@@ -1,0 +1,4 @@
+interface:
+  display_name: "Reflect Model Delta"
+  short_description: "Reflect model changes for human correction"
+  default_prompt: "Use $reflect-model-delta to reflect an emerging model as concise prose and a small diagram for correction."

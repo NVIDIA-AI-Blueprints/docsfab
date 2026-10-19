@@ -1,0 +1,165 @@
+# DocsFab operational limits owned by the `technicalCorrection` name prefix.
+# Registered in config/limits.yaml; every limit here is named `technicalCorrection.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: technicalCorrection.maxIssueJudgments
+    value: 256
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_TECHNICAL_CORRECTION_MAX_ISSUE_JUDGMENTS
+    min: 1
+    max: 256
+    refusal: technical-correction-max-issue-judgments-bound
+    remediation: Return fewer issue judgments, or lower technicalCorrection.maxIssueJudgments in config/limits/technicalCorrection.yaml.
+    rationale: Canonical technical-correction issue-judgment ceiling. 256 matches the previous host-fill cap. Override may only lower it.
+
+  - name: technicalCorrection.maxJudgmentFactIds
+    value: 32
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_TECHNICAL_CORRECTION_MAX_JUDGMENT_FACT_IDS
+    min: 1
+    max: 32
+    refusal: technical-correction-max-judgment-fact-ids-bound
+    remediation: Link fewer fact or obligation ids on one judgment, or lower technicalCorrection.maxJudgmentFactIds in config/limits/technicalCorrection.yaml.
+    rationale: Identifiers one technical-correction judgment may name. 32 matches the previous host-fill cap. Override may only lower it.
+
+  - name: technicalCorrection.identifierMaxChars
+    value: 63
+    unit: characters
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_TECHNICAL_CORRECTION_IDENTIFIER_MAX_CHARS
+    min: 1
+    max: 63
+    refusal: technical-correction-identifier-max-chars-bound
+    remediation: Shorten the obligation or judgment id, or lower technicalCorrection.identifierMaxChars in config/limits/technicalCorrection.yaml.
+    rationale: Host-issued obligation and judgment identifiers are short labels. 63 is the accepted OBL grammar maximum (OBL- plus 59 identifier characters). Override may only lower it.
+
+  - name: technicalCorrection.fieldMaxChars
+    value: 4096
+    unit: characters
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_TECHNICAL_CORRECTION_FIELD_MAX_CHARS
+    min: 8
+    max: 4096
+    refusal: technical-correction-field-max-chars-bound
+    remediation: Shorten the statement or location, cite fewer or shorter evidence locators on one rejection, or lower technicalCorrection.fieldMaxChars in config/limits/technicalCorrection.yaml.
+    rationale: Replacement statement and judgment location ceiling, and the ceiling of the host's per-rejection demotion evidence limitation (#1254). 4096 matches the previous host-fill cap and the fact-inventory limitation entry bound. Override may only lower it.
+
+  - name: technicalCorrection.proseMaxChars
+    value: 2048
+    unit: characters
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_TECHNICAL_CORRECTION_PROSE_MAX_CHARS
+    min: 1
+    max: 2048
+    refusal: technical-correction-prose-max-chars-bound
+    remediation: Shorten the uncertainty or reason, or lower technicalCorrection.proseMaxChars in config/limits/technicalCorrection.yaml.
+    rationale: Uncertainty and rejection-reason ceiling. 2048 matches the previous host-fill cap. Override may only lower it.
+
+  - name: technicalCorrection.maxDemotionEvidenceLocators
+    value: 64
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_TECHNICAL_CORRECTION_MAX_DEMOTION_EVIDENCE_LOCATORS
+    min: 1
+    max: 64
+    refusal: technical-correction-max-demotion-evidence-locators-bound
+    remediation: Cite fewer distinct admitted source locators across the rejections of one dimension, or lower technicalCorrection.maxDemotionEvidenceLocators in config/limits/technicalCorrection.yaml.
+    rationale: Admitted source locators the evidenceLocators of one rejection, and their union over one demoted dimension, may name (#1254). The host makes that union the demoted dimension's sourceLocators, and the fact-inventory validator admits at most 64 locators per dimension, so 64 is the largest value that dimension can carry. Override may only lower it.
+
+  - name: technicalCorrection.coverageReasonMaxChars
+    value: 512
+    unit: characters
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_TECHNICAL_CORRECTION_COVERAGE_REASON_MAX_CHARS
+    min: 1
+    max: 2048
+    refusal: technical-correction-coverage-reason-max-chars-bound
+    remediation: Keep each coverage reason to the sentence that names the page claim and the admitted source it was compared with, or raise technicalCorrection.coverageReasonMaxChars in config/limits/technicalCorrection.yaml up to 2048, the prose ceiling the rest of the judgment uses. On a review-documentation judgment an over-length reason is truncated and recorded as a host limitation rather than refused, so this bound shapes the answer the model plans instead of rejecting it.
+    rationale: Characters one coverage entry reason may hold (#645). Coverage carried no length bound at all, so the judgment contract permitted answers no output budget could finish - the 2026-09-25 probe run answered 8 coverage entries and was cut at the 32,768-token output limit after 78,394 retained characters, about 9,800 characters per entry. 512 keeps eight entries inside 4,096 characters, about three percent of the whole-answer budget, which leaves the judgments and accounting the rest. Override may only lower it below the prose ceiling of 2048.
+
+  - name: technicalCorrection.coverageEvidenceMaxEntries
+    value: 8
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_TECHNICAL_CORRECTION_COVERAGE_EVIDENCE_MAX_ENTRIES
+    min: 1
+    max: 64
+    refusal: technical-correction-coverage-evidence-max-entries-bound
+    remediation: Cite the few admitted source locators that actually establish the page claims for one coverage entry, or raise technicalCorrection.coverageEvidenceMaxEntries in config/limits/technicalCorrection.yaml up to 64, the locator ceiling one fact-inventory dimension carries. On a review-documentation judgment the entries past this bound are dropped and recorded as a host limitation rather than refused.
+    rationale: Evidence locators one coverage entry may name (#645). The coverage validator required distinct non-empty strings and bounded neither their count nor their length, which is half of why the 2026-09-25 probe answer ran to 78,394 characters over 8 entries. 8 locators is the widest citation a single page needs when the same sources are already itemised in the obligation ledger, and 64 is the ceiling a fact-inventory dimension may carry, so the override range cannot exceed what the rest of the record admits.
+
+  - name: technicalCorrection.coverageEvidenceEntryMaxChars
+    value: 256
+    unit: characters
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_TECHNICAL_CORRECTION_COVERAGE_EVIDENCE_ENTRY_MAX_CHARS
+    min: 1
+    max: 4096
+    refusal: technical-correction-coverage-evidence-entry-max-chars-bound
+    remediation: Cite one admitted source locator per coverage evidence entry, in path or path-and-line form, or raise technicalCorrection.coverageEvidenceEntryMaxChars in config/limits/technicalCorrection.yaml up to 4096, the ceiling a judgment location already uses. On a review-documentation judgment an over-length entry is truncated and recorded as a host limitation rather than refused.
+    rationale: Characters one coverage evidence entry may hold (#645). An evidence entry is a repository locator, and the locator grammar the evidence validators parse admits a path of at most 512 characters plus a line range or a label of at most 256, so 256 characters holds every locator form the host can resolve and nothing else. 4096 is the judgment location ceiling, which is the most any single evidence field elsewhere in the same answer may hold.
+
+  - name: technicalCorrection.answerCharsPerOutputToken
+    value: 2
+    unit: characters
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_TECHNICAL_CORRECTION_ANSWER_CHARS_PER_OUTPUT_TOKEN
+    min: 1
+    max: 4
+    refusal: technical-correction-answer-chars-per-output-token-bound
+    remediation: This is the conversion the host uses to state a whole-answer character budget to the model, not an enforced ceiling on any field. Lower it to state a smaller budget when answers keep arriving cut; raising it above the measured compact-JSON range would state a budget the output limit cannot carry.
+    rationale: Characters of compact JSON the host counts against one output token when it states the whole-answer budget in the judgment contracts (#645). The four retrievable pilot records of 2026-09-23 were cut after 63,545 to 82,789 characters against a 32,768-token budget, which is 1.9 to 2.5 characters per token; the 2026-09-25 probe retained only 78,394 characters for 65,536 output tokens, 1.2, because output the harness does not retain never reaches the answer. 2 is the low end of the measured compact-JSON range, so the stated budget understates rather than overstates what one output budget plus its continuations can finish.
+
+  - name: technicalCorrection.proposalMaxBytes
+    value: 262144
+    unit: bytes
+    scope: sealed
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 262144
+    refusal: technical-correction-proposal-max-bytes-bound
+    remediation: Narrow the review scope, for example to one directory or a named set of pages, then run it again. The host writes one coverage entry for every target page and one accounting row for every source obligation, so a rerun of the same scope stops at the same bound.
+    rationale: Technical-capacity constraint on the sealed technical-correction record, set as a provisional implementation choice rather than from a measured provider or platform limit. Canonical JSON UTF-8 bytes of one technical-correction proposal, which every record reader re-validates, so it is sealed rather than overridable. The proposal grows with the scope, by a host-filled coverage entry per target page and an accounting row per source obligation. Measured with the recorded 18-obligation ledger, the all-host floor proposal is 108,837 bytes over 256 real target pages and 471,270 bytes over the 1,313-page probe 7 documentation set, after that set's reply was refused at this bound; the floor's note names the refused reply's rejection code, so its size moves by a few bytes with that code. Run 549a2968 (2026-10-05) stopped at this bound over 1,410 whole-repository pages, whose host-filled coverage alone is 466,289 bytes. Each host-filled coverage entry costs its path's UTF-8 bytes plus 255 bytes, so reviewScope.maxTargets pages pass the run-start check while their paths average at most 768 UTF-8 bytes. The widest ASCII focused scope, reviewScope.maxTargets pages of reviewScope.pathMaxChars characters, carries 196,354 bytes and passes with the rest left for obligation accounting; reviewScope.pathMaxChars counts UTF-16 characters, so the same scope of two-byte characters (324,098 bytes) or three-byte characters (451,842 bytes) is refused. A whole-documentation-set review has no reviewScope and is refused before its first model call when its host-filled coverage alone exceeds this bound.
+    docValue: 262,144 bytes (256 KiB)
+    docSummary: Canonical JSON of one technical-correction proposal. A review whose host-filled coverage alone exceeds it is refused before the first model call; narrow the scope.
+
+  - name: technicalCorrection.evidenceMaxBytes
+    value: 524288
+    unit: bytes
+    scope: sealed
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 524288
+    refusal: technical-correction-evidence-max-bytes-bound
+    remediation: Narrow the review scope, for example to one directory or a named set of pages, then run it again. The evidence carries the whole proposal plus one source check per cited source, so a rerun of the same scope stops at the same bound.
+    rationale: Technical-capacity constraint on the sealed technical-correction record, set as a provisional implementation choice rather than from a measured provider or platform limit. Canonical JSON UTF-8 bytes of the complete technical-correction evidence, which holds the proposal, its digests, and the admitted source checks. Every record reader re-validates it, so it is sealed. Twice technicalCorrection.proposalMaxBytes, so a proposal at its own bound leaves the same number of bytes again for source checks.
+    docValue: 524,288 bytes (512 KiB)
+    docSummary: Canonical JSON of the complete technical-correction evidence, which carries the proposal and its source checks.
+
+  - name: technicalCorrection.derivedResultMaxBytes
+    value: 786432
+    unit: bytes
+    scope: sealed
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 786432
+    refusal: technical-correction-derived-result-max-bytes-bound
+    remediation: Narrow the review scope, for example to one directory or a named set of pages, or link fewer facts to each issue judgment, then run it again. The host writes each finding from the facts its judgment links, so a rerun of the same scope and judgments stops at the same bound.
+    rationale: Technical-capacity constraint on the sealed technical-correction record, set as a provisional implementation choice rather than from a measured provider or platform limit. Canonical JSON UTF-8 bytes of the verification result the host derives from a proposal, which holds coverage, the fact inventory, and one finding per issue judgment, each restating the facts it links. Every record reader re-derives it, so it is sealed. Three times technicalCorrection.proposalMaxBytes; the derived result repeats fact text into findings, which the proposal does not.
+    docValue: 786,432 bytes (768 KiB)
+    docSummary: Canonical JSON of the verification result the host derives from a technical-correction proposal.

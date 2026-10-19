@@ -1,0 +1,39 @@
+# DocsFab operational limits owned by the `ia` name prefix.
+# Registered in config/limits.yaml; every limit here is named `ia.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: ia.inputPackageMaxBytes
+    value: 16777216
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 16777216
+    refusal: package-too-large
+    remediation: Narrow the IA task scope or target so the provisioned package holds fewer indexed documents, or raise ia.inputPackageMaxBytes in config/limits/ia.yaml and regenerate the mirrors.
+    rationale: Default admitted size of one canonical IA input package, the immutable governed task bundle a planning or analysis run reads, applied whenever a caller names no allowance of its own. It bounds a host-written private file, not model output; a package over it is refused whole and never truncated, because a partial package would change the digest the run is bound to. A caller may name its own allowance below ia.packageAllowanceMaxBytes and gets exactly that; an allowance above that ceiling is refused by name, never honoured and never silently narrowed.
+
+  - name: ia.packageAllowanceMaxBytes
+    value: 33554432
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 33554432
+    refusal: package-too-large
+    remediation: Reduce the analysed documentation set so the derived planning package is smaller, or raise ia.packageAllowanceMaxBytes in config/limits/ia.yaml and regenerate the mirrors.
+    rationale: Absolute admitted size of one IA input package, and the exact allowance the hosted planning arm names when it derives a planning package from an already admitted analysis output. A caller-supplied allowance above this value is refused as package-too-large on the maxPackageBytes field, so a caller can never widen its own bound; the default a caller gets without naming one stays the smaller ia.inputPackageMaxBytes. It equals the retained analysis bound because a derived planning package restates that admitted analysis alongside its governed task binding, and a derived package over it is refused rather than admitted on the strength of its own measured size.
+
+  - name: ia.analysisOutputMaxBytes
+    value: 33554432
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 33554432
+    refusal: artifact-too-large
+    remediation: Reduce the analysed documentation set so the retained analysis package is smaller, or raise ia.analysisOutputMaxBytes in config/limits/ia.yaml and regenerate the mirrors.
+    rationale: Admitted size of one retained IA analysis output package and of each artifact either hosted IA job stores, because both jobs share one artifact store bound. It is larger than the default input-package bound because one analysis restates its own governed input alongside the produced ontology, candidates and navigation evaluation. An output over it is refused, never truncated. A retained planning-input record is bounded separately by ia.packageAllowanceMaxBytes plus the fixed canonical bytes of the discriminator wrapper retention adds.

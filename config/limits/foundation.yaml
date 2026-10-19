@@ -1,0 +1,15 @@
+# DocsFab operational limits owned by the `foundation` name prefix.
+# Registered in config/limits.yaml; every limit here is named `foundation.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: foundation.claimLabelMaxChars
+    value: 65536
+    unit: characters
+    scope: per-run
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 65536
+    refusal: foundation-claim-label-max-chars-bound
+    remediation: Shorten the claim subject, assertion, statement or applicability label, or qualify the strict record decoder's own string ceiling and this admission together before raising it.
+    rationale: Admitted length of one Foundation claim label, counted in UTF-16 units. Inherited approved statements are complete sentences, so the ceiling is the strict decoder's own string bound rather than a shorter label-shaped guess; anything longer is already refused before this admission runs. The label is never truncated to fit.

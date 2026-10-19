@@ -1,0 +1,82 @@
+# Model-output rules for a documentation planner's reply (#1423) that no
+# shared code states. Canonical source; generated bindings are produced by
+# `npm run generate:model-output` from packages/runtime.
+#
+# The planner's reply admission (harness/reply-admission/planner.ts) records
+# every refusal with a closed code and a location. Most planner rules are
+# stated by a shared code at a planner location, such as invalid-value at
+# $.planBinding.pages[].disposition. The shared codes' tables own those
+# facts until #1289 moves them into a common family. This family declares
+# only the planner rule no shared code can state. The predicate lives in
+# workflow-execution/plan-binding.ts.
+schemaVersion: 1
+kind: docsfab-output-rules
+family: documentation-plan
+# The planner is a read-only step: a retry re-asks from the same repository.
+replay: read-only
+rules:
+  - code: documentation-plan-source-binding-coverage
+    locations:
+      - $.planBinding.sourceBindings
+      - $.planBinding.sourceBindings[].pagePath
+    kind: content
+    retry: model-correctable
+    reason: >-
+      The planner bound sources to an out-of-scope or unplanned page, or left
+      a page it changes without sources; it can correct the page/source map
+      from the same evidence.
+    statement: >-
+      Give every page whose disposition changes it exactly one sourceBindings
+      entry whose pagePath is that page's path. A retained page may have an
+      optional read-only source binding. Never bind an out-of-scope or
+      unplanned page.
+    hint:
+      atLocation:
+        $.planBinding.sourceBindings: >-
+          A page whose disposition changes it has no sourceBindings entry. Add
+          exactly one sourceBindings entry whose pagePath is that page's path,
+          with the sources that support the change.
+        $.planBinding.sourceBindings[].pagePath: >-
+          A sourceBindings entry names an out-of-scope or unplanned page.
+          Bind sources to changed or retained pages only; retained bindings
+          are read-only and optional.
+    operator:
+      kind: correct
+      meaning: >-
+        The documentation planner left a changed page without sources or
+        bound sources to an out-of-scope or unplanned page, and its bounded
+        retries did not correct it.
+      next: >-
+        Inspect the saved run's planner attempts, then start a new run. If the
+        planner keeps binding sources to out-of-scope or unplanned pages,
+        correct the planner contract.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/documentation-plan/source-binding-coverage.json
+    docs: documentation-plan-source-binding-coverage
+
+  - code: documentation-plan-source-write-target
+    locations:
+      - $.planBinding.sourceBindings[].sources[]
+    kind: content
+    retry: model-correctable
+    reason: >-
+      The planner bound a page it writes as a source, which cannot ground the
+      page's own content; it can bind the files that establish the content
+      instead.
+    statement: >-
+      Never list a page the plan writes as a source, including a page that
+      already exists and will be updated: its current content is the base the
+      update keeps, not evidence for it. Bind only the files that establish
+      what the page says.
+    operator:
+      kind: correct
+      meaning: >-
+        The documentation planner bound a page it writes as that page's own
+        source, and its bounded retries did not correct it.
+      next: >-
+        Inspect the saved run's planner attempts, then start a new run. If the
+        planner keeps binding the page to itself, name the source files in the
+        instruction.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/documentation-plan/source-write-target.json
+    docs: documentation-plan-source-write-target

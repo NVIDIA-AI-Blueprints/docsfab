@@ -1,0 +1,10 @@
+# Documentation search, readiness projection, and cross-harness megafiles.
+test/documentation-maturity-cascade.test.ts
+test/documentation-maturity-contracts.test.ts
+test/documentation-maturity-evaluators.test.ts
+test/hosted-readiness-workflows.test.ts
+test/local-workflow-search.test.ts
+test/release-documentation-readiness.test.ts
+test/repository-inventory.test.ts
+test/workflow-search-failure-cause.test.ts
+test/workflow-search.test.ts

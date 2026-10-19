@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "kind": "docsfab-output-rule-fixture",
+  "code": "reply-json-wrapped",
+  "location": "$",
+  "input": {
+    "workflow": "create-documentation",
+    "repositoryRevision": "0bd6fa60ceefdf49d8b92fb760d446cda3434761"
+  },
+  "reply": "Here is the documentation plan.\n\n```json\n{\"summary\":\"Plan one CLI reference page from the CLI source.\",\"planBinding\":{\"mode\":\"create\",\"pages\":[{\"path\":\"docs/cli-reference.md\",\"disposition\":\"create\"}],\"sourceBindings\":[{\"pagePath\":\"docs/cli-reference.md\",\"sources\":[\"src/cli.ts\"]}]}}\n```\n\nOr, with a usage page:\n\n```json\n{\"summary\":\"Plan a CLI reference and a usage page.\",\"planBinding\":{\"mode\":\"create\",\"pages\":[{\"path\":\"docs/cli-reference.md\",\"disposition\":\"create\"},{\"path\":\"docs/usage.md\",\"disposition\":\"create\"}],\"sourceBindings\":[{\"pagePath\":\"docs/cli-reference.md\",\"sources\":[\"src/cli.ts\"]},{\"pagePath\":\"docs/usage.md\",\"sources\":[\"src/cli.ts\"]}]}}\n```"
+}

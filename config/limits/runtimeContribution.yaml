@@ -1,0 +1,106 @@
+# DocsFab operational limits owned by the `runtimeContribution` name prefix.
+# Registered in config/limits.yaml; every limit here is named `runtimeContribution.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+#
+# These bound the authorized live runtime-contribution pilot
+# (benchmarks/runtime-contribution/run/live.mjs). Every condition in a campaign
+# receives the same values; qualification records them in the campaign manifest
+# and later phases refuse a recorded value above the current effective bound. The per-call output ceiling is not a
+# limit here: it is the active host model profile's maxOutputTokens, recorded at
+# qualification, so the benchmark names no model and no model-specific bound.
+limits:
+  - name: runtimeContribution.cellMaxTotalTokens
+    value: 6000000
+    unit: tokens
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_RUNTIME_CONTRIBUTION_CELL_MAX_TOTAL_TOKENS
+    min: 1
+    max: 6000000
+    refusal: runtime-contribution-cell-max-total-tokens-bound
+    remediation: Read the cell's provider accounting in its result record to see which requests consumed the budget. If representative work legitimately needs more, raise runtimeContribution.cellMaxTotalTokens in config/limits/runtimeContribution.yaml and qualify a new campaign; DOCSFAB_RUNTIME_CONTRIBUTION_CELL_MAX_TOTAL_TOKENS and --max-total-tokens may only lower it.
+    rationale: Accounted tokens one benchmark cell may use across every provider request, retry, and conservative reservation, identical for all three conditions. Accounting uses the provider's reported total, which includes cached prompt tokens. Measured basis, one round (gpt-6-sol, local-workflows matrix, main 2d499b21, 2026-09-28) - DocsFab used 0.5M to 2.3M reported tokens per case on a one-file fixture, mostly cached prompt, with 16 to 27 requests. The pilot fixtures are larger, so the value allows about 2.5 times the largest measured case. The former 100000 literal (2026-09-14, gpt-5.4) sat below every measured DocsFab case, so a campaign under it measured the budget rather than the product. The scope vocabulary has no per-cell value, so it is filed per-run. The host override may only lower it.
+
+  - name: runtimeContribution.cellMaxRequests
+    value: 150
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_RUNTIME_CONTRIBUTION_CELL_MAX_REQUESTS
+    min: 1
+    max: 150
+    refusal: runtime-contribution-cell-max-requests-bound
+    remediation: Read the cell's provider accounting to see whether the requests were productive turns or a retry loop. If representative work legitimately needs more turns, raise runtimeContribution.cellMaxRequests in config/limits/runtimeContribution.yaml and qualify a new campaign; DOCSFAB_RUNTIME_CONTRIBUTION_CELL_MAX_REQUESTS may only lower it.
+    rationale: Provider attempts one benchmark cell may send, identical for all three conditions, as a guardrail beside the token budget. Measured basis, one round (gpt-6-sol, local-workflows matrix, 2026-09-28) - DocsFab used 16 to 27 requests per case. The baseline arms are ordinary tool-using agents with one request per turn and no measured basis on the current model, so the value leaves about 5 times the largest measured DocsFab case. The former 60 literal dates from 2026-09-14. The scope vocabulary has no per-cell value, so it is filed per-run. The host override may only lower it.
+
+  - name: runtimeContribution.cellTimeoutMs
+    value: 2700000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_RUNTIME_CONTRIBUTION_CELL_TIMEOUT_MS
+    min: 1000
+    max: 2700000
+    refusal: runtime-contribution-cell-timeout-ms-bound
+    remediation: Read the cell's retained records to find the last completed step. If representative work legitimately needs longer, raise runtimeContribution.cellTimeoutMs in config/limits/runtimeContribution.yaml and qualify a new campaign; DOCSFAB_RUNTIME_CONTRIBUTION_CELL_TIMEOUT_MS may only lower it.
+    rationale: Wall-clock bound for one benchmark cell, identical for all three conditions. Measured basis, one round (gpt-6-sol, local-workflows matrix, 2026-09-28) - DocsFab cases took 4.7 to 7.0 minutes with 8 host CPUs, while pilot cells run in containers limited to 2 CPUs with larger fixtures. One DocsFab step may legitimately run up to its sealed 30 minute attempt bound, so the value is that bound plus 15 minutes for the remaining steps. The former 600000 literal dates from 2026-09-14. The scope vocabulary has no per-cell value, so it is filed per-run. The host override may only lower it.
+
+  - name: runtimeContribution.campaignMaxTotalTokens
+    value: 180000000
+    unit: tokens
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_RUNTIME_CONTRIBUTION_CAMPAIGN_MAX_TOTAL_TOKENS
+    min: 1
+    max: 180000000
+    refusal: runtime-contribution-campaign-max-total-tokens-bound
+    remediation: The campaign stopped before a cell whose full budget no longer fits; completed cells are retained and the remaining cells are named in the phase output. Review the accounted usage, then raise runtimeContribution.campaignMaxTotalTokens in config/limits/runtimeContribution.yaml and qualify a new campaign, or accept the partial matrix as reported; DOCSFAB_RUNTIME_CONTRIBUTION_CAMPAIGN_MAX_TOTAL_TOKENS may only lower it.
+    rationale: Accounted tokens for a whole campaign. The runner starts a cell only when a full cell budget still fits, so the value is the fixed 30-cell matrix times runtimeContribution.cellMaxTotalTokens, and a full matrix can never be cut short by this ceiling. Accounted tokens include cached prompt tokens and conservative reservations; they are not a cost estimate. The former 3000000 literal (2026-09-14) was 30 times the old per-cell budget. The host override may only lower it.
+
+  - name: runtimeContribution.transientRetriesPerRequest
+    value: 8
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_RUNTIME_CONTRIBUTION_TRANSIENT_RETRIES_PER_REQUEST
+    min: 0
+    max: 8
+    refusal: runtime-contribution-transient-retries-per-request-bound
+    remediation: A cell that exhausts these retries stops with provider-throttled (429) or provider-unavailable (502, 503, 504) in its terminal reasons, and its provider events show every retried response and backoff. Wait for the provider's rate limit or availability to recover, or reduce concurrent traffic on the same deployment, then qualify a new campaign. DOCSFAB_RUNTIME_CONTRIBUTION_TRANSIENT_RETRIES_PER_REQUEST may only lower it; 0 restores the fail-closed stop on the first such response.
+    rationale: Times the shared provider interceptor re-sends one request after an HTTP 429, 502, 503, or 504 that reports no usage, identical for every condition, so a transient provider rate limit or outage does not decide a cell. HTTP 500 is not retried because it can report a deterministic request failure. Each re-send is an accounted attempt under runtimeContribution.cellMaxRequests. A 429 is refused before processing and charges no tokens; a 502, 503, or 504 may hide provider work and charges its conservative reservation. Measured basis (2026-09-29) - the first gpt-6-sol pilot canary lost both baseline cells to a 429 on their first request with zero retries; after 429 retries were added, 14 of one baseline cell's 24 requests were 429 and another cell stopped on a 503. With the backoff bounds, eight retries wait at most about four minutes for one request. The scope vocabulary has no per-request value, so it is filed per-run. The host override may only lower it.
+
+  - name: runtimeContribution.transientBackoffInitialMs
+    value: 2000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_RUNTIME_CONTRIBUTION_TRANSIENT_BACKOFF_INITIAL_MS
+    min: 1
+    max: 2000
+    refusal: runtime-contribution-transient-backoff-initial-ms-bound
+    remediation: Lower DOCSFAB_RUNTIME_CONTRIBUTION_TRANSIENT_BACKOFF_INITIAL_MS only to test the retry path; raise this value in config/limits/runtimeContribution.yaml if the provider needs longer to recover.
+    rationale: Provisional, unmeasured. First wait after a retried provider response that has no numeric Retry-After header; each later retry doubles it up to runtimeContribution.transientBackoffMaxMs. A numeric Retry-After from the provider replaces the doubling, still capped by the maximum. The host override may only lower it.
+
+  - name: runtimeContribution.transientBackoffMaxMs
+    value: 60000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_RUNTIME_CONTRIBUTION_TRANSIENT_BACKOFF_MAX_MS
+    min: 1
+    max: 60000
+    refusal: runtime-contribution-transient-backoff-max-ms-bound
+    remediation: Raise this value in config/limits/runtimeContribution.yaml if the provider's Retry-After or recovery time is longer; DOCSFAB_RUNTIME_CONTRIBUTION_TRANSIENT_BACKOFF_MAX_MS may only lower it.
+    rationale: Provisional, unmeasured. Longest single wait between retried attempts of one request, and the cap on a provider Retry-After value. Azure token rate limits are per-minute windows, so one minute covers a full window. A retry that would pass the cell deadline is not attempted and the cell stops with that response's code. The host override may only lower it.
+
+  - name: runtimeContribution.adapterTextMaxBytes
+    value: 524288
+    unit: bytes
+    scope: sealed
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 524288
+    refusal: runtime-contribution-adapter-text-max-bytes-bound
+    remediation: A clipped text ends with a [truncated] line, and result-capture.json sets the matching truncated flag (resultText, pendingQuestion or stepSummaries). Read the full text in the cell's retained run record or with docsfab runs show against its exported state. If representative cells legitimately exceed the bound, raise runtimeContribution.adapterTextMaxBytes in config/limits/runtimeContribution.yaml through a reviewed change, recompute the stdout headroom in its rationale, and qualify a new campaign. No host setting changes this value.
+    rationale: UTF-8 bytes the DocsFab benchmark adapter keeps of each text it returns or retains - the original-scoring finalText and terminalReason, the amended capture's runs show text and pending question, and each step summary and error. It is a fixed capture bound, sealed with no override, because the adapter runs inside the live container, which receives no host limit settings; a host value would show in doctor but never reach a run. Bounded because the live child writes the whole adapter result as one JSON line to a stdout that run/live.mjs stops at 16 MiB. Four bounded texts travel on that line - finalText, terminalReason, resultText and the pending question; step summaries are cut here but written only to result-capture.json. Each is at most 524288 bytes plus a 12-byte newline-[truncated] marker, and JSON escaping writes at most six bytes for each kept byte, so the four take at most 4 x 524288 x 6 bytes (12 MiB) plus their escaped markers. The remaining 4 MiB must carry the run record, whose steps hold the uncut summaries and errors, plus the capture errors, provider report and events, and child diagnostics. This bound does not cut those, and no test measures the combined worst case. Measured basis, one round (gpt-6-sol, 2026-10-05 pilot, 30 cells) - the largest final text was 48960 bytes and the largest runs show text 10445 bytes, so the value leaves about ten times the largest measured text. It carries the former adapter literal (512 KiB, 2026-09-15) unchanged, so original-scoring bytes do not move.

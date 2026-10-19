@@ -1,0 +1,227 @@
+# DocsFab operational limits owned by the `repository` name prefix.
+# Registered in config/limits.yaml; every limit here is named `repository.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: repository.inventoryMaxEntries
+    value: 20000
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_REPOSITORY_INVENTORY_MAX_ENTRIES
+    min: 1
+    max: 9007199254740991
+    refusal: repository-inventory-max-entries-bound
+    remediation: Raise DOCSFAB_REPOSITORY_INVENTORY_MAX_ENTRIES to at least the tracked entry count to inventory the whole tree, or narrow the repository. A tree past the workspace export's ceiling also needs DOCSFAB_REPOSITORY_WORKSPACE_EXPORT_MAX_TREE_ENTRIES raised.
+    rationale: Tracked-tree inventory cap; 20000 covers 10k-file repositories with room to spare. Crossing it degrades instead of failing. The sealed inventory records entry-limit-exceeded and omittedCount, governed search continues with an incomplete-index limitation, and every governed workflow records this limit's refusal line in the run's LIMITATIONS, so the clip is never silent. The inventory is bounded only here, where it is built; inventory decoders apply no node or array ceiling of their own (#1927). An inventory never holds more entries than the workspace export admits, so this limit's maximum is repository.workspaceExportMaxTreeEntries' own, the largest integer the override parser admits. A host that raises the export ceiling can raise this limit to match, and is never capped below it.
+
+  - name: repository.inventoryTextMaxFileBytes
+    value: 8388608
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_REPOSITORY_INVENTORY_TEXT_MAX_FILE_BYTES
+    min: 1
+    max: 536870887
+    refusal: repository-inventory-text-max-file-bytes-bound
+    remediation: Raise DOCSFAB_REPOSITORY_INVENTORY_TEXT_MAX_FILE_BYTES, or repository.inventoryTextMaxFileBytes in the host limits file, above the observed size of the largest left-out file (at most 536870887 bytes), then rerun the same command.
+    rationale: Largest tracked file the repository inventory reads into its text index, the text governed search's literal-text probes match (#1932). It replaces a hand-declared 1 MiB literal. Measured on vllm-project/semantic-router aec7a4ee5, the largest text file is a 3,162,828-byte generated catalog, so 8 MiB indexes every text file there and leaves 2.6 times headroom for generated specifications and lock files. A larger file is never read whole. Its first 8,000 bytes decide whether it is binary, as in Git's own heuristic, and a binary is excluded like a known binary format. A larger text file is left out of the text index, recorded by path as text-index-limit-exceeded with this limit and its size, and counted in the run's LIMITATIONS. A file is held as bytes and as a string while it is read, so the default costs at most about 24 MiB at a time. The maximum is the largest file one JavaScript string can hold, one code unit below the 64-bit Node MAX_STRING_LENGTH, as for artifacts.maxObjectBytes.
+    docValue: 8,388,608 bytes (8 MiB)
+    docSummary: Largest tracked file the repository inventory reads into the text index that governed search matches literal text against. A larger file is left out by path and counted in LIMITATIONS.
+
+  - name: repository.inventoryTextMaxTotalBytes
+    value: 536870912
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_REPOSITORY_INVENTORY_TEXT_MAX_TOTAL_BYTES
+    min: 1
+    max: 9007199254740991
+    refusal: repository-inventory-text-max-total-bytes-bound
+    remediation: Raise DOCSFAB_REPOSITORY_INVENTORY_TEXT_MAX_TOTAL_BYTES, or repository.inventoryTextMaxTotalBytes in the host limits file, to at least the observed total, then rerun the same command. The index holds that much text in host memory while search runs.
+    rationale: Bytes of tracked text the repository inventory holds in its text index, summed over files, for governed search's literal-text probes (#1932). It replaces a hand-declared 16 MiB literal that indexed 1,760 of the 10,334 text candidates of vllm-project/semantic-router aec7a4ee5 and left 8,561 out. Measured there with the 8 MiB file limit, the index holds 89,808,719 bytes of text from 10,308 files, about 8.4 KB per tracked file, so a 30,000-file repository of the same density needs about 253 MB and 512 MiB leaves twice that. The text stays in host memory as strings while governed search runs. Strings of small files live on the JavaScript heap, measured at 1.12 heap bytes per text byte on that repository, where nearly every file is small. Node holds a string decoded from a file over about 1 MiB outside the heap. Either way a byte of text costs at most 2 bytes of memory, so the default costs at most about 1 GiB of host memory. A file past it is never read whole. Its first 8,000 bytes decide whether it is binary, which is excluded rather than counted, and a text file is left out of the text index, recorded by path as text-index-limit-exceeded with this limit and the total the index needed, and counted in the run's LIMITATIONS. The text index never holds more than the workspace export writes, so the maximum is that limit's own, the largest integer the override parser admits.
+    docValue: 536,870,912 bytes (512 MiB)
+    docSummary: Bytes of tracked text the repository inventory holds for governed search, summed over files. Past it, files are left out by path and counted in LIMITATIONS.
+
+  - name: repository.workspaceExportMaxTreeEntries
+    value: 100000
+    unit: files
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_REPOSITORY_WORKSPACE_EXPORT_MAX_TREE_ENTRIES
+    min: 1
+    max: 9007199254740991
+    refusal: repository-workspace-export-max-tree-entries-bound
+    remediation: The revision tracks more entries than the workspace export admits. Raise DOCSFAB_REPOSITORY_WORKSPACE_EXPORT_MAX_TREE_ENTRIES, or run on a revision that tracks fewer files.
+    rationale: Tracked-tree entries one exact-tree workspace export admits. Past it the export stops in preflight with file-count-limit, before any file is written. The value keeps the former harness ceiling, which the issue 1932 audit found fits real repositories. Measured on 2026-10-05, kubernetes-sigs/kueue a1a12a6 tracks 12,830 entries and vllm-project/semantic-router aec7a4ee5 tracks 10,658. The same bound sizes the checked-tree walk and the original source authority's member list, so a host raise reaches all three. The maximum is the largest integer the override parser admits, so a host may raise it as far as its memory allows.
+
+  - name: repository.workspaceExportMaxAggregateBytes
+    value: 2147483648
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_REPOSITORY_WORKSPACE_EXPORT_MAX_AGGREGATE_BYTES
+    min: 1
+    max: 9007199254740991
+    refusal: repository-workspace-export-max-aggregate-bytes-bound
+    remediation: The revision's tracked files hold more bytes than the workspace export admits. Raise DOCSFAB_REPOSITORY_WORKSPACE_EXPORT_MAX_AGGREGATE_BYTES, and keep DOCSFAB_REPOSITORY_WORKSPACE_EXPORT_MAX_SCRATCH_BYTES above it, or run on a revision that tracks fewer large files.
+    rationale: Bytes of tracked regular files one workspace export writes, checked against the tree listing in preflight and again as bytes stream (aggregate-byte-limit). The value keeps the former 2 GiB harness ceiling. Measured on 2026-10-05, the largest field repository, vllm-project/semantic-router aec7a4ee5, exports 459,582,480 bytes, and kubernetes-sigs/kueue a1a12a6 exports 135,801,999. Checked-in binaries can pass the default, hence the upward override. It also bounds one original source authority member and the checked-tree walk. The scratch volume's free space is checked separately. The maximum is the largest integer the override parser admits.
+
+  - name: repository.workspaceExportMaxScratchBytes
+    value: 3221225472
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_REPOSITORY_WORKSPACE_EXPORT_MAX_SCRATCH_BYTES
+    min: 1
+    max: 9007199254740991
+    refusal: repository-workspace-export-max-scratch-bytes-bound
+    remediation: The workspace export would use more scratch space than it admits. Raise DOCSFAB_REPOSITORY_WORKSPACE_EXPORT_MAX_SCRATCH_BYTES if the scratch volume has room, or run on a revision that tracks fewer or smaller files.
+    rationale: Scratch bytes one workspace export may plan and allocate, counted in preflight as file bytes plus 4,096 bytes per tree entry and during export as allocated blocks (scratch-space-limit). The value keeps the former 3 GiB harness ceiling, which leaves room for the 2 GiB byte ceiling plus per-entry overhead. Measured on 2026-10-05, vllm-project/semantic-router aec7a4ee5 plans about 503 MB. Independently, preflight refuses a plan larger than the scratch volume's free space. The maximum is the largest integer the override parser admits.
+
+  - name: repository.workspaceExportMaxTreeMetadataBytes
+    value: 33554432
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_REPOSITORY_WORKSPACE_EXPORT_MAX_TREE_METADATA_BYTES
+    min: 1
+    max: 9007199254740991
+    refusal: repository-workspace-export-max-tree-metadata-bytes-bound
+    remediation: The revision's tree listing is larger than the workspace export reads. Raise DOCSFAB_REPOSITORY_WORKSPACE_EXPORT_MAX_TREE_METADATA_BYTES, or run on a revision that tracks fewer files.
+    rationale: Bytes of git ls-tree output one workspace export reads in preflight (tree-metadata-limit). The value keeps the former 32 MiB ceiling. Measured on 2026-10-05, the listing for kubernetes-sigs/kueue a1a12a6 (12,830 entries) is 1,563,785 bytes and for vllm-project/semantic-router aec7a4ee5 (10,658 entries) 1,332,606 bytes, about 120 bytes per entry, so the default fits roughly 250,000 entries. The maximum is the largest integer the override parser admits.
+
+  - name: repository.workspaceExportStallMs
+    value: 120000
+    unit: milliseconds
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_REPOSITORY_WORKSPACE_EXPORT_STALL_MS
+    min: 1
+    max: 2147483646
+    refusal: repository-workspace-export-stall-ms-bound
+    remediation: The workspace export made no progress for this long, so git or the disk stopped answering. Check that both respond, then retry. If they are healthy and one export step legitimately takes longer on this host, raise DOCSFAB_REPOSITORY_WORKSPACE_EXPORT_STALL_MS.
+    rationale: No-progress window for the exact-tree workspace export (issue 1921, owner decision option A on 2026-10-05, which revisits the 120 s freeze of issue 548). It replaces three wall clocks, 120 s on the whole export, 30 s on each file, and 30 s on each preflight Git command. Progress is any finished Git read, tree-listing chunk, created directory, written chunk of file bytes, or verified file, so an export that keeps moving is never stopped and its total time grows with the tree without a size term. A stall while a file's bytes stream stops with per-blob-timeout, any other stall with aggregate-timeout. Provisional default - 120 s is carried over from the former wall clock as an implementation choice, and the owner approved the mechanism, not the number. Every export the old wall clock admitted is still admitted, because no idle interval can exceed an export's total time. Detection is not always as early as before - a stuck file or a stuck preflight Git command was stopped after 30 s and is now stopped after 120 s, and a hang that begins partway through an export is reported 120 s after the last progress rather than 120 s after the start. Supported workload, measured on the benchmark Mac on 2026-10-05 at load average 86 to 161 - ten exports in one process (five each of vllm-project/semantic-router aec7a4ee5, 10,658 files, and kubernetes-sigs/kueue a1a12a6, 12,830 files) all completed at this default, in 217 s to 821 s. The longest gap without progress was not instrumented. With the window lowered to 10 s one of the ten stopped, so gaps of at least 10 s occur under that load. A filesystem call that never returns still holds the export until it returns, as before. A stall in the file sweep's mkdir, open, chmod, write or close is recorded at the window. `mkdtemp` and the workspace-root `mkdir` run before any watchdog, so a stall in them is judged only when the call returns, and observed is the whole call. The minimum, 1 ms, is the smallest timer delay. The maximum is one below the largest delay a Node timer honours (2^31 - 1 ms, about 24.8 days), because the watchdog arms the window plus 1 ms. A host override may raise or lower it within that range.
+
+  - name: repository.trackedWriteAdmissionMaxBytes
+    value: 33554432
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_REPOSITORY_TRACKED_WRITE_ADMISSION_MAX_BYTES
+    min: 1
+    max: 33554432
+    refusal: repository-tracked-write-admission-max-bytes-bound
+    docValue: 33,554,432 bytes (32 MiB)
+    docSummary: Largest page a create or update run can write. A larger page is refused before the candidate seals. Override may only lower it.
+    remediation: Split the page into smaller pages, or remove a lowering override of repository.trackedWriteAdmissionMaxBytes. Its default is already its maximum, the largest page a run can write, and it cannot rise until authoring.plannedPageMaxBytes and the patch capture (repository.evidenceGitOutputMaxBytes, which the delivery patch readers share) are qualified with it.
+    rationale: Bytes of one tracked file an authorized in-run write may hold when the workspace recaptures it, in repository/workspace/tracked-read.ts. Every written planned page, and the first-pass knowledge snapshot, is read whole into one buffer and digested before later reads and the candidate seal trust it. A file over the bound keeps its export identity and stays quarantined, so both authoring candidate seals check every written planned page first and refuse a larger one by this code instead of leaving it out without a code. It replaces the hand-declared 8 MiB literal (issue 2440). Measured 2026-10-02 the largest tracked Markdown page in representative documentation repositories was 234336 bytes, so 32 MiB is about 143 times the largest and admits generated reference pages that passed the former 8 MiB. Recapture holds at most one file at a time, so the default costs at most about 32 MiB of host memory. The maximum equals the default because the pipeline behind a written page is qualified only up to it. A created page at this size yields a patch of the page plus one byte per line, and a full rewrite yields about twice that, both of which the 80 MiB patch capture (repository.evidenceGitOutputMaxBytes), shared by the delivery patch readers, holds, and authoring.plannedPageMaxBytes may not exceed it. Override may only lower it.
+
+  - name: repository.trackedWriteAdmissionMaxPathChars
+    value: 1024
+    unit: UTF-16 code units
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_REPOSITORY_TRACKED_WRITE_ADMISSION_MAX_PATH_CHARS
+    min: 1
+    max: 9007199254740991
+    refusal: repository-tracked-write-admission-max-path-chars-bound
+    remediation: One eligible repository path for authorized tracked-write recapture exceeds this UTF-16 code-unit limit. Shorten that path, or raise DOCSFAB_REPOSITORY_TRACKED_WRITE_ADMISSION_MAX_PATH_CHARS (or repository.trackedWriteAdmissionMaxPathChars in host limits) to at least the observed length before retrying the same operation. The host filesystem and other contracts may impose independent limits.
+    rationale: Length in UTF-16 code units of one eligible path at the public authorized tracked-write admission operation, checked for all candidates before any recapture-state mutation in that invocation. This registers the pre-existing inline 1024-unit default as provisional legacy policy; it is not a platform maximum, not a materialization-wide path ceiling, and not the independent 512-unit source or review-scope contract. The default admits the known NFD documentation path with substantial headroom. A host may override this recapture-only value after validating its filesystem and downstream contracts. The parser maximum is the largest safe integer representable in JavaScript, not a promise of filesystem support.
+
+  - name: repository.navigationMaxSources
+    value: 32
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_REPOSITORY_NAVIGATION_MAX_SOURCES
+    min: 1
+    max: 32
+    refusal: repository-navigation-max-sources-bound
+    remediation: Reduce navigation source files, or raise repository.navigationMaxSources in config/limits/repository.yaml.
+    rationale: Maximum recognized navigation sources one observation reads. Crossing it records source-budget-exceeded. Override may only lower it.
+
+  - name: repository.navigationMaxSourceBytes
+    value: 1048576
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_REPOSITORY_NAVIGATION_MAX_SOURCE_BYTES
+    min: 1
+    max: 1048576
+    refusal: repository-navigation-max-source-bytes-bound
+    remediation: Shrink the navigation source file, or raise repository.navigationMaxSourceBytes in config/limits/repository.yaml.
+    rationale: Maximum bytes of one navigation source. Crossing it records source-too-large. Override may only lower it.
+
+  - name: repository.navigationMaxTotalSourceBytes
+    value: 8388608
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_REPOSITORY_NAVIGATION_MAX_TOTAL_SOURCE_BYTES
+    min: 1
+    max: 8388608
+    refusal: repository-navigation-max-total-source-bytes-bound
+    remediation: Reduce navigation sources, or raise repository.navigationMaxTotalSourceBytes in config/limits/repository.yaml.
+    rationale: Combined byte budget across navigation sources. Crossing it records source-budget-exceeded. Override may only lower it.
+
+  - name: repository.navigationMaxTargets
+    value: 10000
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_REPOSITORY_NAVIGATION_MAX_TARGETS
+    min: 1
+    max: 10000
+    refusal: repository-navigation-max-targets-bound
+    remediation: Reduce nav targets, or raise repository.navigationMaxTargets in config/limits/repository.yaml.
+    rationale: Maximum documentation targets one navigation source may name. Crossing it records target-budget-exceeded. Override may only lower it.
+
+  - name: repository.navigationMaxTargetBytes
+    value: 8388608
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_REPOSITORY_NAVIGATION_MAX_TARGET_BYTES
+    min: 1
+    max: 8388608
+    refusal: repository-navigation-max-target-bytes-bound
+    remediation: Shrink the named target file, or raise repository.navigationMaxTargetBytes in config/limits/repository.yaml.
+    rationale: Maximum bytes of one navigation target. Crossing it records target-too-large. Override may only lower it.
+
+  - name: repository.navigationMaxTotalTargetBytes
+    value: 67108864
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_REPOSITORY_NAVIGATION_MAX_TOTAL_TARGET_BYTES
+    min: 1
+    max: 67108864
+    refusal: repository-navigation-max-total-target-bytes-bound
+    remediation: Reduce navigation targets, or raise repository.navigationMaxTotalTargetBytes in config/limits/repository.yaml.
+    rationale: Combined byte budget across navigation targets. Crossing it records target-budget-exceeded. Override may only lower it.
+
+  - name: repository.evidenceGitTimeoutMs
+    value: 600000
+    unit: milliseconds
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_REPOSITORY_EVIDENCE_GIT_TIMEOUT_MS
+    min: 1
+    max: 2147483646
+    refusal: repository-evidence-git-timeout-ms-bound
+    remediation: One git command that records the run's workspace evidence ran this long without finishing. Check that git and the disk respond. On a large repository or a heavily loaded host, raise DOCSFAB_REPOSITORY_EVIDENCE_GIT_TIMEOUT_MS.
+    rationale: Longest one git command may run while recording a run's workspace evidence (issue 1932) - the baseline git add and commit when the run starts, and the git add, name-status diff, and patch diff that capture its changes. It replaces a fixed 30 s literal that stopped a NemoClaw trial (about 6k files) on the Linux benchmark runner at load average 80 or more on 2026-10-05. Git reports no progress for these commands, so this is a hang guard, not a progress window. Provisional default from measurement on the benchmark Mac, 2026-10-05 and 06. Eight concurrent baselines of NVIDIA/NemoClaw e3e5a06 (6,226 files, 114 MB) at load average 61 to 81 all failed under the 30 s literal and all completed under this limit, in 58 s each. Three concurrent baselines of vllm-project/semantic-router 6a387d5 (10,300 files, 458 MB) at load average 166 to 190 completed in 60 s each, and their captures in 11 s. A field proof on 2026-10-06, on vllm-project/semantic-router (10.6k tracked files) at load average about 160, took 29.6 s for the cold evidence git add alone, and the old 30 s literal stopped it in 1 of 4 runs. A baseline runs five git commands, so its time bounds the git add from above, and the default allows about ten times the longest baseline measured. A command may run for exactly the limit; one millisecond more stops it with this refusal. The minimum, 1 ms, is the smallest timer delay. The maximum is one below the largest delay a Node timer honours (2^31 - 1 ms, about 24.8 days), because the stop timer arms the limit plus 1 ms. A host override may raise or lower it within that range.
+
+  - name: repository.evidenceGitOutputMaxBytes
+    value: 83886080
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_REPOSITORY_EVIDENCE_GIT_OUTPUT_MAX_BYTES
+    min: 1
+    max: 536870888
+    refusal: repository-evidence-git-output-max-bytes-bound
+    docValue: 83,886,080 bytes (80 MiB)
+    docSummary: Largest patch of a run's changes the host captures and delivery reads back, enough for a full rewrite of one page at the page limit.
+    remediation: One git command that records the run's workspace evidence, usually the patch diff, wrote more than this to one output stream. Raise DOCSFAB_REPOSITORY_EVIDENCE_GIT_OUTPUT_MAX_BYTES, or make a smaller change.
+    rationale: Most bytes one workspace-evidence git command may write to stdout or to stderr, held in memory and decoded into one string - the baseline commit, the change list, and the patch diff of the run's changes. The patch readers downstream (delivery preflight, impact patch evidence and the run summary's patch stats) read this same limit, so every patch the run captures stays readable. 80 MiB holds a full rewrite of one page at repository.trackedWriteAdmissionMaxBytes (32 MiB), whose patch carries the old and the new page plus one byte per line (72 MiB for lines averaging 8 bytes, far shorter than real Markdown), and is far above a documentation run's patch. It replaces the former 50 MiB literals (issue 2440). A write run's delivered patch is bounded separately by writeAuthority.maxPatchBytes. The maximum is the longest string Node can hold (MAX_STRING_LENGTH, 536,870,888 UTF-16 code units on qualified 64-bit Node), because the output is decoded into one string and each byte decodes to at most one code unit. A host override may raise or lower it within that range.

@@ -1,0 +1,77 @@
+{
+  "unknownRationaleBudget": 0,
+  "shards": [
+    {
+      "file": "host.json",
+      "owner": "packages/host/src"
+    },
+    {
+      "file": "host.service.json",
+      "owner": "packages/host/src/service"
+    },
+    {
+      "file": "runtime.json",
+      "owner": "packages/runtime/src"
+    },
+    {
+      "file": "runtime.autonomy.json",
+      "owner": "packages/runtime/src/autonomy"
+    },
+    {
+      "file": "runtime.cli.json",
+      "owner": "packages/runtime/src/cli"
+    },
+    {
+      "file": "runtime.context.json",
+      "owner": "packages/runtime/src/context"
+    },
+    {
+      "file": "runtime.delivery.json",
+      "owner": "packages/runtime/src/delivery"
+    },
+    {
+      "file": "runtime.harness-qualification.json",
+      "owner": "packages/runtime/src/harness-qualification"
+    },
+    {
+      "file": "runtime.inputs.json",
+      "owner": "packages/runtime/src/inputs"
+    },
+    {
+      "file": "runtime.live-agent.json",
+      "owner": "packages/runtime/src/live-agent"
+    },
+    {
+      "file": "runtime.maturity.json",
+      "owner": "packages/runtime/src/maturity"
+    },
+    {
+      "file": "runtime.model.json",
+      "owner": "packages/runtime/src/model"
+    },
+    {
+      "file": "runtime.native-compositions.json",
+      "owner": "packages/runtime/src/native-compositions"
+    },
+    {
+      "file": "runtime.quality-evaluation.json",
+      "owner": "packages/runtime/src/quality-evaluation"
+    },
+    {
+      "file": "runtime.repository.json",
+      "owner": "packages/runtime/src/repository"
+    },
+    {
+      "file": "runtime.roadmap.json",
+      "owner": "packages/runtime/src/roadmap"
+    },
+    {
+      "file": "runtime.search.json",
+      "owner": "packages/runtime/src/search"
+    },
+    {
+      "file": "runtime.workflow-execution.json",
+      "owner": "packages/runtime/src/workflow-execution"
+    }
+  ]
+}

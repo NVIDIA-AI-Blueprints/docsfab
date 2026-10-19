@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "kind": "navigation-evaluation",
+  "repository": {
+    "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "contentDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "digest": "015238257c9e76c076affb336a3d9f4cb1a6a8731682aba34049f844714f725c",
+  "payload": {
+    "tasks": [
+      {
+        "id": "task:get-started",
+        "query": "How do I get started with DocsFab?",
+        "expectedNodeIds": ["section:introduction"],
+        "acceptableNodeIds": ["document:home"]
+      },
+      {
+        "id": "task:install",
+        "query": "How do I install DocsFab?",
+        "expectedNodeIds": ["section:install"],
+        "acceptableNodeIds": []
+      }
+    ],
+    "results": [
+      {
+        "taskId": "task:get-started",
+        "rankedNodeIds": ["section:introduction"],
+        "outcome": "matched"
+      },
+      {
+        "taskId": "task:install",
+        "rankedNodeIds": [],
+        "outcome": "no-result"
+      }
+    ],
+    "metrics": {
+      "taskCount": 2,
+      "agreementRate": 0.5,
+      "recallAt3": 0.5,
+      "meanReciprocalRank": 0.5,
+      "noResultRate": 0.5,
+      "ambiguousPlacementRate": 0
+    }
+  }
+}

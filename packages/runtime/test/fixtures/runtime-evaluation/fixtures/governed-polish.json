@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "name": "governed polish repeatability",
+  "assertions": [
+    { "type": "run-count", "minimum": 2 },
+    { "type": "status", "equals": "succeeded" },
+    { "type": "workflow", "equals": "update-documentation" },
+    { "type": "all-steps-succeeded" },
+    { "type": "summaries-present" },
+    {
+      "type": "step-skills",
+      "equals": [
+        "plan-documentation",
+        "verify-technical-accuracy",
+        "write-documentation",
+        "lint-documentation",
+        "verify-technical-accuracy",
+        "review-documentation",
+        "test-audience-understanding",
+        "evaluate-document-quality"
+      ]
+    },
+    { "type": "governed-skill-evidence" },
+    { "type": "record-shape-consistent" }
+  ]
+}

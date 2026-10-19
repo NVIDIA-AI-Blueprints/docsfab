@@ -1,0 +1,59 @@
+schema_version: "1.0"
+library_version: "1.0.0"
+name: release-notes
+description: "Release notes page with versioned entries"
+source_template: "templates/release-notes/release-notes.md"
+
+structure:
+  headings:
+    h1:
+      required:
+        - pattern: "Release Notes.*"
+          description: "Release notes title"
+      max_count: 1
+    h2:
+      required:
+        - pattern: "Release \\d|v?\\d+\\.\\d+"
+          description: "Versioned release entry"
+      optional:
+        - pattern: "All Known Issues|Known Issues"
+          description: "Known issues section"
+        - pattern: "Release Notes for Previous.*|Previous.*"
+          description: "Link to previous release notes"
+        - pattern: "Related Topics?"
+          description: "Related topics section"
+    h3:
+      optional:
+        - pattern: "Highlights?"
+          description: "Highlights subsection"
+        - pattern: "Support Matrix.*|Compatibility.*"
+          description: "Support matrix subsection"
+        - pattern: "Fixed Known Issues|Bug Fixes"
+          description: "Fixed issues subsection"
+        - pattern: ".*"
+          description: "Additional release subsections"
+
+  elements: []
+
+  section_order:
+    - "Release"
+    - "All Known Issues"
+    - "Previous"
+    - "Related"
+
+severity:
+  missing_required_section: error
+  missing_optional_section: info
+  wrong_section_order: warning
+  missing_element: info
+  duplicate_h1: error
+
+lint:
+  # Release-notes pages accumulate versioned entries over time; the canonical
+  # split is by release branch, not per-section within a single notes page.
+  long_file:
+    mode: skip
+
+content:
+  entries:
+    per_release_fields: ["Highlights", "Fixed Issues"]

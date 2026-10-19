@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "name": "ia-analysis",
+  "title": "Information architecture analysis",
+  "outcome": "A governed, revision-bound IA recommendation backed by durable artifacts.",
+  "contextPolicy": {
+    "schemaVersion": 1,
+    "steps": [
+      {
+        "stepId": "analyze-information-architecture",
+        "required": true,
+        "level": "corpus",
+        "query": "expand",
+        "allowReadOnlyDegraded": true
+      }
+    ]
+  },
+  "steps": [
+    {
+      "id": "analyze-information-architecture",
+      "title": "Analyze information architecture",
+      "kind": "inference",
+      "skill": "tpl-design-ia",
+      "mode": "read-only",
+      "prompt": "Analyze the fixed IA task using supplied governed evidence for the declared hierarchy and navigation search when configured; never infer missing host evidence. Return the closed tpl-design-ia result, preserve inconclusive or blocked search limitations, and do not modify repository files.",
+      "searchMode": "observe",
+      "searchPlan": "information-architecture-discovery"
+    }
+  ]
+}

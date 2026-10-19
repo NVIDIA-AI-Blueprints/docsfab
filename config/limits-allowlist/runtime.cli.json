@@ -1,0 +1,184 @@
+{
+  "literals": [
+    {
+      "path": "packages/runtime/src/cli/admission-model.ts",
+      "kind": "max-assign",
+      "lexeme": "maxRetries: 0",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/cli/commands/config.ts",
+      "kind": "kib-product",
+      "lexeme": "64 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/cli/commands/config.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_HOST_CONFIG_BYTES = 6",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/cli/commands/do-delegated.ts",
+      "kind": "timeout-assign",
+      "lexeme": "DELEGATED_CHECK_TIMEOUT_MS = 6",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/cli/commands/runs.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_LIST_FIELD_LENGTH = 5",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/cli/commands/runs.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_LIST_RECORDS = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/cli/comment-existing-mr-glab.ts",
+      "kind": "per-page",
+      "lexeme": "per_page=1",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/cli/first-pass-support.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 1000",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/cli/first-pass-support.ts",
+      "kind": "max-assign",
+      "lexeme": "maxCompactions: 0",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/cli/first-pass-support.ts",
+      "kind": "max-assign",
+      "lexeme": "maxRetries: 0",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/cli/first-pass-support.ts",
+      "kind": "max-assign",
+      "lexeme": "maxToolCalls: 1",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/cli/first-pass.ts",
+      "kind": "slice-cap",
+      "lexeme": ".slice(0, 64)",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/cli/outcome-router.ts",
+      "kind": "timeout-assign",
+      "lexeme": "DOCUMENTATION_JOB_WINDOW = 4",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/cli/progress.ts",
+      "kind": "timeout-assign",
+      "lexeme": "DEFAULT_TICK_INTERVAL_MS = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/cli/run/knowledge-continuation.ts",
+      "kind": "slice-cap",
+      "lexeme": ".slice(0, 8)",
+      "count": 2
+    },
+    {
+      "path": "packages/runtime/src/cli/run/merged-mr-update.ts",
+      "kind": "kib-product",
+      "lexeme": "16 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/cli/run/merged-mr-update.ts",
+      "kind": "kib-product",
+      "lexeme": "24 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/cli/run/merged-mr-update.ts",
+      "kind": "kib-product",
+      "lexeme": "3 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/cli/run/merged-mr-update.ts",
+      "kind": "kib-product",
+      "lexeme": "64 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/cli/run/merged-mr-update.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 32",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/cli/run/merged-mr-update.ts",
+      "kind": "max-assign",
+      "lexeme": "HOST_OPENED_MERGED_MR_READ_BUDGET_BYTES = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/cli/run/merged-mr-update.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_MERGED_MR_READER_FILE_BYTES = 6",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/cli/run/merged-mr-update.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_MERGED_MR_READER_PATHS = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/cli/run/merged-mr-update.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_MERGED_MR_READER_RETAINED_BYTES = 3",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/cli/run/merged-mr-update.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_MERGED_MR_READER_TOTAL_PATHS = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/cli/run/merged-mr-update.ts",
+      "kind": "max-assign",
+      "lexeme": "READER_DIFF_BUDGET_BYTES = 2",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/cli/run/merged-mr-update.ts",
+      "kind": "slice-cap",
+      "lexeme": ".slice(0, 32)",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/cli/run/merged-mr-update.ts",
+      "kind": "slice-cap",
+      "lexeme": ".slice(0, 64)",
+      "count": 2
+    }
+  ]
+}

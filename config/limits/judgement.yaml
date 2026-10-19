@@ -1,0 +1,75 @@
+# DocsFab operational limits owned by the `judgement` name prefix.
+# Registered in config/limits.yaml; every limit here is named `judgement.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: judgement.hostSuccessWindowDays
+    value: 7
+    unit: days
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 90
+    refusal: judgement-host-success-window-days-bound
+    remediation: Widen or narrow judgement.hostSuccessWindowDays in config/limits/judgement.yaml, and re-export the host job snapshot if the new window is wider than the export carries.
+    rationale: Trailing window, in whole UTC days ending on the export's own snapshot day inclusive, over which the read-only judgement pass counts host job outcomes per project and workflow. It is anchored at the snapshot rather than at the run clock because the export cannot carry a job created after the host was observed, so a run-anchored window would always leave its newest day empty and silently drop the oldest day the export does cover. A project's workflow with at least one job in this window and zero succeeded is reported as no-host-success. 7 is the breakdown width of the 2026-09-24 orchestration lessons, lesson 1, whose 7-day table read review-documentation 0 succeeded / 180 failed / 2,706 cancelled and live-agent-turn 2 succeeded / 2 failed; the gap that lesson describes ran 9 days, so a 7-day window surfaces it on the first day it can be seen rather than after the fact. Not the export width, judgement.exportWindowDays, which is deliberately wider so one export serves several windows.
+
+  - name: judgement.reviewDurationBoundMinutes
+    value: 15
+    unit: minutes
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 1440
+    refusal: judgement-review-duration-bound
+    remediation: Raise judgement.reviewDurationBoundMinutes in config/limits/judgement.yaml once reviews routinely finish slower for a benign reason, or shorten the review budget so the journey can produce a success.
+    rationale: A host job that had already been queued or running more than this many minutes when the export was taken is reported as review-past-limit, comparator strictly greater than, so a job at exactly this age is not reported. The age is measured from the export's snapshot instant, never from the run clock, because the export is carried off the installed host by a maintainer and is deliberately tolerated for judgement.snapshotMaxAgeHours, so a run-clock age would add the whole transport delay to every queued and running job and report all of them. Named for the review journey that motivated it and applied to every active workflow, because the same starvation shape is not review-specific. 15 is the observation recorded in the 2026-09-25 deploy-window summary, W9 correction, that on a day of continuous merges a review taking over about 15 minutes rarely finishes before its own merge request merges; the four cancelled post-restart reviews had run 13 to 32 minutes when their merge request landed.
+
+  - name: judgement.cancelledReviewRatioBound
+    value: 0.5
+    unit: ratio
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 0.01
+    max: 1
+    refusal: judgement-cancelled-review-ratio-bound
+    remediation: Raise judgement.cancelledReviewRatioBound in config/limits/judgement.yaml only with evidence that the cancellations are benign; otherwise fix the cancellation cause the report names.
+    rationale: Cancelled jobs divided by terminal jobs, succeeded plus failed plus cancelled, per project and workflow over judgement.hostSuccessWindowDays. Above this ratio, comparator strictly greater than, the workflow is reported as review-past-limit with kind cancelled-ratio; a workflow at exactly the bound is not reported. Queued, running, needs-input and needs-human-decision jobs are excluded from the denominator because they have not yet chosen an outcome. 0.5 sits below both measured cases it must catch, 2,706 of 2,886 terminal review jobs, 0.94, in the 2026-09-24 lessons, and 4 of 5 post-restart reviews, 0.8, in the 2026-09-25 window summary, while leaving room for a journey that cancels a minority of its jobs by design.
+
+  - name: judgement.snapshotMaxAgeHours
+    value: 24
+    unit: hours
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 168
+    refusal: judgement-snapshot-max-age-bound
+    remediation: Re-export the host job snapshot, or raise judgement.snapshotMaxAgeHours in config/limits/judgement.yaml if a slower export cadence is accepted.
+    rationale: An export whose snapshot timestamp is older than this many hours, comparator strictly greater than, yields a snapshot-stale finding printed first, ahead of every other finding, and the run still reports and exits zero. It is deliberately not a refusal. The export transport needs a VPN session, the maintainer's own key and a sudo credential cache that can expire over a weekend, and only credentials and write or publish authority fail closed in this release; a refusal here would print no sitrep header at all, which is exactly the silence the 2026-09-24 lessons, lesson 1, forbids. 24 matches the daily sitrep cadence, so a sitrep opened on the day of its export never warns and one opened on a stale export always does.
+
+  - name: judgement.repeatFailStreak
+    value: 2
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 2
+    max: 10
+    refusal: judgement-repeat-fail-streak-bound
+    remediation: Raise judgement.repeatFailStreak in config/limits/judgement.yaml if two consecutive failures of one class prove too noisy to act on; the report never blocks a merge either way.
+    rationale: Consecutive critic rounds for one merge request, all with a FAIL verdict and all blocking on one finding class, at or above this count, comparator greater than or equal, are reported as repeat-fail-class. A round is a reviewed head rather than a report, because several critic instances review one head and a split verdict is settled by the FAIL, and a gap in the round numbers is named rather than bridged. Only the class tokens of the items in a report's blocking section are counted, never the ones under residue, which are explicitly non-blocking. Delta reports, which re-review one head after a rebase rather than advancing a round, never join a streak. 2 is the survey recommendation this slice implements, two consecutive failures of the same finding class, and it is also the round cap, because a slice that fails twice on one class has exhausted its rounds and needs escalation rather than a third round.
+
+  - name: judgement.exportWindowDays
+    value: 30
+    unit: days
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 365
+    refusal: judgement-export-window-days-bound
+    remediation: Raise judgement.exportWindowDays in config/limits/judgement.yaml, then re-run the printed export query, when a wider window is needed than the current export carries.
+    rationale: Trailing width, in days, of the read-only host job export query the judgement pass prints for an operator to run, and the width that export declares back. The query is scoped to the newest deployment epoch of each project the deployment serves, so one project's workflows can never vanish from the export and be read as idle. It is deliberately wider than judgement.hostSuccessWindowDays so one export serves a wider window without a second database round trip; an export declaring a width narrower than the window actually being reported is refused rather than silently reported over missing days. 30 is one sitrep month, four times the reported window, and small enough that the export stays a single modest result document on the installed host.

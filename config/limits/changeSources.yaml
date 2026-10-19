@@ -1,0 +1,88 @@
+# DocsFab operational limits owned by the `changeSources` name prefix.
+# Registered in config/limits.yaml; every limit here is named `changeSources.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: changeSources.commitsMax
+    value: 256
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_CHANGE_SOURCES_COMMITS_MAX
+    min: 1
+    max: 4096
+    refusal: change-source-commits-bound
+    remediation: Narrow the --change range to fewer commits, or raise DOCSFAB_CHANGE_SOURCES_COMMITS_MAX up to 4096, then run again.
+    rationale: Commits one --change range may carry. The host reads every commit object in the range to recompute its id, and the manifest observation lists each commit's id, parents and subject, measured at about 170 bytes plus the subject for a commit with SHA-1 ids. 256 covers a large merge request or a short release with room to spare and keeps the commit list near 60 KB with typical subjects. A whole release range can raise it through the host override. No count bounds subject or path lengths, so the host extracts the whole manifest, commits and changed paths together, under sources.extractionMaxDerivativeBytes and sources.extractionMaxSpans before any model call, and refuses with that limit and the observed size rather than truncate. The count is read with rev-list --count before any commit is listed, so a refusal reports the real number.
+
+  - name: changeSources.changedFilesMax
+    value: 512
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_CHANGE_SOURCES_CHANGED_FILES_MAX
+    min: 1
+    max: 4096
+    refusal: change-source-changed-files-bound
+    remediation: Narrow the --change range so it changes fewer files, or raise DOCSFAB_CHANGE_SOURCES_CHANGED_FILES_MAX up to 4096, then run again.
+    rationale: Changed paths one --change range may carry. It is also the rename-detection limit passed to git as -l, so rename detection is never silently degraded inside the admitted range. 512 covers merge requests that touch a generated tree or a vendored directory. The manifest observation measures about 350 bytes a changed path plus the path itself, once for an added or deleted file and twice otherwise, with SHA-1 ids, so 512 short paths make about 190 KB. Long paths or subjects can still outgrow extraction, so the host extracts the whole manifest under the source extraction limits before any model call and refuses with the observed size. A wider range refuses with the counted number rather than listing a prefix.
+
+  - name: changeSources.diffMaxBytes
+    value: 1048576
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_CHANGE_SOURCES_DIFF_MAX_BYTES
+    min: 1
+    max: 1048576
+    refusal: change-source-diff-bound
+    remediation: Narrow the --change range so its diff is smaller, or raise DOCSFAB_CHANGE_SOURCES_DIFF_MAX_BYTES up to 1048576, then run again.
+    rationale: Bytes of unified diff one --change range may bind as evidence, after file diffs over changeSources.fileDiffMaxBytes are omitted and labelled. The default uses the existing 1 MiB extraction ceiling so an ordinary source-and-documentation PR can bind its whole diff; the live review of nemotron-voice-agent PR 161 needed 424,773 bytes and exceeded the previous 256 KiB default. Acquisition capacity is independent of one step's bounded source-read response, which reads the admitted evidence in spans. The ceiling is sources.extractionMaxDerivativeBytes; the host checks that relation, and that the bound stays below the sealed hostInvoker.gitOutputMaxBytes that caps every git read, before any git read. Extraction adds a manifest of one summary row and one row per file, so the raw-byte relation is necessary, not sufficient. Before any model call the host extracts the diff whole under the run's source extraction limits and refuses one whose extracted form would cross a limit, naming that limit, the bound in force and the observed size, rather than bind part of it.
+
+  - name: changeSources.fileDiffMaxBytes
+    value: 131072
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_CHANGE_SOURCES_FILE_DIFF_MAX_BYTES
+    min: 1
+    max: 1048576
+    refusal: change-source-file-diff-omitted
+    remediation: The file stays listed in the manifest with its observed diff size; to bind its diff, raise DOCSFAB_CHANGE_SOURCES_FILE_DIFF_MAX_BYTES up to changeSources.diffMaxBytes, then run again.
+    rationale: Bytes of one file's diff that bind as evidence. A lockfile or generated bundle can change by megabytes while the rest of the change is small, so a file over this bound is omitted from the diff observation and labelled, with its observed size, in the manifest and the operator status, instead of refusing the whole range. A file whose computed upper bound already exceeds the sealed hostInvoker.gitOutputMaxBytes is omitted the same way without its diff being read, and labelled with that upper bound. 128 KiB keeps at least two full-size files inside the default changeSources.diffMaxBytes. It must not exceed changeSources.diffMaxBytes; the host checks that before any git read.
+
+  - name: changeSources.shallowBoundaryCommitsMax
+    value: 64
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_CHANGE_SOURCES_SHALLOW_BOUNDARY_COMMITS_MAX
+    min: 1
+    max: 4096
+    refusal: change-source-shallow-boundary-bound
+    remediation: Unshallow the checkout with git fetch --unshallow, or raise DOCSFAB_CHANGE_SOURCES_SHALLOW_BOUNDARY_COMMITS_MAX up to 4096, then run again.
+    rationale: Shallow-boundary commits one --change range's exclusion walk may cross in a shallow checkout. Git walks a boundary commit as parentless, so to keep the diff base's own history out of the commit list the host follows each boundary commit's recorded parents itself, re-hashing that commit and checking its parents' presence, in a few local git reads per round. Git walks the history between boundaries, so the commit count behind the diff base is not what costs, and changeSources.commitsMax, which bounds the range's own commits after the walk, does not bound this; the two are independent, so the host checks no relation between them. Shallow clones of this repository at depths 20, 50 and 200 hold 4, 4 and 2 boundary commits, and a shallow clone that later fetched other branches adds about one per fetch, so 64 leaves wide room. The count is cumulative; the walk refuses as soon as it crosses one more than the limit, reporting the count it reached, rather than list a range it could not prove.
+
+  # merge request discussions
+  - name: changeSources.mrDiscussionsMax
+    value: 256
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_CHANGE_SOURCES_MR_DISCUSSIONS_MAX
+    min: 1
+    max: 4096
+    refusal: mr-discussions-count-bound
+    remediation: Raise DOCSFAB_CHANGE_SOURCES_MR_DISCUSSIONS_MAX up to 4096, or reduce the merge request's total discussion count, then run again.
+    rationale: Discussions one merge request's review threads may carry, counted over every discussion GitLab lists, system and resolved ones included, before the selector narrows them. It also fixes the last page the reader asks for, ceil(limit / 100) + 1 at GitLab's page size of 100, so a listing past it refuses before that page is read. Measured on this project's own 1,674 merge requests, the busiest, !379, lists 107 discussions over two pages; the next ones list under 70, and recent ones 14 to 28. 256 is more than twice the busiest. A count over the limit refuses with the number read rather than bind a prefix.
+
+  - name: changeSources.mrDiscussionsMaxBytes
+    value: 524288
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_CHANGE_SOURCES_MR_DISCUSSIONS_MAX_BYTES
+    min: 1
+    max: 1048576
+    refusal: mr-discussions-bytes-bound
+    remediation: Bind the merge request's unresolved discussions only, or raise DOCSFAB_CHANGE_SOURCES_MR_DISCUSSIONS_MAX_BYTES up to sources.extractionMaxDerivativeBytes, then run again.
+    rationale: Bytes of the rendered evidence original one merge request's bound discussions may make, every note's header and its whole body. Measured on this project, the busiest merge request, !379, holds about 230 KB of note bodies, !1030 about 172 KB, and recent ones 10 to 28 KB; one note header adds about 500 bytes. 512 KiB holds the busiest about twice over. The ceiling of 1 MiB is the default sources.extractionMaxDerivativeBytes, and the host checks that the effective value stays within sources.extractionMaxDerivativeBytes and sources.extractionMaxOriginalBytes before any read, so a bound original is never cut by extraction. Each GitLab answer is also capped by the command runner's output bound; a cut answer refuses as mr-discussions-page-bound and is never parsed. An original over the limit refuses with its measured size; no body is ever sliced.

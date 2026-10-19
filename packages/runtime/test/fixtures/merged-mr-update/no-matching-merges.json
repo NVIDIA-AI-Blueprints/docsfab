@@ -1,0 +1,49 @@
+{
+  "description": "Two fully readable pages for the reported 2026-09-14 Los Angeles day in which nothing matches. A genuinely empty, fully walked result must stay distinguishable from a retrieval failure.",
+  "window": {
+    "timeZone": "America/Los_Angeles",
+    "startDate": "2026-09-14",
+    "endDate": "2026-09-14"
+  },
+  "targetBranch": "main",
+  "pages": [
+    {
+      "page": 1,
+      "nextPage": 2,
+      "truncated": false,
+      "items": [
+        {
+          "iid": 2901,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/2901",
+          "title": "Merge into the documentation site branch after the reported day",
+          "description": "Excluded twice over: branch and date.",
+          "state": "merged",
+          "mergedAt": "2026-09-16T11:00:00.000Z",
+          "targetBranch": "docs/site",
+          "sourceBranch": "docs/site-refresh",
+          "mergeCommitSha": "29a1c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        }
+      ]
+    },
+    {
+      "page": 2,
+      "nextPage": null,
+      "truncated": false,
+      "items": [
+        {
+          "iid": 2902,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/2902",
+          "title": "Merge into the requested branch two days early",
+          "description": "Excluded: before the window.",
+          "state": "merged",
+          "mergedAt": "2026-09-12T11:00:00.000Z",
+          "targetBranch": "main",
+          "sourceBranch": "feature/two-days-early",
+          "mergeCommitSha": "29a2c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        }
+      ]
+    }
+  ]
+}

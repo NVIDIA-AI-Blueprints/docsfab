@@ -1,0 +1,157 @@
+# DocsFab operational limits owned by the `liveAgent` name prefix.
+# Registered in config/limits.yaml; every limit here is named `liveAgent.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: liveAgent.taskActivityMaxBytes
+    value: 16777216
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1048576
+    max: 16777216
+    refusal: live-agent-task-activity-byte-bound
+    remediation: Split an unusually long task into smaller requests; an exceeded capture is retained with clipped coverage and cannot support a complete activity claim.
+    rationale: Public content-free event metadata for one noninteractive task. The 16 MiB capacity matches the supported downstream per-file import ceiling; the bound JSON export and companion together still fit the 64 MiB aggregate-output ceiling for representative tasks. It is an evidence-capacity bound, not a smaller provider-turn budget. Crossing the bound marks capture clipped rather than silently omitting events; representative direct and workflow journeys measure headroom.
+    docValue: 16,777,216 bytes (16 MiB)
+    docSummary: Maximum public event metadata for one task; an exceeded capture is marked clipped.
+
+  - name: liveAgent.taskActivityFieldMaxBytes
+    value: 16384
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1024
+    max: 16384
+    refusal: live-agent-task-activity-field-byte-bound
+    remediation: Narrow an unusually long path, query, or command. The public capture marks the field clipped and cannot claim complete audit coverage.
+    rationale: One public audit argument must remain inspectable without turning the activity file into a copy of source or model text. The default equals the existing live-agent workflow-context ceiling, enough for an ordinary path, URL, or search expression. Longer action metadata is represented by an explicit clipped marker; no field is silently shortened.
+    docValue: 16,384 bytes (16 KiB)
+    docSummary: Maximum bytes for one public action argument; longer fields are marked clipped.
+
+  - name: liveAgent.taskProviderTurns
+    value: 32768
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_LIVE_AGENT_TASK_PROVIDER_TURNS
+    min: 1
+    max: 393216
+    refusal: live-agent-task-provider-turns-bound
+    remediation: Reduce provider turns in this task, or raise DOCSFAB_LIVE_AGENT_TASK_PROVIDER_TURNS within the catalog maximum before preparing the request.
+    rationale: Whole noninteractive task physical provider-request capacity shared by parent Pi and bounded children. Synthetic supported workload from the installed workflow catalog has two 14-step create-documentation runs plus one parent segment; at 512 logical turns per segment and one physical retry per turn it spends 29,696 requests, below default 32,768 by 3,072. The raisable maximum 393,216 covers those 29 segments at the existing 12,288 physical-request-per-step ceiling (356,352 requests), leaving 36,864. This is provisional synthetic capacity evidence rather than real-model cost measurement. Missing token and cost usage remains unavailable.
+    docValue: 32,768 physical requests
+    docSummary: Shared physical provider requests for one noninteractive live-agent task, including bounded workflows. The operator can raise it within the catalog maximum.
+
+  - name: liveAgent.agentCausedRefusalRetries
+    value: 1
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_LIVE_AGENT_AGENT_CAUSED_REFUSAL_RETRIES
+    min: 0
+    max: 1
+    refusal: live-agent-agent-caused-refusal-retries-bound
+    remediation: Set DOCSFAB_LIVE_AGENT_AGENT_CAUSED_REFUSAL_RETRIES to 0 or 1.
+    rationale: One agent-driven workflow resubmission after a live-agent-workflow-request-not-verbatim refusal or a proposal-scope refusal of a request the agent assembled (issues 1127 and 1177). The agent resubmits the user's consecutive messages verbatim; the host never substitutes text. A second refusal reaches the operator. Zero disables the resubmission; more than one would repeat the same request without new information.
+    docValue: 1 resubmission
+    docSummary: Live-agent workflow resubmissions, with your exact words, after a refusal the agent caused. `0` disables them.
+
+  - name: liveAgent.workflowContextMaxChars
+    value: 16384
+    unit: characters
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_LIVE_AGENT_WORKFLOW_CONTEXT_MAX_CHARS
+    min: 1
+    max: 16384
+    refusal: live-agent-workflow-context-max-chars-bound
+    remediation: Shorten the live-agent workflow context, or lower DOCSFAB_LIVE_AGENT_WORKFLOW_CONTEXT_MAX_CHARS within max.
+    rationale: Ceiling for the non-authoritative context a live agent attaches beside the user's verbatim instruction (issue 1177). It reaches every workflow step prompt, so it reuses the existing 16,384-character reader response contract bound in harness/pi-session.ts. Longer context is cut at this bound with a coded marker in the prompt, and the cut is recorded on the run and returned to the agent.
+    docValue: 16,384 characters
+    docSummary: Non-authoritative context a live agent attaches to a workflow request. Longer context is cut with a coded marker.
+
+  - name: liveAgent.commandProcessStopMs
+    value: 5000
+    unit: milliseconds
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_LIVE_AGENT_COMMAND_PROCESS_STOP_MS
+    min: 100
+    max: 60000
+    refusal: live-agent-command-process-stop-ms-bound
+    remediation: End the processes the command left running in the repository before retrying. On a heavily loaded host, raise DOCSFAB_LIVE_AGENT_COMMAND_PROCESS_STOP_MS within max.
+    rationale: How long an approved live-agent host command's remaining process-group members may keep answering SIGKILL after the command closes its output. The command's own timeout is already cleared by then, so without this bound a process that SIGKILL cannot end, such as one in uninterruptible I/O, would hang the tool call with no refusal. A normal member ends on the first kill; on a loaded macOS host a kill can miss a member and a few more rounds end it, well inside five seconds. The 100 ms floor still allows several kill rounds; the one-minute ceiling keeps a mistyped value from holding the operator's turn open.
+    docValue: 5,000 ms (5 seconds)
+    docSummary: How long `live-agent` keeps stopping an approved host command's remaining background processes after the command ends. Past it, the command fails with a refusal that names the limit.
+
+  - name: liveAgent.commandOutputBytes
+    value: 1048576
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_LIVE_AGENT_COMMAND_OUTPUT_BYTES
+    min: 1
+    max: 1048576
+    refusal: live-agent-command-output-bytes-bound
+    remediation: Narrow the command's output, for example by filtering it or writing it to a file the agent reads in parts, before retrying. Lower DOCSFAB_LIVE_AGENT_COMMAND_OUTPUT_BYTES within max to tighten it.
+    rationale: Combined stdout and stderr bytes an approved live-agent host command may write before the host stops it and refuses the call. The whole output reaches the model in one tool result after the credential screen and host-root replacement, so an unbounded stream would hold the command and the operator's turn open and flood the model context. One mebibyte holds a full test or build log; the command is stopped, never truncated, so the model never sees a clipped result as complete. Override may only lower it.
+    docValue: 1,048,576 bytes (1 MiB)
+    docSummary: Combined stdout and stderr an approved `live-agent` host command may write. Past it, DocsFab stops the command and returns no partial output.
+
+  - name: liveAgent.sessionMaxAgeDays
+    value: 0
+    unit: days
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_LIVE_AGENT_SESSION_MAX_AGE_DAYS
+    min: 0
+    max: 3650
+    refusal: live-agent-session-max-age-days-bound
+    remediation: Set DOCSFAB_LIVE_AGENT_SESSION_MAX_AGE_DAYS to a whole number of days from 0 through 3650. 0 turns automatic removal off.
+    rationale: Opt-in retention bound for local live-agent sessions. When it is positive, docsfab live-agent removes, before it opens a session, every local transcript whose last write is older than this many days, and the task-branch state of a repository left with no session. The default is 0, which turns removal off, because deleting a user's conversation history is a destructive action DocsFab does not take until the user configures it; docsfab sessions delete removes sessions on request either way. The ceiling of 3650 days (about ten years) is longer than any retention a user would choose, so a larger value would only make a mistyped number look like a retention promise.
+    docValue: 0 days (off)
+    docSummary: Removes local `live-agent` sessions whose last write is older than this many days when `live-agent` starts. `0` turns removal off.
+
+  - name: liveAgent.askIndexPages
+    value: 6
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_LIVE_AGENT_ASK_INDEX_PAGES
+    min: 1
+    max: 256
+    refusal: live-agent-ask-index-pages-bound
+    remediation: Raise DOCSFAB_LIVE_AGENT_ASK_INDEX_PAGES within max so each question approves more of the pages its terms match, or ask again with target=<page> to answer from one page you choose.
+    rationale: Most pages one Slack question approves when it names no target= (issue 2400). DocsFab indexes the project's tracked Markdown pages at the answer revision, ranks them against the question, and approves only the best matches; their text joins the model input within liveAgent.askIndexPageTextBytes and liveAgent.askIndexTextBytes, so the whole documentation set never enters the model's context. Six held the expected page for each of 20 representative questions about this repository (measured 2026-10-14 over its 1,149 indexed pages). The run record and the answer name the approved pages and how many pages matched, so a match past the bound is disclosed, never silently dropped. The ceiling is reviewScope.maxTargets, the most entries an approved-path list may hold.
+    docValue: 6 pages
+    docSummary: Pages a Slack question without `target=` may approve from the project's documentation index. The answer names them and, when more pages matched, how many.
+
+  - name: liveAgent.askIndexPageTextBytes
+    value: 32768
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_LIVE_AGENT_ASK_INDEX_PAGE_TEXT_BYTES
+    min: 1
+    max: 1048576
+    refusal: live-agent-ask-index-page-text-bytes-bound
+    remediation: Raise DOCSFAB_LIVE_AGENT_ASK_INDEX_PAGE_TEXT_BYTES within max so more of each approved page reaches the model, or ask about that page with target=<page>; the model can also read the rest of a clipped page with its read tool.
+    rationale: Most bytes of one approved page a Slack question without target= places in the model input (issue 2400). A longer page is cut after the last whole character within the bound, a letter kept with its accents, not at a line break or space, because a product reference model is one 57 KB line of JSON whose spaces all lie in its first 2 KB; its evidence block names the bytes shown and the page size, the answer marks the page as partial, and the run record lists it as clipped, so a cut is disclosed, never silent; the model can read the rest with its read tool. 32 KiB holds 95 percent of this repository's 1,456 tracked Markdown pages whole (measured 2026-10-14, 95th percentile 30 KB) and keeps one long page, such as a 58 KB product reference model, from taking the whole per-question allowance. The ceiling is the live-agent command output allowance, the most text one live-agent tool result may return.
+    docValue: 32,768 bytes (32 KiB)
+    docSummary: Bytes of one approved page a Slack question without `target=` passes to the model. A longer page is cut at the bound, and the evidence and the answer say so.
+
+  - name: liveAgent.askIndexTextBytes
+    value: 98304
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_LIVE_AGENT_ASK_INDEX_TEXT_BYTES
+    min: 1
+    max: 1048576
+    refusal: live-agent-ask-index-text-bytes-bound
+    remediation: Raise DOCSFAB_LIVE_AGENT_ASK_INDEX_TEXT_BYTES within max so more of the approved pages reach the model, or ask a narrower question; the model can also read a clipped page with its read tool.
+    rationale: Most bytes of approved page text one Slack question without target= places in the model input, across all its approved pages (issue 2400). The allowance is shared, so each page gets its whole text, within liveAgent.askIndexPageTextBytes, or an equal share of what the shorter pages leave, so no approved page arrives as a few bytes (spending in rank order left the last pages slivers). A page cut short is disclosed in its evidence block, in the answer, and in the run record, so nothing is silently dropped. 96 KiB is three full 32 KiB pages, about 25,000 tokens, a small share of the 131,072-token contexts measured hosted runs use, and it leaves room for the question, the conversation window, and the capsule. The ceiling is the live-agent command output allowance.
+    docValue: 98,304 bytes (96 KiB)
+    docSummary: Bytes of approved page text one Slack question without `target=` passes to the model, shared across its pages. Each page gets its whole text or an equal share; a page cut short is marked in the answer.

@@ -1,0 +1,57 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R 4 0 R] /Count 2 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 5 0 R >> >> /Contents 7 0 R >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /XObject << /Im1 6 0 R >> >> /Contents 8 0 R >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+6 0 obj
+<< /Length 1 /Type /XObject /Subtype /Image /Width 1 /Height 1 /ColorSpace /DeviceGray /BitsPerComponent 8 >>
+stream
+@
+endstream
+endobj
+7 0 obj
+<< /Length 91 >>
+stream
+BT
+/F1 12 Tf
+72 720 Td
+(Only the first page of this document carries readable text.) Tj
+ET
+
+endstream
+endobj
+8 0 obj
+<< /Length 31 >>
+stream
+q 50 0 0 50 50 50 cm /Im1 Do Q
+
+endstream
+endobj
+xref
+0 9
+0000000000 65535 f
+0000000015 00000 n
+0000000064 00000 n
+0000000127 00000 n
+0000000253 00000 n
+0000000383 00000 n
+0000000480 00000 n
+0000000624 00000 n
+0000000765 00000 n
+trailer
+<< /Size 9 /Root 1 0 R >>
+startxref
+846
+%%EOF

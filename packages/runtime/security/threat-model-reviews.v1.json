@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "kind": "docsfab-threat-model-review-candidate",
+  "modelId": "docsfab-credential-data-boundary-v1",
+  "modelSha256": "19cbd90a3b2197bd1d1457fca595042a6758a793023d64a96491bbcbb137c50a",
+  "documentSha256": "16b9021a3d7c742fbd822e43636c405236bedbdd4efa98854a4b592f55e9ecd9",
+  "projectPath": "example/docsfab",
+  "packagePath": "packages/runtime",
+  "gitlabHost": "gitlab.example.test",
+  "protocol": "external-gitlab-approval-v1",
+  "requiredApprovalRules": {
+    "security": "DocsFab security review",
+    "product": "DocsFab product review"
+  },
+  "status": "external-approval-required"
+}

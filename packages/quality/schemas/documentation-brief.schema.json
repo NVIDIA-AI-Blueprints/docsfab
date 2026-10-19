@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/documentation-brief.schema.json",
+  "title": "Documentation brief",
+  "$comment": "Legacy brief fields retain their original accepted values. reader_context is optional and does not backfill or upgrade historical records. The host requires identical presence and values for every overlapping field when reader_context is present.",
+  "x-docsfab-reader-context-overlap": {
+    "contextProperty": "reader_context",
+    "fields": [
+      "target_audience",
+      "change_scope",
+      "source_priority",
+      "required_content",
+      "excluded_content",
+      "unresolved_questions",
+      "known_limitations"
+    ],
+    "requireIdenticalPresenceAndValue": true
+  },
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "change_scope",
+    "document_type",
+    "target_audience",
+    "release_status",
+    "srd_provided",
+    "source_priority",
+    "required_content",
+    "excluded_content",
+    "output_destination",
+    "unresolved_questions"
+  ],
+  "properties": {
+    "change_scope": {"$ref": "reader-context.schema.json#/$defs/legacyChangeScope"},
+    "document_type": {"enum": ["task-guide", "concept-guide", "api-reference"]},
+    "target_audience": {"$ref": "reader-context.schema.json#/$defs/legacyTargetAudience"},
+    "release_status": {"enum": ["ga", "public-preview", "private-preview", "internal"]},
+    "srd_provided": {"type": "boolean", "description": "Whether the developer supplied an approved SRD at intake."},
+    "source_priority": {"$ref": "reader-context.schema.json#/$defs/legacySourcePriority"},
+    "required_content": {"$ref": "reader-context.schema.json#/$defs/legacyRequiredContent"},
+    "excluded_content": {"$ref": "reader-context.schema.json#/$defs/legacyExcludedContent"},
+    "known_limitations": {"$ref": "reader-context.schema.json#/$defs/legacyKnownLimitations"},
+    "output_destination": {"type": "string", "minLength": 1},
+    "unresolved_questions": {"$ref": "reader-context.schema.json#/$defs/legacyUnresolvedQuestions"},
+    "reader_context": {"$ref": "reader-context.schema.json"}
+  }
+}

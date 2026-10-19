@@ -1,0 +1,5 @@
+{
+  "evidence_status": "unknown",
+  "reason": "audience-artifact-invalid",
+  "invalid_evidence": ["schema-validation-failed", "target-missing"]
+}

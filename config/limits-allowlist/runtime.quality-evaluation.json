@@ -1,0 +1,130 @@
+{
+  "literals": [
+    {
+      "path": "packages/runtime/src/quality-evaluation/corpus-cli.ts",
+      "kind": "max-assign",
+      "lexeme": "maxRetries: 0",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/quality-evaluation/corpus-files.ts",
+      "kind": "kib-product",
+      "lexeme": "16 * 1024",
+      "count": 2
+    },
+    {
+      "path": "packages/runtime/src/quality-evaluation/corpus-files.ts",
+      "kind": "kib-product",
+      "lexeme": "64 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/quality-evaluation/corpus-live.ts",
+      "kind": "slice-cap",
+      "lexeme": ".slice(0, 1)",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/quality-evaluation/maturity-cascade-files.ts",
+      "kind": "kib-product",
+      "lexeme": "2 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/quality-evaluation/maturity-cascade-files.ts",
+      "kind": "max-assign",
+      "lexeme": "MAXIMUM_JSON_BYTES = 2",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/quality-evaluation/maturity-cascade.ts",
+      "kind": "kib-product",
+      "lexeme": "2 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/quality-evaluation/maturity-cascade.ts",
+      "kind": "kib-product",
+      "lexeme": "512 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/quality-evaluation/maturity-cascade.ts",
+      "kind": "kib-product",
+      "lexeme": "64 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/quality-evaluation/maturity-cascade.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 16",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/quality-evaluation/maturity-cascade.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 256",
+      "count": 2
+    },
+    {
+      "path": "packages/runtime/src/quality-evaluation/maturity-cascade.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 64",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/quality-evaluation/maturity-cascade.ts",
+      "kind": "max-assign",
+      "lexeme": "MAXIMUM_FIXTURE_SOURCE_BYTES = 5",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/quality-evaluation/maturity-cascade.ts",
+      "kind": "max-assign",
+      "lexeme": "MAXIMUM_SEMANTIC_EVIDENCE_BYTES = 2",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/quality-evaluation/maturity-cascade.ts",
+      "kind": "timeout-assign",
+      "lexeme": "SEMANTIC_SCORER_TIMEOUT_MS = 3",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/quality-evaluation/maturity-cascade/dataset-codecs.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 64",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/quality-evaluation/maturity-cascade/value-primitives.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/quality-evaluation/semantic.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_RATIONALE_LENGTH = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/quality-evaluation/semantic.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_SUMMARY_LENGTH = 2",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/quality-evaluation/semantic.ts",
+      "kind": "max-assign",
+      "lexeme": "maxRetries: 0",
+      "count": 1
+    }
+  ]
+}

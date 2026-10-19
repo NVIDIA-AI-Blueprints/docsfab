@@ -1,0 +1,817 @@
+{
+  "conditions": [],
+  "confidence": 0.25,
+  "constraints": {
+    "accessibility_and_inclusion": {
+      "applicability": "required",
+      "assessment": "not-assessed",
+      "confidence": 0.25,
+      "dimension_id": "accessibility-and-inclusion",
+      "evidence": [
+        {
+          "description": "No accessibility or inclusion review evidence was supplied for the approved page.",
+          "evidence_class": "grounded-judgment",
+          "locator": "earlier independent results",
+          "strength": "none"
+        }
+      ],
+      "measures": [],
+      "rationale": "Required constraint evidence was not provided."
+    },
+    "global_and_localization_readiness": {
+      "applicability": "optional",
+      "assessment": "not-assessed",
+      "confidence": 0.25,
+      "dimension_id": "global-and-localization-readiness",
+      "evidence": [
+        {
+          "description": "No globalization or localization evidence was supplied, and nothing in the approved page established applicability beyond English-only local CLI examples.",
+          "evidence_class": "grounded-judgment",
+          "locator": "earlier independent results",
+          "strength": "none"
+        }
+      ],
+      "measures": [],
+      "rationale": "No evidence supported assessment of localization readiness."
+    },
+    "human_agent_representation_parity": {
+      "applicability": "required",
+      "assessment": "not-assessed",
+      "confidence": 0.25,
+      "dimension_id": "human-agent-representation-parity",
+      "evidence": [
+        {
+          "description": "No human or agent outcome baseline or verified attempts were available to compare representation parity.",
+          "evidence_class": "outcome-evaluation",
+          "locator": "test-audience-understanding summary",
+          "strength": "none"
+        }
+      ],
+      "measures": [],
+      "rationale": "Required parity evidence was not provided."
+    },
+    "legal_policy_support": {
+      "applicability": "required",
+      "assessment": "not-assessed",
+      "confidence": 0.25,
+      "dimension_id": "legal-policy-support",
+      "evidence": [
+        {
+          "description": "No legal, policy, or support compliance evidence was supplied for the reviewed page.",
+          "evidence_class": "grounded-judgment",
+          "locator": "earlier independent results",
+          "strength": "none"
+        }
+      ],
+      "measures": [],
+      "rationale": "Required constraint evidence was not provided."
+    },
+    "safety_security_privacy": {
+      "applicability": "required",
+      "assessment": "not-assessed",
+      "confidence": 0.25,
+      "dimension_id": "safety-security-privacy",
+      "evidence": [
+        {
+          "description": "No safety, security, or privacy review evidence was supplied for the reviewed page.",
+          "evidence_class": "grounded-judgment",
+          "locator": "earlier independent results",
+          "strength": "none"
+        }
+      ],
+      "measures": [],
+      "rationale": "Required constraint evidence was not provided."
+    }
+  },
+  "evaluated_at": "2026-09-23T00:00:00Z",
+  "evaluation_id": "quality-eval-docs-quickstart-74ecf7d2",
+  "evaluation_version": "1.0",
+  "evaluator": {
+    "independence_evidence": "Independent evaluation step using supplied frozen evidence only; no authoring context was used.",
+    "independent_of_authors": true,
+    "provider_id": "docsfab-agent",
+    "provider_type": "agent"
+  },
+  "findings": [
+    {
+      "acceptance_condition": "Independently verify against the frozen source that the quickstart's default-name explanation and expected output match FACT-6 exactly, preserving the uncertainty text 'Observed from source only; default-path output was not executed.' in the verification record.",
+      "description": "Open originating findings REV-001 and TECH-001 retain FACT-6 and its linked issue ID TECH-001: When no overriding flags are supplied, name defaults to friend and format defaults to text, producing Hello, friend! as the derived message in text mode. Uncertainty: Observed from source only; default-path output was not executed. The reviewed quickstart instead states the default name is world and predicts Hello, world!.",
+      "dimension_id": "factual-accuracy",
+      "evidence": [
+        {
+          "description": "Originating IDs REV-001, TECH-001, FACT-6. Source lines establish the default bindings and emitted text-mode message for the reviewed command path.",
+          "evidence_class": "grounded-judgment",
+          "locator": "docs/quickstart.md:11; src/sprout.mjs:12-13; src/sprout.mjs:19-20; src/sprout.mjs:26-27",
+          "strength": "direct"
+        }
+      ],
+      "id": "FIND-TECH-DEFAULT-OUTPUT",
+      "owner": "documentation-owner",
+      "severity": "major",
+      "status": "open"
+    },
+    {
+      "acceptance_condition": "Independently verify against the frozen source that the structured-output example and field description match FACT-2 exactly, preserving the uncertainty text 'Observed from source only; output forms were not executed.' in the verification record.",
+      "description": "Open originating findings REV-002 and TECH-002 retain FACT-2 and its linked issue ID TECH-002: The --format value is accepted only as text or json and selects plain-text output versus a JSON stringified object with a message field. Uncertainty: Observed from source only; output forms were not executed. The reviewed quickstart instead documents a greeting property.",
+      "dimension_id": "factual-accuracy",
+      "evidence": [
+        {
+          "description": "Originating IDs REV-002, TECH-002, FACT-2. Source lines establish the accepted format values and emitted JSON object shape with the message field.",
+          "evidence_class": "grounded-judgment",
+          "locator": "docs/quickstart.md:19; src/sprout.mjs:22-27",
+          "strength": "direct"
+        }
+      ],
+      "id": "FIND-TECH-JSON-FIELD",
+      "owner": "documentation-owner",
+      "severity": "major",
+      "status": "open"
+    },
+    {
+      "acceptance_condition": "Independently verify that the reviewed quickstart or its explicitly approved dependency coverage accounts for each retained fact ID FACT-9 through FACT-15 with the exact linked issue ID TECH-003 and preserves each fact's uncertainty text in the verification record.",
+      "description": "Open originating finding TECH-003 consolidates admitted non-documented facts FACT-9, FACT-10, FACT-11, FACT-12, FACT-13, FACT-14, and FACT-15 with linked issue ID TECH-003. FACT-10: Successful help and greeting results are written to standard output via console.log. Uncertainty: Observed from source only; stdout writes were not executed. FACT-9: Invalid command, malformed option usage, and unsupported format errors are written to standard error via console.error. Uncertainty: Observed from source only; stderr writes were not executed. FACT-11: If --format resolves to a value other than text or json, the CLI prints an unsupported-format error and exits with status code 2. Uncertainty: Observed from source only; unsupported-format branch was not executed. FACT-12: If a post-greet argument pair uses an unrecognized flag or omits the required value token, the CLI prints an error and exits with status code 2. Uncertainty: Observed from source only; malformed-option branch was not executed. FACT-13: If the first positional argument is not greet, the CLI prints an error and exits with status code 2. Uncertainty: Observed from source only; invalid-command branch was not executed. FACT-14: The help path exits with status code 0 after printing usage and defaults text. Uncertainty: Observed from source only; exit status was not executed. FACT-15: The implementation's help text declares that no network access or configuration files are required for this CLI usage path. Uncertainty: Observed from source only from help text and nearby implementation; the no-network and no-config-file path was not executed.",
+      "dimension_id": "scoped-sufficiency",
+      "evidence": [
+        {
+          "description": "Originating ID TECH-003 with retained fact IDs FACT-9, FACT-10, FACT-11, FACT-12, FACT-13, FACT-14, and FACT-15. These source ranges establish output channels, help behavior, prerequisite statement, and explicit error branches.",
+          "evidence_class": "grounded-judgment",
+          "locator": "src/sprout.mjs:27; src/sprout.mjs:4-5; src/sprout.mjs:16; src/sprout.mjs:23; src/sprout.mjs:22-24; src/sprout.mjs:14-17; src/sprout.mjs:8-10; src/sprout.mjs:3-6; src/sprout.mjs:5",
+          "strength": "direct"
+        },
+        {
+          "description": "The reviewed quickstart focuses on happy-path usage and defers broader option and error coverage to a linked guide that was outside the approved review set.",
+          "evidence_class": "grounded-judgment",
+          "locator": "docs/quickstart.md:3; docs/quickstart.md:21-22",
+          "strength": "direct"
+        }
+      ],
+      "id": "FIND-TECH-OMITTED-ERRORS-AND-IO",
+      "owner": "documentation-owner",
+      "severity": "major",
+      "status": "open"
+    },
+    {
+      "acceptance_condition": "Obtain approved governing authority before presenting FACT-16 as established runtime policy, and preserve the exact uncertainty text 'Observed from source only; runtime availability of node was not verified in an environment.' in any verification or dismissal rationale.",
+      "description": "Open originating finding TECH-004 retains FACT-16 and linked issue ID TECH-004: The program is authored to run as a Node executable via a shebang that invokes env node. Uncertainty: Observed from source only; runtime availability of node was not verified in an environment. This remains source-observed but policy-unverified for documentation authority.",
+      "dimension_id": "grounding-authority",
+      "evidence": [
+        {
+          "description": "Originating IDs TECH-004 and FACT-16. The shebang establishes authoring intent but not approved runtime policy or environment support.",
+          "evidence_class": "grounded-judgment",
+          "locator": "src/sprout.mjs:1",
+          "strength": "direct"
+        }
+      ],
+      "id": "FIND-TECH-RUNTIME-POLICY-GROUNDING",
+      "owner": "documentation-owner",
+      "severity": "major",
+      "status": "open"
+    }
+  ],
+  "hard_gate_failures": [
+    "broken-required-example",
+    "material-omission"
+  ],
+  "layers": {
+    "effective_experience": {
+      "confidence": 0.25,
+      "decision": "insufficient-evidence",
+      "dimensions": [
+        {
+          "applicability": "required",
+          "assessment": "not-assessed",
+          "confidence": 0.25,
+          "dimension_id": "findability",
+          "evidence": [
+            {
+              "description": "Repository-wide findability evidence is incomplete because rubric probes for navigation and usability were blocked by an unsupported operation limitation, and only one approved page was reviewed.",
+              "evidence_class": "grounded-judgment",
+              "locator": "coordinator search evidence",
+              "strength": "none"
+            }
+          ],
+          "measures": [],
+          "rationale": "The evidence set does not establish findability for the reviewed documentation-set scope."
+        },
+        {
+          "applicability": "required",
+          "assessment": "partially-met",
+          "confidence": 0.25,
+          "dimension_id": "orientation-navigation",
+          "evidence": [
+            {
+              "description": "The page provides a direct link to the user guide for more help, but navigation-graph evidence returned no match and navigation rubric evidence was blocked.",
+              "evidence_class": "grounded-judgment",
+              "locator": "docs/quickstart.md:21-22; coordinator search evidence",
+              "strength": "proxy"
+            }
+          ],
+          "measures": [],
+          "rationale": "Local onward navigation exists, but broader navigation evidence is insufficient."
+        },
+        {
+          "applicability": "required",
+          "assessment": "not-met",
+          "confidence": 0.25,
+          "dimension_id": "task-effectiveness",
+          "evidence": [
+            {
+              "description": "No direct participant outcomes were run, but implementation-backed contradictions in both task examples indicate the reviewed task is unlikely to succeed as documented.",
+              "evidence_class": "outcome-evaluation",
+              "locator": "verify-technical-accuracy summary; review-documentation summary",
+              "strength": "proxy"
+            }
+          ],
+          "measures": [
+            {
+              "interpretation": "Two contradictions in the core path mean the task experience is not met even without participant outcomes.",
+              "method": "Count of implementation-backed task-result contradictions affecting the reviewed quickstart journey.",
+              "metric_id": "reviewed-task-contradictions",
+              "value": 2
+            }
+          ],
+          "rationale": "The quickstart's primary journey produces mismatched results, so the documented task experience is not effective as written."
+        },
+        {
+          "applicability": "required",
+          "assessment": "partially-met",
+          "confidence": 0.25,
+          "dimension_id": "efficiency-friction",
+          "evidence": [
+            {
+              "description": "The page is short and easy to scan, but result mismatches introduce avoidable friction during first use.",
+              "evidence_class": "grounded-judgment",
+              "locator": "docs/quickstart.md:1-22; review-documentation summary",
+              "strength": "proxy"
+            }
+          ],
+          "measures": [],
+          "rationale": "Low reading burden is offset by troubleshooting friction caused by incorrect expected output."
+        },
+        {
+          "applicability": "required",
+          "assessment": "not-met",
+          "confidence": 0.25,
+          "dimension_id": "prevention-recovery",
+          "evidence": [
+            {
+              "description": "FACT-11, FACT-12, and FACT-13 show unsupported format, malformed option usage, and invalid command error behavior is omitted from the reviewed quickstart. Uncertainties retained: FACT-11 Observed from source only; unsupported-format branch was not executed. FACT-12 Observed from source only; malformed-option branch was not executed. FACT-13 Observed from source only; invalid-command branch was not executed.",
+              "evidence_class": "grounded-judgment",
+              "locator": "docs/quickstart.md:3; src/sprout.mjs:8-10; src/sprout.mjs:14-17; src/sprout.mjs:22-24",
+              "strength": "direct"
+            }
+          ],
+          "measures": [],
+          "rationale": "The page does not help readers prevent or recover from several evidenced error paths relevant to the task journey."
+        },
+        {
+          "applicability": "required",
+          "assessment": "partially-met",
+          "confidence": 0.25,
+          "dimension_id": "workflow-continuity",
+          "evidence": [
+            {
+              "description": "The page points readers to the guide for further options and errors, which supports continuation, but the linked page was outside the approved review set.",
+              "evidence_class": "grounded-judgment",
+              "locator": "docs/quickstart.md:21-22",
+              "strength": "proxy"
+            }
+          ],
+          "measures": [],
+          "rationale": "There is an onward path, but its adequacy is unverified within the frozen review scope."
+        },
+        {
+          "applicability": "required",
+          "assessment": "met",
+          "confidence": 0.5,
+          "dimension_id": "contextualization",
+          "evidence": [
+            {
+              "description": "The quickstart establishes basic local requirements and task framing for a first greeting.",
+              "evidence_class": "grounded-judgment",
+              "locator": "docs/quickstart.md:1-4",
+              "strength": "proxy"
+            }
+          ],
+          "measures": [],
+          "rationale": "The reviewed page gives enough immediate context to start the intended beginner task."
+        },
+        {
+          "applicability": "required",
+          "assessment": "not-applicable",
+          "confidence": 0.25,
+          "dimension_id": "interaction-responsiveness",
+          "evidence": [
+            {
+              "description": "The approved page describes a local CLI invocation and contains no interactive UI or responsive system surface to assess.",
+              "evidence_class": "grounded-judgment",
+              "locator": "docs/quickstart.md:1-22",
+              "strength": "proxy"
+            }
+          ],
+          "measures": [],
+          "rationale": "No interactive product surface beyond command invocation is in scope for this reviewed page."
+        },
+        {
+          "applicability": "required",
+          "assessment": "partially-met",
+          "confidence": 0.5,
+          "dimension_id": "presentation-coherence",
+          "evidence": [
+            {
+              "description": "The page structure is coherent and concise, but the misleading examples reduce coherence between instruction and observed result.",
+              "evidence_class": "grounded-judgment",
+              "locator": "docs/quickstart.md:1-22; review-documentation summary",
+              "strength": "proxy"
+            }
+          ],
+          "measures": [],
+          "rationale": "The page reads coherently, but the promised outputs do not cohere with the product behavior."
+        },
+        {
+          "applicability": "required",
+          "assessment": "not-met",
+          "confidence": 0.25,
+          "dimension_id": "calibrated-confidence",
+          "evidence": [
+            {
+              "description": "The page confidently states incorrect expected results, which would over-calibrate reader confidence in wrong outputs.",
+              "evidence_class": "grounded-judgment",
+              "locator": "docs/quickstart.md:11; docs/quickstart.md:19; src/sprout.mjs:12-13; src/sprout.mjs:19-20; src/sprout.mjs:22-27; src/sprout.mjs:26-27",
+              "strength": "direct"
+            }
+          ],
+          "measures": [],
+          "rationale": "Incorrect certainty in expected outputs makes reader confidence poorly calibrated."
+        }
+      ],
+      "hard_gate_failures": [],
+      "limitations": [
+        "Repository-wide navigation and usability rubric probes were blocked by an unsupported operation limitation in the supplied evidence.",
+        "No direct human or agent task-outcome attempt was available for the reviewed quickstart journey.",
+        "The reviewed evidence covers exactly 1 of 3 tracked Markdown pages in the repository, not the whole documentation set."
+      ]
+    },
+    "transferable_understanding": {
+      "confidence": 0.25,
+      "decision": "insufficient-evidence",
+      "dimensions": [
+        {
+          "applicability": "required",
+          "assessment": "not-assessed",
+          "confidence": 0.25,
+          "dimension_id": "audience-fit",
+          "evidence": [
+            {
+              "description": "No audience-understanding participant attempt ran because authoritative audience profile and other prerequisites were missing.",
+              "evidence_class": "outcome-evaluation",
+              "locator": "test-audience-understanding summary",
+              "strength": "none"
+            }
+          ],
+          "measures": [],
+          "rationale": "Audience-fit cannot be established without the missing audience evidence and participant attempt prerequisites."
+        },
+        {
+          "applicability": "required",
+          "assessment": "partially-met",
+          "confidence": 0.5,
+          "dimension_id": "conceptual-fidelity",
+          "evidence": [
+            {
+              "description": "The page presents a simple mental model for greeting text and JSON output, but two major technical contradictions undermine transferability of that model.",
+              "evidence_class": "grounded-judgment",
+              "locator": "review-documentation summary; docs/quickstart.md:1-22",
+              "strength": "proxy"
+            }
+          ],
+          "measures": [],
+          "rationale": "The basic conceptual frame exists, but key modeled outputs are wrong, so conceptual fidelity is only partially met."
+        },
+        {
+          "applicability": "required",
+          "assessment": "met",
+          "confidence": 0.5,
+          "dimension_id": "purpose-rationale",
+          "evidence": [
+            {
+              "description": "The page clearly frames itself as a quickstart for first-run greeting and structured output.",
+              "evidence_class": "grounded-judgment",
+              "locator": "docs/quickstart.md:1-22",
+              "strength": "proxy"
+            }
+          ],
+          "measures": [],
+          "rationale": "Purpose is apparent from the reviewed content and task framing."
+        },
+        {
+          "applicability": "required",
+          "assessment": "partially-met",
+          "confidence": 0.5,
+          "dimension_id": "terminology",
+          "evidence": [
+            {
+              "description": "The page uses the wrong JSON property term greeting where the implementation emits message, weakening terminology precision.",
+              "evidence_class": "grounded-judgment",
+              "locator": "docs/quickstart.md:19; src/sprout.mjs:22-27",
+              "strength": "direct"
+            }
+          ],
+          "measures": [],
+          "rationale": "Terminology is mostly simple and stable, but one consequential term is incorrect."
+        },
+        {
+          "applicability": "required",
+          "assessment": "partially-met",
+          "confidence": 0.5,
+          "dimension_id": "clarity",
+          "evidence": [
+            {
+              "description": "The page is concise and readable, but readers are likely to be confused when actual command results diverge from documented expectations.",
+              "evidence_class": "grounded-judgment",
+              "locator": "review-documentation summary; docs/quickstart.md:1-22",
+              "strength": "proxy"
+            }
+          ],
+          "measures": [],
+          "rationale": "Presentation is concise, but trust-damaging contradictions reduce practical clarity."
+        },
+        {
+          "applicability": "required",
+          "assessment": "met",
+          "confidence": 0.25,
+          "dimension_id": "editorial-style",
+          "evidence": [
+            {
+              "description": "No explicit editorial style defects beyond source-backed accuracy issues were reported in the admitted editorial review evidence.",
+              "evidence_class": "grounded-judgment",
+              "locator": "review-documentation summary",
+              "strength": "proxy"
+            }
+          ],
+          "measures": [],
+          "rationale": "No separate style defect evidence was admitted, but confidence remains low because editorial review coverage was limited."
+        },
+        {
+          "applicability": "required",
+          "assessment": "not-met",
+          "confidence": 0.5,
+          "dimension_id": "examples",
+          "evidence": [
+            {
+              "description": "Both reviewed examples have implementation-backed result mismatches, so the examples do not reliably transfer correct understanding.",
+              "evidence_class": "grounded-judgment",
+              "locator": "docs/quickstart.md:11; docs/quickstart.md:19; src/sprout.mjs:12-13; src/sprout.mjs:19-20; src/sprout.mjs:22-27; src/sprout.mjs:26-27",
+              "strength": "direct"
+            }
+          ],
+          "measures": [
+            {
+              "interpretation": "Two incorrect examples mean the examples dimension is not met.",
+              "method": "Count of reviewed examples contradicted by implementation evidence.",
+              "metric_id": "incorrect-example-count",
+              "value": 2
+            }
+          ],
+          "rationale": "The key teaching examples are wrong at this revision."
+        },
+        {
+          "applicability": "required",
+          "assessment": "partially-met",
+          "confidence": 0.25,
+          "dimension_id": "information-architecture",
+          "evidence": [
+            {
+              "description": "The quickstart links onward to a guide, but repository-wide navigation evidence is incomplete and blocked in parts, so information architecture is only partially supported.",
+              "evidence_class": "grounded-judgment",
+              "locator": "docs/quickstart.md:21-22; docs/guide.md:1-28; coordinator search evidence",
+              "strength": "proxy"
+            }
+          ],
+          "measures": [],
+          "rationale": "Basic onward navigation exists, but the broader architecture for the reviewed documentation set was not fully evidenced."
+        },
+        {
+          "applicability": "required",
+          "assessment": "not-applicable",
+          "confidence": 0.25,
+          "dimension_id": "visual-explanation",
+          "evidence": [
+            {
+              "description": "The reviewed page is a short text-and-code quickstart with no diagrams or visual explanatory assets in scope.",
+              "evidence_class": "grounded-judgment",
+              "locator": "docs/quickstart.md:1-22",
+              "strength": "proxy"
+            }
+          ],
+          "measures": [],
+          "rationale": "No visual explanation asset is present on the approved page, so this dimension is not applicable for the reviewed artifact."
+        },
+        {
+          "applicability": "required",
+          "assessment": "not-assessed",
+          "confidence": 0.25,
+          "dimension_id": "mental-model-transfer",
+          "evidence": [
+            {
+              "description": "No verified human or agent outcome attempt was available to show that readers can reason beyond the prose.",
+              "evidence_class": "outcome-evaluation",
+              "locator": "test-audience-understanding summary",
+              "strength": "none"
+            }
+          ],
+          "measures": [],
+          "rationale": "The selected profile requires outcome evidence for mental-model transfer, and that evidence was not available."
+        }
+      ],
+      "hard_gate_failures": [],
+      "limitations": [
+        "This run did not run an audience-understanding participant attempt.",
+        "The supplied materials did not provide the authoritative reference model, versioned scenario corpus, declared audience profile and prerequisite knowledge, representative participant or clean-agent configuration, evaluator identity evidence, retention boundary, and run authority/consent required by the audience-understanding protocol.",
+        "The reviewed evidence covers exactly 1 of 3 tracked Markdown pages in the repository, not the whole documentation set."
+      ]
+    },
+    "trustworthy_information": {
+      "confidence": 0.25,
+      "decision": "fail",
+      "dimensions": [
+        {
+          "applicability": "required",
+          "assessment": "not-met",
+          "confidence": 0.5,
+          "dimension_id": "factual-accuracy",
+          "evidence": [
+            {
+              "description": "Originating findings REV-001 and TECH-001 / FACT-6 show the page states the default name is world and predicts Hello, world!, while FACT-6 states: When no overriding flags are supplied, name defaults to friend and format defaults to text, producing Hello, friend! as the derived message in text mode. Uncertainty: Observed from source only; default-path output was not executed.",
+              "evidence_class": "grounded-judgment",
+              "locator": "docs/quickstart.md:11; src/sprout.mjs:12-13; src/sprout.mjs:19-20; src/sprout.mjs:26-27",
+              "strength": "direct"
+            },
+            {
+              "description": "Originating findings REV-002 and TECH-002 / FACT-2 show the page documents JSON output with a greeting property, while FACT-2 states: The --format value is accepted only as text or json and selects plain-text output versus a JSON stringified object with a message field. Uncertainty: Observed from source only; output forms were not executed.",
+              "evidence_class": "grounded-judgment",
+              "locator": "docs/quickstart.md:19; src/sprout.mjs:22-27",
+              "strength": "direct"
+            }
+          ],
+          "measures": [
+            {
+              "interpretation": "Two major source-backed contradictions mean factual accuracy is not met for the reviewed quickstart.",
+              "method": "Count of retained major technical-accuracy conflicts from independent technical and editorial review for the approved page.",
+              "metric_id": "major-technical-mismatches",
+              "value": 2
+            }
+          ],
+          "rationale": "Direct repository-source comparison found two major contradictions in the core quickstart claims, so trustworthy correctness for the reviewed task flow is not met."
+        },
+        {
+          "applicability": "required",
+          "assessment": "not-met",
+          "confidence": 0.5,
+          "dimension_id": "functional-validity",
+          "evidence": [
+            {
+              "description": "The quickstart's first-run and structured-output examples do not match the implementation's default message and JSON field behavior at the frozen revision.",
+              "evidence_class": "deterministic-conformance",
+              "locator": "docs/quickstart.md:11; docs/quickstart.md:19; src/sprout.mjs:12-13; src/sprout.mjs:19-20; src/sprout.mjs:22-27; src/sprout.mjs:26-27",
+              "strength": "direct"
+            }
+          ],
+          "measures": [
+            {
+              "interpretation": "Two broken example/result statements mean the documented task flow is not functionally valid for the reviewed page.",
+              "method": "Count of reviewed example/result statements contradicted by implementation lines establishing current behavior.",
+              "metric_id": "broken-reviewed-examples",
+              "value": 2
+            }
+          ],
+          "rationale": "A get-started page requires executable example validity; the reviewed examples produce different results than documented, so functional validity is not met."
+        },
+        {
+          "applicability": "required",
+          "assessment": "partially-met",
+          "confidence": 0.5,
+          "dimension_id": "scoped-sufficiency",
+          "evidence": [
+            {
+              "description": "TECH-003 consolidates FACT-9, FACT-10, FACT-11, FACT-12, FACT-13, FACT-14, and FACT-15 as omitted consequential behavior. Uncertainties retained: FACT-10 Observed from source only; stdout writes were not executed. FACT-9 Observed from source only; stderr writes were not executed. FACT-11 Observed from source only; unsupported-format branch was not executed. FACT-12 Observed from source only; malformed-option branch was not executed. FACT-13 Observed from source only; invalid-command branch was not executed. FACT-14 Observed from source only; exit status was not executed. FACT-15 Observed from source only from help text and nearby implementation; the no-network and no-config-file path was not executed.",
+              "evidence_class": "grounded-judgment",
+              "locator": "docs/quickstart.md:3; src/sprout.mjs:3-6; src/sprout.mjs:4-5; src/sprout.mjs:5; src/sprout.mjs:8-10; src/sprout.mjs:9; src/sprout.mjs:14-17; src/sprout.mjs:16; src/sprout.mjs:22-24; src/sprout.mjs:23; src/sprout.mjs:27",
+              "strength": "direct"
+            },
+            {
+              "description": "The reviewed page defers complete option and error coverage to the linked guide, but this evaluation was frozen to one approved page, so linked-journey completeness remains only partially assessed.",
+              "evidence_class": "grounded-judgment",
+              "locator": "docs/quickstart.md:21-22; docs/guide.md:1-28",
+              "strength": "proxy"
+            }
+          ],
+          "measures": [
+            {
+              "interpretation": "The quickstart covers the happy path but omits multiple consequential behavior and error details, so scoped sufficiency is only partially met.",
+              "method": "Count of admitted non-documented technical facts retained from FACT-9 through FACT-15 for the reviewed page.",
+              "metric_id": "material-omitted-facts",
+              "value": 7
+            }
+          ],
+          "rationale": "The quickstart provides a starter path but omits material behavior, error, and environment details evidenced in the source and relies on an unreviewed linked page for broader coverage."
+        },
+        {
+          "applicability": "required",
+          "assessment": "partially-met",
+          "confidence": 0.5,
+          "dimension_id": "currency-version-fidelity",
+          "evidence": [
+            {
+              "description": "The reviewed page was compared against the frozen repository revision 74ecf7d2835a3afbef5e0acf895c2e2dda3935ef. Two implementation-backed conflicts remain open, showing the page is not fully faithful to this exact revision, although the evaluation is revision-bound.",
+              "evidence_class": "grounded-judgment",
+              "locator": "docs/quickstart.md:1-22; src/sprout.mjs:1-27",
+              "strength": "direct"
+            }
+          ],
+          "measures": [],
+          "rationale": "The evaluation is bound to the frozen revision, but the page contains revision-specific mismatches, so version fidelity is only partially met."
+        },
+        {
+          "applicability": "required",
+          "assessment": "not-met",
+          "confidence": 0.5,
+          "dimension_id": "consistency",
+          "evidence": [
+            {
+              "description": "The page's stated outputs and field names are internally coherent in prose but inconsistent with the approved implementation evidence for the same commands.",
+              "evidence_class": "grounded-judgment",
+              "locator": "docs/quickstart.md:11; docs/quickstart.md:19; src/sprout.mjs:12-13; src/sprout.mjs:19-20; src/sprout.mjs:22-27; src/sprout.mjs:26-27",
+              "strength": "direct"
+            }
+          ],
+          "measures": [],
+          "rationale": "Consistency with the governing implementation is broken for the reviewed commands and output contract."
+        },
+        {
+          "applicability": "required",
+          "assessment": "partially-met",
+          "confidence": 0.5,
+          "dimension_id": "boundary-clarity",
+          "evidence": [
+            {
+              "description": "The page clearly points readers to the guide for more options and errors, which helps mark scope boundaries, but the linked dependency was not itself reviewed in this run and therefore cannot close the completeness boundary for this evaluation.",
+              "evidence_class": "grounded-judgment",
+              "locator": "docs/quickstart.md:21-22; docs/guide.md:1-28",
+              "strength": "direct"
+            }
+          ],
+          "measures": [],
+          "rationale": "The page signals that fuller option and error coverage lives elsewhere, but the reviewed set does not include that dependency, leaving only partial clarity for actual support boundaries."
+        },
+        {
+          "applicability": "required",
+          "assessment": "partially-met",
+          "confidence": 0.5,
+          "dimension_id": "grounding-authority",
+          "evidence": [
+            {
+              "description": "Most retained technical findings are grounded in the frozen implementation source, but FACT-16 / TECH-004 remains an unverified-policy claim because the shebang alone does not establish approved runtime policy. Uncertainty: Observed from source only; runtime availability of node was not verified in an environment.",
+              "evidence_class": "grounded-judgment",
+              "locator": "src/sprout.mjs:1-27",
+              "strength": "direct"
+            }
+          ],
+          "measures": [],
+          "rationale": "Source grounding exists for implementation behavior, but one environment/runtime implication remains policy-unverified, so grounding authority is only partially met."
+        },
+        {
+          "applicability": "required",
+          "assessment": "not-assessed",
+          "confidence": 0.25,
+          "dimension_id": "delivery-integrity",
+          "evidence": [
+            {
+              "description": "No supported native documentation checks were found, so repository-required delivery checks were unavailable and no deterministic delivery-integrity result was established.",
+              "evidence_class": "deterministic-conformance",
+              "locator": "lint-documentation summary",
+              "strength": "none"
+            }
+          ],
+          "measures": [],
+          "rationale": "Required deterministic delivery evidence was unavailable in this run; therefore delivery integrity was not assessed."
+        }
+      ],
+      "hard_gate_failures": [
+        "broken-required-example",
+        "material-omission"
+      ],
+      "limitations": [
+        "No supported native documentation checks were found. Supported entry points are documentation lint/check/link package scripts and documentation check Make targets.",
+        "The reviewed evidence covers exactly 1 of 3 tracked Markdown pages in the repository, not the whole documentation set."
+      ]
+    }
+  },
+  "limitations": [
+    "Completeness is bounded-not-proven from inspection of admitted repository source src/sprout.mjs only; no command execution or external environment verification was authorized.",
+    "The selected quality profile caps decisions at insufficient-evidence while it remains experimental.",
+    "The selected quality profile has pending human and agent outcome baselines.",
+    "The reviewed evidence covers exactly 1 of 3 tracked Markdown pages in the repository, not the whole documentation set.",
+    "No supported native documentation checks were found. Supported entry points are documentation lint/check/link package scripts and documentation check Make targets.",
+    "Repository-wide navigation and usability rubric probes were blocked by an unsupported operation limitation in the supplied evidence.",
+    "This run did not run an audience-understanding participant attempt.",
+    "The supplied materials did not provide the authoritative reference model, versioned scenario corpus with prompts and frozen oracle/acceptance criteria, declared audience profile and prerequisite knowledge, representative participant identity or clean-agent execution configuration, evaluator identity with evidence of independence from documentation authorship, retention boundary, and run authority/consent for a participant attempt."
+  ],
+  "model_version": "documentation-quality-model-v0.2",
+  "outcomes": {
+    "agent": [
+      {
+        "attempt_id": "not-run",
+        "evidence": [
+          {
+            "description": "No clean-agent participant attempt ran because required audience-evaluation prerequisites were missing.",
+            "evidence_class": "outcome-evaluation",
+            "locator": "test-audience-understanding summary",
+            "population": "agent",
+            "strength": "none"
+          }
+        ],
+        "limitations": [
+          "No agent outcome attempt was run.",
+          "The selected quality profile has pending agent outcome baseline calibration."
+        ],
+        "measures": [],
+        "outcome": "not-completed",
+        "population_id": "agent-readers",
+        "task_or_scenario_id": "quickstart-first-run",
+        "verified": false
+      }
+    ],
+    "human": [
+      {
+        "attempt_id": "not-run",
+        "evidence": [
+          {
+            "description": "No human participant attempt ran because required audience-evaluation prerequisites were missing.",
+            "evidence_class": "outcome-evaluation",
+            "locator": "test-audience-understanding summary",
+            "population": "human",
+            "strength": "none"
+          }
+        ],
+        "limitations": [
+          "No human outcome attempt was run.",
+          "The selected quality profile has pending human outcome baseline calibration."
+        ],
+        "measures": [],
+        "outcome": "not-completed",
+        "population_id": "human-readers",
+        "task_or_scenario_id": "quickstart-first-run",
+        "verified": false
+      }
+    ]
+  },
+  "overall_decision": "fail",
+  "profile": {
+    "id": "docsfab-documentation-quality",
+    "version": "v0.1"
+  },
+  "target": {
+    "approved_evidence_revision": "74ecf7d2835a3afbef5e0acf895c2e2dda3935ef",
+    "audiences": [
+      "New CLI users starting with Sprout from repository documentation."
+    ],
+    "delivery_surface_locator": "docs/quickstart.md",
+    "documentation_families": [
+      "get-started"
+    ],
+    "documentation_family_evidence": [
+      {
+        "evidence_locator": "docs/quickstart.md:1-22",
+        "family": "get-started",
+        "method": "manual-reviewed",
+        "paths": [
+          "docs/quickstart.md"
+        ],
+        "rationale": "The page is a quickstart that walks a reader through first-run greeting and structured-output tasks, so the reviewed page family is get-started."
+      }
+    ],
+    "documentation_revision": "74ecf7d2835a3afbef5e0acf895c2e2dda3935ef",
+    "environment": "Repository source inspection only; no command execution or external environment verification was authorized.",
+    "intended_outcome_classes": [
+      "task-completion"
+    ],
+    "intended_outcomes": [
+      "Run the first greeting command and understand the structured JSON output example for the reviewed quickstart page."
+    ],
+    "paths": [
+      "docs/quickstart.md"
+    ],
+    "product_reference_model": {
+      "id": "src/sprout.mjs",
+      "version": "74ecf7d2835a3afbef5e0acf895c2e2dda3935ef"
+    },
+    "product_version": "74ecf7d2835a3afbef5e0acf895c2e2dda3935ef",
+    "repository_revision": "74ecf7d2835a3afbef5e0acf895c2e2dda3935ef",
+    "risk_boundary": "Quickstart guidance for a local CLI greeting task; repository evidence only.",
+    "risk_classes": [
+      "task-execution"
+    ],
+    "scope_type": "documentation-set"
+  }
+}

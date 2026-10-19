@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "status": "governed",
+  "skill": "repo-bootstrap",
+  "requiredSurfaces": ["README.md", "AGENTS.md"],
+  "rules": [
+    "Use only facts, commands, ownership, policy, and support paths established by tracked repository evidence.",
+    "Preserve useful existing guidance and prefer a semantic edit over a parallel guidance file.",
+    "Keep the patch limited to the minimum README.md and correctly scoped AGENTS.md guidance.",
+    "Report assumptions, missing evidence, changed paths, and supporting tracked paths explicitly.",
+    "Stop without changing files when existing guidance has an unresolved semantic conflict."
+  ],
+  "cases": [
+    {
+      "id": "absent",
+      "repository": "cases/absent",
+      "initialFiles": ["package.json"],
+      "evidenceSources": ["package.json"],
+      "decision": "patch",
+      "expectedPatch": "patches/absent.patch",
+      "requiredPathsAfter": ["README.md", "AGENTS.md"],
+      "requiredChanges": ["README.md", "AGENTS.md"],
+      "preserveExactly": []
+    },
+    {
+      "id": "partial",
+      "repository": "cases/partial",
+      "initialFiles": ["README.md", "package.json"],
+      "evidenceSources": ["README.md", "package.json"],
+      "decision": "patch",
+      "expectedPatch": "patches/partial.patch",
+      "requiredPathsAfter": ["README.md", "AGENTS.md"],
+      "requiredChanges": ["README.md", "AGENTS.md"],
+      "preserveExactly": []
+    },
+    {
+      "id": "nested",
+      "repository": "cases/nested",
+      "initialFiles": ["AGENTS.md", "README.md", "docs/AGENTS.md", "package.json"],
+      "evidenceSources": ["AGENTS.md", "README.md", "docs/AGENTS.md", "package.json"],
+      "decision": "patch",
+      "expectedPatch": "patches/nested.patch",
+      "requiredPathsAfter": ["README.md", "AGENTS.md", "docs/AGENTS.md"],
+      "requiredChanges": ["README.md"],
+      "preserveExactly": ["AGENTS.md", "docs/AGENTS.md"]
+    },
+    {
+      "id": "conflicting",
+      "repository": "cases/conflicting",
+      "initialFiles": ["AGENTS.md", "README.md", "docs/AGENTS.md", "package.json"],
+      "evidenceSources": ["AGENTS.md", "README.md", "docs/AGENTS.md", "package.json"],
+      "decision": "needs-input",
+      "expectedPatch": null,
+      "requiredPathsAfter": ["README.md", "AGENTS.md", "docs/AGENTS.md"],
+      "requiredChanges": [],
+      "preserveExactly": ["AGENTS.md", "README.md", "docs/AGENTS.md", "package.json"]
+    }
+  ]
+}

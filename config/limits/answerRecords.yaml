@@ -1,0 +1,27 @@
+# DocsFab operational limits owned by the `answerRecords` name prefix.
+# Registered in config/limits.yaml; every limit here is named `answerRecords.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: answerRecords.maxOpenRecordsPerSet
+    value: 21
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 64
+    refusal: answer-record-open-set-bound
+    remediation: Withdraw or replace an open-set record before adding another; raise answerRecords.maxOpenRecordsPerSet in config/limits/answerRecords.yaml only with a new content-free corpus measurement that shows real answers need more.
+    rationale: Most records one open set (step 8 findings) may hold at once (closed-schema-answer-records-decision.md §4.4); the only record count the declaration does not fix. Measured on 2026-10-07 over content-free statistics committed for issue 1969 (internal evidence answer-record-limits-2026-10) - the 22 staged Nemotron Super step 8 answers (!1430, !1426) hold 0 to 14 findings (median 3, p90 8), all 82 staged evaluations across five models at most 14, and the 14 recorded S6 answers at most 10 - so 1.5 × the largest (14) gives 21. With 36 required and 3 optional step 8 keys and answerRecords.maxRefusalsPerKey, it sizes the derived record-call ceiling at (36 + 3 + 21) × 4 = 240 calls per step.
+
+  - name: answerRecords.maxRefusalsPerKey
+    value: 3
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 3
+    refusal: answer-record-exhausted
+    remediation: Inspect the refused record key's receipts and codes in the saved run, then start a new run; raising answerRecords.maxRefusalsPerKey in config/limits/answerRecords.yaml above retry.maxRetries gives one record more corrections than a whole answer gets.
+    rationale: Most refusals one record key may take in one step before the next refusal stops the step with answer-record-exhausted (closed-schema-answer-records-decision.md §3.3 and §4.4, N20). A record gets the corrections a whole answer gets per step, so it equals retry.maxRetries (3); it is a separate limit because its scope is one key in one step, not one step attempt. It also sizes the derived record-call ceiling, (required keys + optional keys + answerRecords.maxOpenRecordsPerSet) × (1 + answerRecords.maxRefusalsPerKey) per step.

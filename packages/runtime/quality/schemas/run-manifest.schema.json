@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/run-manifest.schema.json",
+  "title": "Run manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["run_id", "request_id", "started_at", "completed_at", "harness", "model", "blueprint_version", "profile", "stylesheet_source", "sources", "artifacts"],
+  "properties": {
+    "run_id": {"type": "string", "minLength": 1},
+    "request_id": {"type": "string", "minLength": 1},
+    "started_at": {"type": "string", "format": "date-time"},
+    "completed_at": {"type": "string", "format": "date-time"},
+    "harness": {"type": "string", "minLength": 1},
+    "model": {"type": "string", "minLength": 1},
+    "blueprint_version": {"type": "string", "minLength": 1},
+    "profile": {"type": "string", "minLength": 1},
+    "stylesheet_source": {"type": "string", "minLength": 1},
+    "sources": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "artifacts": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "limitations": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true}
+  }
+}

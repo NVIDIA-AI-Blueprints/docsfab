@@ -1,0 +1,441 @@
+{
+  "literals": [
+    {
+      "path": "packages/runtime/src/delivery/acceptance-chain.ts",
+      "kind": "kib-product",
+      "lexeme": "4 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/delivery/acceptance-chain.ts",
+      "kind": "max-assign",
+      "lexeme": "MAXIMUM_JSON_LEAF_BYTES = 4",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/delivery/acceptance-cli.ts",
+      "kind": "kib-product",
+      "lexeme": "10 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/delivery/acceptance-cli.ts",
+      "kind": "kib-product",
+      "lexeme": "1024 * 1024",
+      "count": 6
+    },
+    {
+      "path": "packages/runtime/src/delivery/acceptance-cli.ts",
+      "kind": "slice-cap",
+      "lexeme": ".slice(0, 12)",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/delivery/acceptance-manifest.ts",
+      "kind": "kib-product",
+      "lexeme": "1024 * 1024",
+      "count": 2
+    },
+    {
+      "path": "packages/runtime/src/delivery/acceptance-manifest.ts",
+      "kind": "kib-product",
+      "lexeme": "8 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/delivery/acceptance-manifest.ts",
+      "kind": "max-assign",
+      "lexeme": "MAXIMUM_ACCEPTANCE_MANIFEST_BYTES = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/delivery/acceptance.ts",
+      "kind": "kib-product",
+      "lexeme": "1024 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/delivery/acceptance.ts",
+      "kind": "kib-product",
+      "lexeme": "4 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/delivery/acceptance.ts",
+      "kind": "kib-product",
+      "lexeme": "64 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/delivery/acceptance.ts",
+      "kind": "max-assign",
+      "lexeme": "configuredMaxInputTokens: 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/delivery/acceptance.ts",
+      "kind": "max-assign",
+      "lexeme": "configuredMaxOutputTokens: 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/delivery/acceptance.ts",
+      "kind": "max-assign",
+      "lexeme": "contextBudgetSchemaVersion: 2",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/delivery/acceptance.ts",
+      "kind": "max-assign",
+      "lexeme": "effectiveMaxInputTokens: 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/delivery/acceptance.ts",
+      "kind": "max-assign",
+      "lexeme": "effectiveMaxOutputTokens: 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/delivery/acceptance.ts",
+      "kind": "max-assign",
+      "lexeme": "maxCompactions: 1",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/delivery/acceptance.ts",
+      "kind": "max-assign",
+      "lexeme": "maxInputTokens: 1",
+      "count": 2
+    },
+    {
+      "path": "packages/runtime/src/delivery/acceptance.ts",
+      "kind": "max-assign",
+      "lexeme": "maxOutputTokens: 1",
+      "count": 2
+    },
+    {
+      "path": "packages/runtime/src/delivery/acceptance.ts",
+      "kind": "max-assign",
+      "lexeme": "maxProviderTurns: 8",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/delivery/acceptance.ts",
+      "kind": "max-assign",
+      "lexeme": "maxToolCalls: 1",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/delivery/acceptance.ts",
+      "kind": "slice-cap",
+      "lexeme": ".slice(0, 12)",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/delivery/acceptance.ts",
+      "kind": "timeout-assign",
+      "lexeme": "configuredContextWindow: 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/delivery/acceptance.ts",
+      "kind": "timeout-assign",
+      "lexeme": "contextWindow: 1",
+      "count": 2,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/delivery/acceptance.ts",
+      "kind": "timeout-assign",
+      "lexeme": "effectiveContextWindow: 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/delivery/acceptance/checkout-observation.ts",
+      "kind": "kib-product",
+      "lexeme": "1024 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/delivery/acceptance/checkout-observation.ts",
+      "kind": "kib-product",
+      "lexeme": "8 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/delivery/acceptance/checkout-observation.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_FINGERPRINT_FILE_BYTES = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/delivery/acceptance/checkout-observation.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_FINGERPRINT_TOTAL_BYTES = 8",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/delivery/acceptance/checkout-observation.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_FINGERPRINT_UNTRACKED_FILES = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/delivery/acceptance/fake-gitlab.ts",
+      "kind": "kib-product",
+      "lexeme": "1024 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/delivery/acceptance/fake-gitlab.ts",
+      "kind": "per-page",
+      "lexeme": "per_page=1",
+      "count": 3
+    },
+    {
+      "path": "packages/runtime/src/delivery/acceptance/process.ts",
+      "kind": "kib-product",
+      "lexeme": "4 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/delivery/acceptance/process.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_OUTPUT = 4",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/delivery/contracts.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 64",
+      "count": 2
+    },
+    {
+      "path": "packages/runtime/src/delivery/contracts.ts",
+      "kind": "slice-cap",
+      "lexeme": ".slice(0, 12)",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/delivery/contracts.ts",
+      "kind": "slice-cap",
+      "lexeme": ".slice(0, 16)",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/delivery/contracts.ts",
+      "kind": "slice-cap",
+      "lexeme": ".slice(0, 40)",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/delivery/delivery-authority.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 512",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/delivery/freshness.ts",
+      "kind": "timeout-assign",
+      "lexeme": "FETCH_TIMEOUT_MS = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/delivery/freshness.ts",
+      "kind": "timeout-assign",
+      "lexeme": "GIT_TIMEOUT_MS = 3",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/delivery/git-publisher.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_OUTPUT = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/delivery/git-publisher.ts",
+      "kind": "timeout-assign",
+      "lexeme": "timeoutMs = 3",
+      "count": 2
+    },
+    {
+      "path": "packages/runtime/src/delivery/gitlab-adapter.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 100",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/delivery/gitlab-adapter.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_ACCESS_LEVEL = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/delivery/gitlab-adapter.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_OUTPUT = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/delivery/gitlab-adapter.ts",
+      "kind": "per-page",
+      "lexeme": "per_page=1",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/delivery/gitlab-adapter.ts",
+      "kind": "timeout-assign",
+      "lexeme": "timeoutMs: 3",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/delivery/metadata.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_DESCRIPTION = 8",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/delivery/metadata.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_INSTRUCTION = 5",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/delivery/metadata.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_OUTCOME = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/delivery/metadata.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_PATHS = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/delivery/metadata.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_RAW_OUTCOME = 4",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/delivery/metadata.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_TITLE = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/delivery/preflight.ts",
+      "kind": "per-page",
+      "lexeme": "per_page=1",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/delivery/publication-result.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 2048",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/delivery/receipt-store/worker-publication.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_RECEIPT_BYTES = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/delivery/repository-event-routing.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 512",
+      "count": 2
+    },
+    {
+      "path": "packages/runtime/src/delivery/structural-documentation-mkdocs.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_MATERIAL_BLOCK_DEPTH = 4",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/delivery/worktree/host.ts",
+      "kind": "kib-product",
+      "lexeme": "50 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/delivery/worktree/materialize.ts",
+      "kind": "slice-cap",
+      "lexeme": ".slice(0, 24)",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/delivery/worktree/materialize.ts",
+      "kind": "slice-cap",
+      "lexeme": ".slice(0, 40)",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/delivery/worktree/materialize.ts",
+      "kind": "timeout-assign",
+      "lexeme": "timeoutMs: 1",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/delivery/worktree/types.ts",
+      "kind": "kib-product",
+      "lexeme": "4 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/delivery/worktree/types.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_COMMAND_OUTPUT = 4",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/delivery/worktree/validate.ts",
+      "kind": "timeout-assign",
+      "lexeme": "timeoutMs: 5",
+      "count": 2
+    },
+    {
+      "path": "packages/runtime/src/delivery/worktree/validation-backend.ts",
+      "kind": "timeout-assign",
+      "lexeme": "probeTimeoutMs: 5",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/delivery/worktree/validation-backend.ts",
+      "kind": "timeout-assign",
+      "lexeme": "timeoutMs: 1",
+      "count": 1
+    }
+  ]
+}

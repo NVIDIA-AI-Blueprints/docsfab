@@ -1,0 +1,4 @@
+interface:
+  display_name: "Test Audience Understanding"
+  short_description: "Test comprehension and mental-model transfer"
+  default_prompt: "Within a DocsFab runtime workflow, test whether this documentation transfers the intended model to a representative audience."

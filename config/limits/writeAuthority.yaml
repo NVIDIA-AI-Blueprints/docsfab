@@ -1,0 +1,51 @@
+# DocsFab operational limits owned by the `writeAuthority` name prefix.
+# Registered in config/limits.yaml; every limit here is named `writeAuthority.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: writeAuthority.maxPatchBytes
+    value: 8388608
+    unit: bytes
+    scope: sealed
+    warnAt: 0.8
+    override: none
+    min: 4096
+    max: 8388608
+    refusal: write-authority-max-patch-bytes-bound
+    remediation: Produce a smaller patch, or qualify the grant minting, the worker patch evidence, the sealed terminal encoder and the reading line ceiling together before raising the patch capacity.
+    rationale: One shared raw-patch admission for a minted scoped-write grant, the worker's patch evidence and the sealed terminal. A sealed terminal carries the patch inside JSON with metadata and escaping, so a patch at this capacity does not fit a terminal line of the same size; the complete encoded terminal is measured on its own and must not be treated as the same envelope.
+
+  - name: writeAuthority.maxTargets
+    value: 512
+    unit: count
+    scope: sealed
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 512
+    refusal: write-authority-max-targets-bound
+    remediation: Narrow the grant's target list, or qualify the minting producer and this reader together before raising the count.
+    rationale: Admitted number of write targets in a minted scoped-write grant and in the worker's patch evidence. The count is a work allowance only, and target identities, preimage object ids, the permitted file mode and the path ceiling stay independent authority checks that a larger count cannot relax.
+
+  - name: writeAuthority.maxCeilingEntries
+    value: 32
+    unit: count
+    scope: sealed
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 32
+    refusal: write-authority-max-ceiling-entries-bound
+    remediation: Express the write scope with fewer ceiling entries, or qualify the minting write-scope policy and this reader together before raising the count.
+    rationale: Admitted number of path-ceiling entries in a sealed scoped-write grant. The minting policy and this reader already share one exported constant, so they cannot drift apart; the number is an allowance and not the cardinality of a closed enumeration.
+
+  - name: writeAuthority.maxWriteStepIds
+    value: 64
+    unit: count
+    scope: sealed
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 64
+    refusal: write-authority-max-write-step-ids-bound
+    remediation: Mint a grant whose write-step list fits the admitted shape; a longer installed write-step catalog needs this capacity and the installed workflow qualified together.
+    rationale: Admitted length of the write-step identifier list on a scoped-write grant. It is a shape bound only, and the grant's write steps are still compared for exact identity against the installed workflow's write steps, so a caller-minted count can never widen write authority.

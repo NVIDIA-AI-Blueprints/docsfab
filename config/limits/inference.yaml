@@ -1,0 +1,136 @@
+# DocsFab operational limits owned by the `inference` name prefix.
+# Registered in config/limits.yaml; every limit here is named `inference.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: inference.rejectionReasonLength
+    value: 256
+    unit: characters
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 64
+    max: 256
+    refusal: inference-rejection-reason-length-bound
+    remediation: Raise inference.rejectionReasonLength in config/limits/inference.yaml; a longer reason is refused rather than truncated, because a truncated reason reads as a real one.
+    rationale: Longest retainable inference rejection code or location, an order of magnitude above the 45-character longest shipped vocabulary entry and far too short to carry model prose or a host path.
+
+  - name: inference.rejectionSegmentLength
+    value: 64
+    unit: characters
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 8
+    max: 64
+    refusal: inference-rejection-segment-length-bound
+    remediation: Raise inference.rejectionSegmentLength in config/limits/inference.yaml; both rejection grammars are generated from it, so neither can drift from the other.
+    rationale: Longest identifier segment either inference rejection grammar admits, for a whole kebab-case code and for one dot-separated location member.
+
+  - name: inference.echoedKeySegmentRandomChars
+    value: 16
+    unit: characters
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 8
+    max: 64
+    refusal: retry-key-name-withheld
+    remediation: A retry repair counts a reply key instead of naming it when one of the key's segments is at least this long and mixes letters with digits. Lower inference.echoedKeySegmentRandomChars in config/limits/inference.yaml to withhold more keys; the count still tells the model how many undeclared keys it wrote.
+    rationale: Shortest key segment, split on underscores, hyphens, and dots, that a retry repair treats as random-looking and so never repeats to the model. Schema keys are words of at most 16 letters per segment with no digits, while access keys, tokens, and hex digests run 16 to 64 mixed letters and digits, so a credential the shared detector cannot recognize inside an identifier is counted, not echoed.
+
+  - name: inference.rejectionSubjectPathMaxChars
+    value: 512
+    unit: characters
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 64
+    max: 4096
+    refusal: inference-rejection-subject-path-max-chars-bound
+    remediation: The attempt's rejectionSubject records withheld over-bound instead of a path longer than this. Raise inference.rejectionSubjectPathMaxChars in config/limits/inference.yaml if a repository's own paths are longer.
+    rationale: Longest repository path an attempt's rejectionSubject retains for a refused source citation or a revision's changed paths. The subject keeps only paths the host already knows (a plan write path or a tracked regular file at the run's revision), never model text; 512 is the longest member path original source authority admits, and record readers accept any value up to the maximum so lowering it later keeps older records readable. A longer path is withheld, never truncated, because a cut path names a different file.
+
+  - name: inference.rejectionSubjectMaxPaths
+    value: 64
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 512
+    refusal: inference-rejection-subject-max-paths-bound
+    remediation: The attempt's rejectionSubject records how many declared and observed changed paths there were, without the paths, when either list is longer than this. Raise inference.rejectionSubjectMaxPaths in config/limits/inference.yaml to list more.
+    rationale: Most paths one changed-paths rejectionSubject lists in each of its declared and observed lists. Both lists are subsets of the plan's write paths, and the revision accounting decoder admits at most 512 changed paths, the maximum here. A CREATE plan writes one to a few pages, so 64 lists every recorded case while bounding one attempt to about 64 KiB of paths at the path bound. Over the bound, the counts are kept and the paths withheld, never cut.
+
+  - name: inference.rejectedReplyShapeMaxDepth
+    value: 8
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_INFERENCE_REJECTED_REPLY_SHAPE_MAX_DEPTH
+    min: 1
+    max: 32
+    refusal: inference-rejected-reply-shape-max-depth-bound
+    remediation: The attempt's rejectedReplyShape.truncation states how many containers below this depth were not described. Set DOCSFAB_INFERENCE_REJECTED_REPLY_SHAPE_MAX_DEPTH (1 through 32) on the host, or raise inference.rejectedReplyShapeMaxDepth in config/limits/inference.yaml, if a response contract nests deeper.
+    rationale: Deepest JSON nesting that a rejected attempt's reply shape fingerprint describes (#1178). The deepest shipped response contract path, a verification fact locator under $.factInventory.dimensions[].facts[].locators[], is six levels; eight leaves headroom. Containers below the bound are counted, never silently dropped. The fingerprint never records string contents.
+
+  - name: inference.rejectedReplyShapeMaxEntries
+    value: 128
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_INFERENCE_REJECTED_REPLY_SHAPE_MAX_ENTRIES
+    min: 8
+    max: 1024
+    refusal: inference-rejected-reply-shape-max-entries-bound
+    remediation: The attempt's rejectedReplyShape.truncation states how many distinct key paths or top-level keys were not listed. Set DOCSFAB_INFERENCE_REJECTED_REPLY_SHAPE_MAX_ENTRIES (8 through 1024) on the host, or raise inference.rejectedReplyShapeMaxEntries in config/limits/inference.yaml, if a response contract has more distinct paths.
+    rationale: Most distinct key paths, and most top-level keys, that one rejected attempt's reply shape fingerprint lists (#1178). Array members share one [] path, so this bounds the contract's shape rather than the reply's size. A path is at most inference.rejectedReplyShapeMaxDepth segments of at most inference.rejectionSegmentLength characters, so one attempt adds under 96 KiB to the run record in the worst case and a step at most retry.maxRetries + 1 times that; a shipped contract reply adds a few KiB.
+
+  - name: inference.rejectedReplyExcerptChars
+    value: 512
+    unit: characters
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_INFERENCE_REJECTED_REPLY_EXCERPT_CHARS
+    min: 0
+    max: 4096
+    refusal: inference-rejected-reply-excerpt-chars-bound
+    remediation: The attempt's rejectedReplyExcerpt states the reply length, the retained segments, and how many characters were not retained under this bound. Set DOCSFAB_INFERENCE_REJECTED_REPLY_EXCERPT_CHARS (0 through 4096) on the host, or change inference.rejectedReplyExcerptChars in config/limits/inference.yaml, to retain more or less of each segment; 0 retains no reply text.
+    rationale: Most reply characters (UTF-16 code units) that one retained segment of a rejected attempt's redacted excerpt copies (#1690). The bound applies per segment and is a host retention policy, hence per-host. Record readers accept any recorded bound, so lowering the maximum later leaves older records readable. An excerpt keeps at most three segments (head, tail, and a window around the strict parser's stop position), so one attempt retains at most three times this value plus redaction markers, and a step at most retry.maxRetries + 1 times that. 512 shows whether a reply opened with reasoning prose, a fence, or an object and how it ended; the rejected 2026-09-30 replies were 6,109 and 19,573 characters, so a whole reply would add tens of KiB per attempt to private run records. 0 keeps the structural fingerprint only and still states the reply length.
+
+  - name: inference.maxLengthStopContinuations
+    value: 1
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_INFERENCE_MAX_LENGTH_STOP_CONTINUATIONS
+    min: 0
+    max: 4
+    refusal: text-truncated
+    remediation: The attempt declined with the existing text-truncated message naming the step, the output limit and the characters retained. Shorten the step's answer, raise the composition maxOutputTokens through an activation amendment, or set DOCSFAB_INFERENCE_MAX_LENGTH_STOP_CONTINUATIONS (0 through 4) on the host, or raise inference.maxLengthStopContinuations in config/limits/inference.yaml. Each continuation spends one more provider turn inside the same attempt deadline.
+    rationale: Continuation turns one inference attempt may spend completing a structured-reply answer whose turn was cut at the output limit with its partial text retained. Only that shape is continued; a cut that surfaced nothing has no retained prefix to continue. 0 restores the decline-on-cut behaviour without a code change. Default 1 because the four retrievable pilot records of 2026-09-23 were cut after 63,545 to 82,789 characters against a 32,768-token budget, under three characters per token, so a single further budget carries the remainder, while the same records show cut attempts already spending 3.9 to 23.7 minutes of a 30-minute attempt deadline, so a second continuation is more likely to trade the cut for a timeout than to finish. Ceiling 4 admits five budgets, past any recorded answer, and the admitted provider-turn envelope and the attempt deadline still bound continuation independently.
+
+  - name: inference.answerRecordAllowanceShareBasisPoints
+    value: 8000
+    unit: basis-points
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 10000
+    refusal: inference-answer-record-allowance-share-bound
+    remediation: Change inference.answerRecordAllowanceShareBasisPoints in config/limits/inference.yaml only with a re-qualification of every records composition, because it sizes their sealed per-message record budget.
+    rationale: Share of a route's per-turn output allowance one answer message may plan for record bytes (closed-schema-answer-records-decision.md §4.1 and §4.4, from v10.1 §11.4). The remaining 20% covers the call wrappers, reasoning tokens a route spends before the tool calls, and estimate error, so a planned message never reaches the length stop. The premise probe (#1967) sizes phase B's top rung with the same value.
+
+  - name: inference.answerRecordBytesPerTokenFloorMilli
+    value: 2860
+    unit: milli-bytes-per-token
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1000
+    max: 4000
+    refusal: inference-answer-record-bytes-per-token-floor-bound
+    remediation: Change inference.answerRecordBytesPerTokenFloorMilli in config/limits/inference.yaml only with a new measurement of JSON bytes per token on the route's answers and a re-qualification of every records composition.
+    rationale: Lowest JSON bytes per output token measured over the 22 staged Nemotron Super step 8 answers (v9 §2, used by v10.1 §11.4 and closed-schema-answer-records-decision.md §4.1), in thousandths. Sizing record messages never assumes a higher ratio, so a planned message in bytes stays inside the token allowance. The premise probe (#1967) sizes phase B's top rung with the same value.
+

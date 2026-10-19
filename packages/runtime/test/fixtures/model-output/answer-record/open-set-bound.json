@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "kind": "docsfab-output-rule-fixture",
+  "code": "answer-record-open-set-bound",
+  "location": "$",
+  "input": {
+    "contract": "quality-evaluation",
+    "prior": [
+      "{\"type\":\"finding\",\"record\":{\"severity\":\"major\",\"dimension_id\":\"factual-accuracy\",\"description\":\"The install command names a flag the CLI does not accept.\",\"evidence\":[{\"evidence_class\":\"grounded-judgment\",\"strength\":\"direct\",\"locator\":\"docs/install.md:12\",\"description\":\"The page runs sprout init --fast.\"}],\"acceptance_condition\":\"The install command uses flags the CLI accepts.\"}}"
+    ],
+    "limits": {
+      "answerRecords.maxOpenRecordsPerSet": 1
+    }
+  },
+  "reply": "{\"type\":\"finding\",\"record\":{\"severity\":\"minor\",\"dimension_id\":\"factual-accuracy\",\"description\":\"The install command names a flag the CLI does not accept.\",\"evidence\":[{\"evidence_class\":\"grounded-judgment\",\"strength\":\"direct\",\"locator\":\"docs/install.md:12\",\"description\":\"The page runs sprout init --fast.\"}],\"acceptance_condition\":\"The install command uses flags the CLI accepts.\"}}"
+}

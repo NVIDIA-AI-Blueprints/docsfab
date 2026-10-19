@@ -1,0 +1,940 @@
+# yaml-language-server: $schema=https://schema.buildwithfern.dev/docs-yml.json
+
+title: DocsFab
+global-theme: nvidia
+logo:
+  right-text: DocsFab
+instances:
+  - url: docsfab.docs.buildwithfern.com/docsfab
+    custom-domain: docs.nvidia.com/docsfab
+    multi-source: true
+
+check:
+  rules:
+    broken-links: error
+navigation:
+  - section: About
+    slug: about
+    availability: in-development
+    contents:
+      - page: Overview
+        path: ../docs/about/index.md
+        slug: ''
+        availability: in-development
+      - page: Use Cases
+        path: ../docs/about/use-cases.md
+        slug: use-cases
+        availability: in-development
+      - page: Key Features
+        path: ../docs/about/key-features.md
+        slug: key-features
+        availability: in-development
+      - page: Architecture Overview
+        path: ../docs/about/architecture.md
+        slug: architecture
+        availability: in-development
+      - section: Core Concepts
+        slug: core-concepts
+        availability: in-development
+        contents:
+          - page: Documentation Jobs
+            path: ../docs/about/core-concepts/documentation-jobs.md
+            slug: documentation-jobs
+            availability: in-development
+          - page: When a Job Stops
+            path: ../docs/about/core-concepts/job-stops.md
+            slug: job-stops
+            availability: in-development
+          - page: Product Knowledge
+            path: ../docs/about/core-concepts/product-knowledge.md
+            slug: product-knowledge
+            availability: in-development
+          - page: Documentation Quality
+            path: ../docs/about/core-concepts/documentation-quality.md
+            slug: documentation-quality
+            availability: in-development
+          - page: Security and Trust
+            path: ../docs/about/security.md
+            slug: security-and-trust
+            availability: in-development
+      - page: Release Notes
+        path: ../docs/release-notes/release-notes.md
+        slug: release-notes
+        availability: in-development
+  - section: Get Started
+    slug: get-started
+    availability: in-development
+    contents:
+      - page: Install
+        path: ../docs/get-started/installation.md
+        slug: installation
+        availability: in-development
+      - page: Discover Workflows
+        path: ../docs/get-started/discover-workflows.md
+        slug: discover-workflows
+        availability: in-development
+      - page: Live Agent Quickstart
+        path: ../docs/get-started/live-agent-quickstart.md
+        slug: live-agent-quickstart
+        availability: in-development
+      - page: Runner Quickstart
+        path: ../docs/get-started/runner-quickstart.md
+        slug: runner-quickstart
+        availability: in-development
+  - section: Configure DocsFab
+    slug: configure
+    availability: in-development
+    contents:
+      - page: About Configuring DocsFab
+        path: ../docs/configure/index.md
+        slug: ''
+        availability: in-development
+      - section: Models and Routes
+        slug: ''
+        availability: in-development
+        contents:
+          - page: Configure the Model
+            path: ../docs/configure/model.md
+            slug: model
+            availability: in-development
+          - page: Select an Installed Composition
+            path: ../docs/configure/installed-compositions.md
+            slug: installed-compositions
+            availability: in-development
+          - page: Override Model Settings
+            path: ../docs/configure/override-model-settings.md
+            slug: override-model-settings
+            availability: in-development
+          - page: Use a Local NIM With DocsFab
+            path: ../docs/configure/local-nim.md
+            slug: local-nim
+            availability: in-development
+          - page: Probe a Model Route
+            path: ../docs/configure/probe-model-route.md
+            slug: probe-model-route
+            availability: in-development
+          - page: Draft a Composition Record
+            path: ../docs/configure/draft-composition.md
+            slug: draft-composition
+            availability: in-development
+      - page: Configure Public Output Roots
+        path: ../docs/configure/public-output-roots.md
+        slug: public-output-roots
+        availability: in-development
+      - page: Configure GitLab Event Intake
+        path: ../docs/configure/gitlab-event-intake.md
+        slug: gitlab-event-intake
+        availability: in-development
+  - section: Workflows
+    slug: workflows
+    availability: in-development
+    contents:
+      - page: About Workflows
+        path: ../docs/workflows/index.md
+        slug: ''
+        availability: in-development
+      - section: Run Documentation Jobs
+        slug: ''
+        availability: in-development
+        contents:
+          - page: Run a Workflow
+            path: ../docs/workflows/run-a-documentation-workflow.md
+            slug: run-a-documentation-workflow
+            availability: in-development
+          - page: Create a Documentation Set
+            path: ../docs/workflows/create-documentation-set.md
+            slug: create-documentation-set
+            availability: in-development
+          - page: Update Documentation Beside a Change
+            path: ../docs/workflows/update-documentation-beside-a-change.md
+            slug: update-documentation-beside-a-change
+            availability: in-development
+          - page: Update a Documentation Set
+            path: ../docs/workflows/update-documentation-set.md
+            slug: update-documentation-set
+            availability: in-development
+          - page: Update One RST Page
+            path: ../docs/workflows/update-rst-page.md
+            slug: update-rst-page
+            availability: in-development
+          - page: Verify That Documentation Needs No Change
+            path: ../docs/workflows/verify-no-change.md
+            slug: verify-no-change
+            availability: in-development
+          - page: Restructure a Documentation Set
+            path: ../docs/workflows/restructure-documentation-set.md
+            slug: restructure-documentation-set
+            availability: in-development
+          - page: Assess Documentation Readiness
+            path: ../docs/workflows/assess-readiness.md
+            slug: assess-readiness
+            availability: in-development
+          - page: Audit Pages Against Templates
+            path: ../docs/workflows/audit-templates.md
+            slug: audit-templates
+            availability: in-development
+      - section: Review Documentation
+        slug: ''
+        availability: in-development
+        contents:
+          - page: Baseline Documentation Health
+            path: ../docs/workflows/baseline-documentation-health.md
+            slug: baseline-documentation-health
+            availability: in-development
+          - page: Review Merge Request Impact
+            path: ../docs/workflows/review-merge-request-impact.md
+            slug: review-merge-request-impact
+            availability: in-development
+          - page: Investigate Saved Runs
+            path: ../docs/workflows/investigate-saved-runs.md
+            slug: investigate-saved-runs
+            availability: in-development
+      - section: Bind Evidence
+        slug: ''
+        availability: in-development
+        contents:
+          - page: Select Source Evidence
+            path: ../docs/workflows/select-sources.md
+            slug: select-sources
+            availability: in-development
+          - page: First-Pass Knowledge
+            path: ../docs/workflows/first-pass-knowledge.md
+            slug: first-pass-knowledge
+            availability: in-development
+          - page: Bind a Local Commit Range
+            path: ../docs/workflows/bind-commit-range.md
+            slug: bind-commit-range
+            availability: in-development
+          - page: Bind a GitLab Change
+            path: ../docs/workflows/bind-gitlab-change.md
+            slug: bind-gitlab-change
+            availability: in-development
+          - page: Bind a GitHub Change
+            path: ../docs/workflows/bind-github-change.md
+            slug: bind-github-change
+            availability: in-development
+          - page: Bind a Release Range
+            path: ../docs/workflows/bind-release-range.md
+            slug: bind-release-range
+            availability: in-development
+      - section: Use the Live Agent
+        slug: ''
+        availability: in-development
+        contents:
+          - page: Attach Evidence to a Live Session
+            path: ../docs/workflows/attach-live-sources.md
+            slug: attach-live-sources
+            availability: in-development
+          - page: Edit Documentation in the Live Agent
+            path: ../docs/workflows/edit-in-live-agent.md
+            slug: edit-in-live-agent
+            availability: in-development
+          - page: Deliver a Live-Agent Patch
+            path: ../docs/workflows/deliver-live-patch.md
+            slug: deliver-live-patch
+            availability: in-development
+      - section: Continue Stopped Work
+        slug: ''
+        availability: in-development
+        contents:
+          - page: Supply Requested Work Products
+            path: ../docs/workflows/supply-work-products.md
+            slug: supply-work-products
+            availability: in-development
+          - page: Answer and Resume a Stopped Job
+            path: ../docs/workflows/answer-and-resume.md
+            slug: answer-and-resume
+            availability: in-development
+      - section: Use Slack
+        slug: ''
+        availability: in-development
+        contents:
+          - page: Review Documentation From Slack
+            path: ../docs/workflows/review-from-slack.md
+            slug: review-from-slack
+            availability: in-development
+          - page: Ask a Documentation Question From Slack
+            path: ../docs/workflows/ask-from-slack.md
+            slug: ask-from-slack
+            availability: in-development
+          - page: Continue a Hosted Documentation Review
+            path: ../docs/workflows/continue-hosted-review.md
+            slug: continue-hosted-review
+            availability: in-development
+      - section: Gather Product Knowledge
+        slug: ''
+        availability: in-development
+        contents:
+          - page: Run the Knowledge-Gathering Workflow
+            path: ../docs/workflows/run-knowledge-gathering-workflow.md
+            slug: run-knowledge-gathering-workflow
+            availability: in-development
+          - page: Conduct a Product-Model Interview
+            path: ../docs/workflows/conduct-product-model-interview.md
+            slug: conduct-product-model-interview
+            availability: in-development
+          - page: Reconcile Source Threads
+            path: ../docs/workflows/reconcile-source-threads.md
+            slug: reconcile-source-threads
+            availability: in-development
+      - section: Automate and Deliver
+        slug: ''
+        availability: in-development
+        contents:
+          - page: Run in CI
+            path: ../docs/workflows/run-docsfab-in-ci.md
+            slug: run-docsfab-in-ci
+            availability: in-development
+          - page: Run a Live-Agent Task Noninteractively
+            path: ../docs/workflows/run-live-agent-noninteractively.md
+            slug: run-live-agent-noninteractively
+            availability: in-development
+          - page: Propose Documentation After CI
+            path: ../docs/workflows/automatic-ci-proposals.md
+            slug: automatic-ci-proposals
+            availability: in-development
+          - page: Delegate a Local Task
+            path: ../docs/workflows/delegate-a-task.md
+            slug: delegate-a-task
+            availability: in-development
+          - page: Deliver or Recover a Draft Merge Request
+            path: ../docs/workflows/deliver-draft-mr.md
+            slug: deliver-draft-mr
+            availability: in-development
+  - section: Manage DocsFab
+    slug: manage
+    availability: in-development
+    contents:
+      - page: About Managing DocsFab
+        path: ../docs/manage/index.md
+        slug: ''
+        availability: in-development
+      - section: Installation and Local State
+        slug: ''
+        availability: in-development
+        contents:
+          - page: Update or Uninstall DocsFab
+            path: ../docs/manage/update-or-uninstall.md
+            slug: update-or-uninstall
+            availability: in-development
+          - page: Install a Development Build
+            path: ../docs/manage/development-installation.md
+            slug: development-installation
+            availability: in-development
+          - page: Back Up and Restore Local State
+            path: ../docs/manage/recover-local-state.md
+            slug: recover-local-state
+            availability: in-development
+          - page: Manage Live Sessions
+            path: ../docs/manage/live-sessions.md
+            slug: live-sessions
+            availability: in-development
+      - section: Configuration and Readiness
+        slug: ''
+        availability: in-development
+        contents:
+          - page: Check Readiness
+            path: ../docs/manage/check-readiness.md
+            slug: check-readiness
+            availability: in-development
+          - page: Manage Local Configuration and Credentials
+            path: ../docs/manage/local-configuration.md
+            slug: local-configuration
+            availability: in-development
+          - page: Inspect Operational Limits
+            path: ../docs/manage/inspect-operational-limits.md
+            slug: inspect-operational-limits
+            availability: in-development
+          - page: Configure Host Limits
+            path: ../docs/manage/configure-host-limits.md
+            slug: configure-host-limits
+            availability: in-development
+          - page: Check Native CLI Readiness
+            path: ../docs/manage/check-native-harness.md
+            slug: check-native-harness
+            availability: in-development
+      - section: Runs and Reports
+        slug: ''
+        availability: in-development
+        contents:
+          - page: Diagnose a Failed Run
+            path: ../docs/manage/diagnose-run.md
+            slug: diagnose-run
+            availability: in-development
+          - page: Compare Completed Composition Runs
+            path: ../docs/manage/compare-runs.md
+            slug: compare-runs
+            availability: in-development
+          - page: Host a Review Report
+            path: ../docs/manage/host-review-report.md
+            slug: host-review-report
+            availability: in-development
+          - page: Check Documentation Freshness
+            path: ../docs/manage/check-documentation-freshness.md
+            slug: check-documentation-freshness
+            availability: in-development
+      - section: Model Capability Checks
+        slug: ''
+        availability: in-development
+        contents:
+          - page: Check Answer Submission Capability
+            path: ../docs/manage/qualify-answer-submission.md
+            slug: qualify-answer-submission
+            availability: in-development
+          - page: Check Answer-Record Capability
+            path: ../docs/manage/qualify-answer-records.md
+            slug: qualify-answer-records
+            availability: in-development
+      - section: Deployment Recovery
+        slug: ''
+        availability: in-development
+        contents:
+          - page: Restore a Deployment
+            path: ../docs/manage/restore-deployment.md
+            slug: restore-deployment
+            availability: in-development
+          - page: Configure the Recovery Object Bound
+            path: ../docs/manage/configure-recovery-bound.md
+            slug: configure-recovery-bound
+            availability: in-development
+          - page: Upgrade the Forge Source Schema
+            path: ../docs/manage/upgrade-forge-source.md
+            slug: upgrade-forge-source
+            availability: in-development
+      - page: Preview the Documentation Site
+        path: ../docs/manage/preview-documentation-site.md
+        slug: preview-documentation-site
+        availability: in-development
+  - section: Reference
+    slug: reference
+    availability: in-development
+    contents:
+      - page: Architecture
+        path: ../docs/reference/architecture.md
+        slug: architecture
+        availability: in-development
+      - page: Support Matrix
+        path: ../docs/reference/support-matrix.md
+        slug: support-matrix
+        availability: in-development
+      - page: Security Reference
+        path: ../docs/reference/security-and-trust.md
+        slug: security-and-trust
+        availability: in-development
+      - section: Status and Configuration
+        slug: status-and-configuration
+        availability: in-development
+        contents:
+          - page: Status and Configuration Reference
+            path: ../docs/reference/status-and-configuration/index.md
+            slug: ''
+            availability: in-development
+          - page: Implementation Status
+            path: ../docs/reference/status-and-configuration/implementation-status.md
+            slug: implementation-status
+            availability: in-development
+          - section: CLI and Configuration
+            slug: ''
+            availability: in-development
+            contents:
+              - page: CLI Command Reference
+                path: ../docs/reference/status-and-configuration/runtime-cli-and-configuration.md
+                slug: runtime-cli-and-configuration
+                availability: in-development
+              - page: Project Configuration Reference
+                path: ../docs/reference/status-and-configuration/project-configuration.md
+                slug: project-configuration
+                availability: in-development
+              - page: Host Environment Variables
+                path: ../docs/reference/status-and-configuration/environment-variables.md
+                slug: environment-variables
+                availability: in-development
+              - page: Human Output and JSON
+                path: ../docs/reference/status-and-configuration/human-output-and-json.md
+                slug: human-output-and-json
+                availability: in-development
+              - page: Request Interpretation
+                path: ../docs/reference/status-and-configuration/request-interpretation.md
+                slug: request-interpretation
+                availability: in-development
+          - section: Models and Routes
+            slug: ''
+            availability: in-development
+            contents:
+              - page: Installed Execution Compositions
+                path: ../docs/reference/status-and-configuration/execution-compositions.md
+                slug: execution-compositions
+                availability: in-development
+              - page: Model Profile Field Reference
+                path: ../docs/reference/status-and-configuration/model-profile-fields.md
+                slug: model-profile-fields
+                availability: in-development
+              - page: Model Setting Precedence
+                path: ../docs/reference/status-and-configuration/model-settings.md
+                slug: model-settings
+                availability: in-development
+              - page: Endpoint Compatibility Reference
+                path: ../docs/reference/status-and-configuration/endpoint-compatibility.md
+                slug: endpoint-compatibility
+                availability: in-development
+              - page: Model-Profile Approval
+                path: ../docs/reference/status-and-configuration/model-profile-approval.md
+                slug: model-profile-approval
+                availability: in-development
+              - page: Model Evidence Routes
+                path: ../docs/reference/status-and-configuration/model-evidence-routes.md
+                slug: model-evidence-routes
+                availability: in-development
+          - section: Execution Behavior
+            slug: ''
+            availability: in-development
+            contents:
+              - page: Composition Execution Budgets
+                path: ../docs/reference/status-and-configuration/execution-budgets.md
+                slug: execution-budgets
+                availability: in-development
+              - page: Tool Result Limits and Recall
+                path: ../docs/reference/status-and-configuration/tool-result-limits.md
+                slug: tool-result-limits
+                availability: in-development
+              - page: Provider and Step Retries
+                path: ../docs/reference/status-and-configuration/provider-retries.md
+                slug: provider-retries
+                availability: in-development
+              - page: Model Answer Continuation
+                path: ../docs/reference/status-and-configuration/answer-continuation.md
+                slug: answer-continuation
+                availability: in-development
+              - page: Read-Loop Supervision
+                path: ../docs/reference/status-and-configuration/read-loop-supervision.md
+                slug: read-loop-supervision
+                availability: in-development
+              - page: Live Agent Reference
+                path: ../docs/reference/status-and-configuration/live-agent.md
+                slug: live-agent
+                availability: in-development
+              - page: Autonomy Authorization Window
+                path: ../docs/reference/status-and-configuration/autonomy-window.md
+                slug: autonomy-window
+                availability: in-development
+          - section: Runs and Results
+            slug: ''
+            availability: in-development
+            contents:
+              - page: Run Index Reference
+                path: ../docs/reference/status-and-configuration/query-failures-across-runs.md
+                slug: query-failures-across-runs
+                availability: in-development
+              - page: Diagnosis Reference
+                path: ../docs/reference/status-and-configuration/diagnose-failed-runs.md
+                slug: diagnose-failed-runs
+                availability: in-development
+              - page: Retry Evidence in Saved Runs
+                path: ../docs/reference/status-and-configuration/retry-evidence.md
+                slug: retry-evidence
+                availability: in-development
+              - page: Stop Classes
+                path: ../docs/reference/status-and-configuration/stop-classes.md
+                slug: stop-classes
+                availability: in-development
+              - page: Operator Error Envelope
+                path: ../docs/reference/status-and-configuration/operator-error-envelope.md
+                slug: operator-error-envelope
+                availability: in-development
+          - section: Sources and Validation
+            slug: ''
+            availability: in-development
+            contents:
+              - page: Tracked Source Evidence Reference
+                path: ../docs/reference/status-and-configuration/source-evidence.md
+                slug: source-evidence
+                availability: in-development
+              - page: Documentation Validation Reference
+                path: ../docs/reference/status-and-configuration/document-validation.md
+                slug: document-validation
+                availability: in-development
+              - page: Documentation Generator Capabilities
+                path: ../docs/reference/status-and-configuration/generator-capabilities.md
+                slug: generator-capabilities
+                availability: in-development
+          - section: Storage and Limits
+            slug: ''
+            availability: in-development
+            contents:
+              - page: Operational Limit Definitions
+                path: ../docs/reference/status-and-configuration/operational-limits.md
+                slug: operational-limits
+                availability: in-development
+              - page: Source Acquisition Limits
+                path: ../docs/reference/status-and-configuration/source-acquisition-limits.md
+                slug: source-acquisition-limits
+                availability: in-development
+              - page: Repository Text Index Limits
+                path: ../docs/reference/status-and-configuration/repository-text-index.md
+                slug: repository-text-index
+                availability: in-development
+              - page: Artifact and Run-Record Size Limits
+                path: ../docs/reference/status-and-configuration/artifact-limits.md
+                slug: artifact-limits
+                availability: in-development
+              - page: Context Packet Budgets
+                path: ../docs/reference/status-and-configuration/context-packet-budgets.md
+                slug: context-packet-budgets
+                availability: in-development
+              - page: Configured-Credential Matching Limits
+                path: ../docs/reference/status-and-configuration/credential-matching-limits.md
+                slug: credential-matching-limits
+                availability: in-development
+              - page: Slack Output Limits
+                path: ../docs/reference/status-and-configuration/slack-output-limits.md
+                slug: slack-output-limits
+                availability: in-development
+              - page: Recovery State Reference
+                path: ../docs/reference/status-and-configuration/recovery-and-migration.md
+                slug: recovery-and-migration
+                availability: in-development
+      - section: Knowledge and Delivery
+        slug: knowledge-and-delivery
+        availability: in-development
+        contents:
+          - page: Overview
+            path: ../docs/reference/knowledge-and-delivery/index.md
+            slug: ''
+            availability: in-development
+          - page: Git History Tools
+            path: ../docs/reference/knowledge-and-delivery/git-history-tools.md
+            slug: git-history-tools
+            availability: in-development
+          - section: Knowledge Contracts
+            slug: knowledge
+            availability: in-development
+            contents:
+              - page: Overview
+                path: ../docs/reference/knowledge-and-delivery/knowledge/index.md
+                slug: ''
+                availability: in-development
+              - page: Knowledge CLI
+                path: ../docs/reference/knowledge-and-delivery/knowledge/knowledge-cli.md
+                slug: knowledge-cli
+                availability: in-development
+              - page: Source-Thread Registry
+                path: ../docs/reference/knowledge-and-delivery/knowledge/source-thread-registry.md
+                slug: source-thread-registry
+                availability: in-development
+              - page: Reference-Model Package
+                path: ../docs/reference/knowledge-and-delivery/knowledge/reference-model-package.md
+                slug: reference-model-package
+                availability: in-development
+          - section: Delivery Contracts
+            slug: delivery
+            availability: in-development
+            contents:
+              - page: Overview
+                path: ../docs/reference/knowledge-and-delivery/delivery/index.md
+                slug: ''
+                availability: in-development
+              - page: GitLab Host Mailbox
+                path: ../docs/reference/knowledge-and-delivery/delivery/gitlab-host-notification.md
+                slug: gitlab-host-notification
+                availability: in-development
+              - page: Reviewed Candidate Proposals
+                path: ../docs/reference/knowledge-and-delivery/delivery/documentation-delivery.md
+                slug: documentation-delivery
+                availability: in-development
+              - page: Documentation Convergence and Freshness
+                path: ../docs/reference/knowledge-and-delivery/delivery/documentation-convergence.md
+                slug: documentation-convergence
+                availability: in-development
+      - section: Quality
+        slug: quality
+        availability: in-development
+        contents:
+          - page: Overview
+            path: ../docs/reference/quality/index.md
+            slug: ''
+            availability: in-development
+          - page: Documentation Constraint Evidence
+            path: ../docs/reference/quality/documentation-constraint-evidence.md
+            slug: documentation-constraint-evidence
+            availability: in-development
+          - page: Quality Roles and Capability Coverage
+            path: ../docs/reference/quality/quality-roles-and-capabilities.md
+            slug: quality-roles-and-capabilities
+            availability: in-development
+          - section: Skill Behavior Contracts
+            slug: skills
+            availability: in-development
+            contents:
+              - page: Overview
+                path: ../docs/reference/quality/skills/index.md
+                slug: ''
+                availability: in-development
+              - section: Planning and Authoring
+                slug: plan-and-author
+                availability: in-development
+                contents:
+                  - page: Overview
+                    path: ../docs/reference/quality/skills/plan-and-author/index.md
+                    slug: ''
+                    availability: in-development
+                  - page: Plan Documentation
+                    path: ../docs/reference/quality/skills/plan-and-author/plan-documentation.md
+                    slug: plan-documentation
+                    availability: in-development
+                  - page: Write Documentation
+                    path: ../docs/reference/quality/skills/plan-and-author/write-documentation.md
+                    slug: write-documentation
+                    availability: in-development
+              - section: Checking and Review
+                slug: check-and-review
+                availability: in-development
+                contents:
+                  - page: Overview
+                    path: ../docs/reference/quality/skills/check-and-review/index.md
+                    slug: ''
+                    availability: in-development
+                  - page: Lint Documentation
+                    path: ../docs/reference/quality/skills/check-and-review/lint-documentation.md
+                    slug: lint-documentation
+                    availability: in-development
+                  - page: Verify Technical Accuracy
+                    path: ../docs/reference/quality/skills/check-and-review/verify-technical-accuracy.md
+                    slug: verify-technical-accuracy
+                    availability: in-development
+                  - page: Review Documentation Skill
+                    path: ../docs/reference/quality/skills/check-and-review/review-documentation.md
+                    slug: review-documentation
+                    availability: in-development
+              - section: Assessment and Evaluation
+                slug: assess-and-evaluate
+                availability: in-development
+                contents:
+                  - page: Overview
+                    path: ../docs/reference/quality/skills/assess-and-evaluate/index.md
+                    slug: ''
+                    availability: in-development
+                  - page: Audit Documentation
+                    path: ../docs/reference/quality/skills/assess-and-evaluate/audit-documentation.md
+                    slug: audit-documentation
+                    availability: in-development
+                  - page: Test Audience Understanding
+                    path: ../docs/reference/quality/skills/assess-and-evaluate/test-audience-understanding.md
+                    slug: test-audience-understanding
+                    availability: in-development
+                  - page: Evaluate Document Quality
+                    path: ../docs/reference/quality/skills/assess-and-evaluate/evaluate-document-quality.md
+                    slug: evaluate-document-quality
+                    availability: in-development
+      - section: Workflow Contracts
+        slug: workflow-contracts
+        availability: in-development
+        contents:
+          - page: Overview
+            path: ../docs/reference/workflow-contracts/index.md
+            slug: ''
+            availability: in-development
+          - page: Review Documentation Workflow
+            path: ../docs/reference/workflow-contracts/review-documentation.md
+            slug: review-documentation
+            availability: in-development
+          - page: Create Documentation
+            path: ../docs/reference/workflow-contracts/create-documentation.md
+            slug: create-documentation
+            availability: in-development
+          - page: Update Documentation
+            path: ../docs/reference/workflow-contracts/update-documentation.md
+            slug: update-documentation
+            availability: in-development
+          - page: Restructure Documentation
+            path: ../docs/reference/workflow-contracts/restructure-documentation.md
+            slug: restructure-documentation
+            availability: in-development
+          - page: Audit Documentation Workflow
+            path: ../docs/reference/workflow-contracts/audit-documentation.md
+            slug: audit-documentation
+            availability: in-development
+          - page: Review JSON Result
+            path: ../docs/reference/workflow-contracts/review-json-result.md
+            slug: review-json-result
+            availability: in-development
+  - page: Troubleshooting DocsFab
+    path: ../docs/troubleshooting.md
+    slug: troubleshooting
+    availability: in-development
+  - section: Resources
+    slug: resources
+    availability: in-development
+    contents:
+      - page: Glossary
+        path: ../docs/resources/glossary.md
+        slug: glossary
+        availability: in-development
+      - section: Evaluation
+        slug: evaluation
+        availability: in-development
+        contents:
+          - page: Evaluating DocsFab
+            path: ../docs/resources/evaluation/index.md
+            slug: ''
+            availability: in-development
+          - page: Documentation Source Coverage
+            path: ../docs/resources/evaluation/source-coverage.md
+            slug: source-coverage
+            availability: in-development
+redirects:
+  - source: /docsfab/get-started/windows-wsl2
+    destination: /docsfab/get-started/installation#windows-11-with-wsl2
+  - source: /docsfab/manage/retired-model-selection
+    destination: /docsfab/troubleshooting#model-selection-is-no-longer-supported
+  - source: /docsfab/get-started/prerequisites
+    destination: /docsfab/get-started/installation
+  - source: /docsfab/get-started/live-agent-commands
+    destination: /docsfab/reference/status-and-configuration/live-agent
+  - source: /docsfab/about/development-coordination
+    destination: /docsfab/about
+  - source: /docsfab/about/ecosystem
+    destination: /docsfab/about/architecture
+  - source: /docsfab/about/security
+    destination: /docsfab/about/core-concepts/security-and-trust
+  - source: /docsfab/about/core-concepts/security
+    destination: /docsfab/about/core-concepts/security-and-trust
+  - source: /docsfab/reference
+    destination: /docsfab/reference/status-and-configuration
+  - source: /docsfab/reference/status-and-configuration/agent-workspace
+    destination: /docsfab/get-started/installation
+  - source: /docsfab/resources
+    destination: /docsfab/resources/glossary
+  - source: /docsfab/conceptual
+    destination: /docsfab/about#core-concepts
+  - source: /docsfab/about/core-concepts
+    destination: /docsfab/about#core-concepts
+  - source: /docsfab/conceptual/use-cases
+    destination: /docsfab/about/use-cases
+  - source: /docsfab/conceptual/source-threads-and-synthesis
+    destination: /docsfab/about/core-concepts/product-knowledge
+  - source: /docsfab/conceptual/product-reference-model
+    destination: /docsfab/about/core-concepts/product-knowledge
+  - source: /docsfab/conceptual/evidence-and-authorization
+    destination: /docsfab/about/core-concepts/documentation-jobs
+  - source: /docsfab/conceptual/documentation-lifecycle
+    destination: /docsfab/about/core-concepts/product-knowledge
+  - source: /docsfab/conceptual/runtime-layer
+    destination: /docsfab/about/core-concepts/documentation-jobs
+  - source: /docsfab/conceptual/governed-workflows
+    destination: /docsfab/about/core-concepts/documentation-jobs
+  - source: /docsfab/conceptual/host-mailbox-and-delivery
+    destination: /docsfab/about/core-concepts/documentation-jobs
+  - source: /docsfab/conceptual/onboarding-target-experience
+    destination: /docsfab/get-started/installation
+  - source: /docsfab/conceptual/documentation-quality-model
+    destination: /docsfab/about/core-concepts/documentation-quality
+  - source: /docsfab/conceptual/documentation-quality-assurance
+    destination: /docsfab/about/core-concepts/documentation-quality
+  - source: /docsfab/conceptual/documentation-testing
+    destination: /docsfab/about/core-concepts/documentation-quality
+  - source: /docsfab/conceptual/readiness-and-quality
+    destination: /docsfab/about/core-concepts/documentation-quality
+  - source: /docsfab/conceptual/quality-skills-and-evidence
+    destination: /docsfab/about/core-concepts/documentation-quality
+  - source: /docsfab/get-started/setup
+    destination: /docsfab/get-started/installation
+  - source: /docsfab/get-started/setup/local-docker
+    destination: /docsfab/get-started/installation
+  - source: /docsfab/get-started/setup/brev-cli
+    destination: /docsfab/get-started/installation
+  - source: /docsfab/get-started/setup/runtime-preview
+    destination: /docsfab/get-started/installation
+  - source: /docsfab/get-started/setup/model-credentials
+    destination: /docsfab/get-started/installation
+  - source: /docsfab/get-started/setup/first-run-quickstart
+    destination: /docsfab/get-started/installation
+  - source: /docsfab/get-started/first-workflows
+    destination: /docsfab/get-started/runner-quickstart
+  - source: /docsfab/get-started/first-workflows/documentation-workflows
+    destination: /docsfab/get-started/runner-quickstart
+  - source: /docsfab/get-started/first-workflows/knowledge-gathering-preview
+    destination: /docsfab/workflows/run-knowledge-gathering-workflow
+  - source: /docsfab/get-started/first-workflows/runtime-source-preview
+    destination: /docsfab/get-started/installation
+  - source: /docsfab/get-started/local-docker
+    destination: /docsfab/get-started/installation
+  - source: /docsfab/get-started/brev-cli
+    destination: /docsfab/get-started/installation
+  - source: /docsfab/get-started/runtime-preview
+    destination: /docsfab/get-started/installation
+  - source: /docsfab/get-started/documentation-workflows
+    destination: /docsfab/get-started/runner-quickstart
+  - source: /docsfab/get-started/knowledge-gathering-preview
+    destination: /docsfab/workflows/run-knowledge-gathering-workflow
+  - source: /docsfab/get-started/runtime-source-preview
+    destination: /docsfab/get-started/installation
+  - source: /docsfab/procedural/run-a-documentation-workflow
+    destination: /docsfab/workflows/run-a-documentation-workflow
+  - source: /docsfab/procedural/run-knowledge-gathering-workflow
+    destination: /docsfab/workflows/run-knowledge-gathering-workflow
+  - source: /docsfab/procedural/conduct-product-model-interview
+    destination: /docsfab/workflows/conduct-product-model-interview
+  - source: /docsfab/procedural/reconcile-source-threads
+    destination: /docsfab/workflows/reconcile-source-threads
+  - source: /docsfab/reference/implementation-status
+    destination: /docsfab/reference/status-and-configuration/implementation-status
+  - source: /docsfab/reference/runtime-cli
+    destination: /docsfab/manage/check-readiness
+  - source: /docsfab/reference/runtime-cli-and-configuration
+    destination: /docsfab/reference/status-and-configuration/runtime-cli-and-configuration
+  - source: /docsfab/reference/model-profile-approval
+    destination: /docsfab/reference/status-and-configuration/model-profile-approval
+  - source: /docsfab/reference/knowledge-cli
+    destination: /docsfab/reference/knowledge-and-delivery/knowledge/knowledge-cli
+  - source: /docsfab/reference/source-thread-registry
+    destination: /docsfab/reference/knowledge-and-delivery/knowledge/source-thread-registry
+  - source: /docsfab/reference/reference-model-package
+    destination: /docsfab/reference/knowledge-and-delivery/knowledge/reference-model-package
+  - source: /docsfab/reference/gitlab-host-notification
+    destination: /docsfab/reference/knowledge-and-delivery/delivery/gitlab-host-notification
+  - source: /docsfab/reference/documentation-delivery
+    destination: /docsfab/reference/knowledge-and-delivery/delivery/documentation-delivery
+  - source: /docsfab/reference/documentation-convergence
+    destination: /docsfab/reference/knowledge-and-delivery/delivery/documentation-convergence
+  - source: /docsfab/reference/documentation-constraint-evidence
+    destination: /docsfab/reference/quality/documentation-constraint-evidence
+  - source: /docsfab/reference/quality-roles-and-capabilities
+    destination: /docsfab/reference/quality/quality-roles-and-capabilities
+  - source: /docsfab/reference/skills
+    destination: /docsfab/reference/quality/skills
+  - source: /docsfab/reference/skills/plan-documentation
+    destination: /docsfab/reference/quality/skills/plan-and-author/plan-documentation
+  - source: /docsfab/reference/skills/write-documentation
+    destination: /docsfab/reference/quality/skills/plan-and-author/write-documentation
+  - source: /docsfab/reference/skills/polish-documentation
+    destination: /docsfab/reference/quality/skills/plan-and-author/write-documentation
+  - source: /docsfab/reference/quality/skills/plan-and-author/polish-documentation
+    destination: /docsfab/reference/quality/skills/plan-and-author/write-documentation
+  - source: /docsfab/reference/skills/derive-source-obligations
+    destination: /docsfab/reference/quality/skills/check-and-review/verify-technical-accuracy
+  - source: /docsfab/reference/quality/skills/check-and-review/derive-source-obligations
+    destination: /docsfab/reference/quality/skills/check-and-review/verify-technical-accuracy
+  - source: /docsfab/reference/skills/lint-documentation
+    destination: /docsfab/reference/quality/skills/check-and-review/lint-documentation
+  - source: /docsfab/reference/skills/verify-technical-accuracy
+    destination: /docsfab/reference/quality/skills/check-and-review/verify-technical-accuracy
+  - source: /docsfab/reference/skills/review-documentation
+    destination: /docsfab/reference/quality/skills/check-and-review/review-documentation
+  - source: /docsfab/reference/skills/audit-documentation
+    destination: /docsfab/reference/quality/skills/assess-and-evaluate/audit-documentation
+  - source: /docsfab/reference/skills/test-audience-understanding
+    destination: /docsfab/reference/quality/skills/assess-and-evaluate/test-audience-understanding
+  - source: /docsfab/reference/skills/evaluate-document-quality
+    destination: /docsfab/reference/quality/skills/assess-and-evaluate/evaluate-document-quality
+  - source: /docsfab/reference/workflows/create-documentation
+    destination: /docsfab/reference/workflow-contracts/create-documentation
+  - source: /docsfab/reference/workflows/restructure-documentation
+    destination: /docsfab/reference/workflow-contracts/restructure-documentation
+  - source: /docsfab/reference/status-and-configuration/profile-probe-and-draft
+    destination: /docsfab/configure/probe-model-route
+  - source: /docsfab/reference/status-and-configuration/runtime-readiness-and-doctor
+    destination: /docsfab/manage/check-readiness
+  - source: /docsfab/reference/status-and-configuration/durable-stop-continuation
+    destination: /docsfab/workflows/answer-and-resume
+  - source: /docsfab/reference/knowledge-and-delivery/documentation-source-coverage
+    destination: /docsfab/resources/evaluation/source-coverage

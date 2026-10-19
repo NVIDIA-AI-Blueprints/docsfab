@@ -1,0 +1,671 @@
+{
+  "description": "Request-wording decision sites. `sites` is debt that may only shrink: remove an entry when its site is gone. `allowlist` holds narrowing guards and `do`'s fixed outcome table kept by decision, each with a rationale. New sites fail `npm run check:request-wording`.",
+  "sites": [
+    {
+      "id": "inv-7-1",
+      "fingerprint": "packages/knowledge/src/first-pass/assess.mjs|seedObligations|explicitPatterns[evidence]#011fb07a14de540ff0329ebb95bffce6246cb827726822dfbb80068f45b45615"
+    },
+    {
+      "id": "inv-7-2",
+      "fingerprint": "packages/knowledge/src/first-pass/assess.mjs|seedObligations|explicitPatterns[preservation]#05c21dc40f6eae43911c6539dd5615c96d63111ab489f5aea526aa7cceb617dd"
+    },
+    {
+      "id": "inv-7-4",
+      "fingerprint": "packages/knowledge/src/first-pass/assess.mjs|seedObligations|explicitPatterns[typed-stop]#fb45eb4fe50277f987aa95c5b9990c24a53e7d2f643367866b6134c5c669b0bc"
+    },
+    {
+      "id": "inv-7-5",
+      "fingerprint": "packages/knowledge/src/first-pass/assess.mjs|seedObligations|explicitPatterns[operations]#3dfa6bfb9acaed864b5cdde84720c2a504daeec3780dde4c3ef0d32111110687"
+    },
+    {
+      "id": "inv-7-6",
+      "fingerprint": "packages/knowledge/src/first-pass/assess.mjs|isWorkspacePreservationConstraint|regex#6bf3186cf025069b00fc09951ec0f2a61d7420eea8e4e4dba6700e97c8bf119f"
+    },
+    {
+      "id": "extra-1",
+      "fingerprint": "packages/knowledge/src/first-pass/assess.mjs|futureCheckClaim|regex#7f88c4c7fc645d981efc46a46cf8df125e438af67694106b0da6128350b146db"
+    },
+    {
+      "id": "inv-7-7",
+      "fingerprint": "packages/knowledge/src/first-pass/assess.mjs|materialConcepts|regex#66fecb490017d13fa03d265424320e27123704712944c55f1c2357d726b8eeb9"
+    },
+    {
+      "id": "inv-1-1",
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|parseOrdinaryDocumentationRequest|LITERAL_SINGLE_TARGET#1e702ef86ffae18aa5212cddb0310c198d04c9cc0a31d5f279e56d592f20627c"
+    },
+    {
+      "id": "inv-1-3",
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|ordinaryOperationOffset|ORDINARY_OPERATION#ca5c4484c7f98563612f76eb9a5b06bef28b005935620748f329f1f8a3ea3f4a"
+    },
+    {
+      "id": "inv-1-4",
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|parseOrdinaryDocumentationRequest|regex#4f9b1541a9b50102b71c38bfdcd4408972b0c6b109d3a1e117b0f3f4aacca3f5"
+    },
+    {
+      "id": "inv-1-5",
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|parseOrdinaryDocumentationRequest|regex#1e9c2a963641a5566812aba79905e8c8c7067a43bba73f325e20af208c350d53"
+    },
+    {
+      "id": "inv-1-6",
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|parseOrdinaryDocumentationRequest|regex#d2ce067a93e185b2e45de5c5eff05814bc6458cad618eb3a4d90f4a67e5c73f6"
+    },
+    {
+      "id": "inv-1-7",
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|parseOrdinaryDocumentationRequest|regex#fd9ef3647d1bc42dc07e8fc7bd353945f35a7527dc0902cb51f1bf7261dde7df"
+    },
+    {
+      "id": "inv-1-8",
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|parseOrdinaryDocumentationRequest|regex#c5087dc44eafef8595aed0023e000837d38b58d609bfe632030b9dff882b91aa"
+    },
+    {
+      "id": "inv-1-11",
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|parseOrdinaryDocumentationRequest|regex#c24429d437048e69affd875cb4841f2ab242c2206ca0345a7eda42615230d7cd"
+    },
+    {
+      "id": "inv-1-12",
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|parseOrdinaryDocumentationRequest|regex#6908869d6af9034b1244571cef3fe0219edb18bee45434a8146cafda936bbb8a"
+    },
+    {
+      "id": "inv-1-13",
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|parseOrdinaryDocumentationRequest|string#a24e10fde71a121ae709d6d866e36dfce91ce464e196f718721d848cbd56d24d"
+    },
+    {
+      "id": "inv-1-14",
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|parseOrdinaryDocumentationRequest|regex#139d6049e8c8e15f7fd351e923a9da194396e9e9fb08a01250ad94f7546fe959"
+    },
+    {
+      "id": "inv-1-15",
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|parseOrdinaryDocumentationRequest|regex#3548968c645380c080c6347f7b83fd7ff28d1793cce908eaffd148614fd8a167"
+    },
+    {
+      "id": "inv-1-16",
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|parseOrdinaryDocumentationRequest|regex#c5087dc44eafef8595aed0023e000837d38b58d609bfe632030b9dff882b91aa"
+    },
+    {
+      "id": "inv-1-17",
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|parseOrdinaryDocumentationRequest|regex#81bde717768bebbf86fe1987ba1344f34fd80382a4dc42f3d55e4e19d03182b7"
+    },
+    {
+      "id": "inv-1-18",
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|parseOrdinaryDocumentationRequest|regex#4f9b1541a9b50102b71c38bfdcd4408972b0c6b109d3a1e117b0f3f4aacca3f5"
+    },
+    {
+      "id": "inv-1-19",
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|parseOrdinaryDocumentationRequest|regex#3b9024c7f53d580cc3ccf4cbd91eba39e0d7ad4c46c3dbd31eb76e3d8d84ee4d"
+    },
+    {
+      "id": "inv-1-20",
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|parseOrdinaryDocumentationRequest|regex#829839dbba4b968b8591d10e7e77c195828325b5c78b0859624f9fda0fc7e54e"
+    },
+    {
+      "id": "inv-1-21",
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|parseOrdinaryDocumentationRequest|LEADING_SCOPE_RESTRICTION#422d8930cdb11085f2ceae88e1dcfb15acbebe087e1b3944cdc2a807ef62d035"
+    },
+    {
+      "id": "inv-1-23",
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|parseOrdinaryDocumentationRequest|regex#35e8199974e567fd81eda1e7b0c185e6ac7d5a22008bfb9c1faee06a73665890"
+    },
+    {
+      "id": "inv-1-24",
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|parseOrdinaryDocumentationRequest|regex#9264ab52143a5f23666b585bb0c3be9c642e1144837c6fe97a8733b170ca0378"
+    },
+    {
+      "id": "inv-1-25",
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|parseOrdinaryDocumentationRequest|regex#4f9b1541a9b50102b71c38bfdcd4408972b0c6b109d3a1e117b0f3f4aacca3f5"
+    },
+    {
+      "id": "inv-2-1",
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|parseOrdinaryDocumentationRequest|INTENT_BEARING_PAGE#bc4d6dc1d5c4649eb1b7591c69cc404ad02b63a1e9db717095771eecd09cc839"
+    },
+    {
+      "id": "inv-4-1",
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|explicitScopeRestrictionMatches|regex#d59df2622e7209933cb238bbe213d6a439a76e2b14828bed36729d76f6168578"
+    },
+    {
+      "id": "inv-8-1",
+      "fingerprint": "packages/knowledge/src/first-pass/partial.mjs|classifyDocumentationPartialFallback|SCAFFOLD_REQUEST#96ac7dc8bdae91cdabd8fb18d60654ade1a86115568276350016e804fd7afd44"
+    },
+    {
+      "id": "inv-8-2",
+      "fingerprint": "packages/knowledge/src/first-pass/partial.mjs|classifyDocumentationPartialFallback|STRICT_ORIGINAL_ONLY#491c36fc7615a691ad0d12e62659115f69a341e2ae82d35205c1b0fcb565f054"
+    },
+    {
+      "id": "inv-8-3",
+      "fingerprint": "packages/knowledge/src/first-pass/partial.mjs|isInstallationGuideCreate|INSTALLATION_GUIDE#5e408f9aabf6221c70d65e56d9707be05fb3f0ef9d9b87e8abaec73a36b02ba2"
+    },
+    {
+      "id": "inv-8-4",
+      "fingerprint": "packages/knowledge/src/first-pass/partial.mjs|readerTaskForObligation|INSTALLATION_GUIDE#5e408f9aabf6221c70d65e56d9707be05fb3f0ef9d9b87e8abaec73a36b02ba2"
+    },
+    {
+      "id": "inv-8-5",
+      "fingerprint": "packages/knowledge/src/first-pass/partial.mjs|claimsThatCannotBeMade|regex#189f551fcc8569ec9afab909304c06f1405ec2d059ee8eb3fe38c1014d9f1d2c"
+    },
+    {
+      "id": "inv-6-1",
+      "fingerprint": "packages/knowledge/src/first-pass.mjs|parseBoundedBehaviorRequest|INTENT_BEARING_PAGE#bc4d6dc1d5c4649eb1b7591c69cc404ad02b63a1e9db717095771eecd09cc839"
+    },
+    {
+      "id": "inv-6-2",
+      "fingerprint": "packages/knowledge/src/first-pass.mjs|parseBoundedBehaviorRequest|BOUNDED_BEHAVIOR_REQUEST_PREFIX#b9ce8d6b23972fe34de36c8a049d5a9358411f878a73ecbc585730fceeebbe6d"
+    },
+    {
+      "id": "inv-6-3",
+      "fingerprint": "packages/knowledge/src/first-pass.mjs|parseBoundedBehaviorRequest|BOUNDED_BEHAVIOR_REQUEST_SUFFIX#7b7ed60783cd6a755c8609ddbb4f6137fa83c9511d01de36d7d9ee0281925fce"
+    },
+    {
+      "id": "inv-15-1",
+      "fingerprint": "packages/runtime/src/cli/commands/do-delegated.ts|deriveDelegatedPauseTargets|DELEGATED_PATH_TOKEN#925b6fc7b52ba45ca5c7fe7636a7d1a38719c2f48f130f31fbf617ea0d09f3df"
+    },
+    {
+      "id": "inv-15-2",
+      "fingerprint": "packages/runtime/src/cli/commands/do-delegated.ts|deriveDelegatedPauseTargets|DELEGATED_MARKDOWN_TOKEN#92efdbb7df63041316309392750b2a1c2ee24a8fc188da71087846cf67ba6dcf"
+    },
+    {
+      "id": "inv-10-1",
+      "fingerprint": "packages/runtime/src/cli/first-pass.ts|explicitProjectConfigTarget|regex#c35a20ed314a00bae4934d7e7f71aa95855591be9a6dcdad641c9aeebe465202"
+    },
+    {
+      "id": "inv-10-2",
+      "fingerprint": "packages/runtime/src/cli/first-pass.ts|explicitProjectConfigTarget|regex#3cf17f8ad4926a6f1c2b608811125b405aa291a6b17a804532262233f90c1c4f"
+    },
+    {
+      "id": "inv-10-3",
+      "fingerprint": "packages/runtime/src/cli/first-pass.ts|explicitProjectConfigTarget|regex#db8d299713b44f3c029152a606fd855b50d2413cfdebc65e4159f30726326ece"
+    },
+    {
+      "id": "inv-10-4",
+      "fingerprint": "packages/runtime/src/cli/first-pass.ts|explicitProjectConfigTarget|regex#1d66278ede273bd8ee4eb67de01b6d3725580bb7d0265f2bc10e079038efd2eb"
+    },
+    {
+      "id": "inv-10-5",
+      "fingerprint": "packages/runtime/src/cli/first-pass.ts|explicitProjectConfigTarget|regex#747678b5492992101dac79ee50e80f13b1d41d3ea475e648299628b194665dc5"
+    },
+    {
+      "id": "inv-10-6",
+      "fingerprint": "packages/runtime/src/cli/first-pass.ts|explicitProjectConfigTarget|regex#e5d1a768a9be419b78f651089dc117f7f281a9539feb1ebcd63d5e4165a44377"
+    },
+    {
+      "id": "inv-9-1",
+      "fingerprint": "packages/runtime/src/cli/knowledge-resume.ts|inspectRequestedPageSupport|INTENT_BEARING_PAGE#bc4d6dc1d5c4649eb1b7591c69cc404ad02b63a1e9db717095771eecd09cc839"
+    },
+    {
+      "id": "inv-9-2",
+      "fingerprint": "packages/runtime/src/cli/knowledge-resume.ts|legacyRequestedDocumentationPaths|token#0c5d70cb9d5348983845c915661cebcdc85e29a44238a833c56a72017571fd13"
+    },
+    {
+      "id": "inv-9-3",
+      "fingerprint": "packages/runtime/src/cli/knowledge-resume.ts|legacyRequestedDocumentationPaths|ORDINARY_OPERATION#ca5c4484c7f98563612f76eb9a5b06bef28b005935620748f329f1f8a3ea3f4a"
+    },
+    {
+      "id": "inv-9-4",
+      "fingerprint": "packages/runtime/src/cli/knowledge-resume.ts|legacyRequestedDocumentationPaths|regex#db8d299713b44f3c029152a606fd855b50d2413cfdebc65e4159f30726326ece"
+    },
+    {
+      "id": "inv-9-5",
+      "fingerprint": "packages/runtime/src/cli/knowledge-resume.ts|parseBoundedBehaviorRequest|BOUNDED_BEHAVIOR_REQUEST_PREFIX#b9ce8d6b23972fe34de36c8a049d5a9358411f878a73ecbc585730fceeebbe6d"
+    },
+    {
+      "id": "inv-9-6",
+      "fingerprint": "packages/runtime/src/cli/knowledge-resume.ts|parseBoundedBehaviorRequest|BOUNDED_BEHAVIOR_REQUEST_SUFFIX#7b7ed60783cd6a755c8609ddbb4f6137fa83c9511d01de36d7d9ee0281925fce"
+    },
+    {
+      "id": "inv-9-7",
+      "fingerprint": "packages/runtime/src/cli/knowledge-resume.ts|isPathlessOrdinaryDocumentationInstruction|ASSESSMENT_PREFIX#dc05fc9241e305a623b16d9deee8c98b33c7197b6b2bb024a0d5ea30462977cd"
+    },
+    {
+      "id": "inv-9-8",
+      "fingerprint": "packages/runtime/src/cli/knowledge-resume.ts|isPathlessOrdinaryDocumentationInstruction|INTENT_BEARING_PAGE#bc4d6dc1d5c4649eb1b7591c69cc404ad02b63a1e9db717095771eecd09cc839"
+    },
+    {
+      "id": "inv-9-10",
+      "fingerprint": "packages/runtime/src/cli/knowledge-resume.ts|isPathlessOrdinaryDocumentationInstruction|MARKDOWN_TARGET_TOKEN#fe08e2569f769d0bcaf30fd50ed7c949c53d2ec9c05ee3bc3b3f05f7df8756f0"
+    },
+    {
+      "id": "inv-13-1",
+      "fingerprint": "packages/runtime/src/inputs/merged-mr-instruction.ts|looksLikeMergedMrDiscovery|regex#9bd46bb225f1c5d08835890a5e88f3038949abab88cd8933a37175db3046c21f"
+    },
+    {
+      "id": "inv-13-2",
+      "fingerprint": "packages/runtime/src/inputs/merged-mr-instruction.ts|looksLikeMergedMrDiscovery|regex#2a97a9e2ce04405c780f937f661f05f3aeea56eb52003cf4427207117092f73f"
+    },
+    {
+      "id": "inv-13-3",
+      "fingerprint": "packages/runtime/src/inputs/merged-mr-instruction.ts|collectNamedDates|MONTH_DATE#b9a3351909a6c76da1240300b2c5926ffe234ede977aca7309458c3a860e2036"
+    },
+    {
+      "id": "inv-13-4",
+      "fingerprint": "packages/runtime/src/inputs/merged-mr-instruction.ts|collectTimeZones|IANA_ZONE#dcba2ebd9aa94ffe80da6693b61e39bbe98ec08051a632227f94f9e17838bf97"
+    },
+    {
+      "id": "inv-13-5",
+      "fingerprint": "packages/runtime/src/inputs/merged-mr-instruction.ts|collectTimeZones|string#7e5f76c94a635c217e282f79db4fc7ee4bfd9b64044166714067602cc4be620c"
+    },
+    {
+      "id": "inv-13-6",
+      "fingerprint": "packages/runtime/src/inputs/merged-mr-instruction.ts|collectExplicitIids|EXPLICIT_MR_IID#e0d73de363e3db92f0f3534e8a2fc929b70ff9ccca8f9beeef6837af228c7a87"
+    },
+    {
+      "id": "inv-13-7",
+      "fingerprint": "packages/runtime/src/inputs/merged-mr-instruction.ts|parseMergedMrUpdateInstruction|MERGED_INTO#bd0fb7b52165ac123412efc94b35405f1a16eb0ca5198aff678a40b18595e060"
+    },
+    {
+      "id": "inv-12-1",
+      "fingerprint": "packages/runtime/src/workflow-execution/local-review-scope.ts|documentationPaths|regex#e52d161b8e6cb0c99a683e53d36ffb9a481e4bcfc3dd177bb66a6bdf8ef75a52"
+    },
+    {
+      "id": "inv-12-2",
+      "fingerprint": "packages/runtime/src/workflow-execution/local-review-scope.ts|resolveLocalReviewScope|regex#eea1ea0c93998ce92682fa1d4964138caf507b6a818fc147f24d447ce13f6e18"
+    }
+  ],
+  "allowlist": [
+    {
+      "fingerprint": "packages/knowledge/src/adapters/docsfab.mjs|requireInstructionDisclosure|CREDENTIAL_PATTERN#2cddd7cfb5894298705ee2a2f142d53d17379ab4f42480ce581425e4cb0707fa",
+      "category": "narrowing",
+      "inventoryRow": null,
+      "rationale": "Credential refusal: credential-shaped request text is refused or withheld from records; it decides no target, route, or grant. Not named in the decision record's narrowing list; recorded for the Epic owner."
+    },
+    {
+      "fingerprint": "packages/knowledge/src/first-pass/assess.mjs|seedObligations|explicitPatterns[nonpublication]#dec71e7c70f0d55b9a92dab99a13812523832db3552488262c36796ce591b96b",
+      "category": "narrowing",
+      "inventoryRow": 7,
+      "rationale": "Publication prohibition: first pass seeds a non-publication obligation from \"keep the result local; do not publish\"; it only adds a restriction."
+    },
+    {
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|mentionAsksForChange|CHANGE_REQUEST_CLAUSE#9e89796ec87ac224c3d74e362ea6adfba3ac4bf68190cc923f7fdc4009a6ca20",
+      "category": "narrowing",
+      "inventoryRow": null,
+      "rationale": "Repeated-page refusal (owner decision, #1914 note 72956288; tightened after the !1577 review): a page the request names more than once binds once only when every mention's clause has a change-request shape and holds no unclear word (negation, exclusion, preservation, restriction, removal, avoidance, condition, or deferral); any other mention refuses the whole request and names the page. It never adds a target: the bound set is the set of pages the request already names."
+    },
+    {
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|mentionAsksForChange|UNCLEAR_CHANGE_WORD#d3f397a6ff43502eb8c36b89dce85597260b93a26b6ea6be8df304ddf7dd0f8e",
+      "category": "narrowing",
+      "inventoryRow": null,
+      "rationale": "Repeated-page refusal (owner decision, #1914 note 72956288; tightened after the !1577 review): a page the request names more than once binds once only when every mention's clause has a change-request shape and holds no unclear word (negation, exclusion, preservation, restriction, removal, avoidance, condition, or deferral); any other mention refuses the whole request and names the page. It never adds a target: the bound set is the set of pages the request already names."
+    },
+    {
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|mentionIsActionable|WRITE_VERB#0587d104086790f746fd01536d333eb5c3153925670dfeda0f9a4b9da2a2109a",
+      "category": "narrowing",
+      "inventoryRow": 3,
+      "rationale": "Negation and deferral refusal: a target mention whose clause negates, questions, or defers the write is not actionable, so the request is refused rather than written."
+    },
+    {
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|mentionIsActionable|INTERROGATIVE_CLAUSE#8843dc97c60990b6eaa69cf07c48521e7670800491f27dd5ca449f832ba14948",
+      "category": "narrowing",
+      "inventoryRow": 3,
+      "rationale": "Negation and deferral refusal: a target mention whose clause negates, questions, or defers the write is not actionable, so the request is refused rather than written."
+    },
+    {
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|mentionIsActionable|NEGATED_VERB#ea860e6d3d2c48156859c817dbaf323246b933ebdf612d3f749853740fc071cc",
+      "category": "narrowing",
+      "inventoryRow": 3,
+      "rationale": "Negation and deferral refusal: a target mention whose clause negates, questions, or defers the write is not actionable, so the request is refused rather than written."
+    },
+    {
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|mentionIsActionable|WHETHER_VERB#dc489ccedfdf5f5e0e5b624a7db1a56ce28a6ab5d630eb1574cc57cb3e0c4a8b",
+      "category": "narrowing",
+      "inventoryRow": 3,
+      "rationale": "Negation and deferral refusal: a target mention whose clause negates, questions, or defers the write is not actionable, so the request is refused rather than written."
+    },
+    {
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|mentionIsActionable|DEFERRED_VERB#5ae359bdc130aee9fd42637d6c3f779de67ec2ea2b29d33a83acf559e075051e",
+      "category": "narrowing",
+      "inventoryRow": 3,
+      "rationale": "Negation and deferral refusal: a target mention whose clause negates, questions, or defers the write is not actionable, so the request is refused rather than written."
+    },
+    {
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|mentionIsPreserved|regex#02e30208eef51b642839b6738a8326a920c760bf8d3ebdab772bad241ea0fc55",
+      "category": "narrowing",
+      "inventoryRow": 1,
+      "rationale": "Keep/leave-unchanged exclusion only removes write targets: a page whose clause says keep or leave it unchanged, or do not edit, change, modify, or update it, is never a write target on either request arm."
+    },
+    {
+      "fingerprint": "packages/knowledge/src/product-feedback-materializer.mjs|text|regex#70de7e38bd4a3a54c337de3c529275c5aefd57fb6ddbd4319d19de8f789f7483",
+      "category": "narrowing",
+      "inventoryRow": null,
+      "rationale": "Credential refusal: credential-shaped request text is refused or withheld from records; it decides no target, route, or grant. Not named in the decision record's narrowing list; recorded for the Epic owner."
+    },
+    {
+      "fingerprint": "packages/runtime/src/cli/first-pass.ts|explicitProjectConfigTarget|proposalScopeExclusion#d80ecd4bfd2443a6f1a94f91459f49ec2b916dc8aa05f53ec00196072068e9b9",
+      "category": "narrowing",
+      "inventoryRow": 10,
+      "rationale": "Negation refusal: an exclusion or preservation word next to `.docsfab.json` keeps it out of the proposed write scope; it only withholds a target."
+    },
+    {
+      "fingerprint": "packages/runtime/src/cli/first-pass.ts|explicitProjectConfigTarget|proposalScopeExclusion#d80ecd4bfd2443a6f1a94f91459f49ec2b916dc8aa05f53ec00196072068e9b9",
+      "category": "narrowing",
+      "inventoryRow": 10,
+      "rationale": "Negation refusal: an exclusion or preservation word next to `.docsfab.json` keeps it out of the proposed write scope; it only withholds a target."
+    },
+    {
+      "fingerprint": "packages/runtime/src/cli/outcome-router.ts|FIXED_ROUTES[workflow=review-documentation].match|REVIEW_DOCUMENTATION_JOB#fd7987e87d5febe57f3c68e629891ee2f80563d0cdd3886a68cc7887a0b17bd9",
+      "category": "kept-by-decision",
+      "inventoryRow": 16,
+      "rationale": "`do`'s fixed outcome table routes on request keywords; kept by decision, and replacing it is a non-goal of the request-intent Epic."
+    },
+    {
+      "fingerprint": "packages/runtime/src/cli/outcome-router.ts|FIXED_ROUTES[workflow=review-documentation].match|regex#ce9594ec4bfc334b39c08f4cd7b73af91c3380e0e175a63d41faf46cca8b4ca5",
+      "category": "kept-by-decision",
+      "inventoryRow": 16,
+      "rationale": "`do`'s fixed outcome table routes on request keywords; kept by decision, and replacing it is a non-goal of the request-intent Epic."
+    },
+    {
+      "fingerprint": "packages/runtime/src/cli/outcome-router.ts|FIXED_ROUTES[workflow=review-documentation].match|regex#dfc50d3ec1e7039cb23697064f5e4921f6d86651c541d4cda63fa23ab39ab5ad",
+      "category": "kept-by-decision",
+      "inventoryRow": 16,
+      "rationale": "`do`'s fixed outcome table routes on request keywords; kept by decision, and replacing it is a non-goal of the request-intent Epic."
+    },
+    {
+      "fingerprint": "packages/runtime/src/cli/outcome-router.ts|FIXED_ROUTES[workflow=review-documentation].match|regex#02269a6f95c80dcfa81277d712ef9e0791e2e1302a35dfc4338d171dd45b86de",
+      "category": "kept-by-decision",
+      "inventoryRow": 16,
+      "rationale": "`do`'s fixed outcome table routes on request keywords; kept by decision, and replacing it is a non-goal of the request-intent Epic."
+    },
+    {
+      "fingerprint": "packages/runtime/src/cli/outcome-router.ts|FIXED_ROUTES[workflow=review-documentation].match|regex#812213624db7782cfe981c67adf1e459355bd3df2c3fefeaa446c8e154193074",
+      "category": "kept-by-decision",
+      "inventoryRow": 16,
+      "rationale": "`do`'s fixed outcome table routes on request keywords; kept by decision, and replacing it is a non-goal of the request-intent Epic."
+    },
+    {
+      "fingerprint": "packages/runtime/src/cli/outcome-router.ts|FIXED_ROUTES[workflow=create-documentation].match|CREATE_DOCUMENTATION_JOB#91d19808c6ce94c9c38610b3a91aa0cfd2066f76bf07c83470e0c82be913376f",
+      "category": "kept-by-decision",
+      "inventoryRow": 16,
+      "rationale": "`do`'s fixed outcome table routes on request keywords; kept by decision, and replacing it is a non-goal of the request-intent Epic."
+    },
+    {
+      "fingerprint": "packages/runtime/src/cli/outcome-router.ts|FIXED_ROUTES[workflow=create-documentation].match|regex#c51aae539cbeee4b0aa27c26b55c81b4dbc42d4c3081654b66cde0fd2f6566ab",
+      "category": "kept-by-decision",
+      "inventoryRow": 16,
+      "rationale": "`do`'s fixed outcome table routes on request keywords; kept by decision, and replacing it is a non-goal of the request-intent Epic."
+    },
+    {
+      "fingerprint": "packages/runtime/src/cli/outcome-router.ts|FIXED_ROUTES[workflow=update-documentation].match|UPDATE_DOCUMENTATION_JOB#804b0c4729af6a0cb1264f2008292359a9ebbd2bd3fdc8f7cc2fb8efbe6549b0",
+      "category": "kept-by-decision",
+      "inventoryRow": 16,
+      "rationale": "`do`'s fixed outcome table routes on request keywords; kept by decision, and replacing it is a non-goal of the request-intent Epic."
+    },
+    {
+      "fingerprint": "packages/runtime/src/cli/outcome-router.ts|FIXED_ROUTES[workflow=update-documentation].match|regex#2faceb57bc17d39257a418c50806ffbcc896afbd75a7be8736ef60d8cf217ab1",
+      "category": "kept-by-decision",
+      "inventoryRow": 16,
+      "rationale": "`do`'s fixed outcome table routes on request keywords; kept by decision, and replacing it is a non-goal of the request-intent Epic."
+    },
+    {
+      "fingerprint": "packages/runtime/src/cli/outcome-router.ts|FIXED_ROUTES[workflow=update-documentation].match|regex#dbcd2ff170b1f1475f3be8f712e1dbf4bca6915ec71ebbff0a5ff3a33afd9a1d",
+      "category": "kept-by-decision",
+      "inventoryRow": 16,
+      "rationale": "`do`'s fixed outcome table routes on request keywords; kept by decision, and replacing it is a non-goal of the request-intent Epic."
+    },
+    {
+      "fingerprint": "packages/runtime/src/cli/outcome-router.ts|FIXED_ROUTES[workflow=restructure-documentation].match|RESTRUCTURE_DOCUMENTATION_JOB#4e685d1e2fb09e447be456f9060833f1366f17c17f8785a2a17a4924fb6eb783",
+      "category": "kept-by-decision",
+      "inventoryRow": 16,
+      "rationale": "`do`'s fixed outcome table routes on request keywords; kept by decision, and replacing it is a non-goal of the request-intent Epic."
+    },
+    {
+      "fingerprint": "packages/runtime/src/cli/outcome-router.ts|isTemplateAuditRequest|regex#547bc23e6e3c6bfcc53441eb7094d211c9e3228a670fdda33fcd1fa3c2043f81",
+      "category": "kept-by-decision",
+      "inventoryRow": 16,
+      "rationale": "`do`'s fixed outcome table routes on request keywords; kept by decision. This row selects the read-only, model-free audit-documentation workflow only for conformance wording (follow, conform to, comply with, or against our/its/the templates, or template conformance); it grants nothing."
+    },
+    {
+      "fingerprint": "packages/runtime/src/cli/outcome-router.ts|isTemplateAuditRequest|expr#5417735ecf81238c2834a2cf7968752b390e5a68f3ae0d35631af58fc8ab5b88",
+      "category": "kept-by-decision",
+      "inventoryRow": 16,
+      "rationale": "`do`'s fixed outcome table routes on request keywords; kept by decision. The audit route also requires a documentation noun, the same artifact vocabulary the other routes use."
+    },
+    {
+      "fingerprint": "packages/runtime/src/cli/outcome-router.ts|isTemplateAuditRequest|regex#455e2fd351e5bd6e5dfe194ac19d01e16ef28fa4e63786742e42c244bf4242a0",
+      "category": "narrowing",
+      "inventoryRow": 16,
+      "rationale": "Keeps review, accuracy, technical, write, document, and explanation requests off the template audit route; it only withholds that route."
+    },
+    {
+      "fingerprint": "packages/runtime/src/cli/outcome-router.ts|isTemplateAuditRequest|regex#26ab9ef28966366d4f0f5578b145847aa2feb8aae0fd5d421747d900c9ac9cb3",
+      "category": "narrowing",
+      "inventoryRow": 16,
+      "rationale": "Keeps requests about Helm chart templates off the documentation template audit route; it only withholds that route."
+    },
+    {
+      "fingerprint": "packages/runtime/src/cli/outcome-router.ts|shouldPreserveOriginalAsInstruction|PACK_OR_CLASSIFIER_LANGUAGE#32c65138478a0cdeea270b461b537802b1f3b96a4306a64d03324a61cc05292e",
+      "category": "narrowing",
+      "inventoryRow": 16,
+      "rationale": "`do` unsupported-request refusal: classifier or install wording keeps the operator text out of the refusal's suggested instruction; it only withholds a suggestion."
+    },
+    {
+      "fingerprint": "packages/runtime/src/cli/outcome-router.ts|isAdmissionModelEligible|PACK_OR_CLASSIFIER_LANGUAGE#32c65138478a0cdeea270b461b537802b1f3b96a4306a64d03324a61cc05292e",
+      "category": "narrowing",
+      "inventoryRow": 16,
+      "rationale": "`do` unsupported-request refusal: classifier or install wording keeps the request away from the admission model, so the unsupported stop stands."
+    },
+    {
+      "fingerprint": "packages/runtime/src/cli/publication-prohibition.ts|normalizedRequest|HTML_ENTITY#1de9177feaad797e6388710386fae0fec4da5f6c6519d42a3d12dca1738cfdcd",
+      "category": "narrowing",
+      "inventoryRow": 17,
+      "rationale": "Publication prohibition: decodes the few HTML entities pasted text carries, such as &nbsp;, before the guard reads the request; it only lets a prohibition be read."
+    },
+    {
+      "fingerprint": "packages/runtime/src/cli/publication-prohibition.ts|clauseEnds|CLAUSE_OR_LINE_END#88e4d0206f60106c88525cbacfd2d78b67a986228a7040a8d32d1ca76f04efce",
+      "category": "narrowing",
+      "inventoryRow": 17,
+      "rationale": "Publication prohibition: splits the request into clauses at sentence ends, semicolons, colons, parentheses, dashes, \"but\", \"then\", and line breaks, so a prohibition on its own line counts; it only removes publication."
+    },
+    {
+      "fingerprint": "packages/runtime/src/cli/publication-prohibition.ts|clauseEnds|CLAUSE_END#b60b4663ea7288f7cd8c1ddc70e265d1875c6eda80a003e802c209d9f2a6f38d",
+      "category": "narrowing",
+      "inventoryRow": 17,
+      "rationale": "Publication prohibition: the same clause split reading line breaks as spaces, so a prohibition wrapped across a line still counts; it only removes publication."
+    },
+    {
+      "fingerprint": "packages/runtime/src/cli/publication-prohibition.ts|clauseEnds|CLAUSE_END_AT_ANY_PERIOD#b2eccde6883b52e53279f151273aaa62780a7c65b0d2dd949bcb23b26fafb63e",
+      "category": "narrowing",
+      "inventoryRow": 17,
+      "rationale": "Publication prohibition: the same clause split at every period, even one inside a word, so a prohibition after a missing space still counts; it only removes publication."
+    },
+    {
+      "fingerprint": "packages/runtime/src/cli/publication-prohibition.ts|clauseEnds|CLAUSE_OR_COMMA_END#28b83c21593ddbf3539ccca75c6109b6f83dc1781db9e1a8f04281856ab6eff7",
+      "category": "narrowing",
+      "inventoryRow": 17,
+      "rationale": "Publication prohibition: the same clause split at every comma, so a prohibition spliced on with a comma, such as \"update the guide, do not push\", still counts; it only removes publication."
+    },
+    {
+      "fingerprint": "packages/runtime/src/cli/publication-prohibition.ts|clauseSpans|CLAUSE_AND#2f7f3f914d3f502914681842411336a06178928eae7fadf8300a75b01f415448",
+      "category": "narrowing",
+      "inventoryRow": 17,
+      "rationale": "Publication prohibition: a clause that is not one prohibition as a whole is read again split at \"and\", so a prohibition beside another ask still counts; it only removes publication."
+    },
+    {
+      "fingerprint": "packages/runtime/src/cli/publication-prohibition.ts|isProhibitionClause|PUBLICATION_PROHIBITION_CLAUSE#20a78d2de0f7f84088eb63175f088eb2bd888ff64db353931bf6b18f877cc89e",
+      "category": "narrowing",
+      "inventoryRow": 17,
+      "rationale": "Publication prohibition: an explicit clause such as \"do not publish\", \"do not push\", \"skip the MR\", \"keep the result local\", or \"only produce a patch\", time-bound or conditional too, makes `run` and `do` refuse a delivery that publishes; it only removes publication."
+    },
+    {
+      "fingerprint": "packages/runtime/src/cli/publication-prohibition.ts|isProhibitionClause|ROUTABLE_PROHIBITION_CLAUSE#630a828ef39a17c52bd7685257b7584c1dc5de846051c680587acc32fa06ba23",
+      "category": "narrowing",
+      "inventoryRow": 17,
+      "rationale": "Publication prohibition: `do` leaves a prohibition clause out of its publication-risk check, so it routes the request; every such clause is also a PUBLICATION_PROHIBITION_CLAUSE that refuses a publishing delivery, so it grants nothing."
+    },
+    {
+      "fingerprint": "packages/runtime/src/cli/outcome-router.ts|routeOutcomeRequest|PUBLICATION_RISK_EXPANDING#727378b345c98abff2167823ca597f3a7d941b46c68b147a538e43a1390d5bba",
+      "category": "narrowing",
+      "inventoryRow": 16,
+      "rationale": "`do` risk-expanding refusal: publication or MR wording stops the route with needs-input instead of granting publication."
+    },
+    {
+      "fingerprint": "packages/runtime/src/cli/outcome-router.ts|routeOutcomeRequest|RISK_EXPANDING#89d477bf7cf01c2a8ab148a330821dc26f275c4a05d547b57cc53929c0ed8869",
+      "category": "narrowing",
+      "inventoryRow": 16,
+      "rationale": "`do` risk-expanding refusal: authority, tracker, skill-router, MCP, or delegated-selection wording stops the route with needs-input."
+    },
+    {
+      "fingerprint": "packages/runtime/src/cli/outcome-router.ts|routeOutcomeRequest|UNSUPPORTED#3cb576107f72e0165c564313fc8113691cc7098d28c138277a1795c53ec06f4e",
+      "category": "narrowing",
+      "inventoryRow": 16,
+      "rationale": "`do` unsupported-request refusal: skill-pack, skill-search, or external-agent wording stops the route with needs-input."
+    },
+    {
+      "fingerprint": "packages/runtime/src/cli/outcome-router.ts|routeOutcomeRequest|regex#c8dbbbbc4bbcc187ee222dc10bf01c29a83ba71e838b82e2f67da6e13a35addd",
+      "category": "narrowing",
+      "inventoryRow": 16,
+      "rationale": "`do` unsupported-request refusal: a polish request (without foundation) stops with needs-input; it never selects a route."
+    },
+    {
+      "fingerprint": "packages/runtime/src/cli/outcome-router.ts|routeOutcomeRequest|regex#36e3e07e2902067c0d1bca0333aedb4d89f3c9c6a7e9fb7cc2d3307cb235f51e",
+      "category": "narrowing",
+      "inventoryRow": 16,
+      "rationale": "`do` unsupported-request refusal: a polish request (without foundation) stops with needs-input; it never selects a route."
+    },
+    {
+      "fingerprint": "packages/runtime/src/cli/outcome-router.ts|routeOutcomeRequest|regex#ddf9b3d6b693ad5c384137e1de019a580da08d3f79ebdc2b3e5a6d970cde2790",
+      "category": "narrowing",
+      "inventoryRow": 16,
+      "rationale": "`do` ambiguous refusal: an open-ended request stops with needs-input; it never selects a route."
+    },
+    {
+      "fingerprint": "packages/runtime/src/cli/outcome-router.ts|routeOutcomeRequest|regex#cd77a5c4b5446cde8408b7cc089dc373636f7194c52446f8105005469b60b2bb",
+      "category": "narrowing",
+      "inventoryRow": 16,
+      "rationale": "`do` ambiguous refusal: an open-ended request stops with needs-input; it never selects a route."
+    },
+    {
+      "fingerprint": "packages/runtime/src/workflow-execution/local-review-scope.ts|resolveLocalReviewScope|regex#12915804cfaf5dc5dda021de7c98c3a09aeef20bee756b282e5971fbe3d072c7",
+      "category": "narrowing",
+      "inventoryRow": 12,
+      "rationale": "Negation refusal: an except, exclude, not-review, or whole-docs scope in a local review request refuses as ambiguous; it never selects a target."
+    },
+    {
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|parseOrdinaryDocumentationRequest|expr#dc959fed0fd73f5dbced2463315b3af714c23917d4799cd9743b7d13440b96b2",
+      "category": "narrowing",
+      "inventoryRow": 1,
+      "rationale": "Purpose-only negative write-scope probe recognizes Consult as a source marker so a source mention cannot trigger an early destination refusal; it grants no target or write authority."
+    },
+    {
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|purposeSyntax|regex#86134ed6ad945c03f0c8d4a57c7eaf6f69d97ddd32f501af4097bfca05d848a6",
+      "category": "narrowing",
+      "inventoryRow": 1,
+      "rationale": "Purpose-only qualifier masking keeps directory names from acting as source or write verbs; it can only prevent a false early refusal."
+    },
+    {
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|purposeSegmentState|PURPOSE_SOURCE_CUE#c7579eab1b876d1468f2b74ef10350b3b0b0cb5120c39fa0a50dbc5cea45aea3",
+      "category": "narrowing",
+      "inventoryRow": 1,
+      "rationale": "Purpose-only chronological source cue keeps evidence after an initial or later write from causing an early destination refusal."
+    },
+    {
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|purposeSegmentState|regex#e656da213b084dcc13c53922cb1fba503d87a7716987e93bd96445ff38333274",
+      "category": "narrowing",
+      "inventoryRow": 1,
+      "rationale": "Purpose-only connector check can resume a separately named affirmative write after a source cue; it cannot grant a destination or write authority."
+    },
+    {
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|purposeSegmentState|PURPOSE_NEXT_WRITE#2f4d4ddf4541872d9b0b4b53866244988811204149217741f56bb82a99ff9918",
+      "category": "narrowing",
+      "inventoryRow": 1,
+      "rationale": "Purpose-only connected-write check retains a directly requested destination after evidence for the runtime's negative root check."
+    },
+    {
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|purposeSegmentState|PURPOSE_NEXT_WRITE#2f4d4ddf4541872d9b0b4b53866244988811204149217741f56bb82a99ff9918",
+      "category": "narrowing",
+      "inventoryRow": 1,
+      "rationale": "Purpose-only direct later-clause write stays eligible for the runtime's negative root validation; it grants no target."
+    },
+    {
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|negativeWriteDestinationMatches|regex#b9633d3b75b306854ff56b2914b1604db4c16f291337ef8b84b71582a71fd777",
+      "category": "narrowing",
+      "inventoryRow": 1,
+      "rationale": "Purpose-only leading-source guard locates a later explicit write without promoting the preceding read path."
+    },
+    {
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|negativeWriteDestinationMatches|PURPOSE_WRITE_CLAUSE#90dfe98aaf449969f266cb80b1d1d71d72f5e3d8355ea829eec95875f485b1bb",
+      "category": "narrowing",
+      "inventoryRow": 1,
+      "rationale": "Purpose-only affirmative clause check excludes explanatory or pathless mentions from an early negative destination verdict."
+    },
+    {
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|negativeWriteDestinationMatches|PURPOSE_QUOTED_COMMAND#efb218735e4961ce3862d32bb53b91cf40288da9c5b496d3b8dc1c333f6d6fc0",
+      "category": "narrowing",
+      "inventoryRow": 1,
+      "rationale": "Purpose-only raw-quote check prevents a historical instruction from becoming an active write destination."
+    },
+    {
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|negativeWriteDestinationMatches|PURPOSE_QUOTED_COMMAND#efb218735e4961ce3862d32bb53b91cf40288da9c5b496d3b8dc1c333f6d6fc0",
+      "category": "narrowing",
+      "inventoryRow": 1,
+      "rationale": "Purpose-only first-path historical-quote guard independently prevents an inactive quoted command from becoming a negative root verdict."
+    },
+    {
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|negativeWriteDestinationMatches|PURPOSE_SOURCE_OBJECT#df1b6cae3b2b13afc2cbaa0e922b8dcd2f224e513dbcecaae8030efcb5f57645",
+      "category": "narrowing",
+      "inventoryRow": 1,
+      "rationale": "Purpose-only source-object check keeps a summary or description subject as evidence until a separate output is named."
+    },
+    {
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|negativeWriteDestinationMatches|PURPOSE_SOURCE_OBJECT#df1b6cae3b2b13afc2cbaa0e922b8dcd2f224e513dbcecaae8030efcb5f57645",
+      "category": "narrowing",
+      "inventoryRow": 1,
+      "rationale": "Purpose-only later-clause source-object check keeps the named summary subject as evidence while the following locative output remains eligible for negative root validation."
+    },
+    {
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|negativeWriteDestinationMatches|regex#29ab8ffa777e22c8d3490fb0c7b1d5bfc62bcd41d30bd67ae9eb8e977bf7c6e4",
+      "category": "narrowing",
+      "inventoryRow": 1,
+      "rationale": "Purpose-only locative check recognizes a separately named output after a source subject without promoting the subject."
+    },
+    {
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|negativeWriteDestinationMatches|regex#cfb1a03a066f6a7d97b0b7f97f17254a06c33ba7a51969efaab94fb263e5e175",
+      "category": "narrowing",
+      "inventoryRow": 1,
+      "rationale": "Purpose-only list continuation preserves the existing source or destination role without guessing from a filename."
+    },
+    {
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|negativeWriteDestinationMatches|string#fa8847b0c33183273f5945508b31c3208a9e4ece58ca47233a05628d8dba3799",
+      "category": "narrowing",
+      "inventoryRow": 1,
+      "rationale": "Purpose-only bare update defers root inference when tracked inventory is unavailable; direct create remains subject to existing root validation."
+    },
+    {
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|listDirectoryForMention|regex#1f4f9ed542a2e46839a2eb832c5f2057762f2488e23ead5d0e68b20679e0ed1f",
+      "category": "narrowing",
+      "inventoryRow": 1,
+      "rationale": "Purpose-only list qualifier associates each raw under-directory with its own named page members so unsafe directory prefixes are checked before inference."
+    },
+    {
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|listDirectoryForMention|regex#eb65d688cf8b143c19024af124de70fcdc0a033ccf735e2feca68ec936712e46",
+      "category": "narrowing",
+      "inventoryRow": 1,
+      "rationale": "Purpose-only list boundary stops one directory qualifier from rewriting a later independent write destination; it grants no write authority."
+    },
+    {
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|parseOrdinaryDocumentationRequest|regex#30e1dead727a4615f7e437405a2858cb312bf156a3f3d66a10b6f7deb86ccf9a",
+      "category": "narrowing",
+      "inventoryRow": 1,
+      "rationale": "The suffix guard extends unsafe-path refusal to RST-like mentions; the declared update workflow, patch-only flag, and exact tracked-page host admission remain required for writing."
+    },
+    {
+      "fingerprint": "packages/knowledge/src/first-pass/parse.mjs|documentationPathMatches|regex#30e1dead727a4615f7e437405a2858cb312bf156a3f3d66a10b6f7deb86ccf9a",
+      "category": "narrowing",
+      "inventoryRow": 1,
+      "rationale": "The suffix guard identifies unsafe RST-like tokens for traversal and negative-scope refusal; safe token grammar, declared workflow, and host exact-page admission alone determine write authority."
+    },
+    {
+      "fingerprint": "packages/runtime/src/live-agent/review-target.ts|liveReviewPullRequest|regex#3406e9298be0f43950cb7a863b45f99fd1832885f67f6cfdae553095bbd52a28",
+      "category": "kept-by-decision",
+      "inventoryRow": null,
+      "rationale": "The human-requested live-agent PR review binds one explicit public GitHub PR URL from the verbatim operator instruction. This recognizes URL syntax only after review-documentation is selected, including insecure schemes so the shared change-source parser can refuse them before any local-HEAD fallback. The parser validates the selector, ambiguous URLs refuse, and conversation context cannot select a target. It grants no writes or workflow route."
+    },
+    {
+      "fingerprint": "packages/runtime/src/live-agent/review-target.ts|liveReviewPullRequest|regex#fd62bb2a13376d91f212d52c55205b396f9d5f6d4326f3983f354875eabfde53",
+      "category": "narrowing",
+      "inventoryRow": null,
+      "rationale": "Restricts the explicit GitHub URL selector to pull-request paths; unrelated GitHub links cannot select a review snapshot. The shared selector parser remains authoritative for URL validity."
+    },
+    {
+      "fingerprint": "packages/runtime/src/live-agent/review-target.ts|liveReviewNetworkAllowed|regex#bca9c3462163edae8b9e5d2d429ee9a295c4c2467368adf617a3d52f6699a5aa",
+      "category": "narrowing",
+      "inventoryRow": null,
+      "rationale": "An explicit operator network prohibition, including do not and don't contractions with straight or curly apostrophes, suppresses GitHub acquisition and preserves the existing supplied-local-evidence review path. It adds no authority, inferred target, write, or workflow route; the host announces that no PR snapshot was acquired."
+    }
+  ]
+}

@@ -1,0 +1,99 @@
+# DocsFab operational limits owned by the `semantic` name prefix.
+# Registered in config/limits.yaml; every limit here is named `semantic.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: semantic.comparisonChunkBytes
+    value: 16777216
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_SEMANTIC_COMPARISON_CHUNK_BYTES
+    min: 4096
+    max: 16777216
+    refusal: semantic-comparison-chunk-bytes-bound
+    remediation: Configure DOCSFAB_SEMANTIC_COMPARISON_CHUNK_BYTES within 4096..16777216; retain the sealed value for an existing revalidation directive. Complete payload framing and provider context admission still apply.
+    rationale: Full supported dispatcher CAS object capacity of 16 MiB, with exact retained payload checks. New budgets above the historical 128 KiB envelope include canon bytes; smaller sealed budgets retain their original partition formula. This is a byte carrier allowance, not a promise of model tokens or permission to truncate sources.
+
+  - name: semantic.mergeComparisonTurnBytes
+    value: 1048576
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_SEMANTIC_MERGE_COMPARISON_TURN_BYTES
+    min: 4096
+    max: 16777216
+    refusal: semantic-merge-comparison-turn-bytes-bound
+    remediation: Configure DOCSFAB_SEMANTIC_MERGE_COMPARISON_TURN_BYTES within 4096..16777216; the sealed chunk-budget carrier checks in semantic.comparisonChunkBytes still apply on top of this value.
+    rationale: One merge comparison's own per-provider-turn byte carrier ceiling, distinct from semantic.comparisonChunkBytes's dispatcher CAS-object capacity. The pilot's hash-heavy JSON measured about 2.3 bytes per provider token (2,334,156 bytes against 1,009,642 tokens), so the former 2 MiB default plus canon and framing reached the 1,000,000-token window. A 1 MiB chunk plus the observed canon and framing leaves substantial room for the configured output allowance and later tool results at that measured density. The approved model's 141 claims (about 88 KB), canon (83-98 KB), and one working merge's 90 KB evidence fit together. Operators can raise this limit for a qualified model or lower it for denser input; provider context admission and lossless narrowing still apply.
+
+  - name: semantic.mergeComparisonNarrowings
+    value: 2
+    unit: count
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_SEMANTIC_MERGE_COMPARISON_NARROWINGS
+    min: 0
+    max: 2147483647
+    refusal: semantic-merge-comparison-narrowings-bound
+    remediation: Configure DOCSFAB_SEMANTIC_MERGE_COMPARISON_NARROWINGS within the declared integer domain; increase it when a retained context or output-limit failure needs more lossless chunk splits.
+    rationale: Number of smaller admissions after a merge comparison chunk fails from exhausted context or a cut answer. The two existing halvings take the former 2 MiB turn through 1 MiB and 512 KiB; the lower 1 MiB default now ends at 256 KiB. The loop also stops when another halving would cross semantic.mergeComparisonTurnBytes's minimum, so increasing this count does not create an unbounded zero-byte turn.
+
+  - name: semantic.mergeComparisonCutAnswerRetries
+    value: 0
+    unit: count
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_SEMANTIC_MERGE_COMPARISON_CUT_ANSWER_RETRIES
+    min: 0
+    max: 3
+    refusal: semantic-merge-comparison-cut-answer-retries-bound
+    remediation: Leave this at zero to split an output-limited comparison after its first cut; to enable a same-input retry, raise this and the global cut-answer retry budget together within the declared domains.
+    rationale: The J4 comparison must assess every evidence item. The pilot's 204-item chunk used its full 32,768-token output allowance twice on identical input; an identical retry cannot make the required answer fit. A zero comparison-only cut retry hands the retained output-limit failure to the host's lossless narrowing after the first attempt. Other workflows keep retry.maxCutAnswerRetries.
+
+  - name: semantic.stateIndexBytes
+    value: 536870888
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_SEMANTIC_STATE_INDEX_BYTES
+    min: 1
+    max: 536870888
+    refusal: semantic-state-index-bytes-bound
+    remediation: Inspect the immutable index and its logical reference; lower configured admission may be restored within the supported string representation range.
+    rationale: UTF-8 JSON index admission uses the supported 64-bit Node single-string representation ceiling for worst-case ASCII. The default admits the full representation and preserves legacy padded indexes; complete logical records remain in independently verified artifact pages. This is not a memory-throughput qualification.
+
+  - name: semantic.comparisonRequestBytes
+    value: 101056512
+    unit: bytes
+    scope: sealed
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 101056512
+    refusal: host-invoker-request-max-bytes-bound
+    remediation: Reduce the sealed comparison chunk or qualify a coordinated carrier change; this is the widest serialized worker request any workflow may present, and the worker refuses a larger descriptor before parsing it.
+    rationale: Names the complete worker-request boundary for a governed semantic comparison. The chunk travels as an object inside a request that also carries canon as a JSON string, so the boundary reserves JSON's longest encoding of every admitted chunk byte on top of the ordinary request envelope, less the ordinary frozen-input aggregate the chunk replaces. It is a representation boundary, not measured memory throughput, and it is the pre-parse descriptor ceiling for every workflow.
+
+  - name: semantic.jobPollIntervalMs
+    value: 100
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_SEMANTIC_JOB_POLL_INTERVAL_MS
+    min: 1
+    max: 2147483647
+    refusal: semantic-jobPollIntervalMs-bound
+    remediation: Configure DOCSFAB_SEMANTIC_JOB_POLL_INTERVAL_MS within the declared domain, or supply an explicit cadence inside it; the submitted comparison still ends at the project's configured executor timeout.
+    rationale: Journal poll cadence while a submitted semantic comparison job runs. Ten observations a second keeps a short comparison responsive without holding the journal open continuously; a slower journal can be given a wider cadence. The maximum is the Node timer representation boundary, not a completion promise, and the refusal that ends a run is still the configured executor timeout.
+
+  - name: semantic.suggestionRationaleMaxChars
+    value: 240
+    unit: characters
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_SEMANTIC_SUGGESTION_RATIONALE_MAX_CHARS
+    min: 1
+    max: 1000
+    refusal: semantic-suggestion-rationale-max-chars-bound
+    remediation: Raise DOCSFAB_SEMANTIC_SUGGESTION_RATIONALE_MAX_CHARS up to 1000, or leave it and let the comparison write a shorter rationale; an over-long rationale is dropped and the message carries DocsFab's default suggestion instead.
+    rationale: Longest rationale that may sit beside a suggested reply on the first Slack message of a PRM decision. The line is one plain sentence read at a glance, so the default allows about two lines of Slack text, enough to name what the claim says and why the merge does or does not change it. A longer rationale is never cut. The comparison's suggestion is dropped, the drop is named on the comparison result, and the message shows DocsFab's own default suggestion marked as such. Fresh comparison replies use the effective allowance; a stored comparison outcome is read back under the catalog maximum, so lowering the allowance never invalidates one. The ceiling of 1000 characters keeps the line well inside the first message's part allowance beside its other fields.

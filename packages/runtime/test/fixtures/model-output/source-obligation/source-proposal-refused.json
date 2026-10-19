@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "kind": "docsfab-output-rule-fixture",
+  "code": "source-proposal-refused",
+  "location": "$.sourceProposals[].path",
+  "input": {
+    "runRevision": "c5fd828e37646da8d0488eb2e1b7fb5d231da788",
+    "plan": { "writePage": "docs/routing/guide.md", "sources": ["src/cli.py"] }
+  },
+  "reply": "{\"completeness\":\"bounded-not-proven\",\"dimensions\":[{\"dimension\":\"input-representations\",\"status\":\"applicable\",\"reason\":\"The candidate source supports this obligation.\",\"sourceLocators\":[],\"obligations\":[{\"id\":\"OBL-INPUT\",\"dimension\":\"input-representations\",\"sourceLocators\":[\"src/missing.py:1\"],\"statement\":\"The command reads its input from the proposed file.\",\"evidenceClass\":\"source-observation\",\"uncertainty\":\"The host has not admitted this proposal.\"}]},{\"dimension\":\"defaults-and-overrides\",\"status\":\"not-applicable\",\"reason\":\"No default behavior is established by this candidate.\",\"sourceLocators\":[\"src/cli.py:1\"],\"obligations\":[]},{\"dimension\":\"mutable-state\",\"status\":\"not-applicable\",\"reason\":\"No mutable state behavior is established by this candidate.\",\"sourceLocators\":[\"src/cli.py:1\"],\"obligations\":[]},{\"dimension\":\"destination-and-trust\",\"status\":\"not-applicable\",\"reason\":\"No destination or trust behavior is established by this candidate.\",\"sourceLocators\":[\"src/cli.py:1\"],\"obligations\":[]},{\"dimension\":\"error-status-retry\",\"status\":\"not-applicable\",\"reason\":\"No error behavior is established by this candidate.\",\"sourceLocators\":[\"src/cli.py:1\"],\"obligations\":[]},{\"dimension\":\"environment-prerequisite\",\"status\":\"not-applicable\",\"reason\":\"No environment prerequisite is established by this candidate.\",\"sourceLocators\":[\"src/cli.py:1\"],\"obligations\":[]}],\"limitations\":[],\"sourceProposals\":[{\"path\":\"src/missing.py\",\"reason\":\"It explains the command behavior.\"}]}"
+}

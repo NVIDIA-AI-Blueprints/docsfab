@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "name": "MVP live readiness acceptance",
+  "assertions": [
+    { "type": "run-count", "minimum": 2 },
+    { "type": "workflow", "equals": "readiness" },
+    { "type": "status", "equals": "succeeded" },
+    { "type": "all-steps-succeeded" },
+    { "type": "summaries-present" },
+    { "type": "step-skills", "equals": ["doc-context-analyzer"] },
+    { "type": "governed-skill-evidence" },
+    { "type": "turn-governance-evidence" },
+    { "type": "allowed-tools", "tools": ["read", "grep", "find", "ls"] },
+    { "type": "forbidden-tools", "tools": ["edit", "write"] }
+  ]
+}

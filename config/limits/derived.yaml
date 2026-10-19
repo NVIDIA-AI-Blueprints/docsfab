@@ -1,0 +1,15 @@
+# DocsFab operational limits owned by the `derived` name prefix.
+# Registered in config/limits.yaml; every limit here is named `derived.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: derived.lockWaitMs
+    value: 180000
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: null
+    min: 1000
+    max: 180000
+    refusal: derived-lock-wait-ms-bound
+    remediation: Verify that no derived generation is still running in this checkout, because an unrelated process can reuse a stopped holder's process id, then remove the named lock file and rerun. If a regeneration legitimately runs longer, raise derived.lockWaitMs in config/limits/derived.yaml and run npm run generate:limits from packages/runtime.
+    rationale: Longest time the shared derived-generation step (scripts/ensure-derived.mjs) waits on another process's checkout-level generation lock before refusing. Build, typecheck, every Vitest run, and the source-checkout docsfab launcher reach that wait, so a lock left by a stopped holder whose process id was reused must not stall them without a bound. On October 7, 2026, regenerating all four hook families (skill crate, quality pack, limits, model output) took 3.5 to 3.9 s of wall clock per run, three runs, on an 11-core macOS host at load average 6 to 7; the lock is held for less than that. 180 s is about 46 times the worst run, above the 36 times DocsFab allows between its local and CI test budgets (test.localTimeoutMs and test.ciTimeoutMs), so a slow shared runner still finishes inside it. A stopped holder is reclaimed at once; this bound only ends a wait on a holder that still looks live.

@@ -1,0 +1,160 @@
+# DocsFab operational limits owned by the `benchmarkMining` name prefix.
+# Registered in config/limits.yaml; every limit here is named `benchmarkMining.*`.
+# Read by benchmarks/corpus/mining/lib/limits.mjs, the DocsFab Bench candidate miner.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: benchmarkMining.apiPageSize
+    value: 100
+    unit: count
+    scope: per-run
+    warnAt: 1
+    override: null
+    min: 1
+    max: 100
+    refusal: bench-mining-api-page-size-bound
+    remediation: Keep benchmarkMining.apiPageSize in config/limits/benchmarkMining.yaml at or below the GitHub REST page maximum of 100.
+    rationale: Items per page the candidate miner requests from GitHub search, pull request lists, merge commit files, and timelines. 100 is the GitHub REST maximum, so each page costs the fewest requests against the hourly budget; the same precedent as localWorkflows.canaryApiPageSize for GitLab.
+
+  - name: benchmarkMining.queryPagesMax
+    value: 10
+    unit: pages
+    scope: per-run
+    warnAt: 1
+    override: DOCSFAB_BENCHMARK_MINING_QUERY_PAGES_MAX
+    min: 1
+    max: 10
+    refusal: bench-mining-query-pages-bound
+    remediation: The run report counts every listing that stopped at this bound under query-pages-exhausted; nothing past it was examined and its cursor stays in progress.json. Raise benchmarkMining.queryPagesMax in config/limits/benchmarkMining.yaml if seeds legitimately need deeper listings. DOCSFAB_BENCHMARK_MINING_QUERY_PAGES_MAX may only lower it.
+    rationale: Most pages the miner reads from one listing (one seed search, one repository's closed pull requests, one merge commit's files, or one timeline). At benchmarkMining.apiPageSize it reaches 1000 items, which is the GitHub search result cap, so a deeper search page could never answer. In the 2026-10-01 smoke run (target 10, 100 seeded repositories) no listing reached the bound. A listing that reaches the bound is counted, never read as complete; a files listing cut by it is excluded as changed-files-incomplete. The host override may only lower it.
+
+  - name: benchmarkMining.triggersPerRepositoryMax
+    value: 40
+    unit: count
+    scope: per-run
+    warnAt: 1
+    override: DOCSFAB_BENCHMARK_MINING_TRIGGERS_PER_REPOSITORY_MAX
+    min: 1
+    max: 40
+    refusal: bench-mining-triggers-per-repository-bound
+    remediation: The run report counts every repository that stopped at this bound under repository-trigger-cap-reached; its remaining pull requests were not examined. Raise benchmarkMining.triggersPerRepositoryMax in config/limits/benchmarkMining.yaml for a deeper scan of fewer repositories. DOCSFAB_BENCHMARK_MINING_TRIGGERS_PER_REPOSITORY_MAX may only lower it.
+    rationale: Most merged-or-closed pull requests the miner examines in one repository, so one busy repository cannot fill the whole 150-candidate corpus and the corpus spreads across repositories and platforms. At the 20-30 percent yield the plan estimates, 40 triggers give about 8-12 candidates from one repository, under a tenth of the 150 target. In the 2026-10-01 smoke run one repository reached it with all 40 triggers excluded (GitHub reported no recognised license at their base commits), and the bound stopped it from consuming the run. The host override may only lower it.
+
+  - name: benchmarkMining.gapReportScanCap
+    value: 40
+    unit: count
+    scope: per-run
+    warnAt: 1
+    override: DOCSFAB_BENCHMARK_MINING_GAP_REPORT_SCAN_CAP
+    min: 1
+    max: 40
+    refusal: bench-mining-gap-report-scan-cap-bound
+    remediation: The run report counts every repository that stopped at this bound under gapReportScanCapReached; its remaining closed issues were not examined. Raise benchmarkMining.gapReportScanCap in config/limits/benchmarkMining.yaml for a deeper issue scan of fewer repositories. DOCSFAB_BENCHMARK_MINING_GAP_REPORT_SCAN_CAP may only lower it.
+    rationale: Most closed issues the miner examines in detail for gap reports in one repository, past the listing filters (closed as completed with a docs-scope label), counted apart from benchmarkMining.triggersPerRepositoryMax so the pull request scan and the issue scan each keep their own share. An issue examined in detail costs its timeline and, when it links one merged pull request, that pull request's detail, files, license and tree, about 6 requests, so 40 issues cost at most about 240 requests, under a twentieth of benchmarkMining.githubRequestsPerRunMax; listing-only issues cost only their share of a listing page. Measured 2026-10-02 in three 20-candidate smoke runs (cutoff 2026-07-01) - 7 repositories scanned their issues, 22 closed issues were listed, 1 was examined in detail (at most 1 in any repository), and the issue scan sent 9 of 696 GitHub requests; no gap-report candidate was found, so the cost per gap-report candidate is still unmeasured. The value stays provisional, the same as the pull request bound, until the 150-candidate run measures it. The host override may only lower it.
+
+  - name: benchmarkMining.githubRequestsPerRunMax
+    value: 5000
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_BENCHMARK_MINING_GITHUB_REQUESTS_PER_RUN_MAX
+    min: 1
+    max: 5000
+    refusal: bench-mining-github-requests-per-run-bound
+    remediation: The run stopped before its next GitHub request and kept progress.json; rerun the same command with --resume <run-dir> to continue with a fresh budget. Raise benchmarkMining.githubRequestsPerRunMax in config/limits/benchmarkMining.yaml only if the token's hourly allowance is larger. DOCSFAB_BENCHMARK_MINING_GITHUB_REQUESTS_PER_RUN_MAX may only lower it.
+    rationale: GitHub requests one miner invocation sends, counting redirects and retries. 5000 is the authenticated GitHub REST core allowance per hour, so one invocation cannot outrun it. The plan estimate is 4-6 requests per examined trigger and 500-750 triggers for 150 candidates, about 2000-4500 requests, so a full corpus needs about one invocation and --resume covers the rest. Measured 2026-10-01 smoke run - 191 requests for 10 candidates (19.1 per candidate, about 3.1 per trigger examined in detail), which projects about 2900 requests for 150. The host override may only lower it.
+
+  - name: benchmarkMining.rateLimitWaitMaxMs
+    value: 60000
+    unit: ms
+    scope: per-run
+    warnAt: 1
+    override: DOCSFAB_BENCHMARK_MINING_RATE_LIMIT_WAIT_MAX_MS
+    min: 1000
+    max: 60000
+    refusal: bench-mining-rate-limit-wait-bound
+    remediation: GitHub asked the miner to wait longer than this bound after a secondary rate limit. The run stopped with progress.json kept; wait for the time GitHub named, then rerun with --resume <run-dir>. DOCSFAB_BENCHMARK_MINING_RATE_LIMIT_WAIT_MAX_MS may only lower it, which also shortens the wait after a secondary limit that names no retry-after.
+    rationale: Longest retry-after wait the miner honors in place after a GitHub secondary rate limit before it stops and leaves the rest to --resume, and the wait it uses when a 403 or 429 names a secondary rate limit in its message without retry-after. GitHub documents waiting at least one minute when no retry-after is sent, and its search allowance resets every minute, so 60 s covers the documented secondary waits without holding a run idle for longer; a secondary limit that outlasts benchmarkMining.requestRetriesMax waits refuses with progress kept and never excludes the repository. A primary limit (x-ratelimit-remaining 0) never waits; it stops and names the reset time. The host override may only lower it.
+
+  - name: benchmarkMining.dogbenchPayloadMaxBytes
+    value: 4194304
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_BENCHMARK_MINING_DOGBENCH_PAYLOAD_MAX_BYTES
+    min: 65536
+    max: 4194304
+    refusal: bench-mining-dogbench-payload-bytes-bound
+    remediation: The pinned DoGBench item list is larger than this bound, so no repository was mined. Check that the miner fetched the DoGBench revision its exclusion data pins, then raise benchmarkMining.dogbenchPayloadMaxBytes in config/limits/benchmarkMining.yaml. DOCSFAB_BENCHMARK_MINING_DOGBENCH_PAYLOAD_MAX_BYTES may only lower it.
+    rationale: Largest DoGBench items.jsonl body the miner reads to build its in-memory exclusion set. The pinned revision measured 676813 bytes on 2026-10-01 (HEAD content-length), so 4 MiB leaves about six times headroom for a pinned-revision bump while keeping an unexpected body from exhausting memory before parsing. The host override may only lower it.
+
+  - name: benchmarkMining.githubResponseMaxBytes
+    value: 16777216
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_BENCHMARK_MINING_GITHUB_RESPONSE_MAX_BYTES
+    min: 65536
+    max: 16777216
+    refusal: bench-mining-github-response-bytes-bound
+    remediation: One GitHub response was larger than this bound and the run stopped with progress.json kept. The usual cause is a very large recursive tree; raise benchmarkMining.githubResponseMaxBytes in config/limits/benchmarkMining.yaml and rerun with --resume <run-dir>. DOCSFAB_BENCHMARK_MINING_GITHUB_RESPONSE_MAX_BYTES may only lower it.
+    rationale: Largest single GitHub response body the miner reads. GitHub caps a recursive tree response at 100000 entries and 7 MB and marks it truncated past that, and every other response the miner reads is one page of at most benchmarkMining.apiPageSize items, so 16 MiB holds the largest legitimate answer with room for JSON overhead. The host override may only lower it.
+
+  - name: benchmarkMining.githubRequestTimeoutMs
+    value: 30000
+    unit: ms
+    scope: per-run
+    warnAt: 1
+    override: DOCSFAB_BENCHMARK_MINING_GITHUB_REQUEST_TIMEOUT_MS
+    min: 100
+    max: 30000
+    refusal: bench-mining-github-request-timeout-bound
+    remediation: GitHub did not answer within this bound after every retry; the run stopped with progress.json kept. Check connectivity to api.github.com, then rerun with --resume <run-dir>. DOCSFAB_BENCHMARK_MINING_GITHUB_REQUEST_TIMEOUT_MS may only lower it.
+    rationale: Wall-clock bound on one GitHub request, retried up to benchmarkMining.requestRetriesMax times. Provisional; the 2026-10-01 smoke run sent 191 GitHub requests in 102 s of wall time, about 0.5 s each including processing. 30 s leaves room for a large recursive tree. The host override may only lower it.
+
+  - name: benchmarkMining.huggingFaceRequestTimeoutMs
+    value: 30000
+    unit: ms
+    scope: per-run
+    warnAt: 1
+    override: DOCSFAB_BENCHMARK_MINING_HUGGING_FACE_REQUEST_TIMEOUT_MS
+    min: 100
+    max: 30000
+    refusal: bench-mining-hugging-face-request-timeout-bound
+    remediation: Hugging Face did not answer within this bound, so no exclusion list was loaded and nothing was mined. Check connectivity to huggingface.co and rerun. DOCSFAB_BENCHMARK_MINING_HUGGING_FACE_REQUEST_TIMEOUT_MS may only lower it.
+    rationale: Wall-clock bound on the one DoGBench item-list fetch, redirects included. Provisional; the 676813-byte file downloaded in about a second on 2026-10-01. The host override may only lower it.
+
+  - name: benchmarkMining.requestRetriesMax
+    value: 3
+    unit: count
+    scope: per-run
+    warnAt: 1
+    override: DOCSFAB_BENCHMARK_MINING_REQUEST_RETRIES_MAX
+    min: 0
+    max: 3
+    refusal: bench-mining-request-retries-bound
+    remediation: A GitHub request kept failing with a server error, a timeout, or a secondary rate limit after this many retries; the run stopped with progress.json kept. Rerun with --resume <run-dir> once GitHub answers. DOCSFAB_BENCHMARK_MINING_REQUEST_RETRIES_MAX may only lower it.
+    rationale: Retries after a GitHub 5xx, a network failure or timeout, or a secondary rate limit, each spaced by benchmarkMining.retryBackoffMs times the attempt number or by GitHub's retry-after. Provisional; three retries ride out a transient error without hiding a persistent one. A 404, a 403 whose message names no rate limit, and a primary rate limit are never retried. The host override may only lower it.
+
+  - name: benchmarkMining.retryBackoffMs
+    value: 2000
+    unit: ms
+    scope: per-run
+    warnAt: 1
+    override: DOCSFAB_BENCHMARK_MINING_RETRY_BACKOFF_MS
+    min: 0
+    max: 2000
+    refusal: bench-mining-retry-backoff-bound
+    remediation: Lower DOCSFAB_BENCHMARK_MINING_RETRY_BACKOFF_MS for faster retries, or raise benchmarkMining.retryBackoffMs in config/limits/benchmarkMining.yaml if GitHub needs longer to recover.
+    rationale: Base spacing between retries of one GitHub request when GitHub sends no retry-after; attempt n waits n times this value, so three retries wait 12 s in total. Provisional and unmeasured. The host override may only lower it.
+
+  - name: benchmarkMining.redirectsMax
+    value: 3
+    unit: count
+    scope: per-run
+    warnAt: 1
+    override: DOCSFAB_BENCHMARK_MINING_REDIRECTS_MAX
+    min: 0
+    max: 3
+    refusal: bench-mining-redirects-bound
+    remediation: An upstream request redirected more times than this bound and the run stopped. Check the requested URL; raise benchmarkMining.redirectsMax in config/limits/benchmarkMining.yaml only for a known redirect chain. DOCSFAB_BENCHMARK_MINING_REDIRECTS_MAX may only lower it.
+    rationale: Redirects the miner follows for one request. The pinned DoGBench item list answered with one same-origin redirect on 2026-10-01, and GitHub answers a renamed repository with one; 3 leaves room without following a loop. The Authorization header is dropped on any redirect away from https://api.github.com. The host override may only lower it.

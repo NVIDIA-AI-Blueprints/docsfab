@@ -1,0 +1,17 @@
+# DocsFab operational limits owned by the `conversion` name prefix.
+# Registered in config/limits.yaml; every limit here is named `conversion.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: conversion.maxNestingDepth
+    value: 32
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_CONVERSION_MAX_NESTING_DEPTH
+    min: 1
+    max: 256
+    refusal: conversion-max-nesting-depth-bound
+    remediation: Flatten the nesting the message names in the source page (directives, block quotes, list items, or emphasis and links inside one another), or raise conversion.maxNestingDepth with DOCSFAB_CONVERSION_MAX_NESTING_DEPTH, then rerun the same command.
+    rationale: Technical capacity. Containers nested inside one another along one path in one page that a documentation conversion reader turns into the conversion IR, counting block containers (directive bodies, block quotes, list items, footnotes) and inline containers (emphasis, strong, links). The reader, the construct resolver, and every emitter walk the IR recursively, so the bound keeps one generated or hostile page from exhausting the stack. Real MyST pages nest tab sets, tab items, dropdowns, lists, and emphasis well under 16 levels; 32 leaves headroom. A page past the bound stops the read with this code, naming the page and line; nothing is truncated. Override may raise it to 256.
+    docValue: 32 levels
+    docSummary: Containers nested inside one another in one page a conversion reader reads; a deeper page stops the read, naming it.

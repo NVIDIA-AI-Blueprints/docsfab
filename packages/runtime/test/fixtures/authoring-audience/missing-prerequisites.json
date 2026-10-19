@@ -1,0 +1,8 @@
+{
+  "evidence_status": "insufficient-evidence",
+  "target": {
+    "repository_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "documentation_revision": "candidate-documentation-v1"
+  },
+  "missing_prerequisites": ["audience-match", "run-authority", "scenario-oracle"]
+}

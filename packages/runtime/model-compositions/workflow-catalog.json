@@ -1,0 +1,448 @@
+{
+  "schemaVersion": 1,
+  "kind": "docsfab-model-composition-workflow-catalog/v1",
+  "workflows": [
+    {
+      "workflowId": "audit-documentation",
+      "sourcePath": "workflows/audit-documentation.json",
+      "sourceSha256": "34cba53f7bc6805d2d12b84f7936eedd45be67eb9e2003f8039452e36d4554f9",
+      "steps": [
+        {
+          "stepId": "audit-template-conformance",
+          "stepMode": "read-only",
+          "stepOrdinal": 1,
+          "skillId": "audit-documentation",
+          "role": "documentation-auditor"
+        }
+      ]
+    },
+    {
+      "workflowId": "bootstrap",
+      "sourcePath": "workflows/bootstrap.json",
+      "sourceSha256": "520a2755cdb9792d1e0b558c7014be632e02a145f71eee7cc32d30e3e5d16aaf",
+      "steps": [
+        {
+          "stepId": "bootstrap-guidance",
+          "stepMode": "write",
+          "stepOrdinal": 1,
+          "skillId": "repo-bootstrap",
+          "role": "senior-technical-writer"
+        }
+      ]
+    },
+    {
+      "workflowId": "create-documentation",
+      "sourcePath": "workflows/create-documentation.json",
+      "sourceSha256": "b7a6e15ef904da27a14bed85e8ada3a1aaec08e324f20acd216045b90832198c",
+      "steps": [
+        {
+          "stepId": "plan-documentation",
+          "stepMode": "read-only",
+          "stepOrdinal": 1,
+          "skillId": "plan-documentation",
+          "role": "documentation-planner"
+        },
+        {
+          "stepId": "derive-source-obligations",
+          "stepMode": "read-only",
+          "stepOrdinal": 2,
+          "skillId": "verify-technical-accuracy",
+          "role": "technical-verifier"
+        },
+        {
+          "stepId": "write-documentation",
+          "stepMode": "write",
+          "stepOrdinal": 3,
+          "skillId": "write-documentation",
+          "role": "senior-technical-writer"
+        },
+        {
+          "stepId": "lint-documentation",
+          "stepMode": "read-only",
+          "stepOrdinal": 4,
+          "skillId": "lint-documentation",
+          "role": "documentation-linter"
+        },
+        {
+          "stepId": "provisional-technical-verification",
+          "stepMode": "read-only",
+          "stepOrdinal": 5,
+          "skillId": "verify-technical-accuracy",
+          "role": "technical-verifier"
+        },
+        {
+          "stepId": "review-documentation",
+          "stepMode": "read-only",
+          "stepOrdinal": 6,
+          "skillId": "review-documentation",
+          "role": "senior-editor"
+        },
+        {
+          "stepId": "verify-technical-accuracy",
+          "stepMode": "read-only",
+          "stepOrdinal": 7,
+          "skillId": "verify-technical-accuracy",
+          "role": "technical-verifier"
+        },
+        {
+          "stepId": "revise-documentation",
+          "stepMode": "write",
+          "stepOrdinal": 8,
+          "skillId": "write-documentation",
+          "role": "senior-technical-writer"
+        },
+        {
+          "stepId": "lint-revised-documentation",
+          "stepMode": "read-only",
+          "stepOrdinal": 9,
+          "skillId": "lint-documentation",
+          "role": "documentation-linter"
+        },
+        {
+          "stepId": "provisional-revised-technical-verification",
+          "stepMode": "read-only",
+          "stepOrdinal": 10,
+          "skillId": "verify-technical-accuracy",
+          "role": "technical-verifier"
+        },
+        {
+          "stepId": "verify-revised-technical-accuracy",
+          "stepMode": "read-only",
+          "stepOrdinal": 11,
+          "skillId": "verify-technical-accuracy",
+          "role": "technical-verifier"
+        },
+        {
+          "stepId": "review-revised-documentation",
+          "stepMode": "read-only",
+          "stepOrdinal": 12,
+          "skillId": "review-documentation",
+          "role": "senior-editor"
+        },
+        {
+          "stepId": "test-audience-understanding",
+          "stepMode": "read-only",
+          "stepOrdinal": 13,
+          "skillId": "test-audience-understanding",
+          "role": "target-audience-proxy"
+        },
+        {
+          "stepId": "evaluate-document-quality",
+          "stepMode": "read-only",
+          "stepOrdinal": 14,
+          "skillId": "evaluate-document-quality",
+          "role": "documentation-quality-evaluator"
+        }
+      ]
+    },
+    {
+      "workflowId": "foundation",
+      "sourcePath": "workflows/foundation.json",
+      "sourceSha256": "8b05319b52627674e36e29a399d3a6466714aa7850de09e26527719603185a4d",
+      "steps": [
+        {
+          "stepId": "inspect-foundation",
+          "stepMode": "read-only",
+          "stepOrdinal": 1,
+          "skillId": "doc-context-analyzer",
+          "role": "documentation-foundation-inspector"
+        }
+      ]
+    },
+    {
+      "workflowId": "foundation-to-patch",
+      "sourcePath": "workflows/foundation-to-patch.json",
+      "sourceSha256": "d3b897c1fd8bc1ecf09e4b2aa4a65053142948a34b19d1716c5adac71dc35935",
+      "steps": [
+        {
+          "stepId": "compose-foundation-to-patch",
+          "stepMode": "write",
+          "stepOrdinal": 1,
+          "skillId": "plan-documentation",
+          "role": "documentation-planner"
+        }
+      ]
+    },
+    {
+      "workflowId": "ia-analysis",
+      "sourcePath": "workflows/ia-analysis.json",
+      "sourceSha256": "1fc2666198799540e12266319402ebe3ec45232a6ba90e39e513df0a6b160dff",
+      "steps": [
+        {
+          "stepId": "analyze-information-architecture",
+          "stepMode": "read-only",
+          "stepOrdinal": 1,
+          "skillId": "tpl-design-ia",
+          "role": "information-architecture-designer"
+        }
+      ]
+    },
+    {
+      "workflowId": "ia-plan",
+      "sourcePath": "workflows/ia-plan.json",
+      "sourceSha256": "7952f57a445e3a140e7782c4cb4fb205ee42d76f65a71923d11508ff914fa39f",
+      "steps": [
+        {
+          "stepId": "plan-information-architecture",
+          "stepMode": "read-only",
+          "stepOrdinal": 1,
+          "skillId": "tpl-design-ia",
+          "role": "information-architecture-designer"
+        }
+      ]
+    },
+    {
+      "workflowId": "live-agent-turn",
+      "sourcePath": "workflows/live-agent-turn.json",
+      "sourceSha256": "88dcdfb8318c779900e4cfc2b4bb3bf579abda759b31dc32279a23202433645d",
+      "steps": [
+        {
+          "stepId": "answer-question",
+          "stepMode": "read-only",
+          "stepOrdinal": 1,
+          "skillId": "review-documentation",
+          "role": "senior-editor"
+        }
+      ]
+    },
+    {
+      "workflowId": "readiness",
+      "sourcePath": "workflows/readiness.json",
+      "sourceSha256": "9e02104b947c6ba3e33f24a91efc58591cd9739fe64df9e93f935f5093b761ae",
+      "steps": [
+        {
+          "stepId": "assess-readiness",
+          "stepMode": "read-only",
+          "stepOrdinal": 1,
+          "skillId": "assess-documentation-readiness",
+          "role": "documentation-auditor"
+        }
+      ]
+    },
+    {
+      "workflowId": "reconcile-product-behavior",
+      "sourcePath": "workflows/reconcile-product-behavior.json",
+      "sourceSha256": "bd4cd29b87b6253d811ed3699b75eeedf8a3e248e7c48ecffff0e1760d10c41f",
+      "steps": [
+        {
+          "stepId": "compare-product-behavior",
+          "stepMode": "read-only",
+          "stepOrdinal": 1,
+          "skillId": "reconcile-product-behavior",
+          "role": "product-behavior-analyst"
+        }
+      ]
+    },
+    {
+      "workflowId": "release-documentation-readiness",
+      "sourcePath": "workflows/release-documentation-readiness.json",
+      "sourceSha256": "3b0b2f7a3f03053121f4f54f6fabe140d03802b19362d3ea4b9d7a427ba6029f",
+      "steps": [
+        {
+          "stepId": "assess-release-documentation-readiness",
+          "stepMode": "read-only",
+          "stepOrdinal": 1,
+          "skillId": "assess-documentation-readiness",
+          "role": "documentation-auditor"
+        }
+      ]
+    },
+    {
+      "workflowId": "restructure-documentation",
+      "sourcePath": "workflows/restructure-documentation.json",
+      "sourceSha256": "f5afb6d43dcbd4fde59749784195f7e746c3414ec17ea3d220faeb43d1956041",
+      "steps": [
+        {
+          "stepId": "audit-documentation",
+          "stepMode": "read-only",
+          "stepOrdinal": 1,
+          "skillId": "audit-documentation",
+          "role": "documentation-auditor"
+        },
+        {
+          "stepId": "plan-documentation",
+          "stepMode": "read-only",
+          "stepOrdinal": 2,
+          "skillId": "plan-documentation",
+          "role": "documentation-planner"
+        },
+        {
+          "stepId": "write-documentation",
+          "stepMode": "write",
+          "stepOrdinal": 3,
+          "skillId": "write-documentation",
+          "role": "senior-technical-writer"
+        },
+        {
+          "stepId": "lint-documentation",
+          "stepMode": "read-only",
+          "stepOrdinal": 4,
+          "skillId": "lint-documentation",
+          "role": "documentation-linter"
+        },
+        {
+          "stepId": "verify-technical-accuracy",
+          "stepMode": "read-only",
+          "stepOrdinal": 5,
+          "skillId": "verify-technical-accuracy",
+          "role": "technical-verifier"
+        },
+        {
+          "stepId": "review-documentation",
+          "stepMode": "read-only",
+          "stepOrdinal": 6,
+          "skillId": "review-documentation",
+          "role": "senior-editor"
+        },
+        {
+          "stepId": "test-audience-understanding",
+          "stepMode": "read-only",
+          "stepOrdinal": 7,
+          "skillId": "test-audience-understanding",
+          "role": "target-audience-proxy"
+        },
+        {
+          "stepId": "evaluate-document-quality",
+          "stepMode": "read-only",
+          "stepOrdinal": 8,
+          "skillId": "evaluate-document-quality",
+          "role": "documentation-quality-evaluator"
+        }
+      ]
+    },
+    {
+      "workflowId": "review-documentation",
+      "sourcePath": "workflows/review-documentation.json",
+      "sourceSha256": "18db906c765fb2292ff56797766df444f1a3fcae01dad8f1fd9fad1013517e49",
+      "steps": [
+        {
+          "stepId": "audit-documentation",
+          "stepMode": "read-only",
+          "stepOrdinal": 1,
+          "skillId": "audit-documentation",
+          "role": "documentation-auditor"
+        },
+        {
+          "stepId": "derive-source-obligations",
+          "stepMode": "read-only",
+          "stepOrdinal": 2,
+          "skillId": "verify-technical-accuracy",
+          "role": "technical-verifier"
+        },
+        {
+          "stepId": "lint-documentation",
+          "stepMode": "read-only",
+          "stepOrdinal": 3,
+          "skillId": "lint-documentation",
+          "role": "documentation-linter"
+        },
+        {
+          "stepId": "provisional-technical-verification",
+          "stepMode": "read-only",
+          "stepOrdinal": 4,
+          "skillId": "verify-technical-accuracy",
+          "role": "technical-verifier"
+        },
+        {
+          "stepId": "verify-technical-accuracy",
+          "stepMode": "read-only",
+          "stepOrdinal": 5,
+          "skillId": "verify-technical-accuracy",
+          "role": "technical-verifier"
+        },
+        {
+          "stepId": "review-documentation",
+          "stepMode": "read-only",
+          "stepOrdinal": 6,
+          "skillId": "review-documentation",
+          "role": "senior-editor"
+        },
+        {
+          "stepId": "test-audience-understanding",
+          "stepMode": "read-only",
+          "stepOrdinal": 7,
+          "skillId": "test-audience-understanding",
+          "role": "target-audience-proxy"
+        },
+        {
+          "stepId": "evaluate-document-quality",
+          "stepMode": "read-only",
+          "stepOrdinal": 8,
+          "skillId": "evaluate-document-quality",
+          "role": "documentation-quality-evaluator"
+        }
+      ]
+    },
+    {
+      "workflowId": "site-bootstrap",
+      "sourcePath": "workflows/site-bootstrap.json",
+      "sourceSha256": "9fb15f12b0479d619dc6e1cbf81e4f75c1ed1cd5c1bbc5e248d952baafbfc5f2",
+      "steps": [
+        {
+          "stepId": "apply-site-bootstrap",
+          "stepMode": "write",
+          "stepOrdinal": 1,
+          "skillId": "template-scaffold-site",
+          "role": "site-scaffold-operator"
+        }
+      ]
+    },
+    {
+      "workflowId": "update-documentation",
+      "sourcePath": "workflows/update-documentation.json",
+      "sourceSha256": "a191ce0ab26cf764fe528a29e8f9e145a47cb52a1b74ed6aa745acfe5d5d39a1",
+      "steps": [
+        {
+          "stepId": "plan-documentation",
+          "stepMode": "read-only",
+          "stepOrdinal": 1,
+          "skillId": "plan-documentation",
+          "role": "documentation-planner"
+        },
+        {
+          "stepId": "write-documentation",
+          "stepMode": "write",
+          "stepOrdinal": 2,
+          "skillId": "write-documentation",
+          "role": "senior-technical-writer"
+        },
+        {
+          "stepId": "lint-documentation",
+          "stepMode": "read-only",
+          "stepOrdinal": 3,
+          "skillId": "lint-documentation",
+          "role": "documentation-linter"
+        },
+        {
+          "stepId": "verify-technical-accuracy",
+          "stepMode": "read-only",
+          "stepOrdinal": 4,
+          "skillId": "verify-technical-accuracy",
+          "role": "technical-verifier"
+        },
+        {
+          "stepId": "review-documentation",
+          "stepMode": "read-only",
+          "stepOrdinal": 5,
+          "skillId": "review-documentation",
+          "role": "senior-editor"
+        },
+        {
+          "stepId": "test-audience-understanding",
+          "stepMode": "read-only",
+          "stepOrdinal": 6,
+          "skillId": "test-audience-understanding",
+          "role": "target-audience-proxy"
+        },
+        {
+          "stepId": "evaluate-document-quality",
+          "stepMode": "read-only",
+          "stepOrdinal": 7,
+          "skillId": "evaluate-document-quality",
+          "role": "documentation-quality-evaluator"
+        }
+      ]
+    }
+  ],
+  "catalogSha256": "4d21b47db1b1370bca26ece0d122412777f6999018ca4d0526d8c8f10da8b8d3"
+}

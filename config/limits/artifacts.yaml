@@ -1,0 +1,59 @@
+# DocsFab operational limits owned by the `artifacts` name prefix.
+# Registered in config/limits.yaml; every limit here is named `artifacts.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: artifacts.maxObjectBytes
+    value: 134217728
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_ARTIFACTS_MAX_OBJECT_BYTES
+    min: 4096
+    max: 536870887
+    refusal: artifacts-max-object-bytes-bound
+    remediation: Raise DOCSFAB_ARTIFACTS_MAX_OBJECT_BYTES, or artifacts.maxObjectBytes in the host limits file, above the observed size (at most 536870887 bytes), then rerun the same command. Stored objects are unchanged.
+    rationale: Largest single object the durable artifact store writes or reads when its caller names no tighter bound, and the per-object bound hosted editorial evidence retention applies to the same objects (#1932). It replaces a hand-declared 16 MiB literal that stopped vLLM Semantic Router (about 10,000 tracked files) before any model call, because its 17,410,521-byte content index was written as one object. The content index now splits into parts whenever it exceeds this bound, so repository size alone never reaches it; 128 MiB keeps the whole index of a repository of about 79,000 tracked files (1.7 KB each) in one object. The maximum is the largest UTF-8 JSON object the whole-string reader can parse, one code unit below the 64-bit Node MAX_STRING_LENGTH for worst-case ASCII, as for recovery.logicalObjectMaxBytes. An object over the bound is refused by this name with its observed size, never truncated.
+    docValue: 134,217,728 bytes (128 MiB)
+    docSummary: Largest single object the durable artifact store writes or reads, locally and in hosted editorial evidence retention. A larger content index is stored in parts instead of being refused.
+
+  - name: artifacts.hostedRetentionMaxObjects
+    value: 16384
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_ARTIFACTS_HOSTED_RETENTION_MAX_OBJECTS
+    min: 1
+    max: 32768
+    refusal: artifacts-hosted-retention-max-objects-bound
+    remediation: Raise DOCSFAB_ARTIFACTS_HOSTED_RETENTION_MAX_OBJECTS, or artifacts.hostedRetentionMaxObjects in the host limits file, above the observed count (at most 32768), and artifacts.hostedRetentionManifestMaxBytes with it if the manifest then refuses, then rerun the same request.
+    rationale: Objects one hosted editorial attempt store may hold when the dispatcher retains it in project CAS (#1932). It replaces a hand-declared 1,024 literal. The largest graph the editorial host writes today is about 1,000 objects (content index parts, up to 128 reader sources and 128 admitted artifacts, decision, context and rationale records, and up to 645 step associations), so 16,384 leaves sixteen times headroom while its manifest, about 300 bytes per object, stays near 5 MiB, inside artifacts.hostedRetentionManifestMaxBytes. The maximum keeps a full manifest inside one 16 MiB dispatcher CAS object. Counted before any object is copied.
+    docValue: 16,384 objects
+    docSummary: Objects one hosted editorial attempt may retain in project CAS.
+
+  - name: artifacts.hostedRetentionMaxTotalBytes
+    value: 1073741824
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_ARTIFACTS_HOSTED_RETENTION_MAX_TOTAL_BYTES
+    min: 4096
+    max: 1099511627776
+    refusal: artifacts-hosted-retention-max-total-bytes-bound
+    remediation: Raise DOCSFAB_ARTIFACTS_HOSTED_RETENTION_MAX_TOTAL_BYTES, or artifacts.hostedRetentionMaxTotalBytes in the host limits file, above the observed total, then rerun the same request. Check free space in the project CAS first.
+    rationale: Bytes one hosted editorial attempt may retain in project CAS, summed over every object (#1932). It replaces a hand-declared 64 MiB literal that could not hold the 17.4 MB content index of a 10,000-file repository together with 128 reader sources of up to 1 MiB, each stored as base64 (about 1.37 MiB). A content index runs about 1.7 KB per tracked file, so 1 GiB holds the index and every reader source for a repository of more than 400,000 files. A disk-use guard only; the maximum keeps a mistyped value from disabling it. Objects are read and copied one at a time, so this is not a memory bound.
+    docValue: 1,073,741,824 bytes (1 GiB)
+    docSummary: Bytes one hosted editorial attempt may retain in project CAS, summed over its objects.
+
+  - name: artifacts.hostedRetentionManifestMaxBytes
+    value: 8388608
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_ARTIFACTS_HOSTED_RETENTION_MANIFEST_MAX_BYTES
+    min: 4096
+    max: 16777216
+    refusal: artifacts-hosted-retention-manifest-max-bytes-bound
+    remediation: Raise DOCSFAB_ARTIFACTS_HOSTED_RETENTION_MANIFEST_MAX_BYTES, or artifacts.hostedRetentionManifestMaxBytes in the host limits file, above the observed size (at most 16777216 bytes), then rerun the same request.
+    rationale: Size of the canonical manifest that lists one hosted editorial attempt's retained objects (#1932). It replaces a hand-declared 512 KiB literal that held only about 1,700 entries. At about 300 bytes per object, 8 MiB holds the default artifacts.hostedRetentionMaxObjects with room for split-object segment entries. The manifest is one dispatcher CAS object, so the maximum is that object's 16 MiB capacity.
+    docValue: 8,388,608 bytes (8 MiB)
+    docSummary: Manifest that lists one hosted editorial attempt's retained objects.

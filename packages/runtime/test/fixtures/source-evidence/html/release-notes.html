@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>DocsFab Release Notes</title>
+    <style>
+      body { color: #111; }
+    </style>
+    <script>
+      window.__tracking = "must never reach the derivative";
+    </script>
+  </head>
+  <body>
+    <h1>Release Notes</h1>
+    <p>The runtime reads a tracked source only through a host-issued reader.</p>
+    <p>Span identifiers are computed by the host from the original and derivative digests.</p>
+    <div hidden>Draft note that is not published yet.</div>
+    <div style="display:none">Internal reviewer scratch text.</div>
+    <ul>
+      <li>Original bytes and derivative bytes are hashed separately.</li>
+      <li>A derived line is never reported as a line in the original binary.</li>
+    </ul>
+    <!-- Reviewer comment that is not readable content. -->
+    <p>Quoted entities such as &amp; and &lt;tag&gt; survive extraction.</p>
+  </body>
+</html>

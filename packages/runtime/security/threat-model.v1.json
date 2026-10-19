@@ -1,0 +1,1174 @@
+{
+  "schemaVersion": 1,
+  "modelId": "docsfab-credential-data-boundary-v1",
+  "status": "review-controlled",
+  "scope": "DocsFab local-user governed documentation workflows, hosted or local inference, local-user GitLab delivery and issue lifecycle, and read-only maturity-cascade tracker observation",
+  "requiredStages": [
+    "credential-configuration",
+    "repository-export",
+    "context-selection",
+    "prompt-construction",
+    "authorization",
+    "provider-adapter",
+    "catalog-metadata",
+    "tool-call-and-result",
+    "logs-and-diagnostics",
+    "run-records",
+    "patch-capture",
+    "isolated-validation",
+    "git",
+    "gitlab"
+  ],
+  "invariants": [
+    "DocsFab never copies host-owned model-provider, catalog, or SCM credentials into model message data; provider output and repository content remain untrusted even when they resemble or contain credentials.",
+    "Only content crossing a DocsFab-controlled boundary can affect workflow eligibility.",
+    "Repository and CI credential enforcement belongs to GitLab and organizational CI.",
+    "The model receives neither unrestricted shell nor SCM tools in the current product boundary.",
+    "Raw content-bearing evidence remains private operator state; shared evidence is an allowlisted projection."
+  ],
+  "zones": [
+    {
+      "id": "Z-01",
+      "name": "operator-host",
+      "trust": "trusted-local-capability",
+      "description": "The invoking user, DocsFab process, environment, local credential stores, and selected local executables."
+    },
+    {
+      "id": "Z-02",
+      "name": "selected-repository",
+      "trust": "untrusted-content-operator-selected",
+      "description": "The source checkout and immutable Git object graph selected by the operator."
+    },
+    {
+      "id": "Z-03",
+      "name": "disposable-workspace",
+      "trust": "confined-derived-content",
+      "description": "A tracked-only, revision-bound materialization and its bounded context/tool views."
+    },
+    {
+      "id": "Z-04",
+      "name": "model-endpoint",
+      "trust": "external-operator-approved",
+      "description": "A hosted provider or local inference service that receives exact model messages."
+    },
+    {
+      "id": "Z-05",
+      "name": "private-operator-state",
+      "trust": "owner-private-content-bearing",
+      "description": "Run records, context caches, patches, delivery capsules, journals, and local review artifacts."
+    },
+    {
+      "id": "Z-06",
+      "name": "host-scm-adapters",
+      "trust": "trusted-local-capability",
+      "description": "Fixed-purpose Git and glab adapters that can use the invoking user's host-owned authentication."
+    },
+    {
+      "id": "Z-07",
+      "name": "gitlab-and-ci",
+      "trust": "external-organizational-control",
+      "description": "The selected GitLab project, its access controls, protected branches, CI, and organizational secret enforcement."
+    },
+    {
+      "id": "Z-08",
+      "name": "terminal-and-log-sinks",
+      "trust": "operator-visible-potentially-forwarded",
+      "description": "CLI output, progress callbacks, captured logs, and failure diagnostics."
+    },
+    {
+      "id": "Z-09",
+      "name": "docsfab-policy-core",
+      "trust": "trusted-bounded-orchestration",
+      "description": "Workflow policy, prompt construction, exact boundary guards, response normalization, and evidence projection without direct credential transport."
+    },
+    {
+      "id": "Z-10",
+      "name": "authenticated-catalog-endpoint",
+      "trust": "external-purpose-bound",
+      "description": "The separately authenticated Metadata or provider catalog endpoint that returns untrusted descriptive model data."
+    },
+    {
+      "id": "Z-11",
+      "name": "isolated-validation-subprocess",
+      "trust": "untrusted-repository-code-os-confined",
+      "description": "The #37 delivery validator running repository-selected code with a credential-free environment inside a required OS isolation boundary."
+    },
+    {
+      "id": "Z-12",
+      "name": "provider-and-catalog-adapters",
+      "trust": "trusted-fixed-purpose-capability",
+      "description": "Fixed-purpose inference and Metadata/catalog transports that alone receive their distinct host-owned credentials."
+    },
+    {
+      "id": "Z-13",
+      "name": "host-gitlab-issue-adapters",
+      "trust": "trusted-fixed-purpose-capability",
+      "description": "The fixed-purpose local-user GitLab issue adapters: #47 alone applies an exact authorized lifecycle plan through owner-private request and receipt stores, while #103 alone performs authenticated read-only tracker observation for maturity selection."
+    }
+  ],
+  "flows": [
+    {
+      "id": "F-01",
+      "stage": "credential-configuration",
+      "name": "host credential handoff to fixed-purpose adapters",
+      "sources": ["Z-01"],
+      "destinations": ["Z-06", "Z-12", "Z-13"],
+      "data": ["inference credential", "Metadata/catalog credential", "Git credential capability", "glab authentication"],
+      "sensitive": true,
+      "modes": ["hosted-inference", "local-inference", "local-user-gitlab"],
+      "threats": ["T-01", "T-04", "T-09", "T-13", "T-15"],
+      "controls": ["C-01", "C-05", "C-10", "C-17", "C-18", "C-23", "C-24"]
+    },
+    {
+      "id": "F-02",
+      "stage": "repository-export",
+      "name": "immutable repository export",
+      "sources": ["Z-02"],
+      "destinations": ["Z-03"],
+      "data": ["resolved commit", "tracked regular-file bytes", "tracked paths and modes"],
+      "sensitive": true,
+      "modes": ["hosted-inference", "local-inference"],
+      "threats": ["T-02", "T-03", "T-10"],
+      "controls": ["C-02", "C-11", "C-14"]
+    },
+    {
+      "id": "F-03",
+      "stage": "context-selection",
+      "name": "selected context and private cache",
+      "sources": ["Z-03"],
+      "destinations": ["Z-09", "Z-05"],
+      "data": ["structural index", "budgeted context packet", "consulted node identities", "private context cache"],
+      "sensitive": true,
+      "modes": ["hosted-inference", "local-inference"],
+      "threats": ["T-02", "T-07"],
+      "controls": ["C-03", "C-08"]
+    },
+    {
+      "id": "F-04",
+      "stage": "prompt-construction",
+      "name": "multi-source exact message construction",
+      "sources": ["Z-01", "Z-03"],
+      "destinations": ["Z-09"],
+      "data": ["DocsFab system instruction", "workflow and step instruction", "operator instruction", "governed skill content", "selected repository context"],
+      "sensitive": true,
+      "modes": ["hosted-inference", "local-inference"],
+      "threats": ["T-01", "T-02", "T-03", "T-12"],
+      "controls": ["C-03", "C-04", "C-06", "C-13"]
+    },
+    {
+      "id": "F-05",
+      "stage": "provider-adapter",
+      "name": "guarded provider request handoff",
+      "sources": ["Z-09"],
+      "destinations": ["Z-12"],
+      "data": ["exact serialized model message graph", "virtual workspace and repository-relative paths, never a host absolute path", "request budget and model identity"],
+      "sensitive": true,
+      "modes": ["hosted-inference", "local-inference"],
+      "threats": ["T-01", "T-02", "T-05"],
+      "controls": ["C-03", "C-04"]
+    },
+    {
+      "id": "F-06",
+      "stage": "provider-adapter",
+      "name": "authenticated inference request transport",
+      "sources": ["Z-12"],
+      "destinations": ["Z-04"],
+      "data": ["exact model messages", "inference credential in transport authentication"],
+      "sensitive": true,
+      "modes": ["hosted-inference", "local-inference"],
+      "threats": ["T-01", "T-04", "T-12"],
+      "controls": ["C-01", "C-04", "C-05", "C-13"]
+    },
+    {
+      "id": "F-07",
+      "stage": "provider-adapter",
+      "name": "raw provider response",
+      "sources": ["Z-04"],
+      "destinations": ["Z-12"],
+      "data": ["untrusted model output", "untrusted tool calls", "usage", "provider stream failures"],
+      "sensitive": true,
+      "modes": ["hosted-inference", "local-inference"],
+      "threats": ["T-06", "T-12", "T-14"],
+      "controls": ["C-05", "C-07", "C-15"]
+    },
+    {
+      "id": "F-08",
+      "stage": "provider-adapter",
+      "name": "bounded untrusted model output propagation",
+      "sources": ["Z-12"],
+      "destinations": ["Z-09"],
+      "data": ["normalized untrusted model text", "allowlisted tool-call proposal", "closed response evidence"],
+      "sensitive": true,
+      "modes": ["hosted-inference", "local-inference"],
+      "threats": ["T-03", "T-06", "T-14"],
+      "controls": ["C-07", "C-15"]
+    },
+    {
+      "id": "F-09",
+      "stage": "tool-call-and-result",
+      "name": "confined tool request",
+      "sources": ["Z-09"],
+      "destinations": ["Z-03"],
+      "data": ["allowlisted tool name", "validated repository-relative arguments", "model-proposed write bytes", "operation-bound write authorization identity"],
+      "sensitive": true,
+      "modes": ["hosted-inference", "local-inference"],
+      "threats": ["T-03", "T-05", "T-08", "T-14"],
+      "controls": ["C-06", "C-09", "C-12"]
+    },
+    {
+      "id": "F-10",
+      "stage": "tool-call-and-result",
+      "name": "model-visible tool result",
+      "sources": ["Z-03"],
+      "destinations": ["Z-09"],
+      "data": ["bounded repository content result", "workspace-relative or virtual governed-asset path", "search payload with this host's roots replaced", "safe failure code"],
+      "sensitive": true,
+      "modes": ["hosted-inference", "local-inference"],
+      "threats": ["T-01", "T-02", "T-05"],
+      "controls": ["C-04", "C-06", "C-12"]
+    },
+    {
+      "id": "F-11",
+      "stage": "logs-and-diagnostics",
+      "name": "multi-source progress, logs, and diagnostics",
+      "sources": ["Z-06", "Z-09", "Z-11", "Z-12"],
+      "destinations": ["Z-08"],
+      "data": ["closed progress events", "safe error code", "numeric measurements", "operator next action"],
+      "sensitive": false,
+      "modes": ["hosted-inference", "local-inference", "local-user-gitlab"],
+      "threats": ["T-01", "T-06", "T-09", "T-11", "T-13", "T-14"],
+      "controls": ["C-07", "C-15", "C-16", "C-17"]
+    },
+    {
+      "id": "F-12",
+      "stage": "run-records",
+      "name": "multi-source private run-record assembly",
+      "sources": ["Z-03", "Z-06", "Z-09", "Z-12"],
+      "destinations": ["Z-05"],
+      "data": ["untrusted model output", "operator instruction", "revision and context evidence", "closed tool and delivery evidence"],
+      "sensitive": true,
+      "modes": ["hosted-inference", "local-inference", "local-user-gitlab"],
+      "threats": ["T-01", "T-06", "T-07", "T-14"],
+      "controls": ["C-07", "C-08", "C-15"]
+    },
+    {
+      "id": "F-13",
+      "stage": "run-records",
+      "name": "allowlisted shared evidence projection",
+      "sources": ["Z-05"],
+      "destinations": ["Z-08"],
+      "data": ["content-minimized manifest", "receipt", "scorecard projection"],
+      "sensitive": false,
+      "modes": ["hosted-inference", "local-inference", "local-user-gitlab"],
+      "threats": ["T-01", "T-05", "T-06", "T-07", "T-14"],
+      "controls": ["C-07", "C-08", "C-15"]
+    },
+    {
+      "id": "F-14",
+      "stage": "patch-capture",
+      "name": "patch capture and private retention",
+      "sources": ["Z-03"],
+      "destinations": ["Z-05"],
+      "data": ["untrusted content-bearing binary patch", "changed paths", "patch digest and size"],
+      "sensitive": true,
+      "modes": ["hosted-inference", "local-inference", "local-user-gitlab"],
+      "threats": ["T-07", "T-08", "T-10", "T-14"],
+      "controls": ["C-08", "C-09", "C-11", "C-14"]
+    },
+    {
+      "id": "F-15",
+      "stage": "git",
+      "name": "host-only patch materialization and commit",
+      "sources": ["Z-05"],
+      "destinations": ["Z-06"],
+      "data": ["authorized patch", "commit content and metadata", "content-free Git observations"],
+      "sensitive": true,
+      "modes": ["local-user-gitlab"],
+      "threats": ["T-01", "T-08", "T-09"],
+      "controls": ["C-01", "C-09", "C-10", "C-12", "C-14"]
+    },
+    {
+      "id": "F-16",
+      "stage": "isolated-validation",
+      "name": "isolated validation launch",
+      "sources": ["Z-06"],
+      "destinations": ["Z-11"],
+      "data": ["patched worktree mounted read-only", "configured validation executable and arguments", "small credential-free environment", "private scratch roots"],
+      "sensitive": true,
+      "modes": ["local-user-gitlab"],
+      "threats": ["T-01", "T-03", "T-09", "T-11"],
+      "controls": ["C-10", "C-12", "C-16"]
+    },
+    {
+      "id": "F-17",
+      "stage": "isolated-validation",
+      "name": "untrusted validation observation",
+      "sources": ["Z-11"],
+      "destinations": ["Z-06"],
+      "data": ["exit status", "untrusted bounded stdout and stderr", "filesystem and isolation probe results"],
+      "sensitive": true,
+      "modes": ["local-user-gitlab"],
+      "threats": ["T-01", "T-06", "T-11"],
+      "controls": ["C-07", "C-16"]
+    },
+    {
+      "id": "F-18",
+      "stage": "git",
+      "name": "authenticated Git push",
+      "sources": ["Z-06"],
+      "destinations": ["Z-07"],
+      "data": ["exact commit and source ref", "Git transport authentication", "bounded discarded command output"],
+      "sensitive": true,
+      "modes": ["local-user-gitlab"],
+      "threats": ["T-01", "T-08", "T-09", "T-10"],
+      "controls": ["C-01", "C-07", "C-09", "C-10", "C-11"]
+    },
+    {
+      "id": "F-19",
+      "stage": "gitlab",
+      "name": "authenticated GitLab query or draft-MR request",
+      "sources": ["Z-06"],
+      "destinations": ["Z-07"],
+      "data": ["host authentication", "bounded project query", "sanitized title and description", "exact source and target identity"],
+      "sensitive": true,
+      "modes": ["local-user-gitlab"],
+      "threats": ["T-01", "T-05", "T-06", "T-09", "T-10"],
+      "controls": ["C-01", "C-07", "C-10", "C-11"]
+    },
+    {
+      "id": "F-20",
+      "stage": "gitlab",
+      "name": "raw GitLab response",
+      "sources": ["Z-07"],
+      "destinations": ["Z-06"],
+      "data": ["untrusted API response", "authentication diagnostic", "command output", "MR and project fields"],
+      "sensitive": true,
+      "modes": ["local-user-gitlab"],
+      "threats": ["T-01", "T-06", "T-09"],
+      "controls": ["C-07", "C-10"]
+    },
+    {
+      "id": "F-21",
+      "stage": "gitlab",
+      "name": "sanitized GitLab observation and receipt",
+      "sources": ["Z-06"],
+      "destinations": ["Z-05", "Z-08"],
+      "data": ["allowlisted project and identity observations", "draft merge-request identity", "content-free receipt"],
+      "sensitive": false,
+      "modes": ["local-user-gitlab"],
+      "threats": ["T-01", "T-06", "T-09", "T-14"],
+      "controls": ["C-07", "C-08", "C-10", "C-15"]
+    },
+    {
+      "id": "F-22",
+      "stage": "catalog-metadata",
+      "name": "bounded catalog query handoff",
+      "sources": ["Z-09"],
+      "destinations": ["Z-12"],
+      "data": ["exact requested model label", "approved catalog origin and request policy"],
+      "sensitive": false,
+      "modes": ["hosted-inference", "local-inference"],
+      "threats": ["T-01", "T-04", "T-13"],
+      "controls": ["C-01", "C-05", "C-17"]
+    },
+    {
+      "id": "F-23",
+      "stage": "catalog-metadata",
+      "name": "authenticated catalog request",
+      "sources": ["Z-12"],
+      "destinations": ["Z-10"],
+      "data": ["exact label query", "distinct Metadata or catalog credential in transport authentication"],
+      "sensitive": true,
+      "modes": ["hosted-inference", "local-inference"],
+      "threats": ["T-01", "T-04", "T-13"],
+      "controls": ["C-01", "C-05", "C-17"]
+    },
+    {
+      "id": "F-24",
+      "stage": "catalog-metadata",
+      "name": "raw authenticated catalog response",
+      "sources": ["Z-10"],
+      "destinations": ["Z-12"],
+      "data": ["untrusted catalog JSON", "response headers", "cursor and source metadata", "raw provider error"],
+      "sensitive": true,
+      "modes": ["hosted-inference", "local-inference"],
+      "threats": ["T-06", "T-13", "T-14"],
+      "controls": ["C-05", "C-07", "C-15", "C-17"]
+    },
+    {
+      "id": "F-25",
+      "stage": "catalog-metadata",
+      "name": "sanitized catalog observation and provenance",
+      "sources": ["Z-12"],
+      "destinations": ["Z-05", "Z-08", "Z-09"],
+      "data": ["allowlisted model capabilities", "credential-free origin and request policy", "observation digest", "provenance and reconciliation evidence"],
+      "sensitive": false,
+      "modes": ["hosted-inference", "local-inference"],
+      "threats": ["T-01", "T-06", "T-13", "T-14"],
+      "controls": ["C-07", "C-08", "C-15", "C-17"]
+    },
+    {
+      "id": "F-26",
+      "stage": "authorization",
+      "name": "operation-bound write and publication authorization",
+      "sources": ["Z-01"],
+      "destinations": ["Z-09", "Z-06", "Z-13"],
+      "data": ["decision", "workflow and operation identity", "immutable revision", "patch and plan digest", "destination identity", "issuance and expiry", "host-verifiable binding", "tracker operation key and material digest"],
+      "sensitive": false,
+      "modes": ["hosted-inference", "local-inference", "local-user-gitlab"],
+      "threats": ["T-08", "T-18"],
+      "controls": ["C-09", "C-19"]
+    },
+    {
+      "id": "F-27",
+      "stage": "gitlab",
+      "name": "owner-private issue plan and lifecycle material handoff",
+      "sources": ["Z-05", "Z-09"],
+      "destinations": ["Z-13"],
+      "data": ["strict plan manifest", "operation-bound authorization", "exact material bytes", "expected tracker state", "idempotency keys", "private store identity"],
+      "sensitive": true,
+      "modes": ["local-user-gitlab"],
+      "threats": ["T-01", "T-08", "T-16", "T-18", "T-19"],
+      "controls": ["C-01", "C-08", "C-09", "C-18", "C-19", "C-20", "C-23"]
+    },
+    {
+      "id": "F-28",
+      "stage": "gitlab",
+      "name": "authenticated project, commit, issue, and milestone read or search",
+      "sources": ["Z-13"],
+      "destinations": ["Z-07"],
+      "data": ["transport-only GitLab token", "exact host and project", "bound repository revision", "bounded project, commit, issue, or milestone query", "fixed command arguments"],
+      "sensitive": true,
+      "modes": ["local-user-gitlab"],
+      "threats": ["T-01", "T-09", "T-15", "T-16", "T-18", "T-21"],
+      "controls": ["C-01", "C-07", "C-18", "C-19", "C-22", "C-23", "C-24"]
+    },
+    {
+      "id": "F-29",
+      "stage": "gitlab",
+      "name": "raw project, commit, issue, and milestone observation",
+      "sources": ["Z-07"],
+      "destinations": ["Z-13"],
+      "data": ["untrusted project and commit JSON", "untrusted issue JSON", "untrusted title, description, and comment bodies", "milestone and relationship fields", "raw error and authentication diagnostics"],
+      "sensitive": true,
+      "modes": ["local-user-gitlab"],
+      "threats": ["T-01", "T-06", "T-14", "T-21"],
+      "controls": ["C-07", "C-18", "C-22", "C-23", "C-24"]
+    },
+    {
+      "id": "F-30",
+      "stage": "gitlab",
+      "name": "sanitized revision-bound tracker observation",
+      "sources": ["Z-13"],
+      "destinations": ["Z-05", "Z-09", "Z-08"],
+      "data": ["allowlisted tracker identity and state", "finding fingerprints", "identity and material digests instead of title, description, labels, or comments", "assessment and repository binding", "monotonic freshness", "safe failure code"],
+      "sensitive": false,
+      "modes": ["local-user-gitlab"],
+      "threats": ["T-01", "T-06", "T-14", "T-18", "T-21"],
+      "controls": ["C-07", "C-08", "C-18", "C-22", "C-24"]
+    },
+    {
+      "id": "F-31",
+      "stage": "gitlab",
+      "name": "authorized saga or issue creation",
+      "sources": ["Z-13"],
+      "destinations": ["Z-07"],
+      "data": ["transport-only GitLab token", "exact project", "authorized title and description bytes", "approved labels and milestone", "idempotency marker"],
+      "sensitive": true,
+      "modes": ["local-user-gitlab"],
+      "threats": ["T-01", "T-08", "T-15", "T-16", "T-17", "T-18", "T-21"],
+      "controls": ["C-01", "C-09", "C-18", "C-19", "C-21", "C-22", "C-23"]
+    },
+    {
+      "id": "F-32",
+      "stage": "gitlab",
+      "name": "authorized issue title or description update",
+      "sources": ["Z-13"],
+      "destinations": ["Z-07"],
+      "data": ["transport-only GitLab token", "exact issue identity", "authorized title or description bytes", "expected updated-at state", "idempotency key"],
+      "sensitive": true,
+      "modes": ["local-user-gitlab"],
+      "threats": ["T-01", "T-08", "T-15", "T-16", "T-17", "T-18", "T-21"],
+      "controls": ["C-01", "C-09", "C-18", "C-19", "C-21", "C-22", "C-23"]
+    },
+    {
+      "id": "F-33",
+      "stage": "gitlab",
+      "name": "authorized issue label mutation",
+      "sources": ["Z-13"],
+      "destinations": ["Z-07"],
+      "data": ["transport-only GitLab token", "exact issue identity", "approved label add or remove set", "expected tracker state", "idempotency key"],
+      "sensitive": true,
+      "modes": ["local-user-gitlab"],
+      "threats": ["T-01", "T-08", "T-15", "T-17", "T-18", "T-21"],
+      "controls": ["C-01", "C-09", "C-18", "C-19", "C-21", "C-22", "C-23"]
+    },
+    {
+      "id": "F-34",
+      "stage": "gitlab",
+      "name": "authorized issue milestone assignment",
+      "sources": ["Z-13"],
+      "destinations": ["Z-07"],
+      "data": ["transport-only GitLab token", "exact issue and milestone identities", "approved assignment or move", "expected tracker state", "idempotency key"],
+      "sensitive": true,
+      "modes": ["local-user-gitlab"],
+      "threats": ["T-01", "T-08", "T-15", "T-17", "T-18", "T-21"],
+      "controls": ["C-01", "C-09", "C-18", "C-19", "C-21", "C-22", "C-23"]
+    },
+    {
+      "id": "F-35",
+      "stage": "gitlab",
+      "name": "authorized issue link or parent task-list mutation",
+      "sources": ["Z-13"],
+      "destinations": ["Z-07"],
+      "data": ["transport-only GitLab token", "exact source target and parent identities", "approved relationship type", "expected tracker state", "idempotency key"],
+      "sensitive": true,
+      "modes": ["local-user-gitlab"],
+      "threats": ["T-01", "T-08", "T-15", "T-17", "T-18", "T-21"],
+      "controls": ["C-01", "C-09", "C-18", "C-19", "C-21", "C-22", "C-23"]
+    },
+    {
+      "id": "F-36",
+      "stage": "gitlab",
+      "name": "authorized issue comment creation",
+      "sources": ["Z-13"],
+      "destinations": ["Z-07"],
+      "data": ["transport-only GitLab token", "exact issue identity", "authorized comment bytes", "expected tracker state", "idempotency marker"],
+      "sensitive": true,
+      "modes": ["local-user-gitlab"],
+      "threats": ["T-01", "T-08", "T-15", "T-16", "T-17", "T-18", "T-21"],
+      "controls": ["C-01", "C-09", "C-18", "C-19", "C-21", "C-22", "C-23"]
+    },
+    {
+      "id": "F-37",
+      "stage": "gitlab",
+      "name": "authorized issue close or reopen",
+      "sources": ["Z-13"],
+      "destinations": ["Z-07"],
+      "data": ["transport-only GitLab token", "exact issue identity", "approved target state", "expected tracker state", "idempotency key"],
+      "sensitive": true,
+      "modes": ["local-user-gitlab"],
+      "threats": ["T-01", "T-08", "T-15", "T-17", "T-18", "T-21"],
+      "controls": ["C-01", "C-09", "C-18", "C-19", "C-21", "C-22", "C-23"]
+    },
+    {
+      "id": "F-38",
+      "stage": "gitlab",
+      "name": "raw issue mutation response or ambiguous transport result",
+      "sources": ["Z-07"],
+      "destinations": ["Z-13"],
+      "data": ["untrusted mutation JSON", "raw error body", "transport completion state", "authentication and permission diagnostics"],
+      "sensitive": true,
+      "modes": ["local-user-gitlab"],
+      "threats": ["T-01", "T-06", "T-14", "T-17", "T-21"],
+      "controls": ["C-07", "C-18", "C-21", "C-22", "C-23"]
+    },
+    {
+      "id": "F-39",
+      "stage": "gitlab",
+      "name": "idempotent issue-operation reconciliation",
+      "sources": ["Z-13"],
+      "destinations": ["Z-07"],
+      "data": ["transport-only GitLab token", "exact project and operation identity", "idempotency marker query", "expected material digest"],
+      "sensitive": true,
+      "modes": ["local-user-gitlab"],
+      "threats": ["T-01", "T-15", "T-16", "T-17", "T-18", "T-21"],
+      "controls": ["C-01", "C-18", "C-19", "C-21", "C-22", "C-23"]
+    },
+    {
+      "id": "F-40",
+      "stage": "gitlab",
+      "name": "sanitized issue lifecycle receipt and recovery journal",
+      "sources": ["Z-13"],
+      "destinations": ["Z-05", "Z-08"],
+      "data": ["operation key", "bounded before and after metadata", "material digest", "confirmed operation prefix", "ambiguous or partial state", "safe next action"],
+      "sensitive": false,
+      "modes": ["local-user-gitlab"],
+      "threats": ["T-01", "T-06", "T-14", "T-17", "T-19", "T-20", "T-21"],
+      "controls": ["C-07", "C-08", "C-18", "C-20", "C-21", "C-22"]
+    }
+  ],
+  "threats": [
+    {
+      "id": "T-01",
+      "scenario": "DocsFab copies a host-owned inference, catalog, Git, or glab credential into model data, diagnostics, durable evidence, or publication metadata.",
+      "impact": "credential disclosure and unauthorized provider or repository access",
+      "disposition": "mitigate",
+      "flows": ["F-01", "F-04", "F-05", "F-06", "F-10", "F-11", "F-12", "F-13", "F-15", "F-16", "F-17", "F-18", "F-19", "F-20", "F-21", "F-22", "F-23", "F-25", "F-27", "F-28", "F-29", "F-30", "F-31", "F-32", "F-33", "F-34", "F-35", "F-36", "F-37", "F-38", "F-39", "F-40"],
+      "controls": ["C-01", "C-04", "C-05", "C-07", "C-08", "C-10", "C-15", "C-17", "C-18", "C-22", "C-23", "C-24"]
+    },
+    {
+      "id": "T-02",
+      "scenario": "DocsFab sends more tracked repository content to an inference endpoint than the selected workflow and context budget require.",
+      "impact": "unnecessary proprietary, personal, or otherwise sensitive-data disclosure",
+      "disposition": "mitigate-and-accept-residual",
+      "flows": ["F-02", "F-03", "F-04", "F-05", "F-10"],
+      "controls": ["C-02", "C-03"]
+    },
+    {
+      "id": "T-03",
+      "scenario": "Malicious repository text or untrusted model output attempts to expand capabilities through prompt injection, path traversal, shell, SCM, validation code, or ambient host access.",
+      "impact": "host data disclosure or unauthorized mutation",
+      "disposition": "mitigate-capability-escalation",
+      "flows": ["F-02", "F-04", "F-08", "F-09", "F-16"],
+      "controls": ["C-02", "C-03", "C-06", "C-12", "C-16"]
+    },
+    {
+      "id": "T-04",
+      "scenario": "An inference or catalog credential is attached to a redirected, substituted, or wrong-purpose endpoint.",
+      "impact": "provider credential disclosure",
+      "disposition": "mitigate",
+      "flows": ["F-01", "F-06", "F-22", "F-23"],
+      "controls": ["C-01", "C-05", "C-17"]
+    },
+    {
+      "id": "T-05",
+      "scenario": "A message or tool adapter forwards environment values, headers, credential-helper output, a host absolute path such as the checkout or home directory, raw authentication diagnostics, or an unbounded internal exception as model-visible data, or a publisher sends one of this host's undeclared roots into a published artifact.",
+      "impact": "host capability, host layout, or sensitive-data disclosure to the model endpoint or to readers of published output",
+      "disposition": "mitigate-with-virtual-workspace-at-model-boundary-and-exact-undeclared-root-replacement-at-egress",
+      "flows": ["F-05", "F-09", "F-10", "F-13", "F-19"],
+      "controls": ["C-03", "C-04", "C-06", "C-07", "C-12"]
+    },
+    {
+      "id": "T-06",
+      "scenario": "Provider, catalog, validation, Git, glab, tool, or serialization output containing sensitive data is echoed to logs, terminal diagnostics, shared manifests, or MR metadata.",
+      "impact": "credential or repository-data disclosure through secondary sinks",
+      "disposition": "mitigate",
+      "flows": ["F-07", "F-08", "F-11", "F-12", "F-13", "F-17", "F-19", "F-20", "F-21", "F-24", "F-25", "F-29", "F-30", "F-38", "F-40"],
+      "controls": ["C-07", "C-08", "C-10", "C-15", "C-16", "C-17", "C-22", "C-24"]
+    },
+    {
+      "id": "T-07",
+      "scenario": "Another local user reads raw records, caches, patches, catalog artifacts, or delivery state that intentionally contain model or repository content.",
+      "impact": "local sensitive-data disclosure",
+      "disposition": "mitigate-on-supported-local-hosts",
+      "flows": ["F-03", "F-12", "F-13", "F-14"],
+      "controls": ["C-08"]
+    },
+    {
+      "id": "T-08",
+      "scenario": "A patch is applied to the wrong revision, target, or worktree, or an unauthorized or stale patch is published.",
+      "impact": "unauthorized source or SCM mutation",
+      "disposition": "mitigate",
+      "flows": ["F-09", "F-14", "F-15", "F-18", "F-26", "F-27", "F-31", "F-32", "F-33", "F-34", "F-35", "F-36", "F-37"],
+      "controls": ["C-09", "C-10", "C-14", "C-19"]
+    },
+    {
+      "id": "T-09",
+      "scenario": "The model or untrusted validation code reaches Git, glab, credential helpers, agent sockets, or raw SCM output, or untrusted content becomes command authority.",
+      "impact": "SCM credential disclosure or unauthorized repository operation",
+      "disposition": "mitigate",
+      "flows": ["F-01", "F-11", "F-15", "F-16", "F-18", "F-19", "F-20", "F-21", "F-28"],
+      "controls": ["C-01", "C-07", "C-10", "C-12", "C-16", "C-18", "C-23", "C-24"]
+    },
+    {
+      "id": "T-10",
+      "scenario": "A token-shaped string anywhere in a repository is treated as DocsFab authority, blocking an unrelated workflow or creating false confidence that repository content is safe.",
+      "impact": "denial of useful operation and confused responsibility without reducing boundary risk",
+      "disposition": "remove-misaligned-control-and-transfer-repository-enforcement",
+      "flows": ["F-02", "F-14", "F-18", "F-19"],
+      "controls": ["C-11"]
+    },
+    {
+      "id": "T-11",
+      "scenario": "Repository-selected validation code reads host credentials or source Git state, writes the delivery tree or host, uses the network, escapes child lifecycle control, or leaks raw stdout and stderr.",
+      "impact": "host disclosure, unauthorized mutation, or misleading validation evidence",
+      "disposition": "mitigate-and-fail-closed-when-isolation-unavailable",
+      "flows": ["F-11", "F-16", "F-17"],
+      "controls": ["C-07", "C-16"]
+    },
+    {
+      "id": "T-12",
+      "scenario": "An approved hosted or local model endpoint retains, logs, or misuses repository content that the operator intentionally sent in an exact request.",
+      "impact": "provider-side sensitive-data disclosure",
+      "disposition": "accept-under-operator-provider-trust-decision",
+      "flows": ["F-04", "F-06", "F-07"],
+      "controls": ["C-03", "C-13"]
+    },
+    {
+      "id": "T-13",
+      "scenario": "The distinct Metadata or catalog credential crosses to the inference origin, a raw authenticated response is persisted or logged, or untrusted catalog data is promoted as approved provenance.",
+      "impact": "catalog credential disclosure or poisoned model configuration authority",
+      "disposition": "mitigate",
+      "flows": ["F-01", "F-11", "F-22", "F-23", "F-24", "F-25"],
+      "controls": ["C-01", "C-05", "C-07", "C-17"]
+    },
+    {
+      "id": "T-14",
+      "scenario": "A privileged or malicious provider emits credential material or credential-like content that is propagated into records, patches, shared evidence, catalog provenance, logs, or SCM metadata.",
+      "impact": "secondary credential disclosure or repository contamination",
+      "disposition": "mitigate-at-durable-and-public-boundaries-and-transfer-patch-content-to-ci",
+      "flows": ["F-07", "F-08", "F-09", "F-11", "F-12", "F-13", "F-14", "F-21", "F-24", "F-25", "F-29", "F-30", "F-38", "F-40"],
+      "controls": ["C-07", "C-08", "C-11", "C-15", "C-17", "C-22", "C-24"]
+    },
+    {
+      "id": "T-15",
+      "scenario": "The local-user GitLab token is attached to a substituted host, project, redirect, executable, or wrong-purpose command while issue observation or lifecycle data is sent.",
+      "impact": "GitLab credential disclosure, private tracker disclosure, or mutation of an unintended tracker",
+      "disposition": "mitigate",
+      "flows": ["F-01", "F-28", "F-31", "F-32", "F-33", "F-34", "F-35", "F-36", "F-37", "F-39"],
+      "controls": ["C-01", "C-18", "C-23", "C-24"]
+    },
+    {
+      "id": "T-16",
+      "scenario": "A glab field-value convention, raw material argument, or substituted local pathname causes authorized issue text, host files, or credentials to be read or disclosed outside the exact private material channel.",
+      "impact": "local-file, credential, or issue-material disclosure",
+      "disposition": "mitigate",
+      "flows": ["F-27", "F-28", "F-31", "F-32", "F-36", "F-39"],
+      "controls": ["C-18", "C-20", "C-23"]
+    },
+    {
+      "id": "T-17",
+      "scenario": "Concurrent apply processes, a crash after remote success, or ambiguous transport completion duplicates a non-idempotent issue creation, comment, link, or other mutation.",
+      "impact": "duplicate or contradictory tracker state with an unsafe retry decision",
+      "disposition": "mitigate-with-durable-reconciliation",
+      "flows": ["F-31", "F-32", "F-33", "F-34", "F-35", "F-36", "F-37", "F-38", "F-39", "F-40"],
+      "controls": ["C-21"]
+    },
+    {
+      "id": "T-18",
+      "scenario": "An expired, substituted, or prematurely checked observation or authorization is used after assessment, repository revision, operator, project, plan, or tracker state has drifted.",
+      "impact": "a stale maturity selection or unauthorized GitLab issue mutation",
+      "disposition": "mitigate",
+      "flows": ["F-26", "F-27", "F-28", "F-30", "F-31", "F-32", "F-33", "F-34", "F-35", "F-36", "F-37", "F-39"],
+      "controls": ["C-09", "C-19", "C-24"]
+    },
+    {
+      "id": "T-19",
+      "scenario": "A private lifecycle input or receipt parent, pathname, link, inode, ownership, or mode is substituted between validation and use.",
+      "impact": "disclosure, overwrite, or acceptance of attacker-controlled lifecycle state",
+      "disposition": "mitigate",
+      "flows": ["F-27", "F-40"],
+      "controls": ["C-08", "C-20"]
+    },
+    {
+      "id": "T-20",
+      "scenario": "A receipt or recovery journal is replaced, relinked, or modified after atomic rename and is later trusted as proof that a remote mutation completed.",
+      "impact": "false completion evidence, skipped work, or unsafe mutation replay",
+      "disposition": "mitigate",
+      "flows": ["F-40"],
+      "controls": ["C-20", "C-21"]
+    },
+    {
+      "id": "T-21",
+      "scenario": "Raw GitLab issue bodies, API responses, permission errors, authentication diagnostics, or internal exceptions reach model context, durable receipts, logs, or public evidence.",
+      "impact": "credential, private issue material, or organizational metadata disclosure",
+      "disposition": "mitigate",
+      "flows": ["F-28", "F-29", "F-30", "F-31", "F-32", "F-33", "F-34", "F-35", "F-36", "F-37", "F-38", "F-39", "F-40"],
+      "controls": ["C-07", "C-18", "C-22", "C-23", "C-24"]
+    }
+  ],
+  "controls": [
+    {
+      "id": "C-01",
+      "name": "host-owned credential isolation",
+      "status": "retained-and-hardened",
+      "owner": "DocsFab host adapters",
+      "flows": ["F-01", "F-06", "F-15", "F-18", "F-19", "F-22", "F-23", "F-27", "F-28", "F-31", "F-32", "F-33", "F-34", "F-35", "F-36", "F-37", "F-39"],
+      "threats": ["T-01", "T-04", "T-09", "T-13", "T-15"],
+      "requirement": "Read each credential only inside its fixed-purpose adapter and supply it only through normal inference, catalog, Git, or glab transport authentication; never interpolate it into model data or evidence.",
+      "verification": "Boundary tests inject distinct inference, Metadata/catalog, Git, and glab canaries and prove DocsFab never copies them into messages, results, diagnostics, records, patches, or metadata."
+    },
+    {
+      "id": "C-02",
+      "name": "immutable tracked-only export",
+      "status": "retained",
+      "owner": "DocsFab repository workspace",
+      "flows": ["F-02"],
+      "threats": ["T-02", "T-03"],
+      "requirement": "Resolve an immutable commit and expose only admitted tracked regular files without .git, ignored/untracked bytes, unsafe links, ambient Git configuration, or credential helpers.",
+      "verification": "Workspace tests cover immutable revision binding, excluded entries, executable Git configuration, path races, and source-checkout invariance."
+    },
+    {
+      "id": "C-03",
+      "name": "explicit budgeted model context",
+      "status": "retained-and-hardened",
+      "owner": "DocsFab context and prompt assembly",
+      "flows": ["F-03", "F-04", "F-05"],
+      "threats": ["T-02", "T-03", "T-05", "T-12"],
+      "requirement": "Construct each request only from the fixed DocsFab instruction, selected workflow/step/skill data, explicit operator input, and revision-bound budgeted context objects. Give the model a virtual workspace: the session working directory is a virtual /workspace, repository instructions carry repository-relative paths, and governed skills are named only under .docsfab-governed-assets/, so no host absolute path is supplied. Do not refuse model content because it contains or resembles a path.",
+      "verification": "Request-capture tests compare the exact provider message graph with admitted sources and reject ambient environment fields; the model-boundary host-path canary proves the checkout, installation, and state roots never appear in a provider request."
+    },
+    {
+      "id": "C-04",
+      "name": "exact outbound credential guard",
+      "status": "required-by-issue-111",
+      "owner": "DocsFab model-message boundary",
+      "flows": ["F-04", "F-05", "F-06", "F-10"],
+      "threats": ["T-01", "T-05"],
+      "requirement": "Inspect only the exact serialized message or tool result about to cross into the model endpoint. Reject recognized credential material with one content-free code and narrowing action; do not claim to detect proprietary or personal data, grant repository-wide authority, or offer scanner overrides.",
+      "verification": "Exact-context and malicious-tool-result fixtures fail before provider transmission while identical token-shaped fixtures outside the request do not affect eligibility."
+    },
+    {
+      "id": "C-05",
+      "name": "provider purpose and origin binding",
+      "status": "retained-and-hardened",
+      "owner": "DocsFab provider adapters",
+      "flows": ["F-01", "F-06", "F-07", "F-22", "F-23", "F-24"],
+      "threats": ["T-01", "T-04", "T-13"],
+      "requirement": "Use distinct purpose-bound credentials, HTTPS endpoints for remote transport, exact origin binding, redirect rejection, bounded responses, and content-free failures.",
+      "verification": "Tests prove wrong-purpose keys and redirects are rejected before credentials reach another origin and raw responses do not bypass normalization."
+    },
+    {
+      "id": "C-06",
+      "name": "confined closed tool set",
+      "status": "retained-and-hardened",
+      "owner": "DocsFab harness adapter",
+      "flows": ["F-04", "F-09", "F-10"],
+      "threats": ["T-03", "T-05"],
+      "requirement": "Grant only step-selected filesystem tools rooted in the active disposable workspace or an explicit read-only governed-skill root, with canonical path and race checks.",
+      "verification": "Tool tests deny absolute, traversal, symlink, and raced paths and return only closed safe failures."
+    },
+    {
+      "id": "C-07",
+      "name": "content-free diagnostics and public metadata",
+      "status": "retained-and-hardened",
+      "owner": "DocsFab CLI and host adapters",
+      "flows": ["F-07", "F-08", "F-11", "F-12", "F-13", "F-17", "F-18", "F-19", "F-20", "F-21", "F-24", "F-25", "F-28", "F-29", "F-30", "F-38", "F-40"],
+      "threats": ["T-01", "T-05", "T-06", "T-09", "T-11", "T-13", "T-14", "T-21"],
+      "requirement": "Discard raw provider, catalog, validation, tool, Git, glab, and authentication output and emit closed codes, counts, digests, bounded identity, and safe remediation only. Pass each production publisher's text through the one egress function, which replaces this host's undeclared roots with fixed placeholders (repository-relative, ~, $TMPDIR, $DOCSFAB_STATE_DIR, $DOCSFAB_CONFIG_ROOT, $HOST_PATH), leaves roots declared in DOCSFAB_PUBLIC_ROOTS and the generic /tmp and /var/tmp as written, and refuses credential material with a content-free code. One known exception remains: the runtime Slack webhook status block still screens path shapes instead of passing through egress.",
+      "verification": "Error-path tests place canaries in stdout, stderr, responses, exceptions, identities, titles, and descriptions and prove no canary reaches a public sink. Runtime and host egress canary tests place this host's roots in note, draft-MR, update-existing-MR, issue, Slack post, host incoming webhook, and hosted-report text and prove none reaches the sink, while text citing a declared or generic root is unchanged."
+    },
+    {
+      "id": "C-08",
+      "name": "private content-bearing state and allowlisted sharing",
+      "status": "retained-from-issue-52-and-hardened",
+      "owner": "DocsFab artifact stores",
+      "flows": ["F-03", "F-12", "F-13", "F-14", "F-21", "F-25", "F-27", "F-30", "F-40"],
+      "threats": ["T-01", "T-06", "T-07", "T-14", "T-19"],
+      "requirement": "Preserve #52: raw records, caches, patches, catalog artifacts, and delivery state remain owner-only with atomic fail-closed stores; only credential-free allowlisted schemas cross the sharing boundary.",
+      "verification": "#52 permission, symlink/race, serializer, and complete-field canary tests cover raw and shared stores under restrictive and ordinary umasks."
+    },
+    {
+      "id": "C-09",
+      "name": "explicit write and publication authority",
+      "status": "retained",
+      "owner": "DocsFab workflow and delivery policy",
+      "flows": ["F-09", "F-14", "F-15", "F-18", "F-26", "F-27", "F-31", "F-32", "F-33", "F-34", "F-35", "F-36", "F-37"],
+      "threats": ["T-08", "T-18"],
+      "requirement": "Default to read-only; bind write and publication authorization to the exact revision, workflow, plan, patch digest, destination, and current operation.",
+      "verification": "Authorization, expiry, replay, drift, idempotency, and zero-mutation denial tests cover every write boundary."
+    },
+    {
+      "id": "C-10",
+      "name": "fixed-purpose host-only SCM delivery",
+      "status": "retained-from-issue-37-and-hardened",
+      "owner": "DocsFab local-user publisher",
+      "flows": ["F-01", "F-15", "F-16", "F-18", "F-19", "F-20", "F-21"],
+      "threats": ["T-01", "T-06", "T-08", "T-09"],
+      "requirement": "Preserve #37: keep Git and glab outside model tools, expose no generic command or refspec surface, and revalidate project, identity, branch, revision, isolation, and draft-MR policy before mutation.",
+      "verification": "Fake-adapter, real local Git, isolation, race/restart, unsafe-config, and gated live GitLab tests prove the exact allowed operations and sanitized receipts."
+    },
+    {
+      "id": "C-11",
+      "name": "repository and CI credential enforcement",
+      "status": "external-organizational-control",
+      "owner": "GitLab and organizational CI",
+      "flows": ["F-02", "F-14", "F-18", "F-19"],
+      "threats": ["T-10", "T-14"],
+      "requirement": "Enforce credentials committed to repository history and untrusted generated patch content through repository policy, protected branches, and CI; DocsFab must not reinterpret repository-wide findings as workflow authority.",
+      "verification": "Repository CI operates independently, while DocsFab eligibility admits unrelated synthetic token fixtures and publication still runs configured validation and CI."
+    },
+    {
+      "id": "C-12",
+      "name": "no model shell, environment, or SCM capability",
+      "status": "retained",
+      "owner": "DocsFab product boundary",
+      "flows": ["F-09", "F-10", "F-15", "F-16"],
+      "threats": ["T-03", "T-05", "T-09"],
+      "requirement": "Do not offer unrestricted shell, process execution, environment access, Git, glab, credential-helper, or network tools to the model; validation is a separate host-controlled OS-isolated boundary.",
+      "verification": "Tool inventory and adversarial unknown-tool tests prove those model capabilities cannot be selected or invoked."
+    },
+    {
+      "id": "C-13",
+      "name": "explicit endpoint trust decision",
+      "status": "retained-and-documented",
+      "owner": "operator and deploying organization",
+      "flows": ["F-04", "F-06"],
+      "threats": ["T-12"],
+      "requirement": "The operator selects an approved hosted or local endpoint and accepts its access, retention, and deployment policy for exact request content and untrusted responses.",
+      "verification": "Configuration and operating documentation distinguish hosted and local trust without claiming DocsFab controls endpoint retention."
+    },
+    {
+      "id": "C-14",
+      "name": "source and artifact identity preservation",
+      "status": "retained",
+      "owner": "DocsFab workspace and delivery services",
+      "flows": ["F-02", "F-14", "F-15"],
+      "threats": ["T-08"],
+      "requirement": "Bind exports and patches to immutable digests and filesystem identities, leave the source checkout unchanged, and fail closed on substitution or drift.",
+      "verification": "Identity/race tests and before/after source fingerprints cover workspace and patch lifecycles."
+    },
+    {
+      "id": "C-15",
+      "name": "untrusted inbound and durable-output guard",
+      "status": "required-by-issue-111",
+      "owner": "DocsFab response and evidence boundaries",
+      "flows": ["F-07", "F-08", "F-11", "F-12", "F-13", "F-21", "F-24", "F-25"],
+      "threats": ["T-01", "T-06", "T-14"],
+      "requirement": "Treat model, catalog, and SCM responses as untrusted; reject or content-safely minimize credential-bearing values before durable records, logs, shared evidence, or public metadata. Private patch content remains untrusted and is governed by C-11 rather than this evidence control.",
+      "verification": "Privileged-provider, malicious catalog/GitLab response, record, log, and metadata fixtures prove recognized credentials fail without echoing content."
+    },
+    {
+      "id": "C-16",
+      "name": "OS-isolated credential-free validation",
+      "status": "retained-from-issue-37",
+      "owner": "DocsFab delivery validation boundary",
+      "flows": ["F-11", "F-16", "F-17"],
+      "threats": ["T-03", "T-06", "T-09", "T-11"],
+      "requirement": "Run repository-selected validation without a shell, with a small credential-free environment, read-only delivery tree, private scratch, denied source/credential reads and network, complete child-lifecycle control, bounded discarded stdout/stderr, and fail closed when the required OS isolation is unavailable.",
+      "verification": "#37 behavioral probes and failure tests prove denied host/source reads, worktree writes, networking, descendant escape, output leakage, and unsupported-platform execution."
+    },
+    {
+      "id": "C-17",
+      "name": "authenticated catalog normalization and provenance",
+      "status": "retained-and-hardened",
+      "owner": "DocsFab Metadata and catalog adapters",
+      "flows": ["F-01", "F-11", "F-22", "F-23", "F-24", "F-25"],
+      "threats": ["T-01", "T-04", "T-06", "T-13", "T-14"],
+      "requirement": "Use a credential distinct from inference, bind the exact catalog origin and request policy, reject redirects, treat the authenticated response as untrusted, and emit only schema-validated credential-free observations/provenance without granting configuration authority.",
+      "verification": "Metadata/catalog tests cover wrong-purpose credentials, origin/redirect substitution, raw response canaries, schema drift, provenance binding, and descriptive-only observations."
+    },
+    {
+      "id": "C-18",
+      "name": "fixed-purpose host-owned GitLab issue lifecycle",
+      "status": "retained-and-hardened",
+      "owner": "DocsFab local-user issue adapter",
+      "flows": ["F-01", "F-27", "F-28", "F-29", "F-30", "F-31", "F-32", "F-33", "F-34", "F-35", "F-36", "F-37", "F-38", "F-39", "F-40"],
+      "threats": ["T-01", "T-09", "T-15", "T-16", "T-21"],
+      "requirement": "Keep #47 planning credential-free and expose only a fixed-command host adapter for bounded issue and milestone reads plus the exact authorized create, update, label, milestone, relationship, comment, close, reopen, and reconcile operations; never expose glab, token, raw response, or generic API authority to the model.",
+      "verification": "#47 fake-adapter, command-capture, operation denial, token canary, raw response, and gated-live fixtures cover every supported action and reject all unsupported bulk, delete, confidentiality, membership, project-setting, and generic command operations."
+    },
+    {
+      "id": "C-19",
+      "name": "exact tracker authorization preflight and drift boundary",
+      "status": "retained-and-hardened",
+      "owner": "DocsFab roadmap authorization and issue adapter",
+      "flows": ["F-26", "F-27", "F-28", "F-31", "F-32", "F-33", "F-34", "F-35", "F-36", "F-37", "F-39"],
+      "threats": ["T-08", "T-18"],
+      "requirement": "Bind operator, host, project, plan and operation digests, exact material, expected issue state, issuance, and expiry; preflight identity and permissions and revalidate current authorization immediately before each remote mutation, failing the affected operation on tracker drift.",
+      "verification": "#47 tests cover expired and substituted authorization, operation expansion, identity/project drift, stale updated_at, missing labels, closed issues, permission failure, and a final mutation-boundary authorization recheck."
+    },
+    {
+      "id": "C-20",
+      "name": "owner-private issue material and receipt store",
+      "status": "retained-from-issue-52-and-hardened",
+      "owner": "DocsFab issue lifecycle stores",
+      "flows": ["F-27", "F-40"],
+      "threats": ["T-16", "T-19", "T-20"],
+      "requirement": "Accept material only through exact owner-private regular files and publish receipts through owner-private atomic stores; reject unsafe ancestors, symlinks, hardlinks, permissive modes, unexpected ownership, pathname or inode substitution, and post-rename byte, identity, mode, or link-count drift.",
+      "verification": "#47 store and CLI tests cover secure-parent setup, raw-material path substitution, symlink/hardlink/mode attacks, concurrent publication, and receipt revalidation after rename and before later trust."
+    },
+    {
+      "id": "C-21",
+      "name": "serialized idempotent issue mutation and ambiguous recovery",
+      "status": "retained-and-hardened",
+      "owner": "DocsFab issue lifecycle journal",
+      "flows": ["F-31", "F-32", "F-33", "F-34", "F-35", "F-36", "F-37", "F-38", "F-39", "F-40"],
+      "threats": ["T-17", "T-20"],
+      "requirement": "Serialize the exact plan across processes, durably record prepared and confirmed prefixes, reconcile each operation by its exact idempotency key and material digest, and treat any potentially successful transport without confirmed identity as ambiguous and reconcile-only before retry.",
+      "verification": "#47 crash-before, crash-after, concurrent process, duplicate create/comment/link, partial batch, ambiguous-success, material mismatch, and receipt-tamper tests prove no non-idempotent operation is blindly replayed."
+    },
+    {
+      "id": "C-22",
+      "name": "inert GitLab response normalization and sanitized lifecycle evidence",
+      "status": "retained-and-hardened",
+      "owner": "DocsFab issue adapter and evidence projection",
+      "flows": ["F-28", "F-29", "F-30", "F-31", "F-32", "F-33", "F-34", "F-35", "F-36", "F-37", "F-38", "F-39", "F-40"],
+      "threats": ["T-01", "T-06", "T-14", "T-21"],
+      "requirement": "Decode GitLab JSON as recursive inert plain data before semantic access, discard raw bodies and diagnostics, and emit only bounded allowlisted identities, states, digests, confirmed prefixes, ambiguity codes, and safe next actions; issue descriptions and comments never become durable evidence.",
+      "verification": "#47 fixtures inject credentials, private API fields, accessors, proxies, oversized bodies, schema drift, raw errors, and ambiguous responses and prove rejection before traps or content-bearing output."
+    },
+    {
+      "id": "C-23",
+      "name": "exact GitLab issue transport and material channel",
+      "status": "retained-and-hardened",
+      "owner": "DocsFab fixed-command glab adapter",
+      "flows": ["F-01", "F-27", "F-28", "F-29", "F-31", "F-32", "F-33", "F-34", "F-35", "F-36", "F-37", "F-38", "F-39"],
+      "threats": ["T-01", "T-09", "T-15", "T-16", "T-21"],
+      "requirement": "Bind the exact HTTPS GitLab host and project, reject redirects and substituted origins, use a fixed allowlisted command grammar, and transmit authorized body bytes through a literal-safe channel that cannot interpret @path, shell, config, environment, stdin, or caller-selected file expansion as additional authority.",
+      "verification": "#47 command-capture tests prove fixed host/project arguments and literal bytes, reject --field or @file expansion and generic endpoints, and show the token reaches only the selected GitLab origin while raw output is bounded and discarded."
+    },
+    {
+      "id": "C-24",
+      "name": "revision-bound read-only cascade tracker observation",
+      "status": "retained-and-hardened",
+      "owner": "DocsFab documentation-maturity cascade host observer",
+      "flows": ["F-01", "F-28", "F-29", "F-30"],
+      "threats": ["T-01", "T-06", "T-09", "T-14", "T-15", "T-18", "T-21"],
+      "requirement": "Preserve #103's host-only read boundary: snapshot exact host/project/executable configuration before workflow code can influence it, match the active repository remote and GitLab commit, pass only purpose-minimized glab environment state, bound elapsed time, pages, bytes, issue count, and decoded structure, and expose only an assessment-bound, repository-bound, monotonic-expiring sanitized observation with tracker mutation explicitly unauthorized.",
+      "verification": "#103 production-path fixtures poison public readers and clocks, substitute assessments, repositories, commits, projects, executables, endpoints, and environment secrets, inject oversized or hostile GitLab data, and prove selection accepts only the fresh authentic sanitized observation."
+    }
+  ],
+  "decisions": [
+    {
+      "id": "D-01",
+      "question": "Can a whole-repository secret scan grant or deny workflow eligibility?",
+      "decision": "No. This explicitly supersedes #32's repository-eligibility and override product assumption. #110 removes that authority, while #110/#112 preserve historical raw securityScan and securityScanEffectiveDisposition fields as readable evidence with no new authority.",
+      "rationale": "A whole-repository scan inspects content that may never cross a DocsFab boundary and conflates organizational repository hygiene with model egress; historical facts remain facts but cannot authorize current execution.",
+      "implementationIssues": [32, 110, 112]
+    },
+    {
+      "id": "D-02",
+      "question": "Does exact outbound credential scanning add value beyond structural isolation?",
+      "decision": "Yes, as bounded defense in depth over only the exact serialized model message and exact model-visible tool result.",
+      "rationale": "Structural isolation is primary, but an exact-boundary guard can catch a recognized credential introduced through selected tracked context, operator input, a regression, or a malicious adapter. It cannot prove arbitrary content non-sensitive and has no repository-wide authority.",
+      "implementationIssues": [111, 112]
+    },
+    {
+      "id": "D-03",
+      "question": "Should the standalone repository scanner remain?",
+      "decision": "Retain the explicitly invoked standalone scan command as an advisory diagnostic with no effect on run, write, or publication authority and no override ceremony.",
+      "rationale": "An operator may value local hints, but GitLab and organizational CI are authoritative for committed credentials.",
+      "implementationIssues": [110]
+    },
+    {
+      "id": "D-04",
+      "question": "Who owns credentials committed to repository history or generated patch content?",
+      "decision": "GitLab and organizational CI own repository credential enforcement; DocsFab runs configured validation and preserves private patch review evidence.",
+      "rationale": "Repository policy can inspect the actual change and history in the destination's organizational context without turning unrelated files into DocsFab capability decisions.",
+      "implementationIssues": [110, 112]
+    },
+    {
+      "id": "D-05",
+      "question": "Is unrestricted shell inside the current model boundary?",
+      "decision": "No. It is intentionally excluded, along with process, environment, arbitrary network, Git, and glab tools.",
+      "rationale": "A shell would collapse the distinction between repository content and host capabilities, making provider and SCM credential isolation dependent on an unimplemented production sandbox.",
+      "implementationIssues": [111]
+    },
+    {
+      "id": "D-06",
+      "question": "Do local and hosted inference have the same trust boundary?",
+      "decision": "They receive the same bounded messages and tools, but have different deployment trust: hosted requests leave the host; local requests go to an operator-approved local service that may still log content or possess independent host privileges.",
+      "rationale": "Local transport is not proof of process isolation, while hosted transport adds provider retention and jurisdiction concerns.",
+      "implementationIssues": [111, 112]
+    },
+    {
+      "id": "D-07",
+      "question": "Are raw run records public security evidence?",
+      "decision": "No. Preserve #52's owner-only raw-record boundary: raw records and patches are private content-bearing state; only explicit allowlisted manifests, receipts, and MR metadata are shareable.",
+      "rationale": "#52 recognizes that raw records intentionally retain untrusted model output, instructions, repository identity, and local paths even when DocsFab-supplied host credentials are excluded.",
+      "implementationIssues": [52, 111, 112]
+    },
+    {
+      "id": "D-08",
+      "question": "Should generic token-pattern scanning gate patch capture or publication?",
+      "decision": "No. Keep patches private before explicit publication, validate exact metadata boundaries, and rely on destination CI for repository content enforcement.",
+      "rationale": "A generic patch gate recreates repository scanner false authority. DocsFab does not supply host credentials to the model, but untrusted provider output can still create credential-like or sensitive patch content; private review, configured validation, and destination CI own that content boundary.",
+      "implementationIssues": [110, 111, 112]
+    },
+    {
+      "id": "D-09",
+      "question": "Can repository-selected validation run with ordinary host process authority?",
+      "decision": "No. Preserve #37's separate host-controlled validation boundary: credential-free environment, read-only delivery tree, private scratch, denied source/credential/network access, complete child-lifecycle control, discarded raw output, and fail closed when required OS isolation is unavailable.",
+      "rationale": "Validation executes untrusted repository code and is not a model tool; ordinary host authority would expose the same credentials and filesystem capabilities that the model boundary excludes.",
+      "implementationIssues": [37, 111, 112]
+    },
+    {
+      "id": "D-10",
+      "question": "Can authenticated Metadata or catalog output become configuration authority directly?",
+      "decision": "No. Use its own purpose-bound credential and origin, treat raw responses as untrusted, and emit only schema-validated credential-free observation/provenance that remains descriptive until a separate approval chain.",
+      "rationale": "Authentication proves the transport source, not semantic correctness, safe serialization, or operator approval of a runtime model profile.",
+      "implementationIssues": [111, 112]
+    },
+    {
+      "id": "D-11",
+      "question": "Does host credential isolation prove model output and patches are credential-free?",
+      "decision": "No. DocsFab never supplies its host credentials as model data, but privileged or malicious providers can emit credential material or lookalikes. Guard durable/public sinks, treat patches as untrusted private content, and delegate repository-content enforcement to validation and CI.",
+      "rationale": "Inbound provider output is attacker-controlled data; an outbound-only invariant cannot make claims about bytes a provider independently returns.",
+      "implementationIssues": [111, 112]
+    },
+    {
+      "id": "D-12",
+      "question": "Can roadmap planning or model execution receive GitLab credentials, raw issue bodies, generic glab access, or direct tracker mutation authority?",
+      "decision": "No. #47 adds a separate host-owned issue-lifecycle phase whose fixed adapter alone reads authentication and exact private material, preflights and rechecks authorization and tracker state, serializes mutations, reconciles ambiguous completion, and returns only sanitized observations and receipts.",
+      "rationale": "Issue descriptions, comments, tokens, raw API responses, local material files, and non-idempotent remote effects cross materially different boundaries from draft-MR publication and require explicit flows, storage controls, and recovery authority without expanding the model tool set.",
+      "implementationIssues": [47, 111, 112]
+    },
+    {
+      "id": "D-13",
+      "question": "Can documentation-maturity selection accept caller-supplied GitLab access, raw issue material, or a structurally valid but unauthenticated tracker snapshot?",
+      "decision": "No. Preserve #103's separate host-owned read-only observation: bind the configured GitLab project and exact repository revision, execute only bounded fixed endpoints through the captured glab executable and purpose-minimized environment, sanitize issue bodies into identities and fingerprints, bind the result to the authentic assessment and workspace, expire it monotonically, and keep tracker mutation unauthorized.",
+      "rationale": "Dependency ranking needs current issue state, but giving workflow or model inputs transport authority or accepting replayable snapshots would expose tracker data and let stale or forged issue state choose an executable work unit.",
+      "implementationIssues": [103, 109, 111, 112]
+    }
+  ],
+  "acceptedRisks": [
+    {
+      "id": "R-01",
+      "risk": "A compromised invoking account, DocsFab process, dependency, kernel, root user, or local credential store can read host credentials and private state.",
+      "reason": "The current product is a local single-user tool, not a hostile-host or multi-tenant security boundary."
+    },
+    {
+      "id": "R-02",
+      "risk": "Tracked repository content selected into an exact request may contain confidential information that does not match a credential detector.",
+      "reason": "The operator authorizes the repository/workflow/provider combination; exact scanning cannot classify arbitrary confidentiality. Context minimization reduces but cannot eliminate this exposure."
+    },
+    {
+      "id": "R-03",
+      "risk": "An approved hosted provider or local inference service may retain or misuse exact request content according to policy outside DocsFab's control.",
+      "reason": "Endpoint governance is an operator and organizational trust decision."
+    },
+    {
+      "id": "R-04",
+      "risk": "Prompt injection can influence model reasoning and output within the explicitly granted read/write tools.",
+      "reason": "DocsFab constrains capability and evidence; it does not prove semantic obedience. Patch review, validation, and explicit publication remain required."
+    },
+    {
+      "id": "R-05",
+      "risk": "GitLab administrators, project members, CI jobs, and repository policy can see content after authorized push, MR creation, or issue lifecycle mutation.",
+      "reason": "The operator selected that organizational destination and explicitly authorized the exact repository or issue material; access and retention are GitLab responsibilities."
+    },
+    {
+      "id": "R-06",
+      "risk": "A local inference service may independently possess host filesystem, environment, or network access even though DocsFab never grants those capabilities as model tools.",
+      "reason": "DocsFab controls its request and tool adapter, not the deployment privileges of an operator-selected endpoint."
+    },
+    {
+      "id": "R-07",
+      "risk": "Exact-boundary credential detection has false negatives for unknown credential families, transformed or split encodings, encrypted values, proprietary secrets, and arbitrary confidential data.",
+      "reason": "The detector is bounded defense in depth, not DLP or a proof of non-sensitivity; structural minimization, endpoint selection, private evidence, and organizational policy remain primary."
+    },
+    {
+      "id": "R-08",
+      "risk": "A privileged or malicious provider can independently emit credential-like or sensitive bytes into model output or a private patch even though DocsFab never supplied host-owned credentials.",
+      "reason": "Durable/public evidence guards reject recognized leakage, but private patch content remains untrusted and requires review, configured validation, and GitLab/CI enforcement."
+    }
+  ],
+  "removedControls": [
+    {
+      "id": "X-01",
+      "control": "whole-repository scan as an eligibility gate",
+      "reason": "Unrelated tracked content does not cross the model, evidence, or SCM metadata boundary and therefore cannot justify DocsFab authority."
+    },
+    {
+      "id": "X-02",
+      "control": "revision/rule/reason/expiry scanner override ceremony on normal runs",
+      "reason": "This supersedes #32's override ceremony because it authorizes a mis-scoped repository gate rather than an exact egress boundary; #110/#112 retain historical raw/effective record fields only for read compatibility, never authority."
+    },
+    {
+      "id": "X-03",
+      "control": "claims that absence of token-shaped matches proves repository or prompt content non-sensitive",
+      "reason": "Pattern matching cannot classify arbitrary confidential content or provider suitability."
+    }
+  ],
+  "outOfScope": [
+    "hostile-host, root-compromise, and compromised-DocsFab-process containment",
+    "production multi-tenant isolation, hosted credential brokerage, revocation, and user-role intersection",
+    "general repository DLP or replacement of GitLab and organizational CI secret enforcement",
+    "provider-side retention, training, jurisdiction, or local-model service sandboxing",
+    "unrestricted shell, arbitrary process execution, arbitrary network tools, generic SCM tools, merge, approval, protected-branch administration, issue deletion, confidential-state mutation, membership mutation, project-setting mutation, or destructive bulk close",
+    "automatic classification of all confidential or regulated repository content"
+  ],
+  "reviewGate": {
+    "requiredRoles": ["security", "product"],
+    "decision": "approved",
+    "evidenceKind": "gitlab-external-approval-verification",
+    "approvalRuleNames": {
+      "security": "DocsFab security review",
+      "product": "DocsFab product review"
+    },
+    "binding": "The committed candidate manifest binds only immutable model/document digests and the required GitLab approval-rule names. A fixed-purpose verifier fetches the exact candidate commit, files, merge request, approval rules, current approvals, and system approval notes from GitLab. Its verified result remains external closure evidence, so no self-referential post-approval repository commit is required.",
+    "verification": "Require GitLab's project approval settings to reset approvals on push, the MR current head to equal the external evidence candidate commit, detailed_merge_status to be outside checking/approvals_syncing, and the latest collected diff version to bind that head with a non-null patch_id_sha; fetch the candidate manifest/model/document at that ref; verify exact digests; reject per-MR rule overrides; require one distinct currently approved user from each exact named regular rule in approval_state; require each user's API-fetched system note body to be exactly 'approved this merge request'; then re-fetch and re-pin the exact MR, diff version, setting, rule, and approval facts after awaited note reads. Self-declared action, role, commit, ordinary comments, asynchronous pre-reset approvals, stale or revoked approvals, mutable /diffs URLs, and repository-committed approval claims do not count."
+  }
+}

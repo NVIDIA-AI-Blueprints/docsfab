@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "kind": "impact-report",
+  "repository": {
+    "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "contentDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "digest": "d0af7b6695aa3d276456784628439c224cb9682d015afb5091b0e157b53d6661",
+  "payload": {
+    "beforeRepository": {
+      "revision": "dddddddddddddddddddddddddddddddddddddddd",
+      "contentDigest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+    },
+    "afterRepository": {
+      "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "contentDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    },
+    "beforeIndexDigest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "afterIndexDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "changedPaths": ["docs/guide.md"],
+    "structuralRegions": ["body", "navigation"],
+    "ontologyDelta": {
+      "addedEntityIds": [],
+      "removedEntityIds": [],
+      "changedEntityIds": ["entity:configure"],
+      "addedRelationshipCount": 0,
+      "removedRelationshipCount": 0
+    },
+    "affectedNodeIds": ["document:guide", "section:install"],
+    "navigationPressure": "elevated",
+    "semanticImpact": "localized",
+    "recommendedAction": "bounded-repair",
+    "requiredApproval": "maintainer",
+    "evidence": [{ "path": "docs/guide.md", "nodeId": "section:install" }]
+  }
+}

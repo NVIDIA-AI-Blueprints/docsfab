@@ -1,0 +1,8 @@
+dist/acceptance-cli.js
+dist/acceptance-judge.js
+dist/scorecard-cli.js
+dist/scorecard-render.js
+dist/scorecard.js
+dist/delivery/acceptance-cli.js
+dist/delivery/acceptance-worker.js
+dist/evaluation/corpus-cli.js

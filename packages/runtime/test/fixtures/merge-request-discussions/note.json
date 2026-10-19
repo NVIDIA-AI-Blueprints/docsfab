@@ -1,0 +1,28 @@
+{
+  "id": "@id",
+  "type": "@type",
+  "body": "@body",
+  "attachment": null,
+  "author": {
+    "id": "@author_id",
+    "username": "@username",
+    "name": "Reviewer",
+    "state": "active",
+    "locked": false,
+    "avatar_url": "https://gitlab.example.test/uploads/-/system/user/avatar/1/avatar.png",
+    "web_url": "https://gitlab.example.test/reviewer"
+  },
+  "created_at": "2026-10-02T09:00:00.000Z",
+  "updated_at": "2026-10-02T09:00:00.000Z",
+  "system": "@system",
+  "noteable_id": 9100813,
+  "noteable_type": "MergeRequest",
+  "project_id": 4242,
+  "resolvable": "@resolvable",
+  "confidential": false,
+  "internal": false,
+  "imported": false,
+  "imported_from": "none",
+  "noteable_iid": 813,
+  "commands_changes": {}
+}

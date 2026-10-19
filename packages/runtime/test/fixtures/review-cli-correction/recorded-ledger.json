@@ -1,0 +1,211 @@
+{
+  "recordedObligationIds": [
+    "OBL-INPUT-REPRESENTATIONS-1",
+    "OBL-INPUT-REPRESENTATIONS-2",
+    "OBL-INPUT-REPRESENTATIONS-3",
+    "OBL-DEFAULTS-AND-OVERRIDES-1",
+    "OBL-DEFAULTS-AND-OVERRIDES-2",
+    "OBL-DEFAULTS-AND-OVERRIDES-3",
+    "OBL-MUTABLE-STATE-1",
+    "OBL-DESTINATION-AND-TRUST-1",
+    "OBL-DESTINATION-AND-TRUST-2",
+    "OBL-DESTINATION-AND-TRUST-3",
+    "OBL-ERROR-STATUS-RETRY-1",
+    "OBL-ERROR-STATUS-RETRY-2",
+    "OBL-ERROR-STATUS-RETRY-3",
+    "OBL-ERROR-STATUS-RETRY-4",
+    "OBL-ERROR-STATUS-RETRY-5",
+    "OBL-ENVIRONMENT-PREREQUISITE-1",
+    "OBL-ENVIRONMENT-PREREQUISITE-2",
+    "OBL-ENVIRONMENT-PREREQUISITE-3"
+  ],
+  "ledgerProposal": {
+    "completeness": "bounded-not-proven",
+    "dimensions": [
+      {
+        "dimension": "input-representations",
+        "status": "applicable",
+        "reason": "The frozen CLI accepts a subcommand plus specific flag/value pairs and output formats.",
+        "sourceLocators": [],
+        "obligations": [
+          {
+            "dimension": "input-representations",
+            "sourceLocators": ["src/sprout.mjs:14-20"],
+            "statement": "After greet, arguments are parsed only as alternating flag/value pairs where each flag must be --name or --format and each accepted flag consumes the immediately following value.",
+            "evidenceClass": "source-observation",
+            "uncertainty": "Derived from source inspection only; parsing behavior for concrete invocations was not executed."
+          },
+          {
+            "dimension": "input-representations",
+            "sourceLocators": ["src/sprout.mjs:3-5", "src/sprout.mjs:8-10"],
+            "statement": "The CLI accepts a top-level --help invocation and otherwise requires the first positional argument to be the literal subcommand greet.",
+            "evidenceClass": "source-observation",
+            "uncertainty": "Derived from source inspection only; command behavior was not executed in the declared environment."
+          },
+          {
+            "dimension": "input-representations",
+            "sourceLocators": ["src/sprout.mjs:22-27"],
+            "statement": "The accepted output format values are exactly text and json.",
+            "evidenceClass": "source-observation",
+            "uncertainty": "Derived from source inspection only; supported values were not confirmed by execution."
+          }
+        ]
+      },
+      {
+        "dimension": "defaults-and-overrides",
+        "status": "applicable",
+        "reason": "The frozen CLI defines default option values and lets later parsed pairs override them.",
+        "sourceLocators": [],
+        "obligations": [
+          {
+            "dimension": "defaults-and-overrides",
+            "sourceLocators": ["src/sprout.mjs:14-20"],
+            "statement": "A parsed --format pair overrides the default format with the supplied next argument.",
+            "evidenceClass": "source-observation",
+            "uncertainty": "Derived from source inspection only; override behavior was not executed."
+          },
+          {
+            "dimension": "defaults-and-overrides",
+            "sourceLocators": ["src/sprout.mjs:14-20"],
+            "statement": "A parsed --name pair overrides the default name with the supplied next argument.",
+            "evidenceClass": "source-observation",
+            "uncertainty": "Derived from source inspection only; override behavior was not executed."
+          },
+          {
+            "dimension": "defaults-and-overrides",
+            "sourceLocators": ["src/sprout.mjs:12-13"],
+            "statement": "When no overriding flags are parsed, the default name is friend and the default format is text.",
+            "evidenceClass": "source-observation",
+            "uncertainty": "Derived from source inspection only; default output was not executed."
+          }
+        ]
+      },
+      {
+        "dimension": "mutable-state",
+        "status": "applicable",
+        "reason": "The frozen CLI mutates local state while parsing arguments before producing output.",
+        "sourceLocators": [],
+        "obligations": [
+          {
+            "dimension": "mutable-state",
+            "sourceLocators": ["src/sprout.mjs:12-13", "src/sprout.mjs:19-20"],
+            "statement": "The CLI initializes local variables name and format to friend and text, then mutates them during argument parsing when matching flag/value pairs are encountered.",
+            "evidenceClass": "source-observation",
+            "uncertainty": "Derived from source inspection only; state transitions were not observed at runtime."
+          }
+        ]
+      },
+      {
+        "dimension": "destination-and-trust",
+        "status": "applicable",
+        "reason": "The frozen CLI writes user-visible results to process streams and handles user-supplied values without external I/O.",
+        "sourceLocators": [],
+        "obligations": [
+          {
+            "dimension": "destination-and-trust",
+            "sourceLocators": ["src/sprout.mjs:26-27", "src/sprout.mjs:4-5"],
+            "statement": "Successful help text and greeting output are written to standard output via console.log.",
+            "evidenceClass": "source-observation",
+            "uncertainty": "Derived from source inspection only; stdout behavior was not executed."
+          },
+          {
+            "dimension": "destination-and-trust",
+            "sourceLocators": ["src/sprout.mjs:26-27", "src/sprout.mjs:5"],
+            "statement": "The implementation states that no network access or configuration files are required, and the inspected source contains no network or configuration-file operations before producing output.",
+            "evidenceClass": "source-observation",
+            "uncertainty": "This is bounded to the inspected file src/sprout.mjs and was not confirmed by execution or broader repository inspection."
+          },
+          {
+            "dimension": "destination-and-trust",
+            "sourceLocators": ["src/sprout.mjs:16", "src/sprout.mjs:23", "src/sprout.mjs:9"],
+            "statement": "Usage and validation failures are written to standard error via console.error.",
+            "evidenceClass": "source-observation",
+            "uncertainty": "Derived from source inspection only; stderr behavior was not executed."
+          }
+        ]
+      },
+      {
+        "dimension": "error-status-retry",
+        "status": "applicable",
+        "reason": "The frozen CLI defines explicit failure conditions and process exit statuses.",
+        "sourceLocators": [],
+        "obligations": [
+          {
+            "dimension": "error-status-retry",
+            "sourceLocators": ["src/sprout.mjs:3-6"],
+            "statement": "A top-level --help invocation exits with status code 0 after printing usage and defaults.",
+            "evidenceClass": "source-observation",
+            "uncertainty": "Derived from source inspection only; exit status was not executed."
+          },
+          {
+            "dimension": "error-status-retry",
+            "sourceLocators": ["src/sprout.mjs:22-24"],
+            "statement": "If --format supplies a value other than text or json, the CLI prints an unsupported format error and exits with status code 2.",
+            "evidenceClass": "source-observation",
+            "uncertainty": "Derived from source inspection only; invalid-format behavior was not executed."
+          },
+          {
+            "dimension": "error-status-retry",
+            "sourceLocators": ["src/sprout.mjs:14-18"],
+            "statement": "If any post-greet argument is not --name or --format, or if such a flag has no following value, the CLI prints an error and exits with status code 2.",
+            "evidenceClass": "source-observation",
+            "uncertainty": "Derived from source inspection only; validation failure behavior was not executed."
+          },
+          {
+            "dimension": "error-status-retry",
+            "sourceLocators": ["src/sprout.mjs:8-10"],
+            "statement": "If the first positional argument is not greet, the CLI prints an error and exits with status code 2.",
+            "evidenceClass": "source-observation",
+            "uncertainty": "Derived from source inspection only; failure behavior was not executed."
+          },
+          {
+            "dimension": "error-status-retry",
+            "sourceLocators": ["src/sprout.mjs:3-27"],
+            "statement": "The inspected implementation defines no retry behavior for any success or failure path.",
+            "evidenceClass": "source-observation",
+            "uncertainty": "Derived from source inspection only; absence of retry was inferred from the bounded inspected source file and not from execution."
+          }
+        ]
+      },
+      {
+        "dimension": "environment-prerequisite",
+        "status": "applicable",
+        "reason": "The frozen CLI declares runtime and prerequisite conditions for use.",
+        "sourceLocators": [],
+        "obligations": [
+          {
+            "dimension": "environment-prerequisite",
+            "sourceLocators": ["src/sprout.mjs:2"],
+            "statement": "The CLI reads arguments from process.argv, so invocation requires a runtime that provides Node-style process arguments.",
+            "evidenceClass": "source-inference",
+            "uncertainty": "This prerequisite is inferred from the source operation and was not validated by execution."
+          },
+          {
+            "dimension": "environment-prerequisite",
+            "sourceLocators": ["src/sprout.mjs:5"],
+            "statement": "The implementation declares that no network access or configuration files are required for the documented help path.",
+            "evidenceClass": "source-observation",
+            "uncertainty": "Derived from source inspection only; absence of those prerequisites was not confirmed by execution beyond the bounded inspected source."
+          },
+          {
+            "dimension": "environment-prerequisite",
+            "sourceLocators": ["src/sprout.mjs:1"],
+            "statement": "The program is intended to run under a Node-compatible environment that honors the env node shebang.",
+            "evidenceClass": "source-inference",
+            "uncertainty": "This prerequisite is inferred from the shebang declaration in source; runtime availability of node was not verified in the environment."
+          }
+        ]
+      }
+    ],
+    "limitations": [
+      "Completeness is bounded-not-proven from inspection of admitted source src/sprout.mjs only; no execution, packaging artifact, or broader repository source was inspected in this inventory step."
+    ]
+  },
+  "repositoryRevision": "74ecf7d2835a3afbef5e0acf895c2e2dda3935ef",
+  "sources": [
+    {
+      "path": "src/sprout.mjs",
+      "sha256": "a8c08a5d1a8511e646aa29a9e92750379a875553d31a2566c4ad31e2388c7d4e"
+    }
+  ]
+}

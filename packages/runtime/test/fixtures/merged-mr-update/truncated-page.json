@@ -1,0 +1,30 @@
+{
+  "description": "One in-window merge arriving on a page the source flagged as truncated. The MR is retained with an evidence gap rather than dropped.",
+  "window": {
+    "timeZone": "America/Los_Angeles",
+    "startDate": "2026-09-14",
+    "endDate": "2026-09-14"
+  },
+  "targetBranch": "main",
+  "pages": [
+    {
+      "page": 1,
+      "nextPage": null,
+      "truncated": true,
+      "items": [
+        {
+          "iid": 1901,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/1901",
+          "title": "Arrive on a truncated page",
+          "description": "Retained as selected, with the truncation recorded.",
+          "state": "merged",
+          "mergedAt": "2026-09-14T20:30:00.000Z",
+          "targetBranch": "main",
+          "sourceBranch": "feature/truncated-page-change",
+          "mergeCommitSha": "19a1c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        }
+      ]
+    }
+  ]
+}

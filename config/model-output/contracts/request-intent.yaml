@@ -1,0 +1,181 @@
+# The request interpretation's reply: the model's reading of the operator's
+# request, before the first workflow step. Canonical source; the contract text
+# the host sends is rendered from this declaration and the rules it lists, by
+# packages/runtime/src/contracts/model-output.ts.
+#
+# The interpretation is a host call that precedes every workflow step, so it
+# binds to no workflow step.
+schemaVersion: 1
+kind: docsfab-response-contract
+id: request-intent
+version: 1
+owner: runtime
+bindings: []
+placement: outer
+outputMode: text-final
+decoders:
+  - request-intent
+title: >-
+  Runtime request-interpretation response contract (host-owned):
+# Model-authored fields only. The host stamps the request digest, kind,
+# schema version, quote offsets, and seal itself.
+shape:
+  type: object
+  properties:
+    operation:
+      type: string
+      enum:
+        - create
+        - update
+        - restructure
+        - review
+    targets:
+      type: array
+      items:
+        type: object
+        properties:
+          path:
+            type: string
+          role:
+            type: string
+            enum:
+              - write
+              - companion-nav
+              - companion-index
+          chosenFrom:
+            type: string
+            enum:
+              - named
+              - inventory
+              - proposed-new
+          quote:
+            type: string
+    sources:
+      type: array
+      items:
+        type: object
+        properties:
+          path:
+            type: string
+          quote:
+            type: string
+    preserve:
+      type: array
+      items:
+        type: object
+        properties:
+          quote:
+            type: string
+    exclusions:
+      type: array
+      items:
+        type: object
+        properties:
+          path:
+            type: string
+          quote:
+            type: string
+    constraints:
+      type: array
+      items:
+        type: object
+        properties:
+          kind:
+            type: string
+            enum:
+              - evidence-only
+              - stop-before-mutation
+              - operational-next-steps
+              - non-publication
+          quote:
+            type: string
+    authorityPreference:
+      type: object
+      properties:
+        preference:
+          type: string
+          enum:
+            - implementation
+            - documentation
+            - unspecified
+        quote:
+          type: string
+    questions:
+      type: array
+      items:
+        type: object
+        properties:
+          question:
+            type: string
+          options:
+            type: array
+            items:
+              type: string
+          recommendedDefault:
+            type: string
+          consequence:
+            type: string
+render:
+  - note: >-
+      Read the operator request below and reply with one JSON object and
+      nothing else.
+  - rule: request-intent-shape
+  - rule: request-intent-host-field
+  - rule: request-intent-path-grammar
+  - rule: request-intent-duplicate-target
+  - rule: request-intent-size
+  - rule: request-intent-quote-ungrounded
+  - rule: request-intent-inventory-unmatched
+  - rule: request-intent-proposed-new-operation
+  - rule: request-intent-named-ungrounded
+  - rule: request-intent-excluded-target
+  - rule: request-intent-companion-not-navigation
+  - rule: request-intent-question-count
+  - rule: request-intent-question-default
+  - rule: request-intent-disclosure
+  - rule: request-intent-internal-path
+  - rule: request-intent-target-not-granted
+  - rule: request-intent-outside-docs-root
+  - rule: request-intent-outside-write-scope
+  - rule: request-intent-model-question
+  - rule: request-intent-operation-mismatch
+  - rule: request-intent-target-missing
+  - rule: request-intent-target-absent
+  - rule: request-intent-target-present
+  - rule: request-intent-target-case-ambiguous
+  - rule: request-intent-target-not-file
+  - note: >-
+      Choose a target origin from the operator's wording and the host inventory.
+      Use chosenFrom named only when the request contains the complete path as a
+      whole path. A literal create destination remains a named write target
+      even when it is absent from the repository inventory. Put that path in
+      targets with chosenFrom named and quote the whole path. A path cited only
+      as source evidence is not a write destination; put it in sources instead.
+      When the request identifies a page by title or description instead of a
+      literal path, choose chosenFrom inventory only when a listed path and
+      title clearly identify that page; copy the path exactly and quote only
+      the words the operator used. If the inventory does not identify one page
+      clearly, ask a question instead of guessing. Never invent an inventory
+      path. Use chosenFrom proposed-new only for a create operation.
+  - note: >-
+      The declared workflow and its operation come from the operator's command,
+      not from the request wording; report the operation the request asks for
+      even when it differs. A correction after a refused reply names the rule
+      that reply broke; return the whole object again.
+  - host: declared-workflow
+    label: >-
+      Declared workflow and operation:
+  - host: documentation-roots
+    label: >-
+      Documentation roots a new page must sit under, as a JSON array:
+  - host: navigation-set
+    label: >-
+      Existing navigation and index files a companion target may name, as a
+      JSON array; when it is empty, name no companion target:
+  - host: documentation-inventory
+    label: >-
+      Tracked documentation pages (path, title, navigation label), one JSON
+      object per line:
+  - host: operator-request
+    label: >-
+      Operator request, verbatim:

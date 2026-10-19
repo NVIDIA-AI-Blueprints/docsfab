@@ -1,0 +1,15 @@
+# DocsFab operational limits owned by the `init` name prefix.
+# Registered in config/limits.yaml; every limit here is named `init.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: init.gitignoreMaxBytes
+    value: 262144
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_INIT_GITIGNORE_MAX_BYTES
+    min: 4096
+    max: 16777216
+    refusal: init-gitignore-max-bytes-bound
+    remediation: Inspect the selected repository's .gitignore. If its size is expected, raise DOCSFAB_INIT_GITIGNORE_MAX_BYTES or init.gitignoreMaxBytes in the host limits file and rerun init; otherwise maintain the private entries manually. Init never truncates or edits an oversized file.
+    rationale: Largest regular .gitignore file one init preview reads in full to identify exactly which private entries it would append. A 2026-10-14 measurement of the supported DocsFab checkout found 3,546 bytes in its root .gitignore and 1,341 bytes in the runtime package's .gitignore; an additional local project sample measured 170 bytes. The 262,144-byte default retains the existing read ceiling and leaves more than 70 times headroom over the largest measured file. Preview still reports an oversized optional file as skipped with this bound's code, observed bytes, repository-file scope, and remediation; it never clips a file or claims an append. The 4,096-byte override floor fits the largest measured supported file, and the 16 MiB maximum permits larger legitimate generated ignore files while bounding one in-memory read and string conversion.

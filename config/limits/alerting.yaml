@@ -1,0 +1,213 @@
+# DocsFab operational limits owned by the `alerting` name prefix.
+# Registered in config/limits.yaml; every limit here is named `alerting.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: alerting.journeyCheck.intervalMinutes
+    value: 30
+    unit: minutes
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_ALERTING_JOURNEY_CHECK_INTERVAL_MINUTES
+    min: 5
+    max: 1440
+    refusal: alerting-journeyCheck-intervalMinutes-bound
+    remediation: Set DOCSFAB_ALERTING_JOURNEY_CHECK_INTERVAL_MINUTES within the declared range and set `OnUnitActiveSec` in the host's `docsfab-journey-check.timer` systemd unit to the same cadence.
+    rationale: How often the host-side journey health-check timer runs (issue 645, owner address the gaps 2026-09-29). J3 ran at about 20% success for hours before anyone looked; 30 minutes is fast enough to catch a multi-hour degradation early without adding a second host job for every dispatcher tick. The minimum keeps one run's own read-only queries from overlapping the next; the maximum is one day, the digest's own cadence, below which a health check that runs less than daily would miss the digest's purpose entirely.
+    docValue: 30 minutes
+    docSummary: How often the journey health-check timer runs.
+
+  - name: alerting.journeyCheck.dedupeWindowMinutes
+    value: 240
+    unit: minutes
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_ALERTING_JOURNEY_CHECK_DEDUPE_WINDOW_MINUTES
+    min: 30
+    max: 10080
+    refusal: alerting-journeyCheck-dedupeWindowMinutes-bound
+    remediation: Set DOCSFAB_ALERTING_JOURNEY_CHECK_DEDUPE_WINDOW_MINUTES within the declared range; a shorter window posts more repeats of the same still-open failure, a longer one delays the next repeat if the first alert is missed.
+    rationale: One alert message per failure class per window (owner decision 2026-09-28, clearly labelled messages, posted to the project's report channel, which is docsfab-status since owner decision 2026-10-09). At the 30-minute check interval, 4 hours is 8 checks; a still-failing journey or host signal gets one Slack message for the first check that finds it, then silence for the rest of that span instead of a new message every 30 minutes, while a genuinely new failure a few hours later still gets its own alert. The minimum keeps a repeat further apart than the check interval itself (or every run would count as new); the maximum is one week, so a long-open incident still gets a fresh reminder before the pilot's own weekly cadence.
+    docValue: 240 minutes (4 hours)
+    docSummary: One alert per failure class within this window; a still-failing class stays silent until it elapses.
+
+  - name: alerting.journeyCheck.digestIntervalMinutes
+    value: 1440
+    unit: minutes
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_ALERTING_JOURNEY_CHECK_DIGEST_INTERVAL_MINUTES
+    min: 60
+    max: 10080
+    refusal: alerting-journeyCheck-digestIntervalMinutes-bound
+    remediation: Set DOCSFAB_ALERTING_JOURNEY_CHECK_DIGEST_INTERVAL_MINUTES within the declared range.
+    rationale: The one short daily digest the task names, independent of whether anything is failing. One day matches the existing daily `journeys.py status` scoreboard cadence and the pilot's own daily hypervisor-snapshot rhythm, so on-call reads one digest per day rather than one per check. The minimum is one hour (finer than that is an alert, not a digest); the maximum is one week.
+    docValue: 1,440 minutes (24 hours)
+    docSummary: How often the daily digest posts, regardless of journey health.
+
+  - name: alerting.journeyCheck.serviceLogTailBytes
+    value: 65536
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_ALERTING_JOURNEY_CHECK_SERVICE_LOG_TAIL_BYTES
+    min: 4096
+    max: 10485760
+    refusal: alerting-journeyCheck-serviceLogTailBytes-bound
+    remediation: Set DOCSFAB_ALERTING_JOURNEY_CHECK_SERVICE_LOG_TAIL_BYTES within the declared range; a smaller bound may miss an older catalog-fingerprint refusal line between checks, a larger one costs more read time on every run.
+    rationale: Bytes read from the tail of `/var/log/docsfab/service.log` to count `docsfab.forge-change-source.catalog-fingerprint` refusal lines (host health signal 3 of 3). 64 KiB comfortably covers several hundred JSON log lines, more than one run's worth at the 30-minute check interval on the pilot's observed log volume, without reading the whole file on every check. The maximum, 10 MiB, is a generous multiple of that for a much noisier host; the minimum keeps the scan from being too small to span even one check interval.
+    docValue: 65,536 bytes (64 KiB)
+    docSummary: Bytes of service.log tail scanned per check for catalog-fingerprint refusal lines.
+
+  - name: alerting.journeyCheck.docsfabStatusTimeoutMs
+    value: 30000
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_ALERTING_JOURNEY_CHECK_DOCSFAB_STATUS_TIMEOUT_MS
+    min: 1000
+    max: 120000
+    refusal: alerting-journeyCheck-docsfabStatusTimeoutMs-bound
+    remediation: Set DOCSFAB_ALERTING_JOURNEY_CHECK_DOCSFAB_STATUS_TIMEOUT_MS within the declared range; `docsfab-status` itself bounds its own loopback probe well under this, so a timeout here means the process did not exit at all.
+    rationale: Wall-clock bound on the one `docsfab-status` subprocess call the check makes (host-health signal 1 of 3). `docsfab-status` bounds its own `/healthz` probe with `deploy.statusProbeTimeoutSeconds` (a few seconds) and reads a small number of log lines, so 30 seconds is generous headroom above its expected runtime without letting a wedged child block the whole 30-minute check cycle. The minimum is one second, below which even a healthy fast host could false-positive; the maximum keeps one signal from starving the rest of the run against `alerting.journeyCheck.intervalMinutes`.
+    docValue: 30,000 ms (30 s)
+    docSummary: Wall-clock bound on the docsfab-status subprocess call.
+
+  - name: alerting.journeyCheck.docsfabStatusMaxBufferBytes
+    value: 1048576
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_ALERTING_JOURNEY_CHECK_DOCSFAB_STATUS_MAX_BUFFER_BYTES
+    min: 65536
+    max: 16777216
+    refusal: alerting-journeyCheck-docsfabStatusMaxBufferBytes-bound
+    remediation: Set DOCSFAB_ALERTING_JOURNEY_CHECK_DOCSFAB_STATUS_MAX_BUFFER_BYTES within the declared range; `docsfab-status --logs` is the only flag this check could add that would need more, and this check never passes `--logs`.
+    rationale: Largest combined stdout the `docsfab-status` subprocess may produce before Node's `execFile` refuses it (host-health signal 1 of 3). Without `--logs` (never passed here) its output is a handful of small tables, so 1 MiB is generous headroom; the minimum, 64 KiB, still comfortably covers that output, and the maximum matches other dispatcher byte allowances in `config/limits/host.yaml` rather than inventing a new order of magnitude.
+    docValue: 1,048,576 bytes (1 MiB)
+    docSummary: Largest docsfab-status subprocess output the check buffers before refusing it.
+
+  - name: alerting.journeyCheck.healthzTimeoutMs
+    value: 15000
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_ALERTING_JOURNEY_CHECK_HEALTHZ_TIMEOUT_MS
+    min: 1000
+    max: 60000
+    refusal: alerting-journeyCheck-healthzTimeoutMs-bound
+    remediation: Set DOCSFAB_ALERTING_JOURNEY_CHECK_HEALTHZ_TIMEOUT_MS within the declared range; a loopback request over this bound on a live host is itself worth investigating, not just extending.
+    rationale: Wall-clock bound on the one loopback `GET /healthz` call the check makes to read `pendingForgeEffects` (host-health signal 2 of 3), independent of the separate `docsfab-status` subprocess call. `service-status.sh`'s own equivalent probe uses `deploy.statusProbeTimeoutSeconds` (a few seconds); 15 seconds is headroom above that for a loopback call with no network hop. The minimum is one second; the maximum keeps this one signal from consuming half of `alerting.journeyCheck.intervalMinutes` by itself.
+    docValue: 15,000 ms (15 s)
+    docSummary: Wall-clock bound on the loopback /healthz request.
+
+  - name: alerting.journeyCheck.successRateWarnRatio
+    value: 0.5
+    unit: ratio
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_ALERTING_JOURNEY_CHECK_SUCCESS_RATE_WARN_RATIO
+    min: 0.01
+    max: 0.99
+    refusal: alerting-journeyCheck-successRateWarnRatio-bound
+    remediation: Set DOCSFAB_ALERTING_JOURNEY_CHECK_SUCCESS_RATE_WARN_RATIO within the declared range; a higher ratio alerts on milder degradation, a lower one waits for a worse run.
+    rationale: The task's own motivating case (issue 645) was a partial outage, not a total one -- a journey at about 20 percent success for hours, which the pure last-success state alone reads as LIVE the moment even one attempt still succeeds within a day. Below this fraction of successful attempts in the last 24 hours (and at or above successRateMinAttempts, so a single failed attempt out of one is never a false alarm) the journey counts as failing for alert purposes, alongside the existing no-success-in-7-days state. One half is worse than a coin flip and clearly a working journey in name only; it is not zero, because zero would miss exactly the case this limit exists to catch.
+    docValue: 0.5 (50 percent)
+    docSummary: Below this share of successful attempts in 24 hours, a journey alerts even though it still shows a recent success.
+
+  - name: alerting.journeyCheck.successRateMinAttempts
+    value: 3
+    unit: count
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_ALERTING_JOURNEY_CHECK_SUCCESS_RATE_MIN_ATTEMPTS
+    min: 1
+    max: 100
+    refusal: alerting-journeyCheck-successRateMinAttempts-bound
+    remediation: Set DOCSFAB_ALERTING_JOURNEY_CHECK_SUCCESS_RATE_MIN_ATTEMPTS within the declared range; a lower value judges a ratio from fewer samples and risks a false alarm on one failed attempt.
+    rationale: The fewest attempts in 24 hours before the success-rate signal (alerting.journeyCheck.successRateWarnRatio) judges a journey by its ratio rather than staying silent. One failed attempt out of one is 0 percent and would otherwise always alert; three is enough that a single failure is at most a third, below the default warn ratio only when at least two of three have failed.
+    docValue: 3 attempts
+    docSummary: Fewest 24-hour attempts before the success-rate signal judges a journey by ratio.
+
+  - name: alerting.hostHealth.outboxBacklogWarnCount
+    value: 25
+    unit: count
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_ALERTING_HOST_HEALTH_OUTBOX_BACKLOG_WARN_COUNT
+    min: 1
+    max: 100000
+    refusal: alerting-hostHealth-outboxBacklogWarnCount-bound
+    remediation: Set DOCSFAB_ALERTING_HOST_HEALTH_OUTBOX_BACKLOG_WARN_COUNT within the declared range; investigate `docsfab.forge-outbox.stalled` in service.log before raising it.
+    rationale: Host-health signal 2 of 3, the outbox backlog — above this many pending forge effects (`/healthz`'s own `pendingForgeEffects`, the same field the window runbook already reads as healthz degraded — knowledge, pendingForgeEffects N) the check treats the backlog itself as a failing signal, separately from whichever journey it is blocking. One in-flight merge reconciliation is routine (observed on the pilot mid-deploy); 25 is an order of magnitude above that single-digit steady state without waiting for the backlog to be large enough to also starve every journey before anyone is told.
+    docValue: 25 pending forge effects
+    docSummary: Pending forge outbox effects above this count are reported as an unhealthy backlog.
+
+  - name: alerting.hostHealth.catalogFingerprintRefusalWarnCount
+    value: 0
+    unit: count
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_ALERTING_HOST_HEALTH_CATALOG_FINGERPRINT_REFUSAL_WARN_COUNT
+    min: 0
+    max: 1000
+    refusal: alerting-hostHealth-catalogFingerprintRefusalWarnCount-bound
+    remediation: Set DOCSFAB_ALERTING_HOST_HEALTH_CATALOG_FINGERPRINT_REFUSAL_WARN_COUNT within the declared range only to tolerate a known, already-diagnosed source of the refusal; the persistence-chain pins (COMMON-RULES rule 19) are the actual fix.
+    rationale: Host-health signal 3 of 3, catalog fingerprint refusals — `forge-change-source/postgres.ts` writes one `docsfab.forge-change-source.catalog-fingerprint` line to service.log every time the connected cluster's `service_catalog_fingerprint` does not match the pinned `FORGE_CHANGE_SOURCE_CATALOG_FINGERPRINT_PG16/17`. On a correctly pinned, deployed pilot this never happens, so the default is zero — any occurrence at all is worth naming in an alert. The maximum, 1000, still refuses a runaway retry loop from paging on every single line individually once the first alert has already fired (the de-duplication window in `alerting.journeyCheck.dedupeWindowMinutes` is what actually stops the repeats).
+    docValue: 0 refusal lines
+    docSummary: Any catalog-fingerprint refusal line in the scanned log tail is reported as unhealthy.
+
+  - name: alerting.dailyRun.deadlineMinutes
+    value: 480
+    unit: minutes
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_ALERTING_DAILY_RUN_DEADLINE_MINUTES
+    min: 0
+    max: 1439
+    refusal: alerting-daily-run-deadline-minutes-bound
+    remediation: Set DOCSFAB_ALERTING_DAILY_RUN_DEADLINE_MINUTES within the declared range; it counts minutes after midnight America/Los_Angeles, so 480 is 08:00 Pacific in summer and winter alike.
+    rationale: When, in minutes after midnight America/Los_Angeles (the zone a daily run's day is counted in), the journey health check starts reporting that today's nightly benchmark run is missing from the dashboard's published progress page. Owner decision 2026-10-12 - the nightly publishes a result every morning, partial results included, and if none is published by 08:00 Pacific the owner sees it in the status channel. Before the deadline the advisory signal reads healthy, so a run still in progress never alerts. The range is the minutes of one day.
+    docValue: 480 minutes (08:00 America/Los_Angeles)
+    docSummary: Minutes after midnight Pacific by which today's nightly benchmark run must be published before the health check reports it missing.
+
+  - name: alerting.dailyRun.progressTimeoutMs
+    value: 15000
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_ALERTING_DAILY_RUN_PROGRESS_TIMEOUT_MS
+    min: 1000
+    max: 60000
+    refusal: alerting-daily-run-progress-timeout-ms-bound
+    remediation: Set DOCSFAB_ALERTING_DAILY_RUN_PROGRESS_TIMEOUT_MS within the declared range; a loopback read of a static file that takes longer than this is worth investigating on the dashboard server, not only extending.
+    rationale: Wall-clock bound on the one loopback GET of the dashboard's published progress.json that the advisory daily-run signal makes each check, body included. The dashboard server answers a static file on loopback, so this is the same headroom alerting.journeyCheck.healthzTimeoutMs gives the loopback health probe. A slower answer reads as an unreadable page, alerted only after the deadline, and never fails the check. The minimum is one second; the maximum keeps one advisory read from consuming a large share of alerting.journeyCheck.intervalMinutes.
+    docValue: 15,000 ms (15 s)
+    docSummary: Wall-clock bound on the loopback GET of the dashboard's progress.json.
+
+  - name: alerting.dailyRun.progressMaxBytes
+    value: 16777216
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_ALERTING_DAILY_RUN_PROGRESS_MAX_BYTES
+    min: 1048576
+    max: 67108864
+    refusal: alerting-daily-run-progress-max-bytes-bound
+    remediation: Set DOCSFAB_ALERTING_DAILY_RUN_PROGRESS_MAX_BYTES within the declared range when the published progress.json legitimately grew past this bound, as its run list grows with the nightly history; a page larger than the maximum needs the dashboard to publish less, not a larger read.
+    rationale: Largest progress.json body the advisory daily-run signal reads into memory before it reports the page unreadable with this limit's refusal. Measured 2026-10-12 on synthetic pages - about 0.1 MiB with two weeks of history, and 0.94 MiB with a year of two runs a day, since the page lists every daily run it holds. 16 MiB is many years of that growth with the requested headroom; the maximum keeps a runaway page from being buffered by a host timer job.
+    docValue: 16,777,216 bytes (16 MiB)
+    docSummary: Largest dashboard progress.json body the daily-run signal reads.
+
+  - name: alerting.backup.timerIntervalHours
+    value: 24
+    unit: hours
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_ALERTING_BACKUP_TIMER_INTERVAL_HOURS
+    min: 1
+    max: 168
+    refusal: alerting-backup-timerIntervalHours-bound
+    remediation: Set DOCSFAB_ALERTING_BACKUP_TIMER_INTERVAL_HOURS within the declared range and set `OnCalendar` in the host's `docsfab-backup.timer` systemd unit to the same cadence.
+    rationale: How often the scheduled `docsfab-backup` systemd timer runs the existing backup identity end to end, independent of the pre-deploy hook it already runs inside today (the gap this slice closes — no scheduled backup; backups run only inside the pre-deploy hook). Once a day matches the recovery documentation's own daily-drill cadence and the pilot's existing daily snapshot window, without adding a second concurrent base backup while one is already running (`docsfab-backup` always takes a fresh base backup; there is no republish mode). The maximum is one week, beyond which scheduled backup coverage would not meaningfully improve on the existing per-deploy hook alone.
+    docValue: 24 hours
+    docSummary: How often the scheduled backup timer runs `docsfab-backup`, independent of the pre-deploy hook.

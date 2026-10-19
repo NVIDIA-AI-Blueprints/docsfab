@@ -1,0 +1,9 @@
+# Delivery / worktree / bwrap-adjacent process suites.
+test/check-sandbox-bounds.test.ts
+test/delivery-acceptance.test.ts
+test/delivery-cli.test.ts
+test/delivery-publisher.test.ts
+test/delivery-worktree.test.ts
+test/doc-improvement-cli.test.ts
+test/doc-improvement.test.ts
+test/runner.test.ts

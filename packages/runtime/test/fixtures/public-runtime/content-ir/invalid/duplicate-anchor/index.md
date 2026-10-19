@@ -1,0 +1,3 @@
+# Repeated heading
+
+## Repeated heading

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Scaffold an Approved Site"
+  short_description: "Inspect the native approved-plan apply boundary"
+  default_prompt: "Within a DocsFab site-bootstrap workflow, verify the exact approved plan and report the native executor's outcome without bypassing approval or writing directly."

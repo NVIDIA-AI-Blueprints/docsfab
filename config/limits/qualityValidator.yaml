@@ -1,0 +1,39 @@
+# DocsFab operational limits owned by the `qualityValidator` name prefix.
+# Registered in config/limits.yaml; every limit here is named `qualityValidator.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: qualityValidator.maxOutputBytes
+    value: 65536
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 4096
+    max: 65536
+    refusal: quality-validator-max-output-bytes-bound
+    remediation: A locked quality validator or the deriver wrote more than qualityValidator.maxOutputBytes to stdout or stderr, so the host stopped it and the check failed; inspect the retained run, and raise the value in config/limits/qualityValidator.yaml only with a new measurement of validator output.
+    rationale: Most bytes the quality validator host reads from one python3 spawn's stdout, and separately its stderr, before it stops the spawn and fails the check (closed-schema-answer-records-decision.md §1.2 and §4.4, N10; was MAX_OUTPUT_BYTES in quality-validator-host.ts). Measured on 2026-10-07 (#1969 internal evidence answer-record-limits-2026-10) over 325 spawns of the evaluation, score, and report validators and the deriver on the quality fixtures, 82 archived staged step 8 answers, and synthetic worst cases - largest stream 11,004 B (evaluation validator stderr with every dimension broken; 2,362 B on real answers; the report validator at most 1,803 B with every summary field broken). 2 × that maximum is 22,008 B, so the existing 65,536 B fits and stays.
+
+  - name: qualityValidator.timeoutMs
+    value: 15000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1000
+    max: 60000
+    refusal: quality-validator-timeout-ms-bound
+    remediation: A locked quality validator or the deriver ran past qualityValidator.timeoutMs, so the host stopped it; check the host's python3 runtime and load, and raise the value in config/limits/qualityValidator.yaml (at most its max) only with a new wall-time measurement.
+    rationale: Longest wall time the quality validator host gives one python3 spawn of a locked validator or the deriver (closed-schema-answer-records-decision.md §1.2 and §4.4, N10; was DEFAULT_TIMEOUT_MS and the constructor's 60,000 ms ceiling in quality-validator-host.ts, now this row's value and max). Measured on 2026-10-07 at a host load average near 17 (#1969 internal evidence answer-record-limits-2026-10) - p100 239 ms for the evaluation validator, 101 ms for the score validator, 243 ms for the report validator, and 206 ms for the deriver, so p100 × 2 is under 500 ms. The 15,000 ms default stays as headroom for a cold python3 start on a loaded CI runner; a host may pass a lower timeout up to the max.
+
+  - name: qualityValidator.maxDerivedArtifactBytes
+    value: 133090
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 4096
+    max: 1048576
+    refusal: quality-derivation-failed
+    remediation: The deriver wrote a larger output file than qualityValidator.maxDerivedArtifactBytes, which is a DocsFab defect (quality-derivation-failed); report it with the retained run, and raise the value in config/limits/qualityValidator.yaml only with a new measurement of the largest step 8 answer and fact.
+    rationale: Largest derivation output file the quality validator host reads back from the deriver (closed-schema-answer-records-decision.md §1.2 and §4.4, N10, N12) - 2 × (41,465 B, the largest recorded step 8 answer, run f339f3d0, + 30 facts × 836 B, the largest recorded fact) = 133,090 B. The largest measured deriver output is 39,912 B (fixture b), about 30% of it (#1969 internal evidence answer-record-limits-2026-10). A larger, missing, symlinked, or undecodable output stops the step with quality-derivation-failed.

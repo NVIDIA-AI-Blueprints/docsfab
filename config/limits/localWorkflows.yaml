@@ -1,0 +1,255 @@
+# DocsFab operational limits owned by the `localWorkflows` name prefix.
+# Registered in config/limits.yaml; every limit here is named `localWorkflows.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: localWorkflows.idleStallMs
+    value: 1800000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_LOCAL_WORKFLOWS_IDLE_STALL_MS
+    min: 1000
+    max: 1800000
+    refusal: local-workflows-idle-stall-ms-bound
+    remediation: Read the stream.log saved in the case directory to find the last activity. If the case was still legitimately working without visible progress, raise localWorkflows.idleStallMs in config/limits/localWorkflows.yaml; DOCSFAB_LOCAL_WORKFLOWS_IDLE_STALL_MS and --idle-stall-ms may only lower it.
+    rationale: Idle window after which benchmarks/local-workflows/run.mjs declares a case stalled. It is not a wall-clock budget; a case keeps running while its process produces new terminal output or file activity under its case directory, and a live-agent heartbeat redraw that only advances its elapsed counter is not progress. The value is one step attempt at its effective cap, sealed.compositionLimits.timeoutMs (30 min), which clamps compositionExecution.timeoutMs; that is the longest a step, and so a CLI case that prints only at step boundaries, can legitimately stay silent. Measured basis, one sample (gpt-5.4 live runs, 2026-09-22) - longest step 83.5 s (evaluate-document-quality), a complete live workflow about 4 min, live startup a few seconds. The former fixed 60 s PTY and 120 s per-case timeouts voided every live case (issues 1118 and 1119). Revisit once report.json per-case durations accumulate. The host override and --idle-stall-ms may only lower it.
+
+  - name: localWorkflows.auxCommandTimeoutMs
+    value: 30000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_LOCAL_WORKFLOWS_AUX_COMMAND_TIMEOUT_MS
+    min: 1000
+    max: 30000
+    refusal: local-workflows-aux-command-timeout-ms-bound
+    remediation: Check that git and docsfab respond on this host (a stuck credential helper or file lock is the usual cause), then rerun. DOCSFAB_LOCAL_WORKFLOWS_AUX_COMMAND_TIMEOUT_MS may only lower this bound.
+    rationale: Provisional, unmeasured; refuses loudly. Wall-clock bound for each auxiliary lookup benchmarks/local-workflows/run.mjs makes outside a case (command -v docsfab, docsfab --version, and repository status, revision, or patch apply on the fixture repository). The value is the 30 s literal the runner used before issue 1118; the lookups are local and fixture-sized, but no latency has been measured. A lookup that exceeds it refuses with this code instead of being read as an empty result. Replace this value with a measured one. The host override may only lower it.
+
+  - name: localWorkflows.exitDrainMs
+    value: 5000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_LOCAL_WORKFLOWS_EXIT_DRAIN_MS
+    min: 100
+    max: 5000
+    refusal: local-workflows-exit-drain-ms-bound
+    remediation: Find and stop the process still holding the case output or still in a case process group, then rerun; the case stream.log shows its last output. DOCSFAB_LOCAL_WORKFLOWS_EXIT_DRAIN_MS may only lower this bound.
+    rationale: Provisional, unmeasured; refuses loudly. After a case process exits or is stopped, benchmarks/local-workflows/run.mjs kills its process groups with SIGKILL and waits this long for them to become empty and for the output pipes to close. The 5 s value is not measured. It matters only for a descendant that left the case process group (for example with setsid) and still holds the output; that case is reported as local-e2e-containment-failed and never passes, so the value decides only how soon the failure is reported. The host override may only lower it.
+
+  - name: localWorkflows.streamLineMaxChars
+    value: 1048576
+    unit: characters
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_LOCAL_WORKFLOWS_STREAM_LINE_MAX_CHARS
+    min: 1024
+    max: 1048576
+    refusal: local-workflows-stream-line-max-chars-bound
+    remediation: Nothing is dropped from stream.log by this bound. If a case legitimately draws a longer unfinished line or escape sequence that should still count toward progress or prompt recognition, raise localWorkflows.streamLineMaxChars in config/limits/localWorkflows.yaml.
+    rationale: Provisional, unmeasured. The longest unfinished terminal line, unfinished heartbeat frame, or unterminated escape sequence benchmarks/local-workflows/run.mjs holds while it judges progress and recognizes prompts and driver notes as output arrives; past it the held text is judged as it is and an open escape sequence is treated as ended. It bounds that parser state and its per-chunk work (a review probe spent 6.2 s and 219 MB rescanning one unbounded 16 MB line). Product terminal lines are rendered at terminal width, far below 1 MiB. The host override may only lower it.
+
+  - name: localWorkflows.streamBufferMaxChars
+    value: 16777216
+    unit: characters
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_LOCAL_WORKFLOWS_STREAM_BUFFER_MAX_CHARS
+    min: 1024
+    max: 16777216
+    refusal: local-workflows-stream-buffer-max-chars-bound
+    remediation: The case stream.log marks where its middle was not kept, and report.json records how many characters (streamTruncated). Raise localWorkflows.streamBufferMaxChars in config/limits/localWorkflows.yaml if cases need their whole output kept.
+    rationale: Provisional; truncates loudly. Applies to each case, not to the run as a whole. The scope vocabulary has no per-case value, so, like other per-step bounds, it is filed per-run. The raw output of one case that benchmarks/local-workflows/run.mjs keeps in memory until the case ends, when it redacts the whole text once and writes stream.log. Past the bound it keeps the first and the most recent halves and marks the dropped middle with this code, so memory stays bounded and the start and end of a stall survive. A run holds up to this much for every case running at once (at most the eight matrix cases), and writes one stream at a time. Measured 2026-09-23 on macOS with Node 25. Redacting and writing one full stream peaked at about 0.3 GB runner RSS for prose, and at 0.76 GB for a stream of blank lines, which the line-by-line pattern stage makes the worst case. The independent review measured 1.6 to 1.8 GB for eight concurrent 20 MiB cases. It matches sourceAcquisitionProof.installedOutputMaxBytes, the existing bound on one installed docsfab run output. The host override may only lower it.
+
+  - name: localWorkflows.secretValueMinChars
+    value: 8
+    unit: characters
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_LOCAL_WORKFLOWS_SECRET_VALUE_MIN_CHARS
+    min: 1
+    max: 8
+    refusal: local-workflows-secret-value-min-chars-bound
+    remediation: A known credential shorter than this is redacted only by pattern, and so is a piece of one shorter than this. Lower DOCSFAB_LOCAL_WORKFLOWS_SECRET_VALUE_MIN_CHARS to redact shorter values and pieces by value too, at the cost of redacting matching ordinary text.
+    rationale: Provisional, unmeasured. Shortest known credential value (from the docsfab configuration root or a credential-named environment variable) that benchmarks/local-workflows/run.mjs redacts by value in case streams and reports, and the fragment length it matches. Every run of this many characters of a known value, or of one of its encoded forms, is redacted wherever it appears, so a value cut at the dropped middle or the end of output, soft-wrapped by the chat renderer, or interleaved with other output such as a table column, loses every piece at least this long. Matching shorter values or fragments across whitespace would redact ordinary words; such values are left to pattern redaction and counted in report.json. The host override may only lower it.
+
+  - name: localWorkflows.secretValuesMaxChars
+    value: 16384
+    unit: characters
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_LOCAL_WORKFLOWS_SECRET_VALUES_MAX_CHARS
+    min: 1024
+    max: 16384
+    refusal: local-workflows-secret-values-max-chars-bound
+    remediation: The run refuses before any case starts, because it redacts every known credential value and never skips one. Remove values the docsfab children do not need from the credential file or from credential-named environment variables, or raise localWorkflows.secretValuesMaxChars in config/limits/localWorkflows.yaml.
+    rationale: Technical capacity. Total characters of the known credential values that benchmarks/local-workflows/run.mjs loads (the credential file the docsfab children read, plus credential-named environment variables) and builds one matcher over, at localWorkflows.secretValueMinChars. The matcher holds every fragment of every encoded form of each value, so its build time and memory grow linearly with this total. Measured 2026-09-23 on macOS with Node 25. 256 characters take 8 ms and 8 MB. 4,096 take 95 ms and 74 MB. 16,384 take 0.48 s and 248 MB. 65,536 take 1.7 s and 736 MB. A supported credential file fits with room to spare. Two or three API tokens total well under 1,000 characters. An RSA-4096 private key in PEM is about 3,300 characters, and a service-account JSON is about 2,400. Past the bound the run refuses with this code, the observed total, and the source; it never loads some values and skips others. The host override may only lower it.
+
+  - name: localWorkflows.reportExcerptMaxChars
+    value: 4096
+    unit: characters
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_LOCAL_WORKFLOWS_REPORT_EXCERPT_MAX_CHARS
+    min: 256
+    max: 4096
+    refusal: local-workflows-report-excerpt-max-chars-bound
+    remediation: The full text is in the case stream.log or run record named in the report. Raise localWorkflows.reportExcerptMaxChars in config/limits/localWorkflows.yaml if reports need longer excerpts.
+    rationale: Provisional, unmeasured; shortens loudly. Longest free-text excerpt (error detail, failed step, step detail, artifact detail) that benchmarks/local-workflows/run.mjs puts in REPORT.md, report.json, or JUnit, after redaction. Reports carry structured fields and short excerpts; the full text stays in the case stream.log or run record, and a shortened excerpt ends with this code and the number of characters left out. Messages the runner writes itself fit well inside it. The host override may only lower it.
+
+  - name: localWorkflows.artifactTranscriptMaxChars
+    value: 16777216
+    unit: characters
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_LOCAL_WORKFLOWS_ARTIFACT_TRANSCRIPT_MAX_CHARS
+    min: 1024
+    max: 16777216
+    refusal: local-workflows-artifact-transcript-max-chars-bound
+    remediation: The review artifact was not inspected. Read the case stream.log and run record; if a review case legitimately prints more, raise localWorkflows.artifactTranscriptMaxChars in config/limits/localWorkflows.yaml.
+    rationale: Provisional, unmeasured; refuses loudly. The unredacted terminal text of a review case that benchmarks/local-workflows/run.mjs keeps in memory, never on disk, for the review artifact check (redacted text could fail a correct review). Past the bound the check refuses with this code instead of grading partial text; the saved stream.log is unaffected. It matches sourceAcquisitionProof.installedOutputMaxBytes, the existing bound on one installed docsfab run output. The host override may only lower it.
+
+  - name: localWorkflows.canaryRepeats
+    value: 3
+    unit: count
+    scope: per-run
+    warnAt: 1
+    override: DOCSFAB_LOCAL_WORKFLOWS_CANARY_REPEATS
+    min: 1
+    max: 3
+    refusal: local-workflows-canary-repeats-bound
+    remediation: Rounds that did not start are listed in the canary summary.json and CANARY.md with their reason code. Lower the repeats with DOCSFAB_LOCAL_WORKFLOWS_CANARY_REPEATS or --repeats, or raise localWorkflows.canaryRepeats in config/limits/localWorkflows.yaml together with ci.liveModel.jobTimeoutMs in config/limits/ci.yaml.
+    rationale: Rounds of the eight-case matrix that benchmarks/local-workflows/canary.mjs runs per canary (issue 1183), so each case reports a rate instead of one verdict (issue 1120). Three is the smallest count that separates the !1023 update-cli regression (0/3) from a flake at localWorkflows.canaryAlertMaxPValue. Rounds run one after another; a round starts only when the slowest round so far still fits before the job deadline, and a round that does not start is reported with its reason, never dropped. A canary with fewer complete rounds still compares on the trials it measured. The host override and --repeats may only lower it.
+
+  - name: localWorkflows.canaryJobReserveMs
+    value: 300000
+    unit: ms
+    scope: per-run
+    warnAt: 1
+    override: null
+    min: 60000
+    max: 1800000
+    refusal: local-workflows-canary-job-reserve-ms-bound
+    remediation: Read CANARY.md for the rounds that did not start, each round's duration, and the job deadline. Lower localWorkflows.canaryRepeats, or raise ci.liveModel.jobTimeoutMs in config/limits/ci.yaml. The canary refuses a reserve that is not below ci.liveModel.jobTimeoutMs.
+    rationale: Provisional, unmeasured. Time the runtime:workflow-canary job keeps after its matrix rounds to write summary.json and upload artifacts. The matrix deadline is CI_JOB_STARTED_AT plus ci.liveModel.jobTimeoutMs minus this reserve, so setup time (npm ci, pins, packing, install, configuration) is measured rather than guessed, and each round's per-case ceiling is the time left before that deadline. The comparison runs in the separate runtime:workflow-canary:trend job and needs none of this reserve. Writing a summary takes milliseconds; the rest is artifact upload headroom.
+
+  - name: localWorkflows.canaryBaselineRuns
+    value: 7
+    unit: count
+    scope: per-project
+    warnAt: 1
+    override: null
+    min: 1
+    max: 7
+    refusal: local-workflows-canary-baseline-runs-bound
+    remediation: TREND.md shows each case's baseline runs and admission decision. Raise localWorkflows.canaryBaselineRuns in config/limits/localWorkflows.yaml for a longer memory, or lower it so a changed rate becomes the baseline sooner after a clean night.
+    rationale: Rolling window, per case, of earlier admitted canary runs that the trend comparison pools as that case's baseline (issue 1183). Seven nightly runs are one week, or 21 trials per case at localWorkflows.canaryRepeats. The windows are carried forward in each trend.json, so artifact expiry does not shorten them. A case's data from a run is admitted only when that case shows no change at localWorkflows.canaryBaselineAdmitMaxPValue; another case's alert never keeps it out. The oldest admitted run leaves a case's window when a new one joins.
+
+  - name: localWorkflows.canaryPendingRuns
+    value: 7
+    unit: count
+    scope: per-project
+    warnAt: 1
+    override: null
+    min: 1
+    max: 7
+    refusal: local-workflows-canary-pending-runs-bound
+    remediation: TREND.md names each held-out run and each run folded into the baseline without confirmation. Raise localWorkflows.canaryPendingRuns in config/limits/localWorkflows.yaml to pool a longer run of suspect nights before accepting them.
+    rationale: Most held-out runs carried per case. A case's data is held out when it dips at localWorkflows.canaryBaselineAdmitMaxPValue (unconfirmed) or is part of a confirmed or silenced change (confirmed). Whenever the case has unconfirmed held data, the next night is also tested pooled with it, so 0/3 then 1/3 against a 17/21 baseline alerts on the second night (1/6, p 0.002) instead of folding the 0/3 night in, and 0/3 nightly against 14/21 alerts every second night. Confirmed data is never pooled or admitted. Seven matches localWorkflows.canaryBaselineRuns. Past the bound the oldest held-out data is folded into the baseline (unconfirmed) or discarded (confirmed), and TREND.md counts both per case; nothing is dropped silently.
+
+  - name: localWorkflows.canaryAlertMaxPValue
+    value: 0.01
+    unit: ratio
+    scope: per-project
+    warnAt: 1
+    override: null
+    min: 0.0001
+    max: 0.05
+    refusal: local-workflows-canary-alert-max-p-value-bound
+    remediation: TREND.md lists every compared case with its p-value. Lower localWorkflows.canaryAlertMaxPValue in config/limits/localWorkflows.yaml if known flaky cases alert, or raise it if a real regression was missed.
+    rationale: Provisional. Largest one-sided binomial p-value at which the canary reports a drop in a case or step pass rate, or a rise in a failure code rate, against the pooled baseline with add-one smoothing. At 3 repeats and a 21-trial baseline, a case that always passed alerts at 0/3 or 1/3, a case that passed two thirds of the time does not alert at 0/3 alone (p 0.04) but does when two held-out nights pool to 0/6, and the first comparison against one 3/3 baseline still flags 0/3 (p 0.008). Each case, step, and code is tested separately, so the false-alarm rate per canary is higher than this value; tune it from recorded TREND.md results.
+
+  - name: localWorkflows.canaryBaselineAdmitMaxPValue
+    value: 0.25
+    unit: ratio
+    scope: per-project
+    warnAt: 1
+    override: null
+    min: 0.01
+    max: 0.5
+    refusal: local-workflows-canary-baseline-admit-max-p-value-bound
+    remediation: TREND.md says whether each run was admitted, held out, or folded in. Raise this threshold to hold out more runs, or lower it toward localWorkflows.canaryAlertMaxPValue if too many ordinary nights are held out. The canary refuses a value below the alert threshold.
+    rationale: Provisional; the statistics are being redesigned in issue 1223. 0.25 was chosen over 0.1 on the !1086 trade-off (decision note 71024886 under the owner's delegation). A case's data joins its baseline when its own night shows no pass-rate or step drop and no code rise at this one-sided p-value against its baseline, and, when it has held data, no alert pooled with that data. Silences do not apply here. A night that is not significant at this threshold is admitted, so a change whose single nights stay above it lowers the baseline without an alert, including a later, milder night of a regression that already alerted or is silenced. Measured at 0.25 with 3 repeats and a 21-trial baseline. 0/3 is admitted on a baseline at or below about 7/21, so a case at 7/21 that drops to 0/3 falls to 0/21; a case at 14/21 that is held on its first 0/3 night, alerts on its second, and then runs at 1/3 admits each 1/3 night (p 0.28) and drifts to 8/21 with no further alert; among 200 simulated regressions from 0.95 to 0.5 that alerted, 20 of 179 never alerted again within 10 nights. An always-passing case is held out at 2/3 (p 0.13), so 21/21 then 2/3 nightly alerts every third night with the baseline unchanged. In 200 simulated step regressions from 0.95, a drop to 0.6 was missed within 14 nights in 41 runs and a drop to 0.4 in 3 (96 and 28 at 0.1); a slow decline from 1.0 to 0.5 over 60 nights never alerted in 38 of 100 runs (62 at 0.1). On 400 simulated stationary nights with 8 cases at 3 repeats (3 seeds), the baseline stays within 0.03 of the true rate at 0.8 and 0.02 at 0.9, and nights with an alert run 1.0 to 3.8 times the rate of admitting every run (seed 4242 - 3 against 3 at 0.97, 31 against 12 at 0.9, 48 against 14 at 0.8, 42 against 11 for mixed rates); at 0.1 the same process alerted on 24 nights at 0.8.
+
+  - name: localWorkflows.canaryBaselineScanPipelines
+    value: 30
+    unit: count
+    scope: per-project
+    warnAt: 1
+    override: null
+    min: 1
+    max: 100
+    refusal: local-workflows-canary-baseline-scan-pipelines-bound
+    remediation: TREND.md lists each scheduled pipeline examined and why it held no usable trend.json. Raise localWorkflows.canaryBaselineScanPipelines in config/limits/localWorkflows.yaml (at most one GitLab page of 100) if canary pipelines are sparser than that, or set DOCSFAB_CANARY_ALLOW_NEW_BASELINE=1 on the schedule for one run to start a new chain deliberately.
+    rationale: Most scheduled main pipelines older than the current one, newest first, that the canary trend job examines through the GitLab API to find the latest intact trend.json. With the nightly live-model schedule and a nightly canary schedule that is about two weeks. A run starts a new baseline only when this scan covers the whole schedule history and finds no earlier trend.json or expired canary artifacts, or when the operator allows it; otherwise the verdict is chain-broken and the run is never a baseline. It is one API page, so GitLab's 100-item page maximum is its ceiling.
+
+  - name: localWorkflows.canaryApiPageSize
+    value: 100
+    unit: count
+    scope: per-project
+    warnAt: 1
+    override: null
+    min: 1
+    max: 100
+    refusal: local-workflows-canary-api-page-size-bound
+    remediation: Keep localWorkflows.canaryApiPageSize at or below GitLab's page maximum of 100.
+    rationale: GitLab API page size the canary trend job requests when it lists one pipeline's jobs. 100 is GitLab's maximum, so a pipeline of about 60 jobs fits one page.
+
+  - name: localWorkflows.canaryPipelineJobPagesMax
+    value: 3
+    unit: pages
+    scope: per-project
+    warnAt: 1
+    override: null
+    min: 1
+    max: 10
+    refusal: local-workflows-canary-pipeline-job-pages-bound
+    remediation: The trend job refused instead of reading part of a pipeline's job list. Raise localWorkflows.canaryPipelineJobPagesMax in config/limits/localWorkflows.yaml if scheduled pipelines legitimately grew past that many pages of localWorkflows.canaryApiPageSize jobs.
+    rationale: Most pages of jobs the canary trend job reads for one scheduled pipeline while looking for the earlier trend job. Scheduled main pipelines have about 60 jobs (pipeline 69429173), one page at localWorkflows.canaryApiPageSize; three pages leave room for growth. Past it the lookup refuses with this code and the verdict is chain-broken, never a partial scan.
+
+  - name: localWorkflows.canaryDocumentMaxBytes
+    value: 4194304
+    unit: bytes
+    scope: per-project
+    warnAt: 0.8
+    override: null
+    min: 65536
+    max: 16777216
+    refusal: local-workflows-canary-document-max-bytes-bound
+    remediation: The canary refused to parse an oversized summary.json or trend.json. Inspect the document; if the case, step, and code counts legitimately grew, raise localWorkflows.canaryDocumentMaxBytes in config/limits/localWorkflows.yaml.
+    rationale: Largest summary.json or trend.json the canary trend job reads, from the matrix job artifact or a downloaded earlier trend. A summary of 8 cases with their steps and codes is tens of KiB, and a trend carries at most localWorkflows.canaryBaselineRuns plus localWorkflows.canaryPendingRuns summaries, well under 1 MiB. The bound keeps untrusted input from exhausting the job before validation.
+
+  - name: localWorkflows.canaryCasesMax
+    value: 64
+    unit: count
+    scope: per-project
+    warnAt: 1
+    override: null
+    min: 8
+    max: 256
+    refusal: local-workflows-canary-cases-max-bound
+    remediation: The trend job refused a summary.json or trend.json with more cases than this. The matrix has 8 cases; if cases were legitimately added, raise localWorkflows.canaryCasesMax in config/limits/localWorkflows.yaml.
+    rationale: Most cases a canary summary or carried trend state may hold. The matrix has 8 cases (4 workflows by 2 entry points), so 64 leaves room for growth while bounding the per-case state the trend job reads before localWorkflows.canaryDocumentMaxBytes alone would; per-case baseline and held-out lengths are bounded by the catalog maxima of localWorkflows.canaryBaselineRuns and localWorkflows.canaryPendingRuns.
+
+  - name: localWorkflows.canarySilenceMaxDays
+    value: 30
+    unit: days
+    scope: per-project
+    warnAt: 1
+    override: null
+    min: 1
+    max: 90
+    refusal: local-workflows-canary-silence-max-days-bound
+    remediation: Set the silence's expires date no more than this many days ahead, and renew it through a reviewed change if the regression is still open.
+    rationale: Longest time a canary silence may run ahead of the evaluation day. A silence mutes the alert and keeps the muted nights out of the baseline, but other nights during it follow localWorkflows.canaryBaselineAdmitMaxPValue, so a regression milder than that threshold can still be absorbed; after expiry the case alerts only when a night, or pooled held nights, is significant against the baseline as it stands then. A silence stays active through the end of its expires day. In a simulated sweep at 0.25 (baselines 8/21 to 21/21, regressed rates 0/3 to 2/3, silences of 1 to 12 nights), a still-broken case with no night admitted during the silence alerted again within its hold cycle, up to five canaries after expiry for a mild regression (15/21 at 1/3, 20/21 at 2/3); a regression milder than the admission threshold may be absorbed during the silence and never alert, whatever the shape of the baseline (for example 17/21 at 2/3 and 11/21 at 1/3). An open-ended silence would hide a lasting change indefinitely; 30 days forces a reviewed renewal about monthly, which matches the artifact retention of ci.liveModel.evidenceRetentionDays.

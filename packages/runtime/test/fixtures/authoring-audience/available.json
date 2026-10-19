@@ -1,0 +1,138 @@
+{
+  "schema_version": "docsfab.quality.audience-understanding-evaluation/v1",
+  "evaluation_id": "AUDIENCE-EVAL-001",
+  "evaluation_version": "v0.1",
+  "evaluated_at": "2026-09-13T14:05:00Z",
+  "target": {
+    "repository_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "documentation_revision": "candidate-documentation-v1",
+    "documentation_paths": ["docs/candidate.md"],
+    "delivery_surface_locator": "file:///tmp/docsfab-authoring-audience/repository/docs/candidate.md",
+    "product_version": "in-development",
+    "product_reference_model": {
+      "id": "DOCSFAB-PRODUCT",
+      "version": "v0.1",
+      "locator": "evidence://reference-model/v0.1"
+    },
+    "approved_evidence_revision": "evidence://approved/REVISION-001",
+    "audience_profile_id": "technical-writer-v1",
+    "declared_prerequisites": ["technical documentation experience"],
+    "allowed_tools": ["read-only browser"],
+    "risk_boundary": "No product mutation or credential use."
+  },
+  "evaluator": {
+    "provider_id": "fixture-evaluator",
+    "provider_type": "agent",
+    "independent_of_authors": true,
+    "independence_evidence": "evidence://evaluator/independence"
+  },
+  "protocol": {
+    "protocol_version": "audience-understanding-v1",
+    "scenario_corpus_id": "DOCSFAB-AUDIENCE-CORPUS",
+    "scenario_corpus_version": "v0.1",
+    "scenario_corpus_locator": "evidence://corpus/audience-v0.1",
+    "scenario_frozen_at": "2026-09-13T13:50:00Z",
+    "exposure_started_at": "2026-09-13T14:00:00Z",
+    "measured_phase_ended_at": "2026-09-13T14:03:00Z",
+    "scored_at": "2026-09-13T14:04:00Z",
+    "realistic_entry_point": "file:///tmp/docsfab-authoring-audience/repository/docs/candidate.md",
+    "maximum_prompts_per_scenario": 3,
+    "maximum_attempts_per_participant": 2,
+    "agent_repeats_per_configuration": 1,
+    "correction_policy": "no-substantive-correction-during-measurement",
+    "debrief_after_measurement": true,
+    "raw_evidence_boundary": "Private DocsFab evaluation storage."
+  },
+  "scenarios": [
+    {
+      "scenario_id": "SCENARIO-AUDIENCE-001",
+      "version": "v0.1",
+      "prompt_locator": "evidence://corpus/audience-001/prompt",
+      "oracle_locator": "evidence://corpus/audience-001/oracle",
+      "acceptance_criteria_locator": "evidence://corpus/audience-001/criteria",
+      "model_claim_ids": ["CLAIM-DOCUMENTATION-001"],
+      "methods": ["teach-back", "relationship", "transfer"],
+      "starting_point": "file:///tmp/docsfab-authoring-audience/repository/docs/candidate.md",
+      "risk_boundary": "No product mutation or credential use."
+    }
+  ],
+  "participants": [
+    {
+      "participant_id": "AGENT-001",
+      "population": "agent",
+      "audience_match": "matched",
+      "prerequisite_evidence": "evidence://prerequisites/verified",
+      "consent_or_run_authorization_locator": "evidence://run-authority/AGENT-001",
+      "configuration": {
+        "human_profile_locator": null,
+        "agent_provider": "fixture-provider",
+        "agent_model": "fixture-model-v1",
+        "system_instructions_hash": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+        "retrieval_configuration": "docs-only-v1",
+        "tool_configuration": "read-and-search-only-v1",
+        "context_budget": 32000,
+        "run_id": "RUN-AGENT-001"
+      },
+      "contamination": {
+        "state": "clean",
+        "authorship_participation": false,
+        "synthesis_participation": false,
+        "prior_review_participation": false,
+        "expected_answers_exposed": false,
+        "private_authoring_context_exposed": false,
+        "prior_results_exposed": false,
+        "non_safety_coaching_during_measurement": false,
+        "evidence_locator": "evidence://independence/AGENT-001",
+        "rationale": "The participant received only the frozen documentation and prompt."
+      },
+      "attempts": [
+        {
+          "attempt_id": "ATTEMPT-AGENT-001",
+          "scenario_id": "SCENARIO-AUDIENCE-001",
+          "started_at": "2026-09-13T14:01:00Z",
+          "completed_at": "2026-09-13T14:02:00Z",
+          "prompt_locator": "evidence://corpus/audience-001/prompt",
+          "response_locator": "evidence://responses/AGENT-001",
+          "trace_locator": "evidence://traces/AGENT-001",
+          "outcome": "success",
+          "correctness": "met",
+          "relationship_fidelity": "met",
+          "boundary_recognition": "met",
+          "prediction_or_transfer": "met",
+          "confidence": 0.8,
+          "evidence_location_success": "met",
+          "interventions": [],
+          "misconceptions": [],
+          "scored_by": "fixture-evaluator",
+          "score_evidence_locator": "evidence://scores/AGENT-001",
+          "limitations": []
+        }
+      ],
+      "evidence_status": "direct-outcome-evidence",
+      "limitations": []
+    }
+  ],
+  "population_summaries": {
+    "human": {
+      "participant_count": 0,
+      "direct_evidence_participant_count": 0,
+      "attempt_count": 0,
+      "direct_evidence_attempt_count": 0,
+      "scenario_ids": [],
+      "measures": [],
+      "limitations": []
+    },
+    "agent": {
+      "participant_count": 1,
+      "direct_evidence_participant_count": 1,
+      "attempt_count": 1,
+      "direct_evidence_attempt_count": 1,
+      "scenario_ids": ["SCENARIO-AUDIENCE-001"],
+      "measures": [],
+      "limitations": []
+    }
+  },
+  "evidence_status": "direct-outcome-evidence",
+  "findings": [],
+  "limitations": ["One fixture participant does not establish a population baseline."]
+}

@@ -1,0 +1,8 @@
+{
+  "name": "docsfab-bootstrap-absent",
+  "private": true,
+  "description": "A small fixture with no contributor guidance.",
+  "scripts": {
+    "check": "node --test"
+  }
+}

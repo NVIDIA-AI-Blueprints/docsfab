@@ -1,0 +1,77 @@
+schema_version: "1.0"
+library_version: "1.0.0"
+name: ecosystem
+description: "Ecosystem positioning page — product within a product family"
+source_template: "templates/about/ecosystem.md"
+
+structure:
+  headings:
+    h1:
+      required:
+        - pattern: ".+ in the .+ Ecosystem|.+ Ecosystem"
+          description: "Ecosystem title positioning the product"
+      max_count: 1
+    h2:
+      required:
+        - pattern: ".+ Within .+|Understanding .+|The .+ Platform|.+ Platform Overview"
+          description: "Product family overview section"
+      optional:
+        - pattern: "Related Products.*|Related .+ Libraries|Other .+ Libraries"
+          description: "Dedicated related products section"
+        - pattern: "Choosing .+|Choose .+"
+          description: "Decision guide for choosing between products"
+        - pattern: "Training Framework.*|Framework.*Integration"
+          description: "Training framework integrations"
+        - pattern: "Environment.*Integration|Library.*Integration"
+          description: "Environment or library integrations"
+        - pattern: "Integration.*|How .+ Work Together|Migration.*"
+          description: "Cross-product integration patterns"
+        - pattern: "Next Steps.*"
+          description: "Next steps organized by user goal"
+        - pattern: "Version.*Compatibility|Compatibility.*"
+          description: "Version compatibility reference"
+    h3:
+      optional:
+        - pattern: ".*"
+          description: "Per-product subsections and details"
+
+  elements:
+    - type: list-table
+      context: "within Choosing or comparison section"
+      required: false
+    - type: tab-set
+      context: "within product comparison section"
+      required: false
+    - type: admonition
+      context: "within ecosystem overview"
+      required: false
+      attributes:
+        class: tip
+    - type: mermaid
+      context: "within integration section"
+      required: false
+
+  section_order:
+    - "Understanding"
+    - "Choosing"
+    - "Work Together"
+    - "Next Steps"
+    - "Version Compatibility"
+
+severity:
+  missing_required_section: error
+  missing_optional_section: info
+  wrong_section_order: warning
+  missing_element: info
+  duplicate_h1: error
+
+content:
+  intro:
+    max_sentences: 3
+    must_include: ["ecosystem positioning", "cross-reference to overview"]
+  product_descriptions:
+    per_product_fields: ["What", "Best for", "Key traits"]
+    min_products: 2
+  decision_guide:
+    format: "table or bullet list"
+    include_use_when_criteria: recommended

@@ -1,0 +1,56 @@
+{
+  "literals": [
+    {
+      "path": "packages/runtime/src/context/diagnostic.ts",
+      "kind": "max-assign",
+      "lexeme": "ENV_VALUE_MIN_LENGTH = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/context/diagnostic.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_MESSAGE_LENGTH = 5",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/context/reader-context.ts",
+      "kind": "kib-product",
+      "lexeme": "128 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/context/reader-context.ts",
+      "kind": "kib-product",
+      "lexeme": "64 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/context/reader-context.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 128",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/context/reader-context.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 32",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/context/reader-context.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_CONTEXT_BYTES = 6",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/context/reader-context.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_PROVENANCE_BYTES = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    }
+  ]
+}

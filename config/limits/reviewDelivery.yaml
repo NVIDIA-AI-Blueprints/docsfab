@@ -1,0 +1,30 @@
+# DocsFab operational limits owned by the reviewDelivery name prefix.
+# Registered in config/limits.yaml; regenerate mirrors from packages/runtime.
+limits:
+  - name: reviewDelivery.snapshotUniqueOriginalBytesMax
+    value: 268435456
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_REVIEW_DELIVERY_SNAPSHOT_UNIQUE_ORIGINAL_BYTES_MAX
+    min: 1
+    max: 2147483648
+    refusal: review-delivery-snapshot-unique-original-bytes-bound
+    remediation: Narrow the review source range, or raise DOCSFAB_REVIEW_DELIVERY_SNAPSHOT_UNIQUE_ORIGINAL_BYTES_MAX together with any smaller source-acquisition materialization bound, then rerun before model dispatch.
+    rationale: Distinct verified original Git blob bytes retained for one review, charged once by object id rather than once per side or file. The 256 MiB default matches changeSourcesGithub.objectMaterializedMaxBytes, so its default acquisition can be retained without a second smaller ceiling. It is a design admission and disk-retention budget, not a measured peak RSS bound; preflight must still measure the full run and retained graph.
+    docValue: 268,435,456 bytes (256 MiB)
+    docSummary: Maximum distinct original source bytes retained for one review run.
+
+  - name: reviewDelivery.snapshotPartBytes
+    value: 8388608
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_REVIEW_DELIVERY_SNAPSHOT_PART_BYTES
+    min: 4096
+    max: 134217728
+    refusal: review-delivery-snapshot-part-bytes-bound
+    remediation: Increase DOCSFAB_REVIEW_DELIVERY_SNAPSHOT_PART_BYTES when a smaller part size creates too many objects, or raise artifacts.maxObjectBytes for serialized fit; the source bytes are never clipped.
+    rationale: Target maximum raw bytes per stored snapshot part, matching the existing sealed hostInvoker.gitOutputMaxBytes default. This is fragmentation, not an input ceiling. The writer still checks each JSON/base64 part against effective artifacts.maxObjectBytes and splits it further when required.
+    docValue: 8,388,608 bytes (8 MiB)
+    docSummary: Raw bytes in one retained review source snapshot part before serialized-object fit.

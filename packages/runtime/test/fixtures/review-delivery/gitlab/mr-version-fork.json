@@ -1,0 +1,51 @@
+{
+  "merge_request": {
+    "id": 4701,
+    "iid": 83,
+    "project_id": 914,
+    "source_project_id": 1720,
+    "target_project_id": 914,
+    "source_branch": "review/fork-change",
+    "target_branch": "main",
+    "web_url": "https://gitlab.example.test/group/project/-/merge_requests/83",
+    "diff_refs": {
+      "base_sha": "base-commit-sha",
+      "start_sha": "target-start-sha",
+      "head_sha": "source-head-sha"
+    }
+  },
+  "version": {
+    "id": 301,
+    "merge_request_id": 4701,
+    "base_commit_sha": "base-commit-sha",
+    "start_commit_sha": "target-start-sha",
+    "head_commit_sha": "source-head-sha",
+    "state": "collected",
+    "diffs": [
+      {
+        "old_path": "docs/old-name.md",
+        "new_path": "docs/new-name.md",
+        "renamed_file": true,
+        "new_file": false,
+        "deleted_file": false,
+        "diff": "@@ -8,2 +8,4 @@\n context before\n-old line one\n-old line two\n+new line one\n+new line two\n+new line three\n context after\n"
+      },
+      {
+        "old_path": "docs/removed.md",
+        "new_path": "docs/removed.md",
+        "renamed_file": false,
+        "new_file": false,
+        "deleted_file": true,
+        "diff": "@@ -21,1 +0,0 @@\n-removed content\n"
+      },
+      {
+        "old_path": "docs/added.md",
+        "new_path": "docs/added.md",
+        "renamed_file": false,
+        "new_file": true,
+        "deleted_file": false,
+        "diff": "@@ -0,0 +1,2 @@\n+first added line\n+second added line\n"
+      }
+    ]
+  }
+}

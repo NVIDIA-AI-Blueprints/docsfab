@@ -1,0 +1,40 @@
+{
+  "assets": [
+    {
+      "contractSha256": "81ac8618257d8b0b0462793bcf597821dac40d1ba62d791132e7f2bc23c10bbe",
+      "fileSha256": "956998768053cbe567d3c5c85eba29afacf7a1c5cfe3587dcc650bbf59b64318",
+      "kind": "adapter-registry",
+      "path": "adapter-registry.json"
+    },
+    {
+      "contractSha256": "0fec166caaa6565636f3f972304f3ad70e84beb91c99f5a00f5a0b00d0e6ebae",
+      "fileSha256": "715d32fb83009b330e1b1b32c3b9c531d229fb869f0d45160fc0447112829533",
+      "kind": "candidate-projections",
+      "path": "candidate-projections.json"
+    },
+    {
+      "contractSha256": "9b087928aa7ae460fa56905c21d78faff65486cdd7de6b22250672b164b7c8fd",
+      "fileSha256": "b392ed2f646bbcd3de0d83803623b139abef9d1aa089c249538c9e705f1f9303",
+      "kind": "composition-registry",
+      "path": "composition-registry.json"
+    },
+    {
+      "contractSha256": "4d21b47db1b1370bca26ece0d122412777f6999018ca4d0526d8c8f10da8b8d3",
+      "fileSha256": "f3d0c3565571c9e1094e72bb995ba62dc1f9fe9152b2bf71b136e32eded6b9dd",
+      "kind": "workflow-catalog",
+      "path": "workflow-catalog.json"
+    }
+  ],
+  "compositionCeiling": {
+    "contextWindow": 1050000,
+    "maxInputTokens": 1050000,
+    "maxOutputTokens": 384000,
+    "maxProviderTurns": 512,
+    "maxResponseBytes": 4194304,
+    "timeoutMs": 1800000
+  },
+  "compositionCeilingSha256": "78e9d5076f8d66a28c8ba758c3b72ec06c3afbe545d632c77a724e7ddb69d60d",
+  "installedManifestSha256": "c0abd2eda95af373260b75d8fe4ae2b4765d473a3b5902d9d3af3d59077f839f",
+  "kind": "docsfab-installed-model-composition-manifest/v1",
+  "schemaVersion": 1
+}

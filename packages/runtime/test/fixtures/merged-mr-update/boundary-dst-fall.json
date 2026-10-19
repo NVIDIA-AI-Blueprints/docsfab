@@ -1,0 +1,66 @@
+{
+  "description": "The 25-hour 2026-11-01 Los Angeles day: [2026-11-01T07:00:00.000Z, 2026-11-02T08:00:00.000Z). MR 3403 is inside the window only because the day is 25 hours long.",
+  "window": {
+    "timeZone": "America/Los_Angeles",
+    "startDate": "2026-11-01",
+    "endDate": "2026-11-01"
+  },
+  "targetBranch": "main",
+  "pages": [
+    {
+      "page": 1,
+      "nextPage": null,
+      "truncated": false,
+      "items": [
+        {
+          "iid": 3401,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/3401",
+          "title": "Land one millisecond before the fall-back day begins",
+          "description": "Excluded: before the window start.",
+          "state": "merged",
+          "mergedAt": "2026-11-01T06:59:59.999Z",
+          "targetBranch": "main",
+          "sourceBranch": "feature/before-fall-start",
+          "mergeCommitSha": "41a1c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        },
+        {
+          "iid": 3402,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/3402",
+          "title": "Land exactly at the fall-back day start",
+          "description": "Selected: the inclusive window start instant.",
+          "state": "merged",
+          "mergedAt": "2026-11-01T07:00:00.000Z",
+          "targetBranch": "main",
+          "sourceBranch": "feature/at-fall-start",
+          "mergeCommitSha": "42a2c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        },
+        {
+          "iid": 3403,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/3403",
+          "title": "Land in the twenty-fifth hour of the fall-back day",
+          "description": "Selected only because the reported day is 25 hours long.",
+          "state": "merged",
+          "mergedAt": "2026-11-02T07:59:59.999Z",
+          "targetBranch": "main",
+          "sourceBranch": "feature/twenty-fifth-hour",
+          "mergeCommitSha": "43a3c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        },
+        {
+          "iid": 3404,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/3404",
+          "title": "Land exactly at the fall-back day end",
+          "description": "Excluded: the exclusive window end instant.",
+          "state": "merged",
+          "mergedAt": "2026-11-02T08:00:00.000Z",
+          "targetBranch": "main",
+          "sourceBranch": "feature/at-fall-end",
+          "mergeCommitSha": "44a4c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        }
+      ]
+    }
+  ]
+}

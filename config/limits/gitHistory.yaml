@@ -1,0 +1,99 @@
+# DocsFab operational limits owned by the `gitHistory` name prefix.
+# Registered in config/limits.yaml; every limit here is named `gitHistory.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: gitHistory.logMaxEntries
+    value: 50
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_GIT_HISTORY_LOG_MAX_ENTRIES
+    min: 1
+    max: 200
+    refusal: git-history-log-max-entries-bound
+    remediation: Continue the walk with the cursor the previous docsfab_history_log page returned, or narrow it with a path or a range; a host may set DOCSFAB_GIT_HISTORY_LOG_MAX_ENTRIES from 1 through 200.
+    rationale: Presentation. The most commits one docsfab_history_log page lists. An entry is a full commit id, its parent ids, the committer date and the subject, about 200 bytes of JSON for an ordinary one-line subject, so 50 entries stay near 10 KB, a third of the default 32 KiB per-call tool output cap, and leave the rest for long subjects. A longer walk is never cut; the page returns a cursor for the next one, and gitHistory.responseMaxBytes still ends a page early when the subjects are long. The 200 maximum keeps 200 ordinary entries inside gitHistory.responseMaxBytes at its default.
+
+  - name: gitHistory.responseMaxBytes
+    value: 32768
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_GIT_HISTORY_RESPONSE_MAX_BYTES
+    min: 1024
+    max: 262144
+    refusal: git-history-response-max-bytes-bound
+    remediation: Keep gitHistory.responseMaxBytes at or below the per-call tool output cap (DOCSFAB_TOOL_OUTPUT_CAP_BYTES), or raise that cap; page through a larger file or diff with the cursor the previous page returned.
+    rationale: Presentation. The most bytes of the rendered JSON one docsfab_history_show, docsfab_history_diff, docsfab_history_log, docsfab_history_search or docsfab_history_blame call returns, envelope, labels and cursor included. It equals the default per-call tool output cap in harness/tool-output-cap.ts, so one history page costs no more context than one capped read. The tool set refuses to start when it is above the effective cap, so the two bounds cannot disagree. A larger file, diff, blamed range or set of search matches is served in pages with a cursor, never cut, and a search match whose file list does not fit continues on the next page; one blamed line, or one search match with one file, too long for a page alone is refused by this name. The minimum and maximum are the tool output cap's own range.
+
+  - name: gitHistory.pathsMaxPerCall
+    value: 64
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_GIT_HISTORY_PATHS_MAX_PER_CALL
+    min: 1
+    max: 256
+    refusal: git-history-paths-max-per-call-bound
+    remediation: Name fewer paths in one docsfab_history_diff or docsfab_history_search call and read the rest in another call; a host may set DOCSFAB_GIT_HISTORY_PATHS_MAX_PER_CALL from 1 through 256.
+    rationale: Technical capacity. The most paths one docsfab_history_diff or docsfab_history_search call may name, and the most changed files one diff page covers, so neither the argument list handed to git nor one page's file list grows with the change. The other history tools take at most one path. 64 files covers an ordinary merge request in one call; a larger change pages on with the cursor, and a longer path argument list is refused by this name rather than shortened.
+
+  - name: gitHistory.cursorsMaxPerToolSet
+    value: 256
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_GIT_HISTORY_CURSORS_MAX_PER_TOOL_SET
+    min: 1
+    max: 1024
+    refusal: git-history-cursors-max-per-tool-set-bound
+    remediation: Resume from cursors already issued, or narrow the history read so it needs fewer pages; a host may set DOCSFAB_GIT_HISTORY_CURSORS_MAX_PER_TOOL_SET from 1 through 1024.
+    rationale: Technical capacity. The most distinct continuation cursors one history tool set holds, shared by docsfab_history_show, docsfab_history_diff, docsfab_history_log, docsfab_history_search and docsfab_history_blame. A tool set lives for one step attempt, and the same page asked again reuses its cursor, so each distinct page costs one entry of a few hundred bytes plus its admitted path list and, for a search, its search string. 256 is more than half the per-step tool-call ceiling (compositionExecution.maxToolCallsPerStep, 400), so an attempt that pages all the way through a large diff, or searches a whole long history window by window, still fits. A call that would need one more is refused by this name; no older cursor is evicted.
+
+  - name: gitHistory.revisionMinHexChars
+    value: 7
+    unit: characters
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 4
+    max: 40
+    refusal: git-history-revision-min-hex-chars-bound
+    remediation: Send at least gitHistory.revisionMinHexChars hex characters of the commit id, or the full id that docsfab_history_log returns.
+    rationale: Technical capacity. The shortest abbreviated commit id a history tool resolves. An abbreviation resolves by listing every object whose id starts with it, and each hex character fewer multiplies that list by 16, so a short prefix in a large repository is a large probe and usually ambiguous. 7 is git's default abbreviation, so an id copied from ordinary git output still resolves, and docsfab_history_log returns full ids. The minimum 4 is git's own shortest abbreviation and the maximum 40 is a full SHA-1 id. A shorter id is refused as history-revision-invalid, never padded or guessed.
+
+  - name: gitHistory.blameMaxLines
+    value: 2000
+    unit: lines
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_GIT_HISTORY_BLAME_MAX_LINES
+    min: 1
+    max: 20000
+    refusal: git-history-blame-max-lines-bound
+    remediation: Blame a shorter range in one docsfab_history_blame call and the rest in another call; a host may set DOCSFAB_GIT_HISTORY_BLAME_MAX_LINES from 1 through 20000.
+    rationale: Technical capacity. The most lines one docsfab_history_blame call may ask about, checked before git runs. It bounds git's work, not presentation; served lines page by gitHistory.responseMaxBytes with a cursor. Blame traces every asked line back through history, and every history read shares the sealed hostInvoker.gitTimeoutMs (10 s) and hostInvoker.gitOutputMaxBytes (8 MiB). Measured on 2026-10-06 in this repository on a shared laptop at load average 8 to 13 with git 2.50.1, blaming all 3046 lines of the planner harness source (112 commits) took 0.09 s, and all 7535 lines of the generated limits mirror (155 commits) took 0.12 s with about 125 bytes of porcelain output per line. 2000 lines covers a whole ordinary source or documentation file, or a large section of a long one, in one call, and leaves a deeper history two orders of magnitude of the timeout. The 20000 maximum keeps the porcelain output near 2.5 MB at that rate, inside the output bound. A longer range is refused with the asked count, never shortened.
+
+  - name: gitHistory.pickaxeMaxCommitsScanned
+    value: 1000
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_GIT_HISTORY_PICKAXE_MAX_COMMITS_SCANNED
+    min: 1
+    max: 2000
+    refusal: git-history-pickaxe-max-commits-scanned-bound
+    remediation: Continue the search with the cursor the previous docsfab_history_search page returned, or narrow it with paths or a range; a host may set DOCSFAB_GIT_HISTORY_PICKAXE_MAX_COMMITS_SCANNED from 1 through 2000.
+    rationale: Technical capacity. The most commits one docsfab_history_search page scans for the search string. It bounds git's work, not presentation, and is never a refusal; a longer walk continues window by window with a cursor, even past a window with no match, so nothing is skipped. Each page runs three git reads over its window, all under the sealed hostInvoker.gitTimeoutMs (10 s) and hostInvoker.gitOutputMaxBytes (8 MiB) - the walk, a needle-free list of every name the window's commits changed, and the search itself - and the name list is the largest output, since a root or shallow cut lists its whole tree. Measured on 2026-10-07 in this repository (3548 commits) on a shared laptop at load average 12 with git 2.50.1 and a string found nowhere, the costliest 1000-commit window took 0.04 s to walk, 0.23 s and 1.7 MB to list names and 0.73 s to search; the costliest 2000-commit window took 0.04 s, 0.15 s and 3.0 MB, and 0.77 s; the whole history in one window took 0.22 s and 4.9 MB to list and 1.0 s to search. Generated files churn often, so cost differs by window. At 1000 a search of the whole history takes four pages, far inside gitHistory.cursorsMaxPerToolSet (256) and compositionExecution.maxToolCallsPerStep (400). Each page re-walks the commits earlier windows scanned to skip them, so a path-limited page costs more the deeper it starts; the walk stayed under 0.1 s at every offset measured. The 2000 maximum keeps the measured name list under half the output bound; a window whose names exceed it is refused as history-output-too-large, whose remediation narrows it with paths or a range.
+
+  - name: gitHistory.searchNeedleMaxBytes
+    value: 256
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_GIT_HISTORY_SEARCH_NEEDLE_MAX_BYTES
+    min: 1
+    max: 4096
+    refusal: git-history-search-needle-max-bytes-bound
+    remediation: Search for a shorter string, such as the symbol's own name rather than the line around it; a host may set DOCSFAB_GIT_HISTORY_SEARCH_NEEDLE_MAX_BYTES from 1 through 4096.
+    rationale: Technical capacity. The longest search string, in UTF-8 bytes, one docsfab_history_search call may send, checked before git runs. The string reaches git as one command-line argument and stays in the host's cursor state for the tool set's life, so its size bounds both. 256 bytes holds any ordinary identifier, option, configuration key or error message, and a short phrase; a search is for where a symbol appeared or vanished, not for a whole line or block. The 4096 maximum keeps the argument far inside every supported operating system's limit on one argument. A longer string is refused with its byte count, never shortened.

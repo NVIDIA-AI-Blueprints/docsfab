@@ -1,0 +1,95 @@
+{
+  "source": "Trimmed from retained run record d158e98a (create-documentation, PRR 2026-09-25, main d0ad77394). Evaluate step summary keeps the staging envelope keys {evaluation, qualityScore, reportMarkdown} with the evaluation trimmed to the fields the projector reads; host paths and digests removed.",
+  "runId": "d158e98a-742d-4cae-a208-1c117b940faa",
+  "workflow": "create-documentation",
+  "repositoryRevision": "f4540a69f8652b9b492315c423c6e4bd237e09e0",
+  "changedFiles": [
+    {
+      "path": "docs/usage.md",
+      "status": "added"
+    }
+  ],
+  "patch": {
+    "artifactPath": "/private/checkout/.docsfab/patches/d158e98a-742d-4cae-a208-1c117b940faa.patch",
+    "byteLength": 4862,
+    "lineCount": 120,
+    "format": "git-diff"
+  },
+  "evaluateEnvelope": {
+    "evaluation": {
+      "profile": {
+        "id": "docsfab-documentation-quality",
+        "version": "v0.1"
+      },
+      "model_version": "documentation-quality-model-v0.2",
+      "hard_gate_failures": [],
+      "overall_decision": "insufficient-evidence",
+      "confidence": 0.25,
+      "findings": [
+        {
+          "id": "FINDING-1",
+          "severity": "major",
+          "dimension_id": "task-effectiveness",
+          "owner": "quality-evaluation-follow-up",
+          "status": "open"
+        },
+        {
+          "id": "FINDING-2",
+          "severity": "moderate",
+          "dimension_id": "findability",
+          "owner": "documentation-system-maintainers",
+          "status": "open"
+        },
+        {
+          "id": "FINDING-3",
+          "severity": "moderate",
+          "dimension_id": "accessibility-and-inclusion",
+          "owner": "quality-evaluation-follow-up",
+          "status": "open"
+        },
+        {
+          "id": "FINDING-4",
+          "severity": "moderate",
+          "dimension_id": "legal-policy-support",
+          "owner": "quality-evaluation-follow-up",
+          "status": "open"
+        },
+        {
+          "id": "FINDING-5",
+          "severity": "moderate",
+          "dimension_id": "human-agent-representation-parity",
+          "owner": "quality-evaluation-follow-up",
+          "status": "open"
+        }
+      ]
+    },
+    "qualityScore": {
+      "status": "unavailable",
+      "reason": "No rubric can be selected safely for docs/usage.md from the available governed rubrics. The page combines consumer installation, usage procedure, and reference-style behavior/limits, while the available task-guide, concept-guide, and api-reference rubrics each require mismatched mandatory section structures for this target."
+    },
+    "reportMarkdown": "# Documentation quality evaluation report\n\n## Validated result summary\n\n```json\n{\n  \"report_contract\": \"docsfab-quality-report-v0.1\",\n  \"target\": {\n    \"paths\": [\"docs/usage.md\"],\n    \"repository_revision\": \"f4540a69f8652b9b492315c423c6e4bd237e09e0\",\n    \"documentation_revision\": \"f4540a69f8652b9b492315c423c6e4bd237e09e0\"\n  },\n  \"profile\": {\n    \"id\": \"docsfab-documentation-quality\",\n    \"version\": \"v0.1\"\n  },\n  \"evaluation\": {\n    \"decision\": \"insufficient-evidence\",\n    \"confidence\": 0.25,\n    \"hard_gate_failures\": []\n  },\n  \"rubric\": {\n    \"status\": \"unavailable\",\n    \"reason\": \"No rubric can be selected safely for docs/usage.md from the available governed rubrics. The page combines consumer installation, usage procedure, and reference-style behavior/limits, while the available task-guide, concept-guide, and api-reference rubrics each require mismatched mandatory section structures for this target.\"\n  },\n  \"validation\": {\n    \"evaluation\": \"passed\",\n    \"quality_score\": \"unavailable\",\n    \"report_binding\": \"passed\"\n  },\n  \"artifact_locators\": {\n    \"evaluation\": \"evaluation.json\",\n    \"quality_score\": null,\n    \"quality_report\": \"quality-report.md\"\n  }\n}\n```\n"
+  },
+  "audienceSummary": "{\"status\": \"insufficient-evidence\", \"summary\": \"Audience-understanding prerequisite check failed before any participant attempt. No new participant attempt ran.\", \"missingPrerequisites\": [\"authoritative reference model explicitly supplied as the evaluation model for an audience-understanding run\", \"versioned scenario corpus with prompts, oracles, acceptance criteria, and misconception probes\", \"representative participant identity or clean-agent execution configuration\", \"evaluator identity with evidence of independence from documentation authorship\", \"retention boundary\", \"run authority\"]}",
+  "storedWorkflowOutcome": {
+    "disposition": "inconclusive",
+    "findings": [
+      {
+        "id": "finding:authoring-quality:experimental-quality-profile",
+        "kind": "evidence-limitation",
+        "severity": "warning",
+        "code": "experimental-quality-profile",
+        "evidenceIds": ["step:evaluate-document-quality"]
+      },
+      {
+        "id": "finding:authoring-quality:insufficient-evidence",
+        "kind": "evidence-limitation",
+        "severity": "warning",
+        "code": "insufficient-evidence",
+        "evidenceIds": ["step:evaluate-document-quality", "step:test-audience-understanding"]
+      }
+    ],
+    "limitations": ["experimental-quality-profile", "insufficient-evidence"],
+    "openDecisions": [],
+    "producedArtifacts": []
+  }
+}

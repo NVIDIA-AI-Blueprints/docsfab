@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "kind": "docsfab-sanitized-model-catalog-evidence-example",
+  "generatedAt": "2026-08-04T12:34:56.789Z",
+  "subject": {
+    "provider": "nvidia",
+    "model": "openai/gpt-5.4",
+    "purpose": "policy"
+  },
+  "sources": [
+    {
+      "surface": "inference",
+      "status": "observed",
+      "observationSha256": "975a0db3e54071485f8a6e6a04740e3331ad68d74bd204f8ca5d02870f5b23e7",
+      "provenanceSha256": "65e1ae84aac10e7ed3ac814308444f70c19fed6d409bd1801d39f3e0a87f365a"
+    },
+    {
+      "surface": "metadata",
+      "status": "observed",
+      "observationSha256": "b7aa88e254844677d7f14f4231141e806d6b40fc2a70b1149f9a5fc17eb03fba",
+      "provenanceSha256": "6051faf0f6ef6a6bebcdae6724315bf1b9931905ef8f79fe1ff47fd87de740ca"
+    }
+  ],
+  "inspectionSha256": "2bde20956080cada0cc71c64a826e34e3ac3776c5f7f6f67751c9d42a4be20ff",
+  "proposalSha256": "54ab82ae2dad251d189d5fb7d8533ed3d0aecce4a3c669b6e4795113fe62b88c",
+  "proposalProvenanceSha256": "4e9308732e2aa6acfc2da74f10e0b6e5bbc5bf60cf3d802159991ae803813484",
+  "decisionSha256": "043049da005fa96f6a344761381d7871db5a7a3cec595bd76f9516cb976ff0a3",
+  "selectedLimits": {
+    "contextWindow": 128000,
+    "maxInputTokens": 96000,
+    "maxOutputTokens": 20000
+  },
+  "pricingDisposition": "unknown-not-approved",
+  "rawPayloadRetained": false,
+  "credentialsRetained": false
+}

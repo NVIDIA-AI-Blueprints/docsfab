@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "name": "audit-documentation",
+  "title": "Documentation template conformance audit",
+  "outcome": "A read-only, revision-bound per-page template conformance report with host-counted coverage and no model calls.",
+  "contextPolicy": {
+    "schemaVersion": 1,
+    "steps": [
+      {
+        "stepId": "audit-template-conformance",
+        "required": true,
+        "level": "corpus",
+        "query": "expand",
+        "allowReadOnlyDegraded": true
+      }
+    ]
+  },
+  "steps": [
+    {
+      "id": "audit-template-conformance",
+      "title": "Audit pages against their templates",
+      "kind": "host-operation",
+      "skill": "audit-documentation",
+      "mode": "read-only",
+      "prompt": "Enumerate every documentation page in the declared scope, map each page to a governed template from its frontmatter or path conventions, and run the structural template checks on every mapped page. Report each unmapped or refused page with its reason. Never guess a template, call a model, or modify files."
+    }
+  ]
+}

@@ -1,0 +1,215 @@
+{
+  "schemaVersion": 1,
+  "pinnedRevision": "735d162e2134cbc6c284bac022686ec2e14063bc",
+  "positiveCases": [
+    {
+      "id": "router-six-page-update",
+      "workflow": "update-documentation",
+      "instruction": "Update exactly docs/collections/README.md, docs/collections/guide.md, docs/collections/reference.md and their Fern projections fern/pages/collections/_index.mdx, fern/pages/collections/concepts.mdx, fern/pages/collections/guide.mdx to clarify the Source, Shortcut, Installed, and Estate vocabulary and operational next steps using only current repository evidence. Preserve current behavior, routes, links, and unrelated content. Change no other path, and stop with a typed scope or input outcome before mutation if another page is required.",
+      "targetPaths": [
+        "docs/collections/README.md",
+        "docs/collections/guide.md",
+        "docs/collections/reference.md",
+        "fern/pages/collections/_index.mdx",
+        "fern/pages/collections/concepts.mdx",
+        "fern/pages/collections/guide.mdx"
+      ],
+      "expected": "supported"
+    },
+    {
+      "id": "ordinary-paraphrase",
+      "workflow": "update-documentation",
+      "instruction": "Refresh docs/collections/README.md, docs/collections/guide.md, docs/collections/reference.md, fern/pages/collections/_index.mdx, fern/pages/collections/concepts.mdx, and fern/pages/collections/guide.mdx from current repository evidence while preserving their current routes and links.",
+      "targetPaths": [
+        "docs/collections/README.md",
+        "docs/collections/guide.md",
+        "docs/collections/reference.md",
+        "fern/pages/collections/_index.mdx",
+        "fern/pages/collections/concepts.mdx",
+        "fern/pages/collections/guide.mdx"
+      ],
+      "expected": "supported"
+    },
+    {
+      "id": "three-absent-create",
+      "workflow": "create-documentation",
+      "instruction": "Create docs/start/a.md, docs/start/b.md, and fern/pages/start/c.mdx from the current command contract using only current repository evidence. Change no other path.",
+      "targetPaths": ["docs/start/a.md", "docs/start/b.md", "fern/pages/start/c.mdx"],
+      "expected": "supported"
+    },
+    {
+      "id": "leading-read-dependency",
+      "workflow": "update-documentation",
+      "instruction": "Based on docs/source.md, update exactly docs/a.md and docs/b.md using current evidence.",
+      "targetPaths": ["docs/a.md", "docs/b.md"],
+      "expected": "supported"
+    }
+  ],
+  "negativeClasses": [
+    "decomposition-omission",
+    "one-page-missing-fact",
+    "joint-span-missing",
+    "high-overlap-distractor",
+    "contradiction",
+    "unsupported-product-intent",
+    "forged-provenance",
+    "unsafe-path",
+    "source-authority-expansion",
+    "out-of-scope-write",
+    "non-first-target-conflict",
+    "budget-exhausted",
+    "no-progress"
+  ],
+  "reportedSeparately": [
+    "decompositionOmissions",
+    "retrievalMisses",
+    "falseAdmissions",
+    "falseStops",
+    "provenanceValidity",
+    "boundedCost",
+    "repeatability"
+  ],
+  "observedEvidence": {
+    "frozenCandidate": {
+      "baseRevision": "7b3ce1026b56ac0c3c95381954ab9c188858aa71",
+      "sourceIdentitySha256": "b47ffc1b36df7bce4999a1fe0b7c00aee743c848295dbf428c652cbfffed3902",
+      "sourceUnchanged": true,
+      "filesAtReplay": {
+        "docs/workflows/run-a-documentation-workflow.md": "b6d28f56f60e11c97ab38e27a03eb5d0faffd3882329ea2a3fc057ae55833ee8",
+        "packages/knowledge/skills/assess-product-repository/SKILL.md": "f8fcc73d15fe4784507954c6be7b4e8163350971114c44632ee3a357781bc0e5",
+        "packages/knowledge/skills/assess-product-repository/evals/evals.json": "4b1f272edf7167ed254b3785c49f57a1ceb0922c210b4bcdbc6c53a1d3e62002",
+        "packages/knowledge/skills/assess-product-repository/references/assessment-contract.md": "b705278e69715c9263e77b3f679ed1077a3371fab1d26e774bf4b04098d28426",
+        "packages/knowledge/src/first-pass-support.mjs": "d9dc04e19441226004f88a8d2b42be5842ac0857481bb68cce5c600c95bce88d",
+        "packages/knowledge/src/first-pass.mjs": "cd45d448a63d120be19e37e4765511581e674eed53a1c3014ecf4d8e84617a80",
+        "packages/knowledge/tests/first-pass-support.test.mjs": "0b4d48634b41cf1e9ccaec2c8e28555d5841aab863ebae7084fcfaa8935f0e74",
+        "packages/runtime/src/cli/first-pass-support.ts": "974a84cc54be5d98b1be010ee916e069430f76a4f346fe085dea6e28de1e3709",
+        "packages/runtime/src/cli/first-pass.ts": "ea6b35c82dc7e14f9ba2f30085ed3bd259f3ab9caad8376b32f7da7008ad3773",
+        "packages/runtime/src/cli/run-request.ts": "588458cba916279242add7c5426de4b6ce1cb6435063bada21db87dee6a56536",
+        "packages/runtime/src/cli/run/execution.ts": "eb65863be3c85c2bfa16caf4a5b8e9487a74e61202e7096b0d5edb49341df16c",
+        "packages/runtime/src/cli/run/request.ts": "6ee90287cd530d224a835c6f53b9cddd723cbd892d5a65f8943a6f39e46b121e",
+        "packages/runtime/src/workflow-execution/runner.ts": "458a46a8a452d3fd17da585a57b543ad525fb6becc84b8ad96119e38b6b29326",
+        "packages/runtime/test/documentation-plan-binding.test.ts": "8abaea5dcb987d1d37335774a55204788f492eec228c8b20be33bdf6a6b4eb88",
+        "packages/runtime/test/first-pass-cli.test.ts": "b0a649bf736b9dcd536936dd5b9e938ed29251cff2aa4049b1e294b24f0494ec",
+        "packages/runtime/test/fixtures/knowledge-resume-loop/multi-page-first-use-corpus.json": "4c71d9b2017cbb00611c83635b7414f89b54f5b6d85e3f42fd01b5e9149c08fc"
+      }
+    },
+    "baseline": {
+      "runtimeRevision": "29d468c71f709f118ad4008eef8102d92ec0e02b",
+      "targetRevision": "735d162e2134cbc6c284bac022686ec2e14063bc",
+      "sourceFiles": 12,
+      "modelTurns": 0,
+      "outcome": "insufficient-evidence-before-workflow"
+    },
+    "liveRuns": [
+      {
+        "id": "live-router-04",
+        "runId": "5625ae02-709b-454e-8087-d3cf36a30db6",
+        "instructionSha256": "d10be2cae10317b101060d3362d4c116a352fcebecbb866bf658a5ef7212d7f6",
+        "assessmentIdentity": {
+          "providerId": "nvidia-inference-api",
+          "modelId": "azure/openai/gpt-5.4",
+          "profileSha256": "6dd07da6845c794976701854314816b1d2bcb7b2dd58bf69acee245982148fda",
+          "compositionSha256": null,
+          "requestPolicySha256": null,
+          "systemPromptSha256": "925b9d998802085ac4ec8eabc3bb3a423de7c6a0232b0b367f32c0a24004d2ce",
+          "promptSha256": "05d5f41cc54474b0838fe78a0a54cff96868de7964df81f74ea9c9d605375517",
+          "procedureSha256": "1441d3bf1fabbeb7d9ac7c8820f6033d8b3dacf233cacbd6e0dc2dff708c6a9a",
+          "responseSha256": "9fb6b0ad564f5f09653f0b34388008cbd0088c993832525f2316822015e5d482",
+          "turnEvidenceSha256": "bb772dc09acdc6d01278b1eb7f6b3e84b819eef23dd3932b36eb4dc39b999835"
+        },
+        "assessmentIdentitySha256": "8a43be0499318b3e1b35ad0d412442f58710f30daa4e52e7d523a17599e285fb",
+        "supportSha256": "351d4e08ee4ca5705dd3c44eacc7f620d9e7706c3d394e0fadf4bef3a6dbeed4",
+        "targetRevision": "735d162e2134cbc6c284bac022686ec2e14063bc",
+        "obligations": 17,
+        "sourceFiles": 16,
+        "spans": 27,
+        "readBytes": 124386,
+        "presentedBytes": 59095,
+        "modelTurns": 3,
+        "reportedInputTokens": 20786,
+        "reportedOutputTokens": 1397,
+        "admission": "supported",
+        "workflowOutcome": "planner-blocked-dependency",
+        "documentationWrites": 0,
+        "inputTokenMetric": "provider-reported-uncached-only"
+      },
+      {
+        "id": "live-router-05",
+        "runId": "49ec683e-20fb-4805-8e5f-d77a576c4472",
+        "instructionSha256": "d10be2cae10317b101060d3362d4c116a352fcebecbb866bf658a5ef7212d7f6",
+        "assessmentIdentity": {
+          "providerId": "nvidia-inference-api",
+          "modelId": "azure/openai/gpt-5.4",
+          "profileSha256": "6dd07da6845c794976701854314816b1d2bcb7b2dd58bf69acee245982148fda",
+          "compositionSha256": null,
+          "requestPolicySha256": null,
+          "systemPromptSha256": "925b9d998802085ac4ec8eabc3bb3a423de7c6a0232b0b367f32c0a24004d2ce",
+          "promptSha256": "05d5f41cc54474b0838fe78a0a54cff96868de7964df81f74ea9c9d605375517",
+          "procedureSha256": "1441d3bf1fabbeb7d9ac7c8820f6033d8b3dacf233cacbd6e0dc2dff708c6a9a",
+          "responseSha256": "033e4e983bb7fa79c28dd742aff6920d7ef7f60d34fdba21986603a2c10da04f",
+          "turnEvidenceSha256": "bb772dc09acdc6d01278b1eb7f6b3e84b819eef23dd3932b36eb4dc39b999835"
+        },
+        "assessmentIdentitySha256": "55b7a5fbfba1f86b971c727e8053745519ef8cb02357f1aecdbd62accd705dae",
+        "supportSha256": "3bf20fa3d19344ff7ea94e114e893b39d6f544b64124cff4e4c01a0e43ac31bd",
+        "targetRevision": "735d162e2134cbc6c284bac022686ec2e14063bc",
+        "obligations": 17,
+        "sourceFiles": 16,
+        "spans": 27,
+        "readBytes": 124386,
+        "presentedBytes": 59095,
+        "modelTurns": 3,
+        "reportedInputTokens": 562,
+        "reportedOutputTokens": 1367,
+        "admission": "supported",
+        "workflowOutcome": "planner-blocked-dependency-observation-nav-graph",
+        "documentationWrites": 0,
+        "inputTokenMetric": "provider-reported-uncached-only"
+      },
+      {
+        "id": "live-router-06",
+        "runId": "087f61b9-f35a-4304-9e41-d0a965b122c6",
+        "sourceRevision": "7b3ce1026b56ac0c3c95381954ab9c188858aa71",
+        "sourceIdentitySha256": "b47ffc1b36df7bce4999a1fe0b7c00aee743c848295dbf428c652cbfffed3902",
+        "sourceUnchanged": true,
+        "instructionSha256": "d10be2cae10317b101060d3362d4c116a352fcebecbb866bf658a5ef7212d7f6",
+        "assessmentIdentity": {
+          "providerId": "nvidia-inference-api",
+          "modelId": "azure/openai/gpt-5.4",
+          "profileSha256": "6dd07da6845c794976701854314816b1d2bcb7b2dd58bf69acee245982148fda",
+          "compositionSha256": null,
+          "requestPolicySha256": null,
+          "systemPromptSha256": "925b9d998802085ac4ec8eabc3bb3a423de7c6a0232b0b367f32c0a24004d2ce",
+          "promptSha256": "05d5f41cc54474b0838fe78a0a54cff96868de7964df81f74ea9c9d605375517",
+          "procedureSha256": "1441d3bf1fabbeb7d9ac7c8820f6033d8b3dacf233cacbd6e0dc2dff708c6a9a",
+          "responseSha256": "c464c7d126643d686041976f4001ddcdf9ab16f51e3843cd4f83b6fac99d4f2b",
+          "turnEvidenceSha256": "bb772dc09acdc6d01278b1eb7f6b3e84b819eef23dd3932b36eb4dc39b999835"
+        },
+        "assessmentIdentitySha256": "302c7da5657c58a231f31fe747e71e747fb0281a1489411723924c82fb601cf3",
+        "supportSha256": "10cb6520605e3d30ba476488c4cd47b2372fe8ea5b0a677f9b22c5f59f80ba1c",
+        "targetRevision": "735d162e2134cbc6c284bac022686ec2e14063bc",
+        "obligations": 17,
+        "sourceFiles": 16,
+        "spans": 27,
+        "readBytes": 124386,
+        "presentedBytes": 59095,
+        "modelTurns": 3,
+        "effectiveInputTokens": 23602,
+        "reportedOutputTokens": 1296,
+        "inputTokenMetric": "effective-prompt-input-including-cache",
+        "admission": "supported",
+        "workflowOutcome": "planner-blocked-dependency-observation-nav-graph/local-index-incomplete",
+        "documentationWrites": 0,
+        "patchPaths": [".docsfab.json"],
+        "publication": "none"
+      }
+    ],
+    "limits": {
+      "claim": "The post-repair live-router-06 run proves knowledge admission and entry into the original planner on the exact clean candidate source.",
+      "repeatability": "The pre-repair live-router-04 and live-router-05 runs independently reached the same knowledge admission on the same target request.",
+      "plannerBlocker": "The original planner stopped on observation-nav-graph/local-index-incomplete.",
+      "patch": "The runs produced only the proposed host-derived .docsfab.json bootstrap path; none produced a six-page documentation patch or publication.",
+      "tokenAccounting": "The pre-repair runs retained provider-reported uncached input only. Post-repair live-router-06 records 23,602 effective input tokens including cache-read and cache-write usage.",
+      "candidateContinuity": "Live-router-06 exercised the exact clean 7b3ce1026b56ac0c3c95381954ab9c188858aa71 source after credential-screening and effective-cache-accounting repairs. Post-replay changes are this evidence corpus, a documentation clarification of the existing finite target slice, and message-only exception-hygiene repairs that do not change support behavior."
+    }
+  }
+}

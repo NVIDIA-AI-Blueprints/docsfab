@@ -1,0 +1,15 @@
+# DocsFab operational limits owned by the `sourceCitation` name prefix.
+# Registered in config/limits.yaml; every limit here is named `sourceCitation.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: sourceCitation.mintedMaxChars
+    value: 32768
+    unit: characters
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 65536
+    refusal: source-citation-minted-max-chars-bound
+    remediation: Cite narrower line ranges so the admitted artifact's minted quotes together fit sourceCitation.mintedMaxChars; the step re-asks within its existing retry budget. Raising the value in config/limits/sourceCitation.yaml re-qualifies the summary readers and is not a retry.
+    rationale: Total UTF-16 characters of quote text the host mints from model-supplied line-range citations into one admitted artifact (a source readiness assessment or a repository bootstrap result); scope per-run because each run admits one such artifact. A citation is three integers that can name a whole file, so minting removes the bound the model's own output once placed on quoted text. Measured on lane D (Inference Hub, 2026-10-01) the admitted gpt-6-sol artifacts carried 473 characters over 8 sentence quotes (readiness dba0a124) and 156 and 238 characters (bootstrap 4f49cc03, 956fe458); whole-line minting widens a sentence to its lines, so 32768 admits 16 citations of 25 lines of 80 characters and keeps an artifact under 3.3% of the 1000000-character step summary readers. The maximum is runtime.contract.maxStringChars, so a single minted quote always re-decodes through the strict contract walk.

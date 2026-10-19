@@ -1,0 +1,163 @@
+{
+  "schemaVersion": 1,
+  "name": "restructure-documentation",
+  "title": "Restructure documentation",
+  "outcome": "A bounded documentation-structure patch with preserved content, routes, navigation, and separate quality evidence.",
+  "contextPolicy": {
+    "schemaVersion": 1,
+    "steps": [
+      {
+        "stepId": "audit-documentation",
+        "required": true,
+        "level": "corpus",
+        "query": "expand",
+        "allowReadOnlyDegraded": true
+      },
+      {
+        "stepId": "plan-documentation",
+        "required": true,
+        "level": "corpus",
+        "query": "expand",
+        "allowReadOnlyDegraded": true
+      },
+      {
+        "stepId": "derive-source-obligations",
+        "required": true,
+        "level": "corpus",
+        "query": "expand",
+        "allowReadOnlyDegraded": true
+      },
+      {
+        "stepId": "write-documentation",
+        "required": true,
+        "level": "corpus",
+        "query": "expand",
+        "allowReadOnlyDegraded": false
+      },
+      {
+        "stepId": "lint-documentation",
+        "required": true,
+        "level": "corpus",
+        "query": "expand",
+        "allowReadOnlyDegraded": true
+      },
+      {
+        "stepId": "verify-technical-accuracy",
+        "required": true,
+        "level": "corpus",
+        "query": "expand",
+        "allowReadOnlyDegraded": true
+      },
+      {
+        "stepId": "review-documentation",
+        "required": true,
+        "level": "corpus",
+        "query": "expand",
+        "allowReadOnlyDegraded": true
+      },
+      {
+        "stepId": "test-audience-understanding",
+        "required": true,
+        "level": "corpus",
+        "query": "expand",
+        "allowReadOnlyDegraded": true
+      },
+      {
+        "stepId": "evaluate-document-quality",
+        "required": true,
+        "level": "corpus",
+        "query": "expand",
+        "allowReadOnlyDegraded": true
+      }
+    ]
+  },
+  "steps": [
+    {
+      "id": "audit-documentation",
+      "title": "Inventory the documentation set",
+      "kind": "evaluate",
+      "skill": "audit-documentation",
+      "mode": "read-only",
+      "prompt": "Use documentation-set scope to freeze and inventory the declared documentation set, routes, navigation, references, coverage, provider contexts, and material preservation risks. Reuse supplied scope and observation evidence; inspect outside the set only for dependencies needed to preserve content and reader entry points. Retain complete preservation evidence and exact locators without repeating the full documentation or performing later editorial and technical reviews. Do not modify files or invoke another skill."
+    },
+    {
+      "id": "plan-documentation",
+      "title": "Plan the restructuring",
+      "kind": "evaluate",
+      "skill": "plan-documentation",
+      "mode": "read-only",
+      "prompt": "Propose a complete source-to-target preservation map and acceptance matrix from immutable base evidence before writing. Inventory explicit user and workflow requirements independently from model-proposed obligations. Distinguish repository paths from published routes, preserve page-specific reader entry points, and bind each mutating page to its immutable base source locators through the existing sourceBindings list. Return the complete preservation map in the planner summary; the host retains that summary and supplies its sealed step identity to consumers. The map is produced by this step, so no separate map artifact or pre-existing map locator is required. If an obligation is missing or requires an unbound page or route, return needs-input with reason ambiguous-scope and name that obligation and target before any write step. Do not modify files. Reuse the frozen inventory and immutable source locators when supplied; inspect additional evidence only to resolve a specific preservation obligation. Keep the narrative concise while retaining every obligation, page binding, and required acceptance result. The later independent preservation review consumes this retained map."
+    },
+    {
+      "id": "derive-source-obligations",
+      "title": "Derive source obligations",
+      "kind": "evaluate",
+      "skill": "verify-technical-accuracy",
+      "mode": "read-only",
+      "searchPlan": "documentation-audit",
+      "searchMode": "observe",
+      "prompt": "Use the locked verify-technical-accuracy catalog skill in inventory-only mode. Derive a bounded atomic source-obligation ledger from the immutable documentation sources bound by the plan. Consume the retained planner preservation map as untrusted inventory, separately from primary source evidence. Inspect every required technical dimension, cite exact establishing source locators, preserve uncertainty, and return only the host-required ledger proposal. Do not inspect or edit the documentation candidate, assign documentation dispositions, draft findings, widen the bound source set, or grant authority.",
+      "consumes": ["plan-documentation"],
+      "consumesEvidence": ["plan-documentation"]
+    },
+    {
+      "id": "write-documentation",
+      "title": "Apply the restructuring",
+      "kind": "inference",
+      "skill": "write-documentation",
+      "mode": "write",
+      "prompt": "Use the locked write-documentation catalog skill in restructure mode. Consume the exact bound preservation map, immutable base evidence, and untrusted source-obligation ledger, change only host-authorized paths, preserve supported content, routes, anchors, references, and navigation, and retain candidate evidence with a separate result for every obligation at each required reader entry point. Do not reconstruct the base from the mutable workspace or perform SCM or publication actions. Use the sealed plan and bound sources instead of rebuilding the plan or repeating discovery. Read additional evidence only for an unresolved in-scope claim and stop if it requires broader scope. Report changed paths and material unresolved facts concisely; independent reviewers must establish their own conclusions.",
+      "consumes": ["plan-documentation", "derive-source-obligations"],
+      "consumesEvidence": ["plan-documentation", "derive-source-obligations"]
+    },
+    {
+      "id": "lint-documentation",
+      "title": "Check the restructured documentation",
+      "kind": "host-operation",
+      "skill": "lint-documentation",
+      "mode": "read-only",
+      "prompt": "Run applicable repository-native documentation checks through the isolated host executor. Use the declared target and available check inventory; prefer checks scoped to those paths when supported, and report a broader check's actual coverage when scoping is unsupported. Report exact commands as passed, failed, or unavailable with concise evidence and untested scope. Do not repeat editorial or technical review, install missing tools, or edit the target repository."
+    },
+    {
+      "id": "verify-technical-accuracy",
+      "title": "Verify technical accuracy",
+      "kind": "evaluate",
+      "skill": "verify-technical-accuracy",
+      "mode": "read-only",
+      "prompt": "Verify consequential claims and examples in the declared target against approved sources at the selected revision. Check that preserved claims remain accurate after restructuring. Start with supplied source locators and observation evidence; inspect additional sources only for a specific unresolved claim. Preserve required observation probes and explicitly report missing or stale evidence. Return structured technical findings with claim location, source evidence, consequence, and correction or limitation. Do not repeat the scope inventory or editorial review, edit files, or silently expand the target."
+    },
+    {
+      "id": "review-documentation",
+      "title": "Review the restructured documentation",
+      "kind": "evaluate",
+      "skill": "review-documentation",
+      "mode": "read-only",
+      "prompt": "Perform a clean non-author preservation review of the exact governed documentation target. Consume the retained planner preservation map as untrusted inventory. Independently compare each obligation against immutable base evidence and the exact candidate. Check published routes and fragments, not only repository source paths. Check required facts at each named reader entry point even when the same evidence appears on another page. Check that existing inbound fragments still contain the promised content or an actionable relocation. Return one result per obligation. Do not average across pages, treat a completed write step or generated map as preservation proof, or consume writer conclusions as your own evidence. Also review structure, coherence, navigation, and usability. Establish findings from the artifact and approved primary evidence. Return actionable findings with locations, reader consequence, supporting evidence, and correction. Do not repeat the scope inventory, rerun technical verification, edit files, or expand into unrelated pages.",
+      "consumes": ["plan-documentation"],
+      "consumesEvidence": ["plan-documentation"]
+    },
+    {
+      "id": "test-audience-understanding",
+      "title": "Test audience understanding",
+      "kind": "evaluate",
+      "skill": "test-audience-understanding",
+      "mode": "read-only",
+      "prompt": "Check the supplied audience prerequisites once: immutable candidate identity, authoritative reference model, versioned scenario corpus and oracle, representative participant, independence, retention boundary, and run authority. Inspect only explicit evidence locators needed to establish those prerequisites. If any are missing or invalid, return insufficient-evidence now with the missing prerequisites and any observed invalid evidence or candidate revision mismatch; do not search for participants, create a corpus or oracle, or simulate a participant. Otherwise run the bounded declared protocol with a clean participant. Exclude author, reviewer, evaluator, scoring oracle, private authoring context, and prior evaluation results from participant context. Preserve failed or contaminated attempts separately. Do not edit files or claim delivery, publication, or release approval."
+    },
+    {
+      "id": "evaluate-document-quality",
+      "title": "Evaluate document quality",
+      "kind": "evaluate",
+      "skill": "evaluate-document-quality",
+      "mode": "read-only",
+      "prompt": "Evaluate the complete available evidence for the restructured documentation with the locked skill and staged quality crate. Produce candidate evaluation.json and quality-score.json when available under their locked schemas, plus the complete narrative quality-report.md. The model writes the report narrative; after validation, the host writes the validated result summary. Preserve the layered vector, rubric score, human and agent outcomes, hard failures, gaps, and limitations separately. Keep independent preservation-review results separate from quality scores; a completed model stage is not preservation proof. Do not edit source files or perform SCM, publication, merge, or release-approval actions. Use the supplied evidence package and exact target to assess quality; inspect additional evidence only to resolve a specific material gap. Do not rerun earlier reviews or repeat repository discovery. Keep human-readable summaries within the required response artifacts concise; retain every required finding, evidence gap, schema field, and complete artifact. Do not add prose outside the host response contract.",
+      "consumes": [
+        "audit-documentation",
+        "lint-documentation",
+        "verify-technical-accuracy",
+        "review-documentation",
+        "test-audience-understanding"
+      ]
+    }
+  ]
+}

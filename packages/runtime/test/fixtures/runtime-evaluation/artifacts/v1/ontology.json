@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "kind": "ontology",
+  "repository": {
+    "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "contentDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "digest": "7f0ed5ecfae2c68d8f48d09d7df3bdff395ba920e998a7c5360cc36f87af2ca1",
+  "payload": {
+    "entities": [
+      {
+        "id": "entity:operator",
+        "label": "Operator",
+        "kind": "actor",
+        "evidence": [{ "path": "docs/index.md", "nodeId": "section:introduction" }]
+      },
+      {
+        "id": "entity:configure",
+        "label": "Configure DocsFab",
+        "kind": "user-job",
+        "evidence": [{ "path": "docs/guide.md", "nodeId": "section:install" }]
+      }
+    ],
+    "relationships": [
+      {
+        "subject": "entity:operator",
+        "predicate": "requires",
+        "object": "entity:configure",
+        "evidence": [{ "path": "docs/guide.md", "nodeId": "section:install" }]
+      }
+    ]
+  }
+}

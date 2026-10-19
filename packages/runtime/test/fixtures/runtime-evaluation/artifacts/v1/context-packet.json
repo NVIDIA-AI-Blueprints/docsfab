@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "kind": "context-packet",
+  "repository": {
+    "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "contentDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "digest": "9bff8c19c55e1ed774d07a8a94a4748c35e89db45e5c1b716735528502695e94",
+  "payload": {
+    "targetNodeId": "section:introduction",
+    "pageRole": {
+      "contentType": "tutorial",
+      "readerJob": "entity:configure",
+      "canonicalParentId": "document:home",
+      "organizingAxis": "reader-job"
+    },
+    "ancestors": ["document:home"],
+    "siblings": [],
+    "relatedCanonicalPages": ["document:guide"],
+    "placementRules": {
+      "belongsHere": ["entity:operator"],
+      "belongsElsewhere": ["entity:configure"]
+    },
+    "activeDecisionIds": ["decision:keep-quickstart"],
+    "structuralPressure": "healthy",
+    "evidence": [{ "path": "docs/index.md", "nodeId": "section:introduction" }]
+  }
+}

@@ -1,0 +1,114 @@
+# Public provenance view; retained evaluation adaptation omitted.
+# Original source SHA-256: fff869e96aa681b57163a559db23e1ef627d6190337c3ea385c221966827fbf1
+schema_version: docsfab.source-snapshot/v1
+
+# `upstream` names an internal source repository by key. The repository
+# locations are kept in DocsFab's internal provenance record, which the public
+# export omits.
+
+component: skills-and-quality
+source:
+  upstream: documentation-agent-blueprint
+  commit: 6138ea631083341164dd38da0b264c3cd1bc79f5
+  tree: b7b86190a0498e537bc7d43f101274c453376eba
+  imported_at: 2026-08-17
+
+design_inputs:
+  - upstream: documentation-skill-collection
+    commit: 9237f739cead79d145139bd1afd9ce7463e08283
+    inspected_at: 2026-08-19
+    use: Compacted overlapping documentation workflows and methods into runtime workflows and ten reusable skills; repository-specific skill-router, agent-memory, Jira, Confluence, plugin, and fixed-framework assumptions were excluded.
+
+  - upstream: documentation-skill-collection
+    commit: c2ae4ef512c849daf563d5b693caf9f0ebcd1710
+    inspected_at: 2026-09-14
+    use: Distilled page-purpose, complete-example, reader-review, and correction methods into eight consolidated skills, folding focused polish into writing; reconciled scope and evidence conflicts and removed plugin-runtime assumptions. See packages/skills/DISTILLATION.md.
+
+included_at_import:
+  - .claude-plugin/
+  - adapters/
+  - benchmarks/
+  - blueprint/
+  - docs/
+  - examples/
+  - fern/
+  - tests/
+  - .gitignore
+  - AGENTS.md
+  - AGENTS_CONTRACT.md
+  - Makefile
+  - install.sh
+
+excluded:
+  - path: README.md
+    reason: Replaced by the DocsFab quality-package facade.
+  - path: .documentation-agent/
+    reason: Untracked generated run output in the source checkout.
+  - path: demo/
+    reason: Untracked legacy and generated demo output in the source checkout.
+  - path: blueprint/examples/guided-demo/out/
+    reason: Ignored generated output; checked-in expected artifacts remain included.
+  - path: adapters/pi/package/
+    reason: Ignored generated Pi package output.
+
+docsfab_adaptations:
+  removed:
+    - path: .claude-plugin/
+      reason: Claude plugin distribution is outside the current DocsFab integration boundary.
+    - path: adapters/claude-code/
+      reason: Claude-specific adapter packaging is not retained.
+    - path: adapters/codex/
+      reason: Codex-specific adapter packaging and generated marketplace output are not retained.
+    - path: tests/test_codex_plugin.py
+      reason: Codex packaging tests were removed; portable schema and metadata coverage moved to packages/quality/tests/test_quality_contracts.py.
+    - path: examples/pi_in_openshell/
+      reason: The optional OpenShell launcher is outside the current DocsFab migration scope.
+  refactored:
+    - from: tests/test_claude_demo.py
+      to: packages/skills/tests/test_create_documentation.py
+      reason: Portable guided creation coverage no longer carries a removed harness name.
+    - from: blueprint/skills/
+      to: packages/skills/
+      reason: All five imported skills now use plain repository-wide identities in the central DocsFab skill catalog.
+    - from: blueprint/AGENTS.md
+      to: packages/skills/EXECUTION_CONTRACT.md
+      reason: The portable execution contract is colocated with canonical skills without becoming repository-development policy.
+    - from: blueprint/workflows/
+      to: packages/skills/workflows/
+      reason: Portable workflow descriptions support the central skill catalog.
+    - from: blueprint/checks/
+      to: packages/quality/checks/
+      reason: Deterministic validation belongs to the quality package.
+    - from: blueprint/schemas/
+      to: packages/quality/schemas/
+      reason: Structured quality contracts belong to the quality package.
+    - from: blueprint/rubrics/
+      to: packages/quality/rubrics/
+      reason: Scoring policy belongs to the quality package.
+    - from: blueprint/formats/
+      to: packages/quality/formats/
+      reason: Deterministic documentation formats belong to the quality package.
+    - from: blueprint/profiles/
+      to: packages/quality/profiles/
+      reason: Quality and team policy profiles share one package boundary.
+    - from: style-profiles/nvidia-technical-documentation/
+      to: packages/quality/profiles/nvidia-technical-documentation/
+      reason: Team-specific style policy is consolidated with other profiles.
+    - from: adapters/pi/
+      to: experiments/pi-quality-preview/
+      reason: Pi packaging is a harness experiment, not quality policy or runtime activation.
+    - from: install.sh
+      to: install.sh
+      reason: DocsFab retains one simple root installer for the explicit Pi preview.
+    - path: packages/skills/write-documentation/
+      reason: The imported Writer behavior and bounded creation and restructuring mutations share one focused authoring skill; create-documentation and restructure-documentation are runtime workflow identities, and guided-demo remains only a benchmark fixture identity.
+
+activation:
+  enabled_by_disk_presence: false
+  runtime_lock_extend_binding: pending_integration
+  adapter_installation: pi_preview_explicit_only
+
+license:
+  source_license_file_at_commit: absent
+  destination_license: Apache-2.0
+  note: NVIDIA-authored source is covered by the DocsFab repository LICENSE; release clearance remains governed by GOVERNANCE.md.

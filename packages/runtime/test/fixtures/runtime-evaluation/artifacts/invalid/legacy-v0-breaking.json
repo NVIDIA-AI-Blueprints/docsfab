@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 0,
+  "kind": "legacy-navigation-evaluation",
+  "repository": {
+    "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "contentDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "digest": "legacy-digest-is-replaced",
+  "payload": {
+    "questions": [],
+    "answers": []
+  }
+}

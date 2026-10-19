@@ -1,0 +1,149 @@
+{
+  "schemaVersion": 1,
+  "kind": "docsfab-study-derived-baseline",
+  "notStudyEventV1": true,
+  "fixtureId": "create-mr-class-shareable-projection",
+  "runId": "fixture-create-mr-class-0001",
+  "workflow": "create-documentation",
+  "steps": [
+    {
+      "order": 1,
+      "stepId": "plan-documentation",
+      "status": "succeeded",
+      "toolsByTool": [
+        {
+          "name": "read",
+          "calls": 1,
+          "failures": 0
+        }
+      ],
+      "inferenceTurnToolCalls": [
+        {
+          "attempt": 1,
+          "turn": 1,
+          "toolCalls": 1
+        },
+        {
+          "attempt": 1,
+          "turn": 2,
+          "toolCalls": 0
+        }
+      ],
+      "consultedNodeIds": ["node-a", "node-b"],
+      "searchDispositions": [
+        {
+          "source": "searchFindings",
+          "disposition": "found",
+          "targetId": "documentation-nav-graph"
+        },
+        {
+          "source": "searchEvidence",
+          "disposition": "found",
+          "targetId": "documentation-nav-graph"
+        }
+      ],
+      "stepKind": "evaluate"
+    },
+    {
+      "order": 2,
+      "stepId": "write-documentation",
+      "status": "succeeded",
+      "toolsByTool": [
+        {
+          "name": "read",
+          "calls": 3,
+          "failures": 0
+        },
+        {
+          "name": "write",
+          "calls": 1,
+          "failures": 0
+        }
+      ],
+      "inferenceTurnToolCalls": [
+        {
+          "attempt": 1,
+          "turn": 1,
+          "toolCalls": 2
+        },
+        {
+          "attempt": 1,
+          "turn": 2,
+          "toolCalls": 1
+        },
+        {
+          "attempt": 1,
+          "turn": 3,
+          "toolCalls": 1
+        },
+        {
+          "attempt": 1,
+          "turn": 4,
+          "toolCalls": 0
+        }
+      ],
+      "consultedNodeIds": ["node-a"],
+      "searchDispositions": null,
+      "stepKind": "inference"
+    },
+    {
+      "order": 3,
+      "stepId": "lint-documentation",
+      "status": "succeeded",
+      "toolsByTool": null,
+      "inferenceTurnToolCalls": null,
+      "consultedNodeIds": null,
+      "searchDispositions": null,
+      "stepKind": "evaluate"
+    },
+    {
+      "order": 4,
+      "stepId": "verify-technical-accuracy",
+      "status": "succeeded",
+      "toolsByTool": null,
+      "inferenceTurnToolCalls": null,
+      "consultedNodeIds": null,
+      "searchDispositions": null,
+      "stepKind": "evaluate"
+    },
+    {
+      "order": 5,
+      "stepId": "peer-review-documentation",
+      "status": "succeeded",
+      "toolsByTool": null,
+      "inferenceTurnToolCalls": null,
+      "consultedNodeIds": null,
+      "searchDispositions": null,
+      "stepKind": "evaluate"
+    },
+    {
+      "order": 6,
+      "stepId": "evaluate-document-quality",
+      "status": "succeeded",
+      "toolsByTool": null,
+      "inferenceTurnToolCalls": null,
+      "consultedNodeIds": null,
+      "searchDispositions": null,
+      "stepKind": "evaluate"
+    }
+  ],
+  "presentToday": {
+    "stepOrder": true,
+    "stepToolsByTool": true,
+    "inferenceTurnToolCallCounts": true,
+    "consultedNodeIds": true,
+    "searchDispositions": true
+  },
+  "gaps": [
+    {
+      "field": "per-read-target",
+      "present": false,
+      "note": "RunRecord has no per-read targetNodeId or pathClass. contextPreflight.consultedNodeIds is a step-level set, not a per-read target."
+    },
+    {
+      "field": "scheduled",
+      "present": false,
+      "note": "RunRecord has no study scheduled flag (catalog/required probe vs extra model-initiated read). inference.attempts[].retryScheduled is retry policy, not that flag."
+    }
+  ]
+}

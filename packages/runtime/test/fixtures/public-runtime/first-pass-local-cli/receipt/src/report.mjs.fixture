@@ -1,0 +1,14 @@
+// SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+// SPDX-License-Identifier: Apache-2.0
+
+const args = process.argv.slice(2);
+let name = 'reader';
+let format = 'text';
+for (let i = 0; i < args.length; i++) {
+  if (args[i] === '--name') name = args[i + 1];
+  if (args[i] === '--format') format = args[i + 1];
+}
+
+// Prepare a receipt; this sample writes no files.
+const message = `Report for ${name}.`;
+console.log(format === 'json' ? JSON.stringify({message}) : message);

@@ -1,0 +1,296 @@
+# Model-output rules for one judgment record submitted on the records answer
+# path (planning/design/closed-schema-answer-records-decision.md, sections 3.1
+# to 3.3). The model calls submit_answer_record with `type`, an optional `key`,
+# and `record`; the host admits or refuses each call on its own with a
+# content-free receipt. Canonical source; generated bindings are produced by
+# `npm run generate:model-output` from packages/runtime.
+#
+# The decoder and the ledger outcomes live in src/harness/answer-records.ts,
+# which is pure: the disclosure screen (admission step 2), the per-key
+# sub-schema, the owner's record checks, and link resolution run in the
+# harness (design section 7, MR 3b) and keep their own codes.
+#
+# A refusal is charged to its key, up to answerRecords.maxRefusalsPerKey per
+# step; the next refusal for that key is answer-record-exhausted. A refusal
+# whose key is unknown is charged to the call itself.
+schemaVersion: 1
+kind: docsfab-output-rules
+family: answer-record
+# No recordedPrefix: the bare suffixes (json, key, shape, duplicate) are
+# common words, so the gate's bare-diagnostic-code scan would flag unrelated
+# tables. Every code still spells out answer-record-.
+# Records are judged on a read-only step: a resent record is re-read from the
+# same repository and admitted evidence.
+replay: read-only
+rules:
+  - code: answer-record-json
+    locations:
+      - $
+      - $.record
+    kind: syntax
+    retry: model-correctable
+    reason: >-
+      The call's arguments, or the record inside them, were not one strict JSON
+      object; the model can resend the same record as strict JSON.
+    statement: >-
+      Call submit_answer_record with arguments that are one strict JSON object
+      holding type, an optional key, and record, where record is one JSON
+      object: no comments, trailing commas, raw line breaks inside strings, or
+      text after the object.
+    hint:
+      atLocation:
+        $.record: >-
+          The record argument was not one strict JSON object. Send record as a
+          JSON object, or as one string that holds exactly one JSON object.
+    operator:
+      kind: correct
+      meaning: >-
+        A submitted answer record was not strict JSON, and the record's bounded
+        resends did not correct it.
+      next: >-
+        Inspect the saved run's record receipts and the rejection location,
+        then start a new run. If the model keeps breaking the same record type,
+        record it as model-compatibility evidence.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/answer-record/json-trailing-text.json
+      - packages/runtime/test/fixtures/model-output/answer-record/json-record-string.json
+    docs: answer-record-json
+
+  - code: answer-record-duplicate-key
+    locations:
+      - $
+      - $.record
+    kind: syntax
+    retry: model-correctable
+    reason: >-
+      Strict JSON admits each key once per object; the model can resend the
+      record with every key written once.
+    statement: >-
+      Write each key once in every JSON object of a submit_answer_record call,
+      inside record too.
+    operator:
+      kind: correct
+      meaning: >-
+        A submitted answer record named a key twice in one object, and the
+        record's bounded resends did not correct it.
+      next: >-
+        Inspect the saved run's record receipts, then start a new run.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/answer-record/duplicate-key-record.json
+    docs: answer-record-duplicate-key
+
+  - code: answer-record-shape
+    locations:
+      - $
+      - $.record
+      - $.record.assessment
+      - $.record.confidence
+      - $.record.hard_gate_failures
+      - $.record.layer_shortfall_decision
+      - $.record.dimension_id
+      - $.record.originating_ids
+    kind: shape
+    retry: model-correctable
+    reason: >-
+      The call's arguments must be exactly type, an optional key, and record,
+      and the record must be an object (or null where the record type allows
+      it); the model can resend the record in that shape.
+    statement: >-
+      Pass exactly type, record, and, when the receipt or the record plan gave
+      you one, key. Send record as one JSON object; send null only to withdraw
+      an open-set record you sent earlier, or where the record plan says the
+      record may be null.
+    operator:
+      kind: correct
+      meaning: >-
+        A submitted answer record had the wrong arguments or a record that was
+        not an object, and the record's bounded resends did not correct it.
+      next: >-
+        Inspect the saved run's record receipts and the rejection location,
+        then start a new run.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/answer-record/shape-extra-argument.json
+      - packages/runtime/test/fixtures/model-output/answer-record/shape-record-array.json
+    docs: answer-record-shape
+
+  - code: answer-record-target-path
+    locations:
+      - $.record
+    kind: shape
+    retry: model-correctable
+    reason: >-
+      A target-judgment record may cite only the evaluation target paths; the
+      model can resend a complete record using those paths.
+    statement: >-
+      Replace the complete target-judgment record and use only the allowed
+      evaluation target paths in documentation-family evidence.
+    operator:
+      kind: correct
+      meaning: >-
+        A target-judgment record cited a path outside the evaluation target.
+      next: >-
+        Replace the complete record using only the allowed evaluation target
+        paths, then continue or resume when eligible.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/answer-record/target-path-outside.json
+    docs: answer-record-target-path
+
+  - code: answer-record-key
+    locations:
+      - $.type
+      - $.key
+    kind: shape
+    retry: model-correctable
+    reason: >-
+      A record names a declared type and its wire key follows that type's
+      declaration. Singleton records omit key or use null, fixed-key records
+      use a key from the record plan, and open sets use a receipt-issued key
+      when replacing or withdrawing; the model can resend it in that form.
+    statement: >-
+      Name a record type from the record plan. For a singleton, omit key or use
+      key null. For a fixed-key type, use a key the record plan lists. For an
+      open set, omit key to add a record or use the key a receipt gave you to
+      replace or withdraw it.
+    hint:
+      atLocation:
+        $.type: >-
+          The type is not a record type of this step. Use a type from the record
+          plan.
+        $.key: >-
+          Match key to the record-plan type: for a singleton, omit key or use
+          null; for a fixed-key record, use a key listed by the plan. For a new
+          open-set record, including a finding, set the top-level key to null or
+          omit it. Keep FACT/TECH fact and issue references inside a finding's
+          record payload.
+          To replace or withdraw an existing open-set row, use only a key
+          previously issued by a receipt.
+    operator:
+      kind: correct
+      meaning: >-
+        A submitted answer record named an undeclared type or key, and the
+        record's bounded resends did not correct it.
+      next: >-
+        Inspect the saved run's record receipts, then start a new run.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/answer-record/key-unknown-type.json
+      - packages/runtime/test/fixtures/model-output/answer-record/key-outside-skeleton.json
+    docs: answer-record-key
+
+  - code: answer-record-too-large
+    locations:
+      - $
+    kind: size
+    retry: model-correctable
+    reason: >-
+      One call's raw arguments must fit the route's record byte bound; the
+      host never clips a record, and the model can resend it shorter.
+    statement: >-
+      Keep each submit_answer_record call's arguments within
+      {limit:sealed.answerSubmission.maxRecordBytes} bytes. When a record is
+      longer, shorten its prose; do not split one record across calls.
+    operator:
+      kind: correct
+      meaning: >-
+        A submitted answer record was larger than the route admits in one call,
+        and the record's bounded resends did not shorten it.
+      next: >-
+        Inspect the saved run's record receipts. If real records keep exceeding
+        the bound, the route needs re-qualification of its record bound.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/answer-record/too-large.json
+    docs: answer-record-too-large
+
+  - code: answer-record-duplicate
+    locations:
+      - $.record
+    kind: content
+    retry: model-correctable
+    reason: >-
+      An open-set record whose content equals a record already admitted under
+      another key adds nothing; the model can replace or withdraw instead.
+    statement: >-
+      Send each open-set record once. To change one you already sent, resend it
+      with the key its receipt gave you.
+    operator:
+      kind: correct
+      meaning: >-
+        A submitted open-set record repeated one already admitted under another
+        key, and the record's bounded resends did not correct it.
+      next: >-
+        Inspect the saved run's record receipts, then start a new run.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/answer-record/duplicate-open-record.json
+    docs: answer-record-duplicate
+
+  - code: answer-record-open-set-bound
+    locations:
+      - $
+    kind: size
+    retry: model-correctable
+    reason: >-
+      An open set holds at most the declared number of records; the records
+      already admitted are kept, and the model can replace or withdraw one
+      instead.
+    statement: >-
+      An open set holds at most {limit:answerRecords.maxOpenRecordsPerSet}
+      records. To add one when it is full, withdraw or replace a record you
+      already sent.
+    operator:
+      kind: correct
+      meaning: >-
+        The model kept adding open-set records past the declared bound.
+      next: >-
+        Inspect the saved run's record receipts. If real evaluations need more
+        records, raise answerRecords.maxOpenRecordsPerSet with its measured
+        provenance.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/answer-record/open-set-bound.json
+    docs: answer-record-open-set-bound
+
+  - code: answer-record-exhausted
+    locations:
+      - $
+    kind: size
+    retry: terminal
+    reason: >-
+      A record gets the corrections a whole answer gets in one step; once its
+      key used them, another refusal ends the attempt instead of re-asking.
+    statement: >-
+      A record refused {limit:answerRecords.maxRefusalsPerKey} times ends the
+      step, so read each refusal's feedback before you resend.
+    operator:
+      kind: correct
+      meaning: >-
+        One record key was refused more times than a step allows, so the step
+        stopped with the admitted records kept.
+      next: >-
+        Inspect the saved run's record receipts for that key and the refusal
+        codes, then start a new run. If one record type keeps failing the same
+        rule, record it as model-compatibility evidence.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/answer-record/exhausted.json
+    docs: answer-record-exhausted
+
+  - code: answer-record-closed
+    locations:
+      - $
+    kind: content
+    retry: terminal
+    reason: >-
+      An open record set was already closed by its declared completion record;
+      later additions or replacements would make that completion ambiguous.
+    statement: >-
+      The declared record set is closed. Do not submit or replace another
+      record in it.
+    operator:
+      kind: correct
+      meaning: >-
+        A model submitted an open-set record after its declared completion
+        record closed the set.
+      next: >-
+        Inspect the run's answer-record receipt order. If the model keeps
+        sending records after completion, record it as model-compatibility
+        evidence.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/answer-record/closed-set-write.json
+    docs: answer-record-closed

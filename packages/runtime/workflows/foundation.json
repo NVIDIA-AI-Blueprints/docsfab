@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "name": "foundation",
+  "title": "Foundation inspection and readiness",
+  "outcome": "A revision-bound candidate Foundation Canon with conflicts, gaps, next questions, and readiness.",
+  "contextPolicy": {
+    "schemaVersion": 1,
+    "steps": [
+      {
+        "stepId": "inspect-foundation",
+        "required": true,
+        "level": "corpus",
+        "query": "expand",
+        "allowReadOnlyDegraded": true
+      }
+    ]
+  },
+  "steps": [
+    {
+      "id": "inspect-foundation",
+      "title": "Inspect foundation canon readiness",
+      "kind": "host-operation",
+      "operation": "foundation",
+      "skill": "doc-context-analyzer",
+      "mode": "read-only",
+      "prompt": "Inspect the immutable repository export and registered evidence only. Submit closed claim proposals into FoundationCanonV1, compute readiness, surface conflicts and missing facts, and do not modify files or grant write tools."
+    }
+  ]
+}

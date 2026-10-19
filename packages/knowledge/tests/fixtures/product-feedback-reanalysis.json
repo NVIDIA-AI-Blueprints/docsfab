@@ -1,0 +1,1482 @@
+{
+  "provenance": {
+    "kind": "synthetic-authority-fixture",
+    "sourceCommit": "f2616d2d098a3242a8b3672b74f568a6ac2b2e07",
+    "generator": "createSemanticMergeDecisionFixture({replyDisposition:rescope,answerSecondQuestion:true})",
+    "realSeams": [
+      "Git",
+      "HostJob dispatcher",
+      "canonical merge result",
+      "first rescope source",
+      "source-case reanalysis",
+      "second owner question",
+      "fresh MAC continuation",
+      "source custody"
+    ],
+    "syntheticBoundaries": [
+      "approved baseline authority",
+      "model response",
+      "Slack transport",
+      "memory persistence"
+    ],
+    "rawMessageIncluded": false
+  },
+  "baseline": {
+    "approval": {
+      "approvalEvidenceSha256": "5e95ad6210b1f13240e930de62f0eaba6c5ae26948a7a5d6f5ab31896eae0b7a",
+      "authorityReceiptSha256": "a2810f4c35e61649640930c38122d65e6274ff7d2b628d942c6229db95d81a06",
+      "modelId": "FIXTURE-PRODUCT",
+      "modelSha256": "30c20bd611561af244a872b707edc09cf50fad1c8f980fb29f6b411a9b1ff950",
+      "principalId": "fixture-owner",
+      "projectId": "semantic-fixture",
+      "scope": "model-version",
+      "snapshotSha256": "8ed1b5097ab02ee3dc73a6397fbde55af1d2e099316f58ade95a20bd9b7f1344",
+      "streamVersion": 1,
+      "version": "v1.0"
+    },
+    "canon": {
+      "gitObjectId": "2fb21176d6df5e23d9f48aaa2cea3ccaf69c3b06",
+      "sha256": "30c20bd611561af244a872b707edc09cf50fad1c8f980fb29f6b411a9b1ff950",
+      "sourcePath": ".docsfab/reference-model/shared/FIXTURE-PRODUCT/v1.0/model.md"
+    },
+    "generation": 1,
+    "kind": "docsfab-approved-model-baseline",
+    "projectId": "semantic-fixture",
+    "schemaVersion": 1,
+    "snapshot": {
+      "claims": [
+        {
+          "id": "CLAIM-MENTION",
+          "record": {
+            "claim_id": "CLAIM-MENTION",
+            "exact_evidence": [],
+            "scope": {
+              "surface": "ordinary-channel-messages"
+            },
+            "source_claims": [],
+            "statement": "Ordinary channel messages require an explicit mention before the service replies."
+          },
+          "recordSha256": "01ed5330ece56a2a65fe4d8bec57ca72951f95d865e61b3a9138754df3dc729a",
+          "sourcePath": ".docsfab/reference-model/shared/FIXTURE-PRODUCT/v1.0/claims.json"
+        }
+      ],
+      "files": [
+        {
+          "path": ".docsfab/reference-model/shared/FIXTURE-PRODUCT/v1.0/model.md",
+          "sha256": "30c20bd611561af244a872b707edc09cf50fad1c8f980fb29f6b411a9b1ff950"
+        },
+        {
+          "path": ".docsfab/reference-model/shared/FIXTURE-PRODUCT/v1.0/claims.json",
+          "sha256": "01ed5330ece56a2a65fe4d8bec57ca72951f95d865e61b3a9138754df3dc729a"
+        }
+      ],
+      "kind": "docsfab-reference-model-snapshot",
+      "modelGitObjectId": "2fb21176d6df5e23d9f48aaa2cea3ccaf69c3b06",
+      "modelId": "FIXTURE-PRODUCT",
+      "modelPath": ".docsfab/reference-model/shared/FIXTURE-PRODUCT/v1.0/model.md",
+      "modelSha256": "30c20bd611561af244a872b707edc09cf50fad1c8f980fb29f6b411a9b1ff950",
+      "openConflicts": [],
+      "projectId": "semantic-fixture",
+      "revision": "3b7df5e617ca332863fd13b8ef14e96a97efbdb0",
+      "schemaVersion": 1,
+      "snapshotSha256": "8ed1b5097ab02ee3dc73a6397fbde55af1d2e099316f58ade95a20bd9b7f1344",
+      "sourceClosureSha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "state": "candidate",
+      "tree": "2e28a783e28f43ccd230d963348d744274dbc8d6",
+      "version": "v1.0"
+    },
+    "streamVersion": 1,
+    "baselineSha256": "19b49d91ba37837bbfdd2a4c554914327babdb500ed4e3c74f15a2c62cfe475c"
+  },
+  "decision": {
+    "kind": "docsfab-verified-merge-decision-source",
+    "binding": {
+      "deploymentId": "fixture-deployment",
+      "projectId": "semantic-fixture",
+      "deploymentEpoch": "epoch-fixture"
+    },
+    "continuation": {
+      "schemaVersion": 1,
+      "kind": "docsfab-reconciliation-continuation",
+      "deploymentId": "fixture-deployment",
+      "projectId": "semantic-fixture",
+      "deploymentEpoch": "epoch-fixture",
+      "reconciliationId": "reconciliation:e212934a460e4ad31a2df1eef3ec7b535ecf64c1af5253223d7e3007e3e94466",
+      "anchor": {
+        "requestKey": "fixture-genuine-merge-request",
+        "workId": "fixture-genuine-merge-work",
+        "originalAttemptId": "attempt-1",
+        "originalJobSha256": "f6aabacdc8860a4bfe2cc9f4a8671e0375ffd4cca92b3637a167c402dc64a00c",
+        "originalPacketSha256": "8bc1a57dc688bdf95cbf1ba5906495ccdf9e70a109380ba21c7bafa53eb7a7b9",
+        "originalResultSha256": "40216d319412bc9d96636659aaf448782c86059bd880418d30eb1a44b641356d",
+        "contextBindingSha256": "83eb35adc3f20769bb68ac3caac91a8a7cfa49eee63f04e2c84b34e6771d8c5e",
+        "mergeRevision": "3f001392aa093babe2cfbcd062703e2b90b5de66",
+        "sourceRevision": "3f001392aa093babe2cfbcd062703e2b90b5de66",
+        "candidateDeltaSha256": "12619244825ef367230df32e064ae27d968928d222b7e27afc32063b7c7b923d",
+        "modelParent": {
+          "modelId": "FIXTURE-PRODUCT",
+          "version": "v1.0",
+          "streamVersion": 1,
+          "sha256": "30c20bd611561af244a872b707edc09cf50fad1c8f980fb29f6b411a9b1ff950",
+          "locator": "docsfab-model:30c20bd611561af244a872b707edc09cf50fad1c8f980fb29f6b411a9b1ff950"
+        },
+        "anchorSha256": "c4fe66075303484290b775347cd272f46b6365b4ac0f0bcbfc4cc3d4f1b9d6f7"
+      },
+      "delivery": {
+        "schemaVersion": 1,
+        "projectId": "semantic-fixture",
+        "deploymentEpoch": "epoch-fixture",
+        "outboxId": "fixture-genuine-merge-outbox",
+        "eventSequence": 1,
+        "effectKey": "forge-effect-1618a9bc3784a5da732d8d680827b2eddfd783ccbed348bdc8a9dda997de094b",
+        "effectKind": "enqueue-merge-reconciliation",
+        "destination": "merge-reconciliation",
+        "payloadSha256": "6b6df1fdb98c5d56ad8ed4a829d0d4ef780ac23f79560df5e9bb68320b810ed7",
+        "payloadLocator": {
+          "kind": "content-addressed-object",
+          "algorithm": "sha256",
+          "digest": "6b6df1fdb98c5d56ad8ed4a829d0d4ef780ac23f79560df5e9bb68320b810ed7",
+          "uri": "cas:sha256:6b6df1fdb98c5d56ad8ed4a829d0d4ef780ac23f79560df5e9bb68320b810ed7"
+        },
+        "status": "pending",
+        "deliveryAttempts": 0,
+        "deliveredAt": null
+      },
+      "status": "succeeded",
+      "generation": 3,
+      "turns": [
+        {
+          "status": "source-registered",
+          "question": {
+            "schemaVersion": 1,
+            "kind": "docsfab-reconciliation-question",
+            "reconciliationId": "reconciliation:e212934a460e4ad31a2df1eef3ec7b535ecf64c1af5253223d7e3007e3e94466",
+            "questionId": "question:7b7ce11e6126f5e2c82b65ea5b407216d54604aa7463b4b78b0e33697657f31f",
+            "generation": 1,
+            "requestKey": "fixture-genuine-merge-request",
+            "stoppedAttemptId": "attempt-1",
+            "stoppedJobSha256": "f6aabacdc8860a4bfe2cc9f4a8671e0375ffd4cca92b3637a167c402dc64a00c",
+            "stoppedPacketSha256": "8bc1a57dc688bdf95cbf1ba5906495ccdf9e70a109380ba21c7bafa53eb7a7b9",
+            "stoppedContextBindingSha256": "83eb35adc3f20769bb68ac3caac91a8a7cfa49eee63f04e2c84b34e6771d8c5e",
+            "continuationAttemptKey": "fixture-genuine-merge-request/adjudication-1",
+            "resumeAnchorSha256": "51f8aa67ab0a50da278daedc47c03d22b5301927e35f0a08937951645cd19a3e",
+            "severityPolicyVersion": 1,
+            "severityPolicySha256": "c9d05be9ef38b0aea80a8546f21aaf54d18a7d2306904492f2dc2ec98c932486",
+            "measurementReceiptSha256": "7ef5f203b505b19291aa97debef3d2da7498ba311362f3800cbf115e6d0d80fb",
+            "conflictId": "conflict-78c381796017a838e5aff5d3d289c8807d134fd3",
+            "conflictSnapshotSha256": "509b6bbd38b23d3219da960acfee27224e53e93e44eadd88d4a3a240ddaf70e6",
+            "classification": "intent-conflict",
+            "decisionKind": "intent",
+            "confidence": "high",
+            "confidenceBasisSha256": "78c381796017a838e5aff5d3d289c8807d134fd3d24482913f462d242e04c819",
+            "impact": "load-bearing",
+            "impactBasisSha256": "78c381796017a838e5aff5d3d289c8807d134fd3d24482913f462d242e04c819",
+            "blocksTargets": [
+              "product-reference-model"
+            ],
+            "safeSummary": "Evidence conflicts with approved claim CLAIM-MENTION; owner scope must be explicit.",
+            "variants": [
+              {
+                "claimId": "semantic-claim-8915f929243997c95b25fb9c9fac30d08e29e60d",
+                "safeSummary": "Keep the currently approved statement and scope.",
+                "evidenceLocators": [
+                  "docsfab-receipt:f9a2f75c342b90fb537a8f5184f0d1fc73d5657277f6a5af7b09cc1b471ad0cc"
+                ]
+              },
+              {
+                "claimId": "semantic-claim-45a225fdb75cd69b32a748e462d3e8574ea97c3f",
+                "safeSummary": "Replace only the statement and scope in the exact offered delta.",
+                "evidenceLocators": [
+                  "docsfab-receipt:f9a2f75c342b90fb537a8f5184f0d1fc73d5657277f6a5af7b09cc1b471ad0cc"
+                ]
+              }
+            ],
+            "offeredClaimIds": [
+              "semantic-claim-45a225fdb75cd69b32a748e462d3e8574ea97c3f",
+              "semantic-claim-8915f929243997c95b25fb9c9fac30d08e29e60d"
+            ],
+            "allowedDispositions": [
+              "accept-variant",
+              "rescope",
+              "defer"
+            ],
+            "semanticOffer": {
+              "schemaVersion": 1,
+              "kind": "docsfab-merge-semantic-offer",
+              "binding": {
+                "deploymentId": "fixture-deployment",
+                "projectId": "semantic-fixture",
+                "deploymentEpoch": "epoch-fixture"
+              },
+              "mergeAnchorSha256": "2c01637392bbf5701942f63f88700f629214db8bfc8edb79776e2952ab72202a",
+              "comparisonSha256": "37c2a0308b94155dcbf5181c00c7dae6ed82eee030816696ff7a6ca02d9fa5fd",
+              "comparisonReceiptSha256": "f9a2f75c342b90fb537a8f5184f0d1fc73d5657277f6a5af7b09cc1b471ad0cc",
+              "baseline": {
+                "generation": 1,
+                "baselineSha256": "19b49d91ba37837bbfdd2a4c554914327babdb500ed4e3c74f15a2c62cfe475c",
+                "modelId": "FIXTURE-PRODUCT",
+                "version": "v1.0",
+                "streamVersion": 1,
+                "modelSha256": "30c20bd611561af244a872b707edc09cf50fad1c8f980fb29f6b411a9b1ff950",
+                "canonSha256": "30c20bd611561af244a872b707edc09cf50fad1c8f980fb29f6b411a9b1ff950",
+                "approvalReceiptSha256": "a2810f4c35e61649640930c38122d65e6274ff7d2b628d942c6229db95d81a06",
+                "sourceClosureSha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+              },
+              "findingSha256": "78c381796017a838e5aff5d3d289c8807d134fd3d24482913f462d242e04c819",
+              "claimId": "CLAIM-MENTION",
+              "beforeClaimRecordSha256": "01ed5330ece56a2a65fe4d8bec57ca72951f95d865e61b3a9138754df3dc729a",
+              "evidenceSourceVersionSha256s": [
+                "01deabd0f9418c10f73f01794c3b59655d8befc76b675f04313668dcc24950b9"
+              ],
+              "options": [
+                {
+                  "optionId": "keep-approved",
+                  "claimId": "semantic-claim-8915f929243997c95b25fb9c9fac30d08e29e60d",
+                  "semanticClaim": {
+                    "claim_id": "CLAIM-MENTION",
+                    "scope": {
+                      "surface": "ordinary-channel-messages"
+                    },
+                    "statement": "Ordinary channel messages require an explicit mention before the service replies."
+                  },
+                  "semanticClaimSha256": "07cd0f17f8e5e8b8a0bb5105730c5bf824f79bee11aa877761c8eefaf8513698",
+                  "approvalTarget": null,
+                  "semanticDelta": null
+                },
+                {
+                  "optionId": "replace-statement-and-scope",
+                  "claimId": "semantic-claim-45a225fdb75cd69b32a748e462d3e8574ea97c3f",
+                  "semanticClaim": {
+                    "claim_id": "CLAIM-MENTION",
+                    "scope": {
+                      "surface": "configured-pilot-channel"
+                    },
+                    "statement": "Ordinary pilot-channel messages may receive a reply without an explicit mention."
+                  },
+                  "semanticClaimSha256": "0dce1e1feb57d4166494d8ab2605dd4d06ed558d46e34d3b92e04c4464040e85",
+                  "approvalTarget": {
+                    "schemaVersion": 1,
+                    "kind": "docsfab-model-approval-target",
+                    "projectId": "semantic-fixture",
+                    "modelId": "FIXTURE-PRODUCT",
+                    "approvedParentModelSha256": "30c20bd611561af244a872b707edc09cf50fad1c8f980fb29f6b411a9b1ff950",
+                    "scope": {
+                      "kind": "semantic-delta",
+                      "semanticDeltaSha256": "a5dbd8e41d571a89a8f456619ceff1775f05b5980d16097f7a3a1946a9e3df85",
+                      "claimIds": [
+                        "CLAIM-MENTION"
+                      ],
+                      "evidenceSourceVersionSha256s": [
+                        "01deabd0f9418c10f73f01794c3b59655d8befc76b675f04313668dcc24950b9"
+                      ],
+                      "projectionTargets": [
+                        "product-requirements"
+                      ]
+                    },
+                    "targetSha256": "5d7521b9f54b6845bb167c47b7b3a5e577d8391ee3f45d74aced31b24a42e1df"
+                  },
+                  "semanticDelta": {
+                    "schemaVersion": 1,
+                    "kind": "docsfab-offered-model-semantic-delta",
+                    "projectId": "semantic-fixture",
+                    "modelId": "FIXTURE-PRODUCT",
+                    "approvedParentModelSha256": "30c20bd611561af244a872b707edc09cf50fad1c8f980fb29f6b411a9b1ff950",
+                    "comparisonReceiptSha256": "f9a2f75c342b90fb537a8f5184f0d1fc73d5657277f6a5af7b09cc1b471ad0cc",
+                    "evidenceSourceVersionSha256s": [
+                      "01deabd0f9418c10f73f01794c3b59655d8befc76b675f04313668dcc24950b9"
+                    ],
+                    "changes": [
+                      {
+                        "claimId": "CLAIM-MENTION",
+                        "beforeClaimRecordSha256": "01ed5330ece56a2a65fe4d8bec57ca72951f95d865e61b3a9138754df3dc729a",
+                        "after": {
+                          "claim_id": "CLAIM-MENTION",
+                          "scope": {
+                            "surface": "configured-pilot-channel"
+                          },
+                          "statement": "Ordinary pilot-channel messages may receive a reply without an explicit mention."
+                        }
+                      }
+                    ],
+                    "deltaSha256": "a5dbd8e41d571a89a8f456619ceff1775f05b5980d16097f7a3a1946a9e3df85"
+                  }
+                }
+              ],
+              "offerSha256": "04fafd2dc341246760e2000b264c40ccfc720165bc715d0ce7f934a5b7002bde"
+            },
+            "semanticDelivery": [
+              {
+                "textSha256": "bbc2dbbf2bd0a4caf7bc1fe6ecff997d3d3bd36cf2a540d6095d9a55afe72c7e",
+                "messageId": "1789689802.000001"
+              }
+            ],
+            "questionTextSha256": "a45df22ce82573701ecb13c2b9906ebb574dc953817b0c0e1af12e420d03dee4",
+            "choiceSetSha256": "36fdf0a21889dba5c33d6629fd4097a35082d5ca11b5456f2080918e2f19a269",
+            "contextThreadId": "reconciliation-context:f725670ff3d1395aa58ac3c5543aea84",
+            "authority": {
+              "ownerKey": "product-owner",
+              "authorityKind": "product-decision-owner",
+              "expectedPrincipalId": "fixture-owner",
+              "expectedChannelIdentitySha256": "8fc5a266e433fdede17f60b2b4086b15430e0b511263f919e921520f0bc828ab",
+              "ownerPolicyVersion": 1,
+              "ownerPolicySha256": "8d6b57042b882260b15707a531b33be747a6f34b1fa4a10910339e4b7b8d8ec7",
+              "authorityReceiptSha256": "eee901a66ccd634c2174fe1cea550a0a951cf5ee8c451a03259d28f273ff5dc9",
+              "identityReceiptSha256": "8dd04ca19e2329b96bd1593c9013bdc7c5968605e7d10db598de2015b2af7748"
+            },
+            "route": {
+              "channelKind": "slack",
+              "surface": "thread",
+              "accountLocatorSha256": "20470fda2703b09211542b65c42fd3bc3c6fd2bc6db0912a2527ead93fb23708",
+              "conversationLocatorSha256": "c708fa78ee124e34d2d0da0c741902e8302cf76623569bb7ee16c5dc194a740c",
+              "threadLocatorSha256": "669128702b075b1ab2e17de7b5b98ff08afb557abb8c8ee8c371994b139985bf",
+              "routeSha256": "3d33957cfda5baebd2161afe6430147f025668c637c6d8237527735764501027"
+            },
+            "issuedAt": "2026-09-18T00:03:22.563Z",
+            "expiresAt": "2026-09-18T01:03:22.563Z",
+            "questionSha256": "d8288a879a71c62c10f200ebd0efce7ce6e641cbc17a9da46fda326ecafd66ea"
+          },
+          "answer": {
+            "schemaVersion": 1,
+            "kind": "docsfab-reconciliation-answer",
+            "reconciliationId": "reconciliation:e212934a460e4ad31a2df1eef3ec7b535ecf64c1af5253223d7e3007e3e94466",
+            "questionId": "question:7b7ce11e6126f5e2c82b65ea5b407216d54604aa7463b4b78b0e33697657f31f",
+            "generation": 1,
+            "questionSha256": "d8288a879a71c62c10f200ebd0efce7ce6e641cbc17a9da46fda326ecafd66ea",
+            "conflictId": "conflict-78c381796017a838e5aff5d3d289c8807d134fd3",
+            "principalId": "fixture-owner",
+            "identityReceiptSha256": "8dd04ca19e2329b96bd1593c9013bdc7c5968605e7d10db598de2015b2af7748",
+            "authorityReceiptSha256": "eee901a66ccd634c2174fe1cea550a0a951cf5ee8c451a03259d28f273ff5dc9",
+            "ownerPolicySha256": "8d6b57042b882260b15707a531b33be747a6f34b1fa4a10910339e4b7b8d8ec7",
+            "channelKind": "slack",
+            "eventLocatorSha256": "14d69da1f6ea0558542949476c596b3d450fdde7df70bfbb947b597d742413d5",
+            "messageLocatorSha256": "eb71a30854aa8d94d29f7bc4bf15e88375b3dfabdd21d7092391c55502ad9346",
+            "channelIdentitySha256": "8fc5a266e433fdede17f60b2b4086b15430e0b511263f919e921520f0bc828ab",
+            "accountLocatorSha256": "20470fda2703b09211542b65c42fd3bc3c6fd2bc6db0912a2527ead93fb23708",
+            "conversationLocatorSha256": "c708fa78ee124e34d2d0da0c741902e8302cf76623569bb7ee16c5dc194a740c",
+            "threadLocatorSha256": "669128702b075b1ab2e17de7b5b98ff08afb557abb8c8ee8c371994b139985bf",
+            "providerLocatorSha256": "105d5ebcde3d60577549ef6495879e7967d79e65400d6e44611cc8924f82a87c",
+            "contentSha256": "fbfde2aba47a6dec22ab9edcf9a994f2eed6db9f9586b9dc6ec153dde1ff5f44",
+            "decision": {
+              "disposition": "rescope",
+              "selectedClaimIds": [],
+              "rationale": "A narrower scope is needed.",
+              "rationaleSha256": "5aa37a455bdc9e80cc3ed0668a4e4703817340154c6b37e71867b373125edd58",
+              "scope": "Only opt-in pilot threads.",
+              "scopeSha256": "c33e1d3d788651d3b6ef7481b10bb7d076b2180a8b70db777d32d66d03d103ab"
+            },
+            "receivedAt": "2026-09-18T00:03:22.563Z",
+            "answerId": "answer:99d10b0161d2e6c3dfc90640097f80a13ddeb5bc2f4e3234c93447dbaf6b289c",
+            "answerSha256": "86a2c3785a4dd2cdf02b4f7c996fa9eb23d3af13abc8dad967fb149124063b88"
+          },
+          "source": {
+            "schemaVersion": 1,
+            "kind": "docsfab-reconciliation-decision-source",
+            "sourceId": "decision-source-86a2c3785a4dd2cdf02b4f7c996fa9eb",
+            "sourceThreadId": "decision-thread-f725670ff3d1395aa58ac3c5543aea84",
+            "itemId": "decision-item-86a2c3785a4dd2cdf02b4f7c996fa9eb",
+            "sourceKind": "authority-decision",
+            "evidenceRole": "intent",
+            "version": "answer-86a2c3785a4dd2cdf02b4f7c996fa9eb",
+            "representationId": "slack-thread-answer",
+            "integritySha256": "e29f5f56c969d4e4cf973860423ca2820f0c31101dd54fc1b6eb9672e7c0f3f4",
+            "locator": "docsfab-source:e29f5f56c969d4e4cf973860423ca2820f0c31101dd54fc1b6eb9672e7c0f3f4",
+            "reconciliationId": "reconciliation:e212934a460e4ad31a2df1eef3ec7b535ecf64c1af5253223d7e3007e3e94466",
+            "questionId": "question:7b7ce11e6126f5e2c82b65ea5b407216d54604aa7463b4b78b0e33697657f31f",
+            "conflictId": "conflict-78c381796017a838e5aff5d3d289c8807d134fd3",
+            "answerSha256": "86a2c3785a4dd2cdf02b4f7c996fa9eb23d3af13abc8dad967fb149124063b88",
+            "principalId": "fixture-owner",
+            "authorityReceiptSha256": "eee901a66ccd634c2174fe1cea550a0a951cf5ee8c451a03259d28f273ff5dc9",
+            "parentThreadEventId": null,
+            "sourceEventId": "decision-event-86a2c3785a4dd2cdf02b4f7c996fa9eb",
+            "registrationSha256": "b2ce278466671f0fec0f5c961e8b73b8310d2ab51b50a5cbbea15d143ef4fd8e"
+          },
+          "closedReason": null
+        },
+        {
+          "status": "source-registered",
+          "question": {
+            "schemaVersion": 1,
+            "kind": "docsfab-reconciliation-question",
+            "reconciliationId": "reconciliation:e212934a460e4ad31a2df1eef3ec7b535ecf64c1af5253223d7e3007e3e94466",
+            "questionId": "question:64dea5c9b7ca6084c9616419765871793de9b3b3239feb33d5ca2f9a5753c7d8",
+            "generation": 2,
+            "requestKey": "fixture-genuine-merge-request",
+            "stoppedAttemptId": "attempt-1",
+            "stoppedJobSha256": "f6aabacdc8860a4bfe2cc9f4a8671e0375ffd4cca92b3637a167c402dc64a00c",
+            "stoppedPacketSha256": "8bc1a57dc688bdf95cbf1ba5906495ccdf9e70a109380ba21c7bafa53eb7a7b9",
+            "stoppedContextBindingSha256": "83eb35adc3f20769bb68ac3caac91a8a7cfa49eee63f04e2c84b34e6771d8c5e",
+            "continuationAttemptKey": "fixture-genuine-merge-request/adjudication-2",
+            "resumeAnchorSha256": "1e181a66c54269c51db0418939e69fb010e0b57dcfdb8bbcdf9b2adfc4eda567",
+            "severityPolicyVersion": 1,
+            "severityPolicySha256": "c9d05be9ef38b0aea80a8546f21aaf54d18a7d2306904492f2dc2ec98c932486",
+            "measurementReceiptSha256": "7ef5f203b505b19291aa97debef3d2da7498ba311362f3800cbf115e6d0d80fb",
+            "conflictId": "conflict-78c381796017a838e5aff5d3d289c8807d134fd3",
+            "conflictSnapshotSha256": "eea0bb8ec5c89a4a5bd724b603720c7e9da15be21dd52ae3515e4f40e319c43c",
+            "classification": "scope-conflict",
+            "decisionKind": "intent",
+            "confidence": "high",
+            "confidenceBasisSha256": "15350e74cb5da1e5052165ffd2505c92847cceb7312add5b9cfae8558e8574da",
+            "impact": "load-bearing",
+            "impactBasisSha256": "15350e74cb5da1e5052165ffd2505c92847cceb7312add5b9cfae8558e8574da",
+            "blocksTargets": [
+              "product-reference-model"
+            ],
+            "safeSummary": "Evidence conflicts with approved claim CLAIM-MENTION; owner scope must be explicit.",
+            "variants": [
+              {
+                "claimId": "semantic-claim-8915f929243997c95b25fb9c9fac30d08e29e60d",
+                "safeSummary": "Keep the currently approved statement and scope.",
+                "evidenceLocators": [
+                  "docsfab-receipt:3819777ed99bbc61e2e661947483632c2d79a713f67a78d45935e711bcd17fe6"
+                ]
+              },
+              {
+                "claimId": "semantic-claim-45a225fdb75cd69b32a748e462d3e8574ea97c3f",
+                "safeSummary": "Replace only the statement and scope in the exact offered delta.",
+                "evidenceLocators": [
+                  "docsfab-receipt:3819777ed99bbc61e2e661947483632c2d79a713f67a78d45935e711bcd17fe6"
+                ]
+              }
+            ],
+            "offeredClaimIds": [
+              "semantic-claim-45a225fdb75cd69b32a748e462d3e8574ea97c3f",
+              "semantic-claim-8915f929243997c95b25fb9c9fac30d08e29e60d"
+            ],
+            "allowedDispositions": [
+              "accept-variant",
+              "rescope",
+              "defer"
+            ],
+            "semanticOffer": {
+              "schemaVersion": 1,
+              "kind": "docsfab-merge-semantic-offer",
+              "binding": {
+                "deploymentId": "fixture-deployment",
+                "projectId": "semantic-fixture",
+                "deploymentEpoch": "epoch-fixture"
+              },
+              "mergeAnchorSha256": "2c01637392bbf5701942f63f88700f629214db8bfc8edb79776e2952ab72202a",
+              "comparisonCase": {
+                "kind": "source-case",
+                "caseSha256": "e0558070f15f9113895c8f484d896e3a90d3d103ee15f083bdebd05fd6b85e56"
+              },
+              "reanalysisOf": {
+                "questionSha256": "d8288a879a71c62c10f200ebd0efce7ce6e641cbc17a9da46fda326ecafd66ea",
+                "sourceRegistrationSha256": "b2ce278466671f0fec0f5c961e8b73b8310d2ab51b50a5cbbea15d143ef4fd8e"
+              },
+              "comparisonSha256": "65a0ecc3ca848f65bdce7e31a6e350ab1d0a321441aca71d28449aa22c59a8e7",
+              "comparisonReceiptSha256": "3819777ed99bbc61e2e661947483632c2d79a713f67a78d45935e711bcd17fe6",
+              "baseline": {
+                "generation": 1,
+                "baselineSha256": "19b49d91ba37837bbfdd2a4c554914327babdb500ed4e3c74f15a2c62cfe475c",
+                "modelId": "FIXTURE-PRODUCT",
+                "version": "v1.0",
+                "streamVersion": 1,
+                "modelSha256": "30c20bd611561af244a872b707edc09cf50fad1c8f980fb29f6b411a9b1ff950",
+                "canonSha256": "30c20bd611561af244a872b707edc09cf50fad1c8f980fb29f6b411a9b1ff950",
+                "approvalReceiptSha256": "a2810f4c35e61649640930c38122d65e6274ff7d2b628d942c6229db95d81a06",
+                "sourceClosureSha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+              },
+              "findingSha256": "15350e74cb5da1e5052165ffd2505c92847cceb7312add5b9cfae8558e8574da",
+              "claimId": "CLAIM-MENTION",
+              "beforeClaimRecordSha256": "01ed5330ece56a2a65fe4d8bec57ca72951f95d865e61b3a9138754df3dc729a",
+              "evidenceSourceVersionSha256s": [
+                "01deabd0f9418c10f73f01794c3b59655d8befc76b675f04313668dcc24950b9",
+                "2de650a88186494ac3a37f9114c36c31e9bfec0d90897877dbf9fc4c39da6637"
+              ],
+              "options": [
+                {
+                  "optionId": "keep-approved",
+                  "claimId": "semantic-claim-8915f929243997c95b25fb9c9fac30d08e29e60d",
+                  "semanticClaim": {
+                    "claim_id": "CLAIM-MENTION",
+                    "statement": "Ordinary channel messages require an explicit mention before the service replies.",
+                    "scope": {
+                      "surface": "ordinary-channel-messages"
+                    }
+                  },
+                  "semanticClaimSha256": "07cd0f17f8e5e8b8a0bb5105730c5bf824f79bee11aa877761c8eefaf8513698",
+                  "approvalTarget": null,
+                  "semanticDelta": null
+                },
+                {
+                  "optionId": "replace-statement-and-scope",
+                  "claimId": "semantic-claim-45a225fdb75cd69b32a748e462d3e8574ea97c3f",
+                  "semanticClaim": {
+                    "claim_id": "CLAIM-MENTION",
+                    "scope": {
+                      "surface": "opt-in-pilot-thread"
+                    },
+                    "statement": "Only opt-in pilot threads may receive replies without an explicit mention."
+                  },
+                  "semanticClaimSha256": "35db582868fe6945607394b13a626e5f32891278f435ea92a3f03e4b77ba9a2d",
+                  "approvalTarget": {
+                    "schemaVersion": 1,
+                    "kind": "docsfab-model-approval-target",
+                    "projectId": "semantic-fixture",
+                    "modelId": "FIXTURE-PRODUCT",
+                    "approvedParentModelSha256": "30c20bd611561af244a872b707edc09cf50fad1c8f980fb29f6b411a9b1ff950",
+                    "scope": {
+                      "kind": "semantic-delta",
+                      "semanticDeltaSha256": "a2735705a29474ef923055ed4faa7c21d8ca3beeef47791102e79a76389ee057",
+                      "claimIds": [
+                        "CLAIM-MENTION"
+                      ],
+                      "evidenceSourceVersionSha256s": [
+                        "01deabd0f9418c10f73f01794c3b59655d8befc76b675f04313668dcc24950b9",
+                        "2de650a88186494ac3a37f9114c36c31e9bfec0d90897877dbf9fc4c39da6637"
+                      ],
+                      "projectionTargets": [
+                        "product-requirements"
+                      ]
+                    },
+                    "targetSha256": "db6bcfb241ab4ce661f107ff3f8ba37f0a7621cc29a8766f9b686fdfb92964d5"
+                  },
+                  "semanticDelta": {
+                    "schemaVersion": 1,
+                    "kind": "docsfab-offered-model-semantic-delta",
+                    "projectId": "semantic-fixture",
+                    "modelId": "FIXTURE-PRODUCT",
+                    "approvedParentModelSha256": "30c20bd611561af244a872b707edc09cf50fad1c8f980fb29f6b411a9b1ff950",
+                    "comparisonReceiptSha256": "3819777ed99bbc61e2e661947483632c2d79a713f67a78d45935e711bcd17fe6",
+                    "evidenceSourceVersionSha256s": [
+                      "01deabd0f9418c10f73f01794c3b59655d8befc76b675f04313668dcc24950b9",
+                      "2de650a88186494ac3a37f9114c36c31e9bfec0d90897877dbf9fc4c39da6637"
+                    ],
+                    "changes": [
+                      {
+                        "claimId": "CLAIM-MENTION",
+                        "beforeClaimRecordSha256": "01ed5330ece56a2a65fe4d8bec57ca72951f95d865e61b3a9138754df3dc729a",
+                        "after": {
+                          "claim_id": "CLAIM-MENTION",
+                          "scope": {
+                            "surface": "opt-in-pilot-thread"
+                          },
+                          "statement": "Only opt-in pilot threads may receive replies without an explicit mention."
+                        }
+                      }
+                    ],
+                    "deltaSha256": "a2735705a29474ef923055ed4faa7c21d8ca3beeef47791102e79a76389ee057"
+                  }
+                }
+              ],
+              "offerSha256": "9916857e968411395cdab99c8742946584ccb2eb9cbb304d0acf4c8369eb59b9"
+            },
+            "semanticDelivery": [
+              {
+                "textSha256": "618f7b2b42058123b764acf803ca0a0f34ceb8607b2b13ca3eaf91d62f6360a3",
+                "messageId": "1789689802.000002"
+              }
+            ],
+            "questionTextSha256": "27b2921940d2cfd4d23524301d2e838cdab2e6e93b3d8eb77ae73922ff795235",
+            "choiceSetSha256": "00141c8d9855273871b8778a668fbd779df671c7441b3b83fdab4f1fedf95727",
+            "contextThreadId": "reconciliation-context:d0c51428c3acdffa541e0c2cde9ce643",
+            "authority": {
+              "ownerKey": "product-owner",
+              "authorityKind": "product-decision-owner",
+              "expectedPrincipalId": "fixture-owner",
+              "expectedChannelIdentitySha256": "8fc5a266e433fdede17f60b2b4086b15430e0b511263f919e921520f0bc828ab",
+              "ownerPolicyVersion": 1,
+              "ownerPolicySha256": "8d6b57042b882260b15707a531b33be747a6f34b1fa4a10910339e4b7b8d8ec7",
+              "authorityReceiptSha256": "eee901a66ccd634c2174fe1cea550a0a951cf5ee8c451a03259d28f273ff5dc9",
+              "identityReceiptSha256": "8dd04ca19e2329b96bd1593c9013bdc7c5968605e7d10db598de2015b2af7748"
+            },
+            "route": {
+              "channelKind": "slack",
+              "surface": "thread",
+              "accountLocatorSha256": "20470fda2703b09211542b65c42fd3bc3c6fd2bc6db0912a2527ead93fb23708",
+              "conversationLocatorSha256": "c708fa78ee124e34d2d0da0c741902e8302cf76623569bb7ee16c5dc194a740c",
+              "threadLocatorSha256": "a440a8b4091b08fb7e62a504dab4c38b5afe6b96d1745ca419550d6c5dbd28a7",
+              "routeSha256": "5e922d54170812270ff5e5eb0c28a75d4cf83f91bf3e7c3445bd953f116f997d"
+            },
+            "issuedAt": "2026-09-18T00:03:22.563Z",
+            "expiresAt": "2026-09-18T01:03:22.563Z",
+            "questionSha256": "947068aebcb6f7770eae96a95a59a4b737b6dc18aaa370435792c3e3ece4a335"
+          },
+          "answer": {
+            "schemaVersion": 1,
+            "kind": "docsfab-reconciliation-answer",
+            "reconciliationId": "reconciliation:e212934a460e4ad31a2df1eef3ec7b535ecf64c1af5253223d7e3007e3e94466",
+            "questionId": "question:64dea5c9b7ca6084c9616419765871793de9b3b3239feb33d5ca2f9a5753c7d8",
+            "generation": 2,
+            "questionSha256": "947068aebcb6f7770eae96a95a59a4b737b6dc18aaa370435792c3e3ece4a335",
+            "conflictId": "conflict-78c381796017a838e5aff5d3d289c8807d134fd3",
+            "principalId": "fixture-owner",
+            "identityReceiptSha256": "8dd04ca19e2329b96bd1593c9013bdc7c5968605e7d10db598de2015b2af7748",
+            "authorityReceiptSha256": "eee901a66ccd634c2174fe1cea550a0a951cf5ee8c451a03259d28f273ff5dc9",
+            "ownerPolicySha256": "8d6b57042b882260b15707a531b33be747a6f34b1fa4a10910339e4b7b8d8ec7",
+            "channelKind": "slack",
+            "eventLocatorSha256": "17fd551a5572d8a757665c25c89312802f2e414cefcff45dda104122d50b7170",
+            "messageLocatorSha256": "4b3583fcaa255c0ea6d2eec0bc24d8e734828efcff85b7c1795282c4d93023be",
+            "channelIdentitySha256": "8fc5a266e433fdede17f60b2b4086b15430e0b511263f919e921520f0bc828ab",
+            "accountLocatorSha256": "20470fda2703b09211542b65c42fd3bc3c6fd2bc6db0912a2527ead93fb23708",
+            "conversationLocatorSha256": "c708fa78ee124e34d2d0da0c741902e8302cf76623569bb7ee16c5dc194a740c",
+            "threadLocatorSha256": "a440a8b4091b08fb7e62a504dab4c38b5afe6b96d1745ca419550d6c5dbd28a7",
+            "providerLocatorSha256": "18c52643c5f227dab0323e9566d8fcd8912a04fec4399cd4ba391472847eefed",
+            "contentSha256": "085336ddb611527b98eb26aebca098e7c0dcea40146155ddfb3bb02c5ef21305",
+            "decision": {
+              "disposition": "accept-variant",
+              "selectedClaimIds": [
+                "semantic-claim-45a225fdb75cd69b32a748e462d3e8574ea97c3f"
+              ],
+              "rationale": "Confirm the newly offered opt-in thread scope.",
+              "rationaleSha256": "7e173d833fc083b0717fb950cc1ddb47f33ab4e52966084c4b77fe3622b8c0f0",
+              "scope": null,
+              "scopeSha256": null
+            },
+            "receivedAt": "2026-09-18T00:03:22.563Z",
+            "answerId": "answer:d779cb309039c66c07aa2d38c2c9b05b6a02ca87d952b6ff6b9df851e7461ade",
+            "answerSha256": "0be6ff1e26085204e6b8ee75aaa4889834027ec6d2f6e7a4508d02a0c133c7e3"
+          },
+          "source": {
+            "schemaVersion": 1,
+            "kind": "docsfab-reconciliation-decision-source",
+            "sourceId": "decision-source-0be6ff1e26085204e6b8ee75aaa48898",
+            "sourceThreadId": "decision-thread-d0c51428c3acdffa541e0c2cde9ce643",
+            "itemId": "decision-item-0be6ff1e26085204e6b8ee75aaa48898",
+            "sourceKind": "authority-decision",
+            "evidenceRole": "intent",
+            "version": "answer-0be6ff1e26085204e6b8ee75aaa48898",
+            "representationId": "slack-thread-answer",
+            "integritySha256": "7c48dfb8ef9ae520f566f8e7d7cd25d7e4ff4b3feefc20cf912f3a7f690a2ba2",
+            "locator": "docsfab-source:7c48dfb8ef9ae520f566f8e7d7cd25d7e4ff4b3feefc20cf912f3a7f690a2ba2",
+            "reconciliationId": "reconciliation:e212934a460e4ad31a2df1eef3ec7b535ecf64c1af5253223d7e3007e3e94466",
+            "questionId": "question:64dea5c9b7ca6084c9616419765871793de9b3b3239feb33d5ca2f9a5753c7d8",
+            "conflictId": "conflict-78c381796017a838e5aff5d3d289c8807d134fd3",
+            "answerSha256": "0be6ff1e26085204e6b8ee75aaa4889834027ec6d2f6e7a4508d02a0c133c7e3",
+            "principalId": "fixture-owner",
+            "authorityReceiptSha256": "eee901a66ccd634c2174fe1cea550a0a951cf5ee8c451a03259d28f273ff5dc9",
+            "parentThreadEventId": null,
+            "sourceEventId": "decision-event-0be6ff1e26085204e6b8ee75aaa48898",
+            "registrationSha256": "f6c7b515a3d6b6f60c5c9fa2ab70a95d03dc6ab3f3384630eac97c5315d0fe50"
+          },
+          "closedReason": null
+        }
+      ],
+      "finalResult": {
+        "schemaVersion": 1,
+        "kind": "docsfab-reconciliation-adjudication-result",
+        "reconciliationId": "reconciliation:e212934a460e4ad31a2df1eef3ec7b535ecf64c1af5253223d7e3007e3e94466",
+        "generation": 3,
+        "attemptId": "attempt-3",
+        "attemptKey": "fixture-genuine-merge-request/retry-3",
+        "contextBindingSha256": "dc9315d19a73e951ddb13ed4bc4bd272da54c6bcf84a6999317dc0fcd7cda48b",
+        "sourceRegistrationSha256": "f6c7b515a3d6b6f60c5c9fa2ab70a95d03dc6ab3f3384630eac97c5315d0fe50",
+        "priorModelSha256": "30c20bd611561af244a872b707edc09cf50fad1c8f980fb29f6b411a9b1ff950",
+        "resolution": {
+          "disposition": "accept-variant",
+          "resolvedConflictId": "conflict-78c381796017a838e5aff5d3d289c8807d134fd3",
+          "remainingLoadBearingConflictIds": [],
+          "deferredConflictIds": []
+        },
+        "model": {
+          "modelId": "FIXTURE-PRODUCT",
+          "parentVersion": "v1.0",
+          "parentSha256": "30c20bd611561af244a872b707edc09cf50fad1c8f980fb29f6b411a9b1ff950",
+          "status": "candidate",
+          "sha256": "b4ccab6439d732d4b077c1a39934bdb97375e360e9d0a2bc92606dd9d15799f3",
+          "locator": "docsfab-candidate:b4ccab6439d732d4b077c1a39934bdb97375e360e9d0a2bc92606dd9d15799f3"
+        },
+        "projections": {
+          "status": "candidate",
+          "affectedTargets": [
+            "product-reference-model"
+          ],
+          "sourceModelSha256": "b4ccab6439d732d4b077c1a39934bdb97375e360e9d0a2bc92606dd9d15799f3",
+          "sha256": "ac5e236dcfe174fc880b977941249d39e071d814c933e28da24d5c7da35b0db9",
+          "locator": "docsfab-candidate:ac5e236dcfe174fc880b977941249d39e071d814c933e28da24d5c7da35b0db9"
+        },
+        "receipt": {
+          "adjudicatedConflictId": "conflict-78c381796017a838e5aff5d3d289c8807d134fd3",
+          "adjudicatorPrincipalId": "fixture-owner",
+          "authorityReceiptSha256": "eee901a66ccd634c2174fe1cea550a0a951cf5ee8c451a03259d28f273ff5dc9",
+          "answerSha256": "0be6ff1e26085204e6b8ee75aaa4889834027ec6d2f6e7a4508d02a0c133c7e3",
+          "decisionChainSha256": "de4b14097d42368d86b22fe0114dcfba139ae605bdf38718d21c8e11dddd3c0e",
+          "priorResultSha256": "40216d319412bc9d96636659aaf448782c86059bd880418d30eb1a44b641356d",
+          "mergeRevision": "3f001392aa093babe2cfbcd062703e2b90b5de66",
+          "sha256": "f590970595a11f3da509aa5b6378dd0d71fbc5adfab9e79b0ff7252099afbf6b",
+          "locator": "docsfab-receipt:f590970595a11f3da509aa5b6378dd0d71fbc5adfab9e79b0ff7252099afbf6b"
+        },
+        "authority": {
+          "exactClaimDecision": true,
+          "modelApproved": false,
+          "projectionPublished": false,
+          "projectionMerged": false
+        },
+        "resultSha256": "08cbe6066f2dc50972e20133e8e2baab9066035a3c3b527a6136f9384476848a"
+      },
+      "createdAt": "2026-09-18T00:03:22.563Z",
+      "updatedAt": "2026-09-18T00:03:22.563Z",
+      "revision": 6,
+      "continuationSha256": "2d579354d10fcdaac5801cada6efa6eacd05d6c387df6b83617584b030a126df"
+    },
+    "question": {
+      "schemaVersion": 1,
+      "kind": "docsfab-reconciliation-question",
+      "reconciliationId": "reconciliation:e212934a460e4ad31a2df1eef3ec7b535ecf64c1af5253223d7e3007e3e94466",
+      "questionId": "question:64dea5c9b7ca6084c9616419765871793de9b3b3239feb33d5ca2f9a5753c7d8",
+      "generation": 2,
+      "requestKey": "fixture-genuine-merge-request",
+      "stoppedAttemptId": "attempt-1",
+      "stoppedJobSha256": "f6aabacdc8860a4bfe2cc9f4a8671e0375ffd4cca92b3637a167c402dc64a00c",
+      "stoppedPacketSha256": "8bc1a57dc688bdf95cbf1ba5906495ccdf9e70a109380ba21c7bafa53eb7a7b9",
+      "stoppedContextBindingSha256": "83eb35adc3f20769bb68ac3caac91a8a7cfa49eee63f04e2c84b34e6771d8c5e",
+      "continuationAttemptKey": "fixture-genuine-merge-request/adjudication-2",
+      "resumeAnchorSha256": "1e181a66c54269c51db0418939e69fb010e0b57dcfdb8bbcdf9b2adfc4eda567",
+      "severityPolicyVersion": 1,
+      "severityPolicySha256": "c9d05be9ef38b0aea80a8546f21aaf54d18a7d2306904492f2dc2ec98c932486",
+      "measurementReceiptSha256": "7ef5f203b505b19291aa97debef3d2da7498ba311362f3800cbf115e6d0d80fb",
+      "conflictId": "conflict-78c381796017a838e5aff5d3d289c8807d134fd3",
+      "conflictSnapshotSha256": "eea0bb8ec5c89a4a5bd724b603720c7e9da15be21dd52ae3515e4f40e319c43c",
+      "classification": "scope-conflict",
+      "decisionKind": "intent",
+      "confidence": "high",
+      "confidenceBasisSha256": "15350e74cb5da1e5052165ffd2505c92847cceb7312add5b9cfae8558e8574da",
+      "impact": "load-bearing",
+      "impactBasisSha256": "15350e74cb5da1e5052165ffd2505c92847cceb7312add5b9cfae8558e8574da",
+      "blocksTargets": [
+        "product-reference-model"
+      ],
+      "safeSummary": "Evidence conflicts with approved claim CLAIM-MENTION; owner scope must be explicit.",
+      "variants": [
+        {
+          "claimId": "semantic-claim-8915f929243997c95b25fb9c9fac30d08e29e60d",
+          "safeSummary": "Keep the currently approved statement and scope.",
+          "evidenceLocators": [
+            "docsfab-receipt:3819777ed99bbc61e2e661947483632c2d79a713f67a78d45935e711bcd17fe6"
+          ]
+        },
+        {
+          "claimId": "semantic-claim-45a225fdb75cd69b32a748e462d3e8574ea97c3f",
+          "safeSummary": "Replace only the statement and scope in the exact offered delta.",
+          "evidenceLocators": [
+            "docsfab-receipt:3819777ed99bbc61e2e661947483632c2d79a713f67a78d45935e711bcd17fe6"
+          ]
+        }
+      ],
+      "offeredClaimIds": [
+        "semantic-claim-45a225fdb75cd69b32a748e462d3e8574ea97c3f",
+        "semantic-claim-8915f929243997c95b25fb9c9fac30d08e29e60d"
+      ],
+      "allowedDispositions": [
+        "accept-variant",
+        "rescope",
+        "defer"
+      ],
+      "semanticOffer": {
+        "schemaVersion": 1,
+        "kind": "docsfab-merge-semantic-offer",
+        "binding": {
+          "deploymentId": "fixture-deployment",
+          "projectId": "semantic-fixture",
+          "deploymentEpoch": "epoch-fixture"
+        },
+        "mergeAnchorSha256": "2c01637392bbf5701942f63f88700f629214db8bfc8edb79776e2952ab72202a",
+        "comparisonCase": {
+          "kind": "source-case",
+          "caseSha256": "e0558070f15f9113895c8f484d896e3a90d3d103ee15f083bdebd05fd6b85e56"
+        },
+        "reanalysisOf": {
+          "questionSha256": "d8288a879a71c62c10f200ebd0efce7ce6e641cbc17a9da46fda326ecafd66ea",
+          "sourceRegistrationSha256": "b2ce278466671f0fec0f5c961e8b73b8310d2ab51b50a5cbbea15d143ef4fd8e"
+        },
+        "comparisonSha256": "65a0ecc3ca848f65bdce7e31a6e350ab1d0a321441aca71d28449aa22c59a8e7",
+        "comparisonReceiptSha256": "3819777ed99bbc61e2e661947483632c2d79a713f67a78d45935e711bcd17fe6",
+        "baseline": {
+          "generation": 1,
+          "baselineSha256": "19b49d91ba37837bbfdd2a4c554914327babdb500ed4e3c74f15a2c62cfe475c",
+          "modelId": "FIXTURE-PRODUCT",
+          "version": "v1.0",
+          "streamVersion": 1,
+          "modelSha256": "30c20bd611561af244a872b707edc09cf50fad1c8f980fb29f6b411a9b1ff950",
+          "canonSha256": "30c20bd611561af244a872b707edc09cf50fad1c8f980fb29f6b411a9b1ff950",
+          "approvalReceiptSha256": "a2810f4c35e61649640930c38122d65e6274ff7d2b628d942c6229db95d81a06",
+          "sourceClosureSha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+        },
+        "findingSha256": "15350e74cb5da1e5052165ffd2505c92847cceb7312add5b9cfae8558e8574da",
+        "claimId": "CLAIM-MENTION",
+        "beforeClaimRecordSha256": "01ed5330ece56a2a65fe4d8bec57ca72951f95d865e61b3a9138754df3dc729a",
+        "evidenceSourceVersionSha256s": [
+          "01deabd0f9418c10f73f01794c3b59655d8befc76b675f04313668dcc24950b9",
+          "2de650a88186494ac3a37f9114c36c31e9bfec0d90897877dbf9fc4c39da6637"
+        ],
+        "options": [
+          {
+            "optionId": "keep-approved",
+            "claimId": "semantic-claim-8915f929243997c95b25fb9c9fac30d08e29e60d",
+            "semanticClaim": {
+              "claim_id": "CLAIM-MENTION",
+              "statement": "Ordinary channel messages require an explicit mention before the service replies.",
+              "scope": {
+                "surface": "ordinary-channel-messages"
+              }
+            },
+            "semanticClaimSha256": "07cd0f17f8e5e8b8a0bb5105730c5bf824f79bee11aa877761c8eefaf8513698",
+            "approvalTarget": null,
+            "semanticDelta": null
+          },
+          {
+            "optionId": "replace-statement-and-scope",
+            "claimId": "semantic-claim-45a225fdb75cd69b32a748e462d3e8574ea97c3f",
+            "semanticClaim": {
+              "claim_id": "CLAIM-MENTION",
+              "scope": {
+                "surface": "opt-in-pilot-thread"
+              },
+              "statement": "Only opt-in pilot threads may receive replies without an explicit mention."
+            },
+            "semanticClaimSha256": "35db582868fe6945607394b13a626e5f32891278f435ea92a3f03e4b77ba9a2d",
+            "approvalTarget": {
+              "schemaVersion": 1,
+              "kind": "docsfab-model-approval-target",
+              "projectId": "semantic-fixture",
+              "modelId": "FIXTURE-PRODUCT",
+              "approvedParentModelSha256": "30c20bd611561af244a872b707edc09cf50fad1c8f980fb29f6b411a9b1ff950",
+              "scope": {
+                "kind": "semantic-delta",
+                "semanticDeltaSha256": "a2735705a29474ef923055ed4faa7c21d8ca3beeef47791102e79a76389ee057",
+                "claimIds": [
+                  "CLAIM-MENTION"
+                ],
+                "evidenceSourceVersionSha256s": [
+                  "01deabd0f9418c10f73f01794c3b59655d8befc76b675f04313668dcc24950b9",
+                  "2de650a88186494ac3a37f9114c36c31e9bfec0d90897877dbf9fc4c39da6637"
+                ],
+                "projectionTargets": [
+                  "product-requirements"
+                ]
+              },
+              "targetSha256": "db6bcfb241ab4ce661f107ff3f8ba37f0a7621cc29a8766f9b686fdfb92964d5"
+            },
+            "semanticDelta": {
+              "schemaVersion": 1,
+              "kind": "docsfab-offered-model-semantic-delta",
+              "projectId": "semantic-fixture",
+              "modelId": "FIXTURE-PRODUCT",
+              "approvedParentModelSha256": "30c20bd611561af244a872b707edc09cf50fad1c8f980fb29f6b411a9b1ff950",
+              "comparisonReceiptSha256": "3819777ed99bbc61e2e661947483632c2d79a713f67a78d45935e711bcd17fe6",
+              "evidenceSourceVersionSha256s": [
+                "01deabd0f9418c10f73f01794c3b59655d8befc76b675f04313668dcc24950b9",
+                "2de650a88186494ac3a37f9114c36c31e9bfec0d90897877dbf9fc4c39da6637"
+              ],
+              "changes": [
+                {
+                  "claimId": "CLAIM-MENTION",
+                  "beforeClaimRecordSha256": "01ed5330ece56a2a65fe4d8bec57ca72951f95d865e61b3a9138754df3dc729a",
+                  "after": {
+                    "claim_id": "CLAIM-MENTION",
+                    "scope": {
+                      "surface": "opt-in-pilot-thread"
+                    },
+                    "statement": "Only opt-in pilot threads may receive replies without an explicit mention."
+                  }
+                }
+              ],
+              "deltaSha256": "a2735705a29474ef923055ed4faa7c21d8ca3beeef47791102e79a76389ee057"
+            }
+          }
+        ],
+        "offerSha256": "9916857e968411395cdab99c8742946584ccb2eb9cbb304d0acf4c8369eb59b9"
+      },
+      "semanticDelivery": [
+        {
+          "textSha256": "618f7b2b42058123b764acf803ca0a0f34ceb8607b2b13ca3eaf91d62f6360a3",
+          "messageId": "1789689802.000002"
+        }
+      ],
+      "questionTextSha256": "27b2921940d2cfd4d23524301d2e838cdab2e6e93b3d8eb77ae73922ff795235",
+      "choiceSetSha256": "00141c8d9855273871b8778a668fbd779df671c7441b3b83fdab4f1fedf95727",
+      "contextThreadId": "reconciliation-context:d0c51428c3acdffa541e0c2cde9ce643",
+      "authority": {
+        "ownerKey": "product-owner",
+        "authorityKind": "product-decision-owner",
+        "expectedPrincipalId": "fixture-owner",
+        "expectedChannelIdentitySha256": "8fc5a266e433fdede17f60b2b4086b15430e0b511263f919e921520f0bc828ab",
+        "ownerPolicyVersion": 1,
+        "ownerPolicySha256": "8d6b57042b882260b15707a531b33be747a6f34b1fa4a10910339e4b7b8d8ec7",
+        "authorityReceiptSha256": "eee901a66ccd634c2174fe1cea550a0a951cf5ee8c451a03259d28f273ff5dc9",
+        "identityReceiptSha256": "8dd04ca19e2329b96bd1593c9013bdc7c5968605e7d10db598de2015b2af7748"
+      },
+      "route": {
+        "channelKind": "slack",
+        "surface": "thread",
+        "accountLocatorSha256": "20470fda2703b09211542b65c42fd3bc3c6fd2bc6db0912a2527ead93fb23708",
+        "conversationLocatorSha256": "c708fa78ee124e34d2d0da0c741902e8302cf76623569bb7ee16c5dc194a740c",
+        "threadLocatorSha256": "a440a8b4091b08fb7e62a504dab4c38b5afe6b96d1745ca419550d6c5dbd28a7",
+        "routeSha256": "5e922d54170812270ff5e5eb0c28a75d4cf83f91bf3e7c3445bd953f116f997d"
+      },
+      "issuedAt": "2026-09-18T00:03:22.563Z",
+      "expiresAt": "2026-09-18T01:03:22.563Z",
+      "questionSha256": "947068aebcb6f7770eae96a95a59a4b737b6dc18aaa370435792c3e3ece4a335"
+    },
+    "answer": {
+      "schemaVersion": 1,
+      "kind": "docsfab-reconciliation-answer",
+      "reconciliationId": "reconciliation:e212934a460e4ad31a2df1eef3ec7b535ecf64c1af5253223d7e3007e3e94466",
+      "questionId": "question:64dea5c9b7ca6084c9616419765871793de9b3b3239feb33d5ca2f9a5753c7d8",
+      "generation": 2,
+      "questionSha256": "947068aebcb6f7770eae96a95a59a4b737b6dc18aaa370435792c3e3ece4a335",
+      "conflictId": "conflict-78c381796017a838e5aff5d3d289c8807d134fd3",
+      "principalId": "fixture-owner",
+      "identityReceiptSha256": "8dd04ca19e2329b96bd1593c9013bdc7c5968605e7d10db598de2015b2af7748",
+      "authorityReceiptSha256": "eee901a66ccd634c2174fe1cea550a0a951cf5ee8c451a03259d28f273ff5dc9",
+      "ownerPolicySha256": "8d6b57042b882260b15707a531b33be747a6f34b1fa4a10910339e4b7b8d8ec7",
+      "channelKind": "slack",
+      "eventLocatorSha256": "17fd551a5572d8a757665c25c89312802f2e414cefcff45dda104122d50b7170",
+      "messageLocatorSha256": "4b3583fcaa255c0ea6d2eec0bc24d8e734828efcff85b7c1795282c4d93023be",
+      "channelIdentitySha256": "8fc5a266e433fdede17f60b2b4086b15430e0b511263f919e921520f0bc828ab",
+      "accountLocatorSha256": "20470fda2703b09211542b65c42fd3bc3c6fd2bc6db0912a2527ead93fb23708",
+      "conversationLocatorSha256": "c708fa78ee124e34d2d0da0c741902e8302cf76623569bb7ee16c5dc194a740c",
+      "threadLocatorSha256": "a440a8b4091b08fb7e62a504dab4c38b5afe6b96d1745ca419550d6c5dbd28a7",
+      "providerLocatorSha256": "18c52643c5f227dab0323e9566d8fcd8912a04fec4399cd4ba391472847eefed",
+      "contentSha256": "085336ddb611527b98eb26aebca098e7c0dcea40146155ddfb3bb02c5ef21305",
+      "decision": {
+        "disposition": "accept-variant",
+        "selectedClaimIds": [
+          "semantic-claim-45a225fdb75cd69b32a748e462d3e8574ea97c3f"
+        ],
+        "rationale": "Confirm the newly offered opt-in thread scope.",
+        "rationaleSha256": "7e173d833fc083b0717fb950cc1ddb47f33ab4e52966084c4b77fe3622b8c0f0",
+        "scope": null,
+        "scopeSha256": null
+      },
+      "receivedAt": "2026-09-18T00:03:22.563Z",
+      "answerId": "answer:d779cb309039c66c07aa2d38c2c9b05b6a02ca87d952b6ff6b9df851e7461ade",
+      "answerSha256": "0be6ff1e26085204e6b8ee75aaa4889834027ec6d2f6e7a4508d02a0c133c7e3"
+    },
+    "source": {
+      "schemaVersion": 1,
+      "kind": "docsfab-reconciliation-decision-source",
+      "sourceId": "decision-source-0be6ff1e26085204e6b8ee75aaa48898",
+      "sourceThreadId": "decision-thread-d0c51428c3acdffa541e0c2cde9ce643",
+      "itemId": "decision-item-0be6ff1e26085204e6b8ee75aaa48898",
+      "sourceKind": "authority-decision",
+      "evidenceRole": "intent",
+      "version": "answer-0be6ff1e26085204e6b8ee75aaa48898",
+      "representationId": "slack-thread-answer",
+      "integritySha256": "7c48dfb8ef9ae520f566f8e7d7cd25d7e4ff4b3feefc20cf912f3a7f690a2ba2",
+      "locator": "docsfab-source:7c48dfb8ef9ae520f566f8e7d7cd25d7e4ff4b3feefc20cf912f3a7f690a2ba2",
+      "reconciliationId": "reconciliation:e212934a460e4ad31a2df1eef3ec7b535ecf64c1af5253223d7e3007e3e94466",
+      "questionId": "question:64dea5c9b7ca6084c9616419765871793de9b3b3239feb33d5ca2f9a5753c7d8",
+      "conflictId": "conflict-78c381796017a838e5aff5d3d289c8807d134fd3",
+      "answerSha256": "0be6ff1e26085204e6b8ee75aaa4889834027ec6d2f6e7a4508d02a0c133c7e3",
+      "principalId": "fixture-owner",
+      "authorityReceiptSha256": "eee901a66ccd634c2174fe1cea550a0a951cf5ee8c451a03259d28f273ff5dc9",
+      "parentThreadEventId": null,
+      "sourceEventId": "decision-event-0be6ff1e26085204e6b8ee75aaa48898",
+      "registrationSha256": "f6c7b515a3d6b6f60c5c9fa2ab70a95d03dc6ab3f3384630eac97c5315d0fe50"
+    },
+    "sourceRegisteredAt": "2026-09-18T00:03:22.563Z",
+    "custody": {
+      "evidence": {
+        "schemaVersion": 1,
+        "sourceKind": "slack-thread",
+        "sourceLocator": "slack-source:18c52643c5f227dab0323e9566d8fcd8912a04fec4399cd4ba391472847eefed",
+        "locatorSha256": "18c52643c5f227dab0323e9566d8fcd8912a04fec4399cd4ba391472847eefed",
+        "contentSha256": "085336ddb611527b98eb26aebca098e7c0dcea40146155ddfb3bb02c5ef21305",
+        "deploymentId": "fixture-deployment",
+        "projectId": "semantic-fixture",
+        "requestKey": "fixture-genuine-merge-request",
+        "runId": "reconciliation:e212934a460e4ad31a2df1eef3ec7b535ecf64c1af5253223d7e3007e3e94466",
+        "attemptId": "attempt-1",
+        "questionId": "question:64dea5c9b7ca6084c9616419765871793de9b3b3239feb33d5ca2f9a5753c7d8",
+        "expectedPrincipalId": "fixture-owner",
+        "disclosurePolicy": "cite-only",
+        "authority": "accountable-principal",
+        "providerLocatorSha256": "a440a8b4091b08fb7e62a504dab4c38b5afe6b96d1745ca419550d6c5dbd28a7"
+      },
+      "contentSha256": "085336ddb611527b98eb26aebca098e7c0dcea40146155ddfb3bb02c5ef21305",
+      "recordedAt": "2026-09-18T00:03:22.563Z",
+      "custodySha256": "642530acef351862f5feb647ed464e6a73be6d78a9b9e9124c70ba09fb70fc70"
+    },
+    "semanticOffer": {
+      "schemaVersion": 1,
+      "kind": "docsfab-merge-semantic-offer",
+      "binding": {
+        "deploymentId": "fixture-deployment",
+        "projectId": "semantic-fixture",
+        "deploymentEpoch": "epoch-fixture"
+      },
+      "mergeAnchorSha256": "2c01637392bbf5701942f63f88700f629214db8bfc8edb79776e2952ab72202a",
+      "comparisonCase": {
+        "kind": "source-case",
+        "caseSha256": "e0558070f15f9113895c8f484d896e3a90d3d103ee15f083bdebd05fd6b85e56"
+      },
+      "reanalysisOf": {
+        "questionSha256": "d8288a879a71c62c10f200ebd0efce7ce6e641cbc17a9da46fda326ecafd66ea",
+        "sourceRegistrationSha256": "b2ce278466671f0fec0f5c961e8b73b8310d2ab51b50a5cbbea15d143ef4fd8e"
+      },
+      "comparisonSha256": "65a0ecc3ca848f65bdce7e31a6e350ab1d0a321441aca71d28449aa22c59a8e7",
+      "comparisonReceiptSha256": "3819777ed99bbc61e2e661947483632c2d79a713f67a78d45935e711bcd17fe6",
+      "baseline": {
+        "generation": 1,
+        "baselineSha256": "19b49d91ba37837bbfdd2a4c554914327babdb500ed4e3c74f15a2c62cfe475c",
+        "modelId": "FIXTURE-PRODUCT",
+        "version": "v1.0",
+        "streamVersion": 1,
+        "modelSha256": "30c20bd611561af244a872b707edc09cf50fad1c8f980fb29f6b411a9b1ff950",
+        "canonSha256": "30c20bd611561af244a872b707edc09cf50fad1c8f980fb29f6b411a9b1ff950",
+        "approvalReceiptSha256": "a2810f4c35e61649640930c38122d65e6274ff7d2b628d942c6229db95d81a06",
+        "sourceClosureSha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+      },
+      "findingSha256": "15350e74cb5da1e5052165ffd2505c92847cceb7312add5b9cfae8558e8574da",
+      "claimId": "CLAIM-MENTION",
+      "beforeClaimRecordSha256": "01ed5330ece56a2a65fe4d8bec57ca72951f95d865e61b3a9138754df3dc729a",
+      "evidenceSourceVersionSha256s": [
+        "01deabd0f9418c10f73f01794c3b59655d8befc76b675f04313668dcc24950b9",
+        "2de650a88186494ac3a37f9114c36c31e9bfec0d90897877dbf9fc4c39da6637"
+      ],
+      "options": [
+        {
+          "optionId": "keep-approved",
+          "claimId": "semantic-claim-8915f929243997c95b25fb9c9fac30d08e29e60d",
+          "semanticClaim": {
+            "claim_id": "CLAIM-MENTION",
+            "statement": "Ordinary channel messages require an explicit mention before the service replies.",
+            "scope": {
+              "surface": "ordinary-channel-messages"
+            }
+          },
+          "semanticClaimSha256": "07cd0f17f8e5e8b8a0bb5105730c5bf824f79bee11aa877761c8eefaf8513698",
+          "approvalTarget": null,
+          "semanticDelta": null
+        },
+        {
+          "optionId": "replace-statement-and-scope",
+          "claimId": "semantic-claim-45a225fdb75cd69b32a748e462d3e8574ea97c3f",
+          "semanticClaim": {
+            "claim_id": "CLAIM-MENTION",
+            "scope": {
+              "surface": "opt-in-pilot-thread"
+            },
+            "statement": "Only opt-in pilot threads may receive replies without an explicit mention."
+          },
+          "semanticClaimSha256": "35db582868fe6945607394b13a626e5f32891278f435ea92a3f03e4b77ba9a2d",
+          "approvalTarget": {
+            "schemaVersion": 1,
+            "kind": "docsfab-model-approval-target",
+            "projectId": "semantic-fixture",
+            "modelId": "FIXTURE-PRODUCT",
+            "approvedParentModelSha256": "30c20bd611561af244a872b707edc09cf50fad1c8f980fb29f6b411a9b1ff950",
+            "scope": {
+              "kind": "semantic-delta",
+              "semanticDeltaSha256": "a2735705a29474ef923055ed4faa7c21d8ca3beeef47791102e79a76389ee057",
+              "claimIds": [
+                "CLAIM-MENTION"
+              ],
+              "evidenceSourceVersionSha256s": [
+                "01deabd0f9418c10f73f01794c3b59655d8befc76b675f04313668dcc24950b9",
+                "2de650a88186494ac3a37f9114c36c31e9bfec0d90897877dbf9fc4c39da6637"
+              ],
+              "projectionTargets": [
+                "product-requirements"
+              ]
+            },
+            "targetSha256": "db6bcfb241ab4ce661f107ff3f8ba37f0a7621cc29a8766f9b686fdfb92964d5"
+          },
+          "semanticDelta": {
+            "schemaVersion": 1,
+            "kind": "docsfab-offered-model-semantic-delta",
+            "projectId": "semantic-fixture",
+            "modelId": "FIXTURE-PRODUCT",
+            "approvedParentModelSha256": "30c20bd611561af244a872b707edc09cf50fad1c8f980fb29f6b411a9b1ff950",
+            "comparisonReceiptSha256": "3819777ed99bbc61e2e661947483632c2d79a713f67a78d45935e711bcd17fe6",
+            "evidenceSourceVersionSha256s": [
+              "01deabd0f9418c10f73f01794c3b59655d8befc76b675f04313668dcc24950b9",
+              "2de650a88186494ac3a37f9114c36c31e9bfec0d90897877dbf9fc4c39da6637"
+            ],
+            "changes": [
+              {
+                "claimId": "CLAIM-MENTION",
+                "beforeClaimRecordSha256": "01ed5330ece56a2a65fe4d8bec57ca72951f95d865e61b3a9138754df3dc729a",
+                "after": {
+                  "claim_id": "CLAIM-MENTION",
+                  "scope": {
+                    "surface": "opt-in-pilot-thread"
+                  },
+                  "statement": "Only opt-in pilot threads may receive replies without an explicit mention."
+                }
+              }
+            ],
+            "deltaSha256": "a2735705a29474ef923055ed4faa7c21d8ca3beeef47791102e79a76389ee057"
+          }
+        }
+      ],
+      "offerSha256": "9916857e968411395cdab99c8742946584ccb2eb9cbb304d0acf4c8369eb59b9"
+    },
+    "selectedOption": {
+      "optionId": "replace-statement-and-scope",
+      "claimId": "semantic-claim-45a225fdb75cd69b32a748e462d3e8574ea97c3f",
+      "semanticClaim": {
+        "claim_id": "CLAIM-MENTION",
+        "scope": {
+          "surface": "opt-in-pilot-thread"
+        },
+        "statement": "Only opt-in pilot threads may receive replies without an explicit mention."
+      },
+      "semanticClaimSha256": "35db582868fe6945607394b13a626e5f32891278f435ea92a3f03e4b77ba9a2d",
+      "approvalTarget": {
+        "schemaVersion": 1,
+        "kind": "docsfab-model-approval-target",
+        "projectId": "semantic-fixture",
+        "modelId": "FIXTURE-PRODUCT",
+        "approvedParentModelSha256": "30c20bd611561af244a872b707edc09cf50fad1c8f980fb29f6b411a9b1ff950",
+        "scope": {
+          "kind": "semantic-delta",
+          "semanticDeltaSha256": "a2735705a29474ef923055ed4faa7c21d8ca3beeef47791102e79a76389ee057",
+          "claimIds": [
+            "CLAIM-MENTION"
+          ],
+          "evidenceSourceVersionSha256s": [
+            "01deabd0f9418c10f73f01794c3b59655d8befc76b675f04313668dcc24950b9",
+            "2de650a88186494ac3a37f9114c36c31e9bfec0d90897877dbf9fc4c39da6637"
+          ],
+          "projectionTargets": [
+            "product-requirements"
+          ]
+        },
+        "targetSha256": "db6bcfb241ab4ce661f107ff3f8ba37f0a7621cc29a8766f9b686fdfb92964d5"
+      },
+      "semanticDelta": {
+        "schemaVersion": 1,
+        "kind": "docsfab-offered-model-semantic-delta",
+        "projectId": "semantic-fixture",
+        "modelId": "FIXTURE-PRODUCT",
+        "approvedParentModelSha256": "30c20bd611561af244a872b707edc09cf50fad1c8f980fb29f6b411a9b1ff950",
+        "comparisonReceiptSha256": "3819777ed99bbc61e2e661947483632c2d79a713f67a78d45935e711bcd17fe6",
+        "evidenceSourceVersionSha256s": [
+          "01deabd0f9418c10f73f01794c3b59655d8befc76b675f04313668dcc24950b9",
+          "2de650a88186494ac3a37f9114c36c31e9bfec0d90897877dbf9fc4c39da6637"
+        ],
+        "changes": [
+          {
+            "claimId": "CLAIM-MENTION",
+            "beforeClaimRecordSha256": "01ed5330ece56a2a65fe4d8bec57ca72951f95d865e61b3a9138754df3dc729a",
+            "after": {
+              "claim_id": "CLAIM-MENTION",
+              "scope": {
+                "surface": "opt-in-pilot-thread"
+              },
+              "statement": "Only opt-in pilot threads may receive replies without an explicit mention."
+            }
+          }
+        ],
+        "deltaSha256": "a2735705a29474ef923055ed4faa7c21d8ca3beeef47791102e79a76389ee057"
+      }
+    }
+  },
+  "entry": {
+    "outcome": {
+      "approvalReceiptSha256": "a2810f4c35e61649640930c38122d65e6274ff7d2b628d942c6229db95d81a06",
+      "baselineGeneration": 1,
+      "baselineSha256": "19b49d91ba37837bbfdd2a4c554914327babdb500ed4e3c74f15a2c62cfe475c",
+      "canonSha256": "30c20bd611561af244a872b707edc09cf50fad1c8f980fb29f6b411a9b1ff950",
+      "case": {
+        "caseSha256": "e0558070f15f9113895c8f484d896e3a90d3d103ee15f083bdebd05fd6b85e56",
+        "kind": "source-case",
+        "mergeRevision": null,
+        "observedAt": "2026-09-18T00:03:22.563Z",
+        "projectId": "semantic-fixture"
+      },
+      "citationInventory": [
+        {
+          "contentSha256": "8dae428d23fdacf65d143521b7eadda54e3917b613dc6c0e7c4edce51c0e2c83",
+          "endByte": 37,
+          "evidenceId": "semantic-evidence:558be4e6f3b4fc631c964b6435fb9fce170738c0628a3ed8a4dfa5d1f2eea553",
+          "inputSha256": "6e1282588fa2219246f28da418abb520cd4f740151bf4dfe09d03e3ac01dfbf1",
+          "sourceContentSha256": "8dae428d23fdacf65d143521b7eadda54e3917b613dc6c0e7c4edce51c0e2c83",
+          "sourcePathSha256": "48e12516d255832537a324364d90449b34a1deb33c74123282c8b3a916cf2c55",
+          "sourceVersionSha256": "01deabd0f9418c10f73f01794c3b59655d8befc76b675f04313668dcc24950b9",
+          "startByte": 0,
+          "totalBytes": 37,
+          "version": "3b7df5e617ca332863fd13b8ef14e96a97efbdb0"
+        },
+        {
+          "contentSha256": "1f4babf02f1b5fa98fc3b8a5b3a3c0dbf663f95e75f18dbfe932614f74251a78",
+          "endByte": 38,
+          "evidenceId": "semantic-evidence:693635f11dcb42a758d5aa1399b99f81825199936a38966185f6cbf35da51ffc",
+          "inputSha256": "6e1282588fa2219246f28da418abb520cd4f740151bf4dfe09d03e3ac01dfbf1",
+          "sourceContentSha256": "1f4babf02f1b5fa98fc3b8a5b3a3c0dbf663f95e75f18dbfe932614f74251a78",
+          "sourcePathSha256": "48e12516d255832537a324364d90449b34a1deb33c74123282c8b3a916cf2c55",
+          "sourceVersionSha256": "01deabd0f9418c10f73f01794c3b59655d8befc76b675f04313668dcc24950b9",
+          "startByte": 0,
+          "totalBytes": 38,
+          "version": "3f001392aa093babe2cfbcd062703e2b90b5de66"
+        },
+        {
+          "contentSha256": "f4f09b22743d3b55eecbb85b6e218f3177bf0c01ad11efe04b631de4f3370d8f",
+          "endByte": 21,
+          "evidenceId": "semantic-evidence:621fed9c61811a908572fadc1d3cc4b1baa42a3fccfce57d5b66f135b6aa7fc6",
+          "inputSha256": "6e1282588fa2219246f28da418abb520cd4f740151bf4dfe09d03e3ac01dfbf1",
+          "sourceContentSha256": "f4f09b22743d3b55eecbb85b6e218f3177bf0c01ad11efe04b631de4f3370d8f",
+          "sourcePathSha256": "587cb980af76fdc7e52369fd0b9d926dff266976b6f8ac631e358fecc49ff8cf",
+          "sourceVersionSha256": "01deabd0f9418c10f73f01794c3b59655d8befc76b675f04313668dcc24950b9",
+          "startByte": 0,
+          "totalBytes": 21,
+          "version": "3f001392aa093babe2cfbcd062703e2b90b5de66"
+        },
+        {
+          "contentSha256": "fbfde2aba47a6dec22ab9edcf9a994f2eed6db9f9586b9dc6ec153dde1ff5f44",
+          "endByte": 102,
+          "evidenceId": "semantic-evidence:85d19f46467642caeef74474701f1719c92941e7def60717febed15b602f68e3",
+          "inputSha256": "6e1282588fa2219246f28da418abb520cd4f740151bf4dfe09d03e3ac01dfbf1",
+          "sourceContentSha256": "fbfde2aba47a6dec22ab9edcf9a994f2eed6db9f9586b9dc6ec153dde1ff5f44",
+          "sourcePathSha256": null,
+          "sourceVersionSha256": "2de650a88186494ac3a37f9114c36c31e9bfec0d90897877dbf9fc4c39da6637",
+          "startByte": 0,
+          "totalBytes": 102,
+          "version": "answer-86a2c3785a4dd2cdf02b4f7c996fa9eb"
+        }
+      ],
+      "comparisonSha256": "65a0ecc3ca848f65bdce7e31a6e350ab1d0a321441aca71d28449aa22c59a8e7",
+      "completedChunkSha256s": [
+        "6e1282588fa2219246f28da418abb520cd4f740151bf4dfe09d03e3ac01dfbf1"
+      ],
+      "currentness": "current",
+      "decisionReady": true,
+      "decisions": [
+        {
+          "beforeClaimRecordSha256": "01ed5330ece56a2a65fe4d8bec57ca72951f95d865e61b3a9138754df3dc729a",
+          "claimId": "CLAIM-MENTION",
+          "evidenceSourceVersionSha256s": [
+            "01deabd0f9418c10f73f01794c3b59655d8befc76b675f04313668dcc24950b9",
+            "2de650a88186494ac3a37f9114c36c31e9bfec0d90897877dbf9fc4c39da6637"
+          ],
+          "findingSha256": "15350e74cb5da1e5052165ffd2505c92847cceb7312add5b9cfae8558e8574da",
+          "missingDecisionDetail": false,
+          "options": [
+            {
+              "id": "keep-approved",
+              "semanticClaim": {
+                "claim_id": "CLAIM-MENTION",
+                "scope": {
+                  "surface": "ordinary-channel-messages"
+                },
+                "statement": "Ordinary channel messages require an explicit mention before the service replies."
+              },
+              "semanticClaimSha256": "07cd0f17f8e5e8b8a0bb5105730c5bf824f79bee11aa877761c8eefaf8513698"
+            },
+            {
+              "id": "replace-statement-and-scope",
+              "semanticClaim": {
+                "claim_id": "CLAIM-MENTION",
+                "scope": {
+                  "surface": "opt-in-pilot-thread"
+                },
+                "statement": "Only opt-in pilot threads may receive replies without an explicit mention."
+              },
+              "semanticClaimSha256": "35db582868fe6945607394b13a626e5f32891278f435ea92a3f03e4b77ba9a2d"
+            }
+          ]
+        }
+      ],
+      "executionReceipts": [
+        {
+          "compositionSha256": "ffdbc397e83ed10144596befb3201f132487d4d57b881aca7c60d7d8c67d3f75",
+          "inputSha256": "6e1282588fa2219246f28da418abb520cd4f740151bf4dfe09d03e3ac01dfbf1",
+          "runRecordSha256": "446fb5ce7e952e594456714611fe00d79608001378b71f6b522153536f720bb1"
+        }
+      ],
+      "kind": "docsfab-semantic-comparison-outcome",
+      "missingSourceVersions": [],
+      "modelId": "FIXTURE-PRODUCT",
+      "modelSha256": "30c20bd611561af244a872b707edc09cf50fad1c8f980fb29f6b411a9b1ff950",
+      "modelVersion": "v1.0",
+      "outcomeSha256": "3819777ed99bbc61e2e661947483632c2d79a713f67a78d45935e711bcd17fe6",
+      "pendingChunkSha256s": [],
+      "proposals": [
+        {
+          "assessments": [
+            {
+              "assertion": "observed-implementation",
+              "claimId": "CLAIM-MENTION",
+              "confidence": "high",
+              "evidenceId": "semantic-evidence:558be4e6f3b4fc631c964b6435fb9fce170738c0628a3ed8a4dfa5d1f2eea553",
+              "explanation": "Explicit fixture model response grounded in the supplied comparison spans.",
+              "modelCitation": {
+                "endByte": 81,
+                "evidenceId": "CLAIM-MENTION",
+                "sha256": "33b5359eea140eeb6312640fe3c725fc60e4042c424fb0063c155b0b4cb2b4cb",
+                "startByte": 0
+              },
+              "relationship": "compatible",
+              "scope": "Only the exact changed fixture behavior; execution is unverified.",
+              "sourceCitations": [
+                {
+                  "endByte": 37,
+                  "evidenceId": "semantic-evidence:558be4e6f3b4fc631c964b6435fb9fce170738c0628a3ed8a4dfa5d1f2eea553",
+                  "sha256": "8dae428d23fdacf65d143521b7eadda54e3917b613dc6c0e7c4edce51c0e2c83",
+                  "startByte": 0
+                }
+              ]
+            },
+            {
+              "assertion": "observed-implementation",
+              "claimId": "CLAIM-MENTION",
+              "confidence": "high",
+              "evidenceId": "semantic-evidence:693635f11dcb42a758d5aa1399b99f81825199936a38966185f6cbf35da51ffc",
+              "explanation": "Explicit fixture model response grounded in the supplied comparison spans.",
+              "modelCitation": {
+                "endByte": 81,
+                "evidenceId": "CLAIM-MENTION",
+                "sha256": "33b5359eea140eeb6312640fe3c725fc60e4042c424fb0063c155b0b4cb2b4cb",
+                "startByte": 0
+              },
+              "proposedClaim": {
+                "scope": {
+                  "surface": "opt-in-pilot-thread"
+                },
+                "statement": "Only opt-in pilot threads may receive replies without an explicit mention."
+              },
+              "relationship": "scope-conflict",
+              "scope": "Only the exact changed fixture behavior; execution is unverified.",
+              "sourceCitations": [
+                {
+                  "endByte": 38,
+                  "evidenceId": "semantic-evidence:693635f11dcb42a758d5aa1399b99f81825199936a38966185f6cbf35da51ffc",
+                  "sha256": "1f4babf02f1b5fa98fc3b8a5b3a3c0dbf663f95e75f18dbfe932614f74251a78",
+                  "startByte": 0
+                },
+                {
+                  "endByte": 102,
+                  "evidenceId": "semantic-evidence:85d19f46467642caeef74474701f1719c92941e7def60717febed15b602f68e3",
+                  "sha256": "fbfde2aba47a6dec22ab9edcf9a994f2eed6db9f9586b9dc6ec153dde1ff5f44",
+                  "startByte": 0
+                }
+              ]
+            },
+            {
+              "assertion": "proposed-intent",
+              "claimId": "CLAIM-MENTION",
+              "confidence": "high",
+              "evidenceId": "semantic-evidence:621fed9c61811a908572fadc1d3cc4b1baa42a3fccfce57d5b66f135b6aa7fc6",
+              "explanation": "Explicit fixture model response grounded in the supplied comparison spans.",
+              "modelCitation": {
+                "endByte": 81,
+                "evidenceId": "CLAIM-MENTION",
+                "sha256": "33b5359eea140eeb6312640fe3c725fc60e4042c424fb0063c155b0b4cb2b4cb",
+                "startByte": 0
+              },
+              "relationship": "compatible",
+              "scope": "Only the exact changed fixture behavior; execution is unverified.",
+              "sourceCitations": [
+                {
+                  "endByte": 21,
+                  "evidenceId": "semantic-evidence:621fed9c61811a908572fadc1d3cc4b1baa42a3fccfce57d5b66f135b6aa7fc6",
+                  "sha256": "f4f09b22743d3b55eecbb85b6e218f3177bf0c01ad11efe04b631de4f3370d8f",
+                  "startByte": 0
+                }
+              ]
+            },
+            {
+              "assertion": "proposed-intent",
+              "claimId": "CLAIM-MENTION",
+              "confidence": "high",
+              "evidenceId": "semantic-evidence:85d19f46467642caeef74474701f1719c92941e7def60717febed15b602f68e3",
+              "explanation": "Explicit fixture model response grounded in the supplied comparison spans.",
+              "modelCitation": {
+                "endByte": 81,
+                "evidenceId": "CLAIM-MENTION",
+                "sha256": "33b5359eea140eeb6312640fe3c725fc60e4042c424fb0063c155b0b4cb2b4cb",
+                "startByte": 0
+              },
+              "relationship": "compatible",
+              "scope": "Only the exact changed fixture behavior; execution is unverified.",
+              "sourceCitations": [
+                {
+                  "endByte": 102,
+                  "evidenceId": "semantic-evidence:85d19f46467642caeef74474701f1719c92941e7def60717febed15b602f68e3",
+                  "sha256": "fbfde2aba47a6dec22ab9edcf9a994f2eed6db9f9586b9dc6ec153dde1ff5f44",
+                  "startByte": 0
+                }
+              ]
+            }
+          ],
+          "inputSha256": "6e1282588fa2219246f28da418abb520cd4f740151bf4dfe09d03e3ac01dfbf1",
+          "kind": "docsfab-semantic-comparison-proposal",
+          "missingEvidence": [],
+          "schemaVersion": 1
+        }
+      ],
+      "reason": null,
+      "schemaVersion": 1,
+      "sourceClosureSha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "sourceInventorySha256": "055500cc98ccc2c0d1de990dd763af8418e4a26f4433770b0026d6ac1eb91645",
+      "sourceVersions": [
+        {
+          "assertion": "proposed-intent",
+          "contentSha256": "fbfde2aba47a6dec22ab9edcf9a994f2eed6db9f9586b9dc6ec153dde1ff5f44",
+          "sourceId": "decision-source-86a2c3785a4dd2cdf02b4f7c996fa9eb",
+          "sourceKind": "slack-owner-input",
+          "sourceVersionSha256": "2de650a88186494ac3a37f9114c36c31e9bfec0d90897877dbf9fc4c39da6637",
+          "version": "answer-86a2c3785a4dd2cdf02b4f7c996fa9eb"
+        },
+        {
+          "assertion": "source-observation",
+          "contentSha256": "a07ae897b552fb98a9e427e36f6eb9ca4131eada9feff564244c9e401a6153cd",
+          "sourceId": "git-merge:3f001392aa093babe2cfbcd062703e2b90b5de66",
+          "sourceKind": "repository-content",
+          "sourceVersionSha256": "01deabd0f9418c10f73f01794c3b59655d8befc76b675f04313668dcc24950b9",
+          "version": "3f001392aa093babe2cfbcd062703e2b90b5de66"
+        }
+      ],
+      "status": "complete",
+      "unavailableEvidenceIds": []
+    },
+    "artifact": {
+      "locator": "cas:694f2e88c21b653a459293b46444bca0:69b6596f4cdb58425f902a1e9d2315653ec22c93e1a02e8c573c3a1f28780062",
+      "sha256": "69b6596f4cdb58425f902a1e9d2315653ec22c93e1a02e8c573c3a1f28780062"
+    },
+    "mergeAnchor": null,
+    "verifiedBehaviorReceipts": []
+  },
+  "sourceVersions": [
+    {
+      "assertion": "proposed-intent",
+      "author": {
+        "kind": "unknown",
+        "providerId": "fixture-owner"
+      },
+      "contentSha256": "fbfde2aba47a6dec22ab9edcf9a994f2eed6db9f9586b9dc6ec153dde1ff5f44",
+      "editor": null,
+      "evidenceSha256s": [
+        "b2ce278466671f0fec0f5c961e8b73b8310d2ab51b50a5cbbea15d143ef4fd8e",
+        "86a2c3785a4dd2cdf02b4f7c996fa9eb23d3af13abc8dad967fb149124063b88",
+        "e29f5f56c969d4e4cf973860423ca2820f0c31101dd54fc1b6eb9672e7c0f3f4"
+      ],
+      "kind": "docsfab-feedback-source-version",
+      "locator": "docsfab-source:fbfde2aba47a6dec22ab9edcf9a994f2eed6db9f9586b9dc6ec153dde1ff5f44",
+      "observedAt": "2026-09-18T00:03:22.563Z",
+      "occurredAt": null,
+      "parentVersionSha256": null,
+      "projectId": "semantic-fixture",
+      "schemaVersion": 1,
+      "sourceId": "decision-source-86a2c3785a4dd2cdf02b4f7c996fa9eb",
+      "sourceKind": "slack-owner-input",
+      "sourceVersionSha256": "2de650a88186494ac3a37f9114c36c31e9bfec0d90897877dbf9fc4c39da6637",
+      "version": "answer-86a2c3785a4dd2cdf02b4f7c996fa9eb"
+    },
+    {
+      "assertion": "source-observation",
+      "author": null,
+      "contentSha256": "a07ae897b552fb98a9e427e36f6eb9ca4131eada9feff564244c9e401a6153cd",
+      "editor": null,
+      "evidenceSha256s": [],
+      "kind": "docsfab-feedback-source-version",
+      "locator": "docsfab-source:a07ae897b552fb98a9e427e36f6eb9ca4131eada9feff564244c9e401a6153cd",
+      "observedAt": "2026-09-18T00:03:22.563Z",
+      "occurredAt": null,
+      "parentVersionSha256": null,
+      "projectId": "semantic-fixture",
+      "schemaVersion": 1,
+      "sourceId": "git-merge:3f001392aa093babe2cfbcd062703e2b90b5de66",
+      "sourceKind": "repository-content",
+      "sourceVersionSha256": "01deabd0f9418c10f73f01794c3b59655d8befc76b675f04313668dcc24950b9",
+      "version": "3f001392aa093babe2cfbcd062703e2b90b5de66"
+    }
+  ],
+  "files": {
+    ".docsfab/reference-model/shared/FIXTURE-PRODUCT/v1.0/model.md": "# Fixture product model v1.0\n\nOrdinary channel messages require an explicit mention before the service replies.\n",
+    ".docsfab/reference-model/shared/FIXTURE-PRODUCT/v1.0/claims.json": "{\"claim_id\":\"CLAIM-MENTION\",\"exact_evidence\":[],\"scope\":{\"surface\":\"ordinary-channel-messages\"},\"source_claims\":[],\"statement\":\"Ordinary channel messages require an explicit mention before the service replies.\"}"
+  }
+}

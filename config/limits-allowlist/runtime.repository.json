@@ -1,0 +1,218 @@
+{
+  "literals": [
+    {
+      "path": "packages/runtime/src/repository/documentation-source-docusaurus.ts",
+      "kind": "kib-product",
+      "lexeme": "1024 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/repository/documentation-source-docusaurus.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_DOCUSAURUS_SOURCE_BYTES = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/repository/documentation-source-mkdocs.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_NAV_DEPTH = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/repository/documentation-source-mkdocs.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_NAV_ENTRIES = 2",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/repository/documentation-source-mkdocs.ts",
+      "kind": "max-assign",
+      "lexeme": "maxAliasCount: 0",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/repository/documentation-source-support.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_CARD_OPENING_TAG_LENGTH = 8",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/repository/documentation-source-support.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_HTML_ANCHOR_TAG_LENGTH = 8",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/repository/fern-navigation.ts",
+      "kind": "kib-product",
+      "lexeme": "1024 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/repository/fern-navigation.ts",
+      "kind": "kib-product",
+      "lexeme": "64 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/repository/fern-navigation.ts",
+      "kind": "kib-product",
+      "lexeme": "8 * 1024",
+      "count": 2
+    },
+    {
+      "path": "packages/runtime/src/repository/fern-navigation.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_FERN_SOURCES = 3",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/repository/fern-navigation.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_FERN_SOURCE_BYTES = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/repository/fern-navigation.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_FERN_SOURCE_TOTAL_BYTES = 8",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/repository/fern-navigation.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_FERN_TARGETS = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/repository/fern-navigation.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_FERN_TARGET_BYTES = 8",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/repository/fern-navigation.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_FERN_TARGET_TOTAL_BYTES = 6",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/repository/fern-navigation.ts",
+      "kind": "max-assign",
+      "lexeme": "maxAliasCount: 0",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/repository/inventory.ts",
+      "kind": "kib-product",
+      "lexeme": "1024 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/repository/inventory.ts",
+      "kind": "max-assign",
+      "lexeme": "BINARY_SNIFF_BYTES = 8",
+      "count": 1,
+      "rationale": "Classification window, not an operational bound: Git's own binary heuristic (xdiff buffer_is_binary) looks for a NUL byte in a file's first 8,000 bytes. The inventory uses it only to count a file it cannot index as binary rather than as text left out (#1932); it decides which files the text index excludes, and those are recorded by path and counted."
+    },
+    {
+      "path": "packages/runtime/src/repository/inventory.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_CONFIG_BYTES = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/repository/inventory.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_RESULTS_PER_PROBE = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/repository/inventory.ts",
+      "kind": "slice-cap",
+      "lexeme": ".slice(0, 32)",
+      "count": 8
+    },
+    {
+      "path": "packages/runtime/src/repository/navigation-observation.ts",
+      "kind": "max-assign",
+      "lexeme": "maxAliasCount: 0",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/repository/probe-selectors.js",
+      "kind": "max-assign",
+      "lexeme": "REPOSITORY_MAX_BATCH_PROBES = 3",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/repository/probe-selectors.js",
+      "kind": "max-assign",
+      "lexeme": "REPOSITORY_PROBE_MAX_LITERAL_CHARS = 1",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/repository/probe-selectors.js",
+      "kind": "max-assign",
+      "lexeme": "REPOSITORY_PROBE_MAX_PATH_CHARS = 1",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/repository/probe-selectors.js",
+      "kind": "max-assign",
+      "lexeme": "REPOSITORY_PROBE_MIN_LITERAL_CHARS = 2",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/repository/workspace/materialize.ts",
+      "kind": "kib-product",
+      "lexeme": "10 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/repository/workspace/materialize.ts",
+      "kind": "kib-product",
+      "lexeme": "1024 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/repository/workspace/materialize.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_TREE_RECORD_BYTES = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/repository/workspace/materialize.ts",
+      "kind": "max-assign",
+      "lexeme": "SCRATCH_ENTRY_OVERHEAD_BYTES = 4",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/repository/workspace/materialize.ts",
+      "kind": "max-assign",
+      "lexeme": "maxBuffer: 1",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/repository/workspace/materialize.ts",
+      "kind": "max-buffer",
+      "lexeme": "maxBuffer: 1",
+      "count": 1
+    }
+  ]
+}

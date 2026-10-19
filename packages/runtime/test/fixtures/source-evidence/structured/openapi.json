@@ -1,0 +1,21 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Pet API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/pets": {
+      "get": {
+        "summary": "List pets"
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Pet": {
+        "$ref": "components.json#/$defs/Pet"
+      }
+    }
+  }
+}

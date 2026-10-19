@@ -1,0 +1,58 @@
+[
+  {
+    "id": "discussion-deleted-line",
+    "individual_note": false,
+    "notes": [
+      {
+        "id": 8102,
+        "body": "Finding: verify removed text",
+        "author": { "id": 65356, "username": "docsfab-bot" },
+        "system": false,
+        "position": {
+          "position_type": "text",
+          "base_sha": "base-commit-sha",
+          "start_sha": "target-start-sha",
+          "head_sha": "source-head-sha",
+          "old_path": "docs/removed.md",
+          "new_path": "docs/removed.md",
+          "old_line": 21
+        }
+      }
+    ]
+  },
+  {
+    "id": "discussion-multiline",
+    "individual_note": false,
+    "notes": [
+      {
+        "id": 8103,
+        "body": "Finding: verify a multiline range",
+        "author": { "id": 65356, "username": "docsfab-bot" },
+        "system": false,
+        "position": {
+          "position_type": "text",
+          "base_sha": "base-commit-sha",
+          "start_sha": "target-start-sha",
+          "head_sha": "source-head-sha",
+          "old_path": "docs/old-name.md",
+          "new_path": "docs/new-name.md",
+          "new_line": 10,
+          "line_range": {
+            "start": {
+              "line_code": "cee20aa21e9b935a64b81d474102fdc0ffbee9c3_0_10",
+              "type": "new",
+              "old_line": null,
+              "new_line": 10
+            },
+            "end": {
+              "line_code": "cee20aa21e9b935a64b81d474102fdc0ffbee9c3_0_11",
+              "type": "new",
+              "old_line": null,
+              "new_line": 11
+            }
+          }
+        }
+      }
+    ]
+  }
+]

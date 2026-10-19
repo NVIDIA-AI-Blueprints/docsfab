@@ -1,0 +1,115 @@
+# DocsFab operational limits owned by the `providerAttempt` name prefix.
+# Registered in config/limits.yaml; every limit here is named `providerAttempt.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: providerAttempt.maxAttemptsPerTurn
+    value: 8
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 8
+    refusal: provider-attempt-max-attempts-per-turn-bound
+    remediation: Lower providerAttempt.maxAttemptsPerTurn in config/limits/providerAttempt.yaml, or pass a smaller maxAttempts on the connection's providerTurnRetry policy.
+    rationale: Physical provider requests one governed turn may spend, the first included. Eight is the measured window of live defect 30 (three of 56 route-fault bursts outlasted the former three-attempt window).
+    docValue: 8 requests
+    docSummary: Physical provider requests one governed turn may spend, the first included.
+
+  - name: providerAttempt.maxBlankAttemptsPerTurn
+    value: 3
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 8
+    refusal: provider-attempt-max-blank-attempts-per-turn-bound
+    remediation: Lower providerAttempt.maxBlankAttemptsPerTurn in config/limits/providerAttempt.yaml; it can never exceed providerAttempt.maxAttemptsPerTurn, whichever is smaller wins.
+    rationale: Physical requests one governed turn may spend on EMPTY provider turns. Held below the transport bound because every replay of an empty turn re-bills the whole input context, which a transport fault that never reached the model does not.
+    docValue: 3 requests
+    docSummary: Physical requests one governed turn may spend on empty provider turns.
+
+  - name: providerAttempt.baseDelayMs
+    value: 500
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 0
+    max: 20000
+    refusal: provider-attempt-base-delay-ms-bound
+    remediation: Lower providerAttempt.baseDelayMs in config/limits/providerAttempt.yaml; it must stay at or below providerAttempt.maxDelayMs.
+    rationale: First deterministic in-turn backoff. No jitter, so replay evidence stays reproducible.
+    docValue: 500 ms
+    docSummary: First deterministic in-turn backoff; no jitter.
+
+  - name: providerAttempt.maxDelayMs
+    value: 20000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 0
+    max: 20000
+    refusal: provider-attempt-max-delay-ms-bound
+    remediation: Lower providerAttempt.maxDelayMs in config/limits/providerAttempt.yaml; a server-requested Retry-After is clamped to it.
+    rationale: Ceiling on one in-turn backoff, including a honoured Retry-After. Under a fifteenth of the smallest sealed composition timeoutMs.
+    docValue: 20,000 ms
+    docSummary: Ceiling on one in-turn backoff, a honoured `Retry-After` included.
+
+  - name: providerAttempt.maxTotalDelayMs
+    value: 60000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 0
+    max: 60000
+    refusal: provider-attempt-max-total-delay-ms-bound
+    remediation: Lower providerAttempt.maxTotalDelayMs in config/limits/providerAttempt.yaml; the composition attempt deadline still bounds every wait.
+    rationale: Summed backoff across every replay of one governed turn. The seven default waits total 51,500 ms and fit inside it.
+    docValue: 60,000 ms
+    docSummary: Summed in-turn backoff across every replay of one governed turn.
+
+  - name: providerAttempt.maxPhysicalRequestsPerStep
+    value: 12288
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 12288
+    refusal: provider-attempt-max-physical-requests-per-step-bound
+    remediation: Lower providerAttempt.maxPhysicalRequestsPerStep in config/limits/providerAttempt.yaml; the runtime reads the generated catalog mirror, so no host environment variable can widen it.
+    rationale: Physical provider requests one step attempt may spend across all of its governed turns. The per-turn attempt bound bounds one turn only, so without this a step could multiply it by every turn it is allowed. 12288 is the sealed compositionLimits.maxProviderTurns ceiling of 512 times providerAttempt.maxThrottledAttemptsPerTurn, the larger of the two per-turn bounds, so no sealed composition can reach it; operators may only lower it.
+    docValue: 12,288 requests
+    docSummary: Physical provider requests one step attempt may spend across all of its governed turns.
+
+  - name: providerAttempt.maxThrottledAttemptsPerTurn
+    value: 24
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 24
+    refusal: provider-attempt-max-throttled-attempts-per-turn-bound
+    remediation: Lower providerAttempt.maxThrottledAttemptsPerTurn in config/limits/providerAttempt.yaml; a turn that runs out ends its step attempt throttled, which then spends the step's transport retries.
+    rationale: Physical requests one governed turn may spend while the provider answers HTTP 429, the first included. On build.nvidia.com (runs 28b5d50f and e1fa56af, 2026-10-01) the chance of another 429 stayed near 0.7 after each of 0 to 6 consecutive 429s while the wait grew from 0.5 s to 20 s, so waiting longer does not help and more attempts do. At 0.71, eight attempts leave about 6.5% of turns throttled out, which ended 15 of 31 step attempts in those runs after up to 61 turns of progress; 24 leaves about 0.03% per turn, about 2% across a 60-turn attempt. The rate past 7 consecutive 429s is extrapolated, not measured (pooled 15 of 27 at 7); a turn that still runs out ends its attempt throttled and spends the step's transport retries, not its contract retries. Other transport faults keep providerAttempt.maxAttemptsPerTurn.
+    docValue: 24 requests
+    docSummary: Physical provider requests one governed turn may spend while the provider answers HTTP 429.
+
+  - name: providerAttempt.maxThrottledTotalDelayMs
+    value: 380000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 0
+    max: 380000
+    refusal: provider-attempt-max-throttled-total-delay-ms-bound
+    remediation: Lower providerAttempt.maxThrottledTotalDelayMs in config/limits/providerAttempt.yaml; the composition attempt deadline still bounds every wait.
+    rationale: Summed in-turn backoff across the replays of one governed turn while the provider answers HTTP 429. The 23 default waits of providerAttempt.maxThrottledAttemptsPerTurn total 371,500 ms and fit inside it; other transport faults keep providerAttempt.maxTotalDelayMs. Under a composition that seals a 300,000 ms attempt timer the attempt deadline ends the turn first, and the attempt ends throttled for the step's transport retry.
+    docValue: 380,000 ms (6 minutes 20 seconds)
+    docSummary: Summed in-turn backoff across the replays of one governed turn while the provider answers HTTP 429.

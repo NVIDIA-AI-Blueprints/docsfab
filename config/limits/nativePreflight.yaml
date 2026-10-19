@@ -1,0 +1,123 @@
+# DocsFab operational limits owned by the `nativePreflight` name prefix.
+# Registered in config/limits.yaml; every limit here is named `nativePreflight.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: nativePreflight.timeoutMs
+    value: 10000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_NATIVE_PREFLIGHT_TIMEOUT_MS
+    min: 1
+    max: 10000
+    refusal: native-preflight-timeout-ms-bound
+    remediation: Recover by inspecting the persisted native preflight observation, then rerun after the child finishes sooner, lower DOCSFAB_NATIVE_PREFLIGHT_TIMEOUT_MS, or raise nativePreflight.timeoutMs in config/limits/nativePreflight.yaml.
+    rationale: Native preflight child timeout (no model request; the Codex account-catalog read is the only provider contact). Capture bound only; measured duration stays the actual elapsed time. Host override may only lower it.
+
+  - name: nativePreflight.versionStdoutBytes
+    value: 4096
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_NATIVE_PREFLIGHT_VERSION_STDOUT_BYTES
+    min: 1
+    max: 4096
+    refusal: native-preflight-version-stdout-bytes-bound
+    remediation: Recover by inspecting the persisted native preflight observation, then rerun after version stdout shrinks, lower DOCSFAB_NATIVE_PREFLIGHT_VERSION_STDOUT_BYTES, or raise nativePreflight.versionStdoutBytes in config/limits/nativePreflight.yaml.
+    rationale: Capture ceiling for the fixed --version command. Overflow is reported; captured byte counts stay actual. Host override may only lower it.
+
+  - name: nativePreflight.authenticationStdoutBytes
+    value: 16384
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_NATIVE_PREFLIGHT_AUTHENTICATION_STDOUT_BYTES
+    min: 1
+    max: 16384
+    refusal: native-preflight-authentication-stdout-bytes-bound
+    remediation: Recover by inspecting the persisted native preflight observation, then rerun after authentication output shrinks, lower DOCSFAB_NATIVE_PREFLIGHT_AUTHENTICATION_STDOUT_BYTES, or raise nativePreflight.authenticationStdoutBytes in config/limits/nativePreflight.yaml.
+    rationale: Capture ceiling for the fixed authentication status command. Overflow is reported; captured byte counts stay actual. Host override may only lower it.
+
+  - name: nativePreflight.catalogStdoutBytes
+    value: 2097152
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_NATIVE_PREFLIGHT_CATALOG_STDOUT_BYTES
+    min: 1
+    max: 2097152
+    refusal: native-preflight-catalog-stdout-bytes-bound
+    remediation: Recover by inspecting the persisted native preflight observation, then rerun after catalog stdout shrinks, lower DOCSFAB_NATIVE_PREFLIGHT_CATALOG_STDOUT_BYTES, or raise nativePreflight.catalogStdoutBytes in config/limits/nativePreflight.yaml.
+    rationale: Capture ceiling for the Codex model catalog command (bundled for the 0.147.0 pin, the authenticated account catalog for the 0.155.1 pin; the live account catalog was 645 KB on 2026-09-28). Overflow is reported; captured byte counts stay actual. Host override may only lower it.
+
+  - name: nativePreflight.catalogModelCount
+    value: 256
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_NATIVE_PREFLIGHT_CATALOG_MODEL_COUNT
+    min: 1
+    max: 256
+    refusal: native-preflight-catalog-model-count-bound
+    remediation: Recover by inspecting the persisted native preflight observation, then rerun after the provider catalog shrinks, lower DOCSFAB_NATIVE_PREFLIGHT_CATALOG_MODEL_COUNT, or raise nativePreflight.catalogModelCount in config/limits/nativePreflight.yaml.
+    rationale: Maximum model entries parsed from a Codex model catalog. The account catalog is provider-controlled and can grow; exceeding the ceiling stops the preflight with a named evidence-limit notice instead of a malformed-output result. Host override may only lower it.
+
+  - name: nativePreflight.catalogSlugCharacters
+    value: 128
+    unit: characters
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_NATIVE_PREFLIGHT_CATALOG_SLUG_CHARACTERS
+    min: 1
+    max: 128
+    refusal: native-preflight-catalog-slug-characters-bound
+    remediation: Recover by inspecting the persisted native preflight observation, then rerun after the provider catalog changes, lower DOCSFAB_NATIVE_PREFLIGHT_CATALOG_SLUG_CHARACTERS, or raise nativePreflight.catalogSlugCharacters in config/limits/nativePreflight.yaml.
+    rationale: Maximum characters in one Codex catalog model slug. Slugs come from a provider-controlled catalog; a longer slug stops the preflight with a named evidence-limit notice instead of a malformed-output result. Host override may only lower it.
+
+  - name: nativePreflight.maxStderrBytes
+    value: 16384
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_NATIVE_PREFLIGHT_MAX_STDERR_BYTES
+    min: 1
+    max: 16384
+    refusal: native-preflight-max-stderr-bytes-bound
+    remediation: Recover by inspecting the persisted native preflight observation, then rerun after stderr shrinks, lower DOCSFAB_NATIVE_PREFLIGHT_MAX_STDERR_BYTES, or raise nativePreflight.maxStderrBytes in config/limits/nativePreflight.yaml.
+    rationale: Capture ceiling for native preflight stderr. Overflow is reported; captured byte counts stay actual. Host override may only lower it.
+
+  - name: nativePreflight.recordedDurationMs
+    value: 600000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_NATIVE_PREFLIGHT_RECORDED_DURATION_MS
+    min: 1
+    max: 600000
+    refusal: native-preflight-recorded-duration-ms-bound
+    remediation: Recover by inspecting the persisted native preflight observation durationMs, then rerun after the child finishes sooner, lower DOCSFAB_NATIVE_PREFLIGHT_RECORDED_DURATION_MS, or raise nativePreflight.recordedDurationMs in config/limits/nativePreflight.yaml.
+    rationale: Notice threshold for recorded native preflight duration. The persisted durationMs stays the measured value, including observations over this bound. Host override may only lower it.
+
+  - name: nativePreflight.recordedStdoutBytes
+    value: 4194304
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_NATIVE_PREFLIGHT_RECORDED_STDOUT_BYTES
+    min: 1
+    max: 4194304
+    refusal: native-preflight-recorded-stdout-bytes-bound
+    remediation: Recover by inspecting the persisted native preflight observation stdoutBytes, then rerun after stdout shrinks, lower DOCSFAB_NATIVE_PREFLIGHT_RECORDED_STDOUT_BYTES, or raise nativePreflight.recordedStdoutBytes in config/limits/nativePreflight.yaml.
+    rationale: Notice threshold for recorded native preflight stdout. The persisted stdoutBytes stays the measured value, including observations over this bound. Host override may only lower it.
+
+  - name: nativePreflight.recordedStderrBytes
+    value: 1048576
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_NATIVE_PREFLIGHT_RECORDED_STDERR_BYTES
+    min: 1
+    max: 1048576
+    refusal: native-preflight-recorded-stderr-bytes-bound
+    remediation: Recover by inspecting the persisted native preflight observation stderrBytes, then rerun after stderr shrinks, lower DOCSFAB_NATIVE_PREFLIGHT_RECORDED_STDERR_BYTES, or raise nativePreflight.recordedStderrBytes in config/limits/nativePreflight.yaml.
+    rationale: Notice threshold for recorded native preflight stderr. The persisted stderrBytes stays the measured value, including observations over this bound. Host override may only lower it.

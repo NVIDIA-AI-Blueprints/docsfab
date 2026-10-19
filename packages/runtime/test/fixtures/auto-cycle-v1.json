@@ -1,0 +1,107 @@
+{
+  "request": {
+    "cycleId": "cycle:fixture-1",
+    "repository": {
+      "identitySha256": "3e474fd57be38c63cde1759369cc9a9321f8eca3ee9cbb5f9d0e03c1549dbebf",
+      "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "tracker": {
+      "projectIdentitySha256": "2222222222222222222222222222222222222222222222222222222222222222",
+      "observationSha256": "3333333333333333333333333333333333333333333333333333333333333333",
+      "observedAt": "2026-08-05T12:00:00.000Z",
+      "authority": "observe-only"
+    },
+    "maturityFindingSha256s": ["4444444444444444444444444444444444444444444444444444444444444444"],
+    "bounds": {
+      "workflowNames": ["update-documentation"],
+      "pathClass": "documentation-write",
+      "pathPrefixes": ["docs"],
+      "targetBranch": "codex/fixture",
+      "deliveryMode": "local-patch",
+      "requiredValidationIds": ["docs-build"],
+      "workflowPrerequisites": [
+        {
+          "workflow": "update-documentation",
+          "prerequisiteIds": ["audit-complete"]
+        }
+      ],
+      "workflowTasks": [
+        {
+          "workflow": "update-documentation",
+          "taskKind": "bounded-doc-improvement",
+          "taskSha256": "ab5fb8208b07e8716b3f80dda8e1911e809cc03a17e862dedc5c137ad35a02b3"
+        }
+      ]
+    }
+  },
+  "task": {
+    "kind": "bounded-doc-improvement",
+    "campaignId": "campaign:fixture",
+    "repositoryId": "group/project",
+    "testedCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "repositoryIdentitySha256": "3e474fd57be38c63cde1759369cc9a9321f8eca3ee9cbb5f9d0e03c1549dbebf",
+    "contextSourcePath": "docs/gap-evidence.json",
+    "gap": {
+      "id": "gap:fixture",
+      "evidenceSha256": "6666666666666666666666666666666666666666666666666666666666666666",
+      "successCriterionSha256": "7777777777777777777777777777777777777777777777777777777777777777"
+    },
+    "analysis": {
+      "runId": "analysis:fixture",
+      "recordSha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "approvedOutcomeSha256": "283fe70219218b5b865d937f177deb99657fc88a408527c5b93addf2c99c3615",
+      "approvedProposal": "Clarify the bounded fixture documentation."
+    },
+    "authorization": {
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    },
+    "intendedPaths": ["docs/guide.md"]
+  },
+  "finding": {
+    "fingerprint": "5555555555555555555555555555555555555555555555555555555555555555",
+    "findingSha256": "4444444444444444444444444444444444444444444444444444444444444444",
+    "confidence": "confirmed",
+    "disposition": "observed-absence"
+  },
+  "candidate": {
+    "id": "candidate:update-documentation",
+    "workflow": "update-documentation",
+    "stepIds": [
+      "plan-documentation",
+      "derive-source-obligations",
+      "write-documentation",
+      "lint-documentation",
+      "verify-technical-accuracy",
+      "review-documentation",
+      "test-audience-understanding",
+      "evaluate-document-quality"
+    ],
+    "prerequisites": [
+      {
+        "id": "audit-complete",
+        "state": "satisfied",
+        "evidenceSha256s": ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"]
+      }
+    ],
+    "maturityFindingFingerprints": [
+      "5555555555555555555555555555555555555555555555555555555555555555"
+    ],
+    "pathClass": "documentation-write",
+    "pathPrefixes": ["docs"],
+    "deliveryMode": "local-patch",
+    "validationIds": ["docs-build"],
+    "taskSha256": "ab5fb8208b07e8716b3f80dda8e1911e809cc03a17e862dedc5c137ad35a02b3"
+  },
+  "authorizationWindow": {
+    "authorizedAt": "2026-08-05T12:01:00.000Z",
+    "expiresAt": "2026-08-05T12:06:00.000Z"
+  },
+  "execution": {
+    "runId": "run:fixture",
+    "recordSha256": "8888888888888888888888888888888888888888888888888888888888888888",
+    "validationId": "docs-build",
+    "validationEvidenceSha256": "9999999999999999999999999999999999999999999999999999999999999999",
+    "completedAt": "2026-08-05T12:04:00.000Z"
+  }
+}

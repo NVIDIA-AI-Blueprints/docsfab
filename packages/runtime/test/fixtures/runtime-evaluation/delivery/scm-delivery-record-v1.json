@@ -1,0 +1,175 @@
+{
+  "schemaVersion": 1,
+  "requiredTopLevel": [
+    "schemaVersion",
+    "kind",
+    "deliveryMode",
+    "idempotencyKey",
+    "planSha256",
+    "authorization",
+    "run",
+    "repository",
+    "baseRevision",
+    "sourceBranch",
+    "targetBranch",
+    "patch",
+    "state",
+    "disposition",
+    "evidence",
+    "attempts",
+    "createdAt",
+    "updatedAt",
+    "sha256"
+  ],
+  "evidenceByState": {
+    "prepared": ["prepared"],
+    "validated": ["prepared", "validation"],
+    "committed": ["prepared", "validation", "commit"],
+    "pushed": ["prepared", "validation", "commit", "push"],
+    "opened": ["prepared", "validation", "commit", "push", "mergeRequest"]
+  },
+  "dispositions": ["active", "failed", "succeeded", "recovered"],
+  "replayStates": ["prepared", "validated", "committed", "pushed", "opened"],
+  "reconciliationCases": [
+    {
+      "id": "remote-drift",
+      "recordState": "planned",
+      "observation": {
+        "authentication": "available",
+        "worktree": "absent",
+        "validation": "unknown",
+        "localCommit": { "status": "absent" },
+        "remoteBranch": {
+          "status": "conflict",
+          "revision": "9999999999999999999999999999999999999999"
+        },
+        "mergeRequest": { "status": "absent" }
+      },
+      "expected": {
+        "decision": "blocked",
+        "failureCode": "remote-drift",
+        "nextAction": "reconcile-external-state"
+      }
+    },
+    {
+      "id": "deleted-remote-branch",
+      "recordState": "planned",
+      "observation": {
+        "authentication": "available",
+        "worktree": "absent",
+        "validation": "unknown",
+        "localCommit": { "status": "absent" },
+        "remoteBranch": { "status": "deleted" },
+        "mergeRequest": { "status": "absent" }
+      },
+      "expected": { "decision": "resume-prepare", "nextAction": "prepare-worktree" }
+    },
+    {
+      "id": "closed-merge-request",
+      "recordState": "planned",
+      "observation": {
+        "authentication": "available",
+        "worktree": "absent",
+        "validation": "unknown",
+        "localCommit": {
+          "status": "matching",
+          "revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        },
+        "remoteBranch": {
+          "status": "matching",
+          "revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        },
+        "mergeRequest": {
+          "status": "closed",
+          "iid": 7,
+          "url": "https://gitlab.example.test/group/docs/-/merge_requests/7",
+          "draft": true,
+          "sourceBranch": "docsfab-run/run-1-aaaaaaaaaaaa",
+          "targetBranch": "main",
+          "headRevision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        }
+      },
+      "expected": {
+        "decision": "blocked",
+        "failureCode": "merge-request-closed",
+        "nextAction": "review-closed-merge-request"
+      }
+    },
+    {
+      "id": "changed-merge-request-target",
+      "recordState": "planned",
+      "observation": {
+        "authentication": "available",
+        "worktree": "absent",
+        "validation": "unknown",
+        "localCommit": {
+          "status": "matching",
+          "revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        },
+        "remoteBranch": {
+          "status": "matching",
+          "revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        },
+        "mergeRequest": {
+          "status": "opened",
+          "iid": 7,
+          "url": "https://gitlab.example.test/group/docs/-/merge_requests/7",
+          "draft": true,
+          "sourceBranch": "docsfab-run/run-1-aaaaaaaaaaaa",
+          "targetBranch": "release",
+          "headRevision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        }
+      },
+      "expected": {
+        "decision": "blocked",
+        "failureCode": "merge-request-changed",
+        "nextAction": "reconcile-external-state"
+      }
+    },
+    {
+      "id": "revoked-authentication",
+      "recordState": "planned",
+      "observation": {
+        "authentication": "revoked",
+        "worktree": "absent",
+        "validation": "unknown",
+        "localCommit": { "status": "absent" },
+        "remoteBranch": { "status": "absent" },
+        "mergeRequest": { "status": "absent" }
+      },
+      "expected": {
+        "decision": "recover-patch-only",
+        "failureCode": "authentication-revoked",
+        "nextAction": "review-preserved-patch"
+      }
+    },
+    {
+      "id": "contradictory-terminal-state",
+      "recordState": "opened",
+      "observation": {
+        "authentication": "available",
+        "worktree": "matching",
+        "validation": "failed",
+        "localCommit": {
+          "status": "matching",
+          "revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        },
+        "remoteBranch": { "status": "deleted" },
+        "mergeRequest": {
+          "status": "opened",
+          "iid": 7,
+          "url": "https://gitlab.example.test/group/docs/-/merge_requests/7",
+          "draft": true,
+          "sourceBranch": "docsfab-run/run-1-aaaaaaaaaaaa",
+          "targetBranch": "main",
+          "headRevision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        }
+      },
+      "expected": {
+        "decision": "blocked",
+        "failureCode": "validation-failed",
+        "nextAction": "fix-validation"
+      }
+    }
+  ]
+}

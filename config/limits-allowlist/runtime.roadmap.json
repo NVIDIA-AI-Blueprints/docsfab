@@ -1,0 +1,289 @@
+{
+  "literals": [
+    {
+      "path": "packages/runtime/src/roadmap/gitlab-issue-adapter.ts",
+      "kind": "kib-product",
+      "lexeme": "2 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/roadmap/gitlab-issue-adapter.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 10",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/roadmap/gitlab-issue-adapter.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 256",
+      "count": 2
+    },
+    {
+      "path": "packages/runtime/src/roadmap/gitlab-issue-adapter.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_OUTPUT = 2",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/roadmap/gitlab-issue-adapter.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_PAGES = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/roadmap/gitlab-issue-adapter.ts",
+      "kind": "per-page",
+      "lexeme": "per_page=1",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/roadmap/gitlab-issue-adapter.ts",
+      "kind": "timeout-assign",
+      "lexeme": "timeoutMs: 2",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/roadmap/gitlab-readonly.ts",
+      "kind": "kib-product",
+      "lexeme": "2 * 1024",
+      "count": 2
+    },
+    {
+      "path": "packages/runtime/src/roadmap/gitlab-readonly.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_MANAGED_LINK_ISSUES = 2",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/roadmap/issue-adapter.ts",
+      "kind": "kib-product",
+      "lexeme": "256 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/roadmap/issue-adapter.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 32",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/roadmap/issue-adapter.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_BODY_BYTES = 2",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/roadmap/issue-adapter.ts",
+      "kind": "slice-cap",
+      "lexeme": ".slice(0, 10)",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/roadmap/issue-cli.ts",
+      "kind": "kib-product",
+      "lexeme": "2 * 1024",
+      "count": 2
+    },
+    {
+      "path": "packages/runtime/src/roadmap/managed-issue-observer.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_ISSUES = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/roadmap/managed-issue-observer.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_LABELS = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/roadmap/managed-issue-observer.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_LINKS = 2",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/roadmap/managed-issue.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_ASSIGNEES = 6",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/roadmap/managed-issue.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_FINDING_DEPENDENCIES = 2",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/roadmap/managed-issue.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_FINDING_EVIDENCE = 2",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/roadmap/managed-issue.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_FINDING_PATHS = 2",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/roadmap/managed-issue.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_OBSERVATIONS = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/roadmap/managed-issue.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_OBSERVATION_LABELS = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/roadmap/managed-issue.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_TEMPLATE_ACCEPTANCE = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/roadmap/managed-issue.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_TEMPLATE_DEPENDENCIES = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/roadmap/managed-issue.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_TEMPLATE_EVIDENCE = 6",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/roadmap/managed-issue.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_TEMPLATE_HUMAN_INPUT = 6",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/roadmap/managed-issue.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_TEMPLATE_PATHS = 2",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/roadmap/managed-issue.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_TEMPLATE_VERIFICATION = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/roadmap/managed-issue.ts",
+      "kind": "max-assign",
+      "lexeme": "minItems = 0",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/roadmap/managed-issue/inert-data.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_PUBLIC_GRAPH_DEPTH = 3",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/roadmap/managed-issue/inert-data.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_PUBLIC_GRAPH_NODES = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/roadmap/managed-issue/inert-data.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_PUBLIC_RECORD_FIELDS = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/roadmap/managed-issue/inert-data.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_ROADMAP_ARRAY_ITEMS = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/roadmap/managed-issue/inert-data.ts",
+      "kind": "max-assign",
+      "lexeme": "minItems = 0",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/roadmap/managed-issue/value-primitives.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_DESCRIPTION_BYTES = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/roadmap/managed-issue/value-primitives.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_TEXT_BYTES = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/roadmap/planning-cli.ts",
+      "kind": "kib-product",
+      "lexeme": "16 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/roadmap/planning-cli.ts",
+      "kind": "kib-product",
+      "lexeme": "64 * 1024",
+      "count": 2
+    },
+    {
+      "path": "packages/runtime/src/roadmap/planning-cli.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 16",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/roadmap/planning-cli.ts",
+      "kind": "max-assign",
+      "lexeme": "maxBuffer: 6",
+      "count": 2
+    },
+    {
+      "path": "packages/runtime/src/roadmap/planning-cli.ts",
+      "kind": "max-buffer",
+      "lexeme": "maxBuffer: 6",
+      "count": 2
+    },
+    {
+      "path": "packages/runtime/src/roadmap/planning.ts",
+      "kind": "slice-cap",
+      "lexeme": ".slice(0, 20)",
+      "count": 1
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "name": "ia-plan",
+  "title": "Information architecture plan",
+  "outcome": "A revision-bound IA recommendation or an explicit request for human input.",
+  "contextPolicy": {
+    "schemaVersion": 1,
+    "steps": [
+      {
+        "stepId": "plan-information-architecture",
+        "required": true,
+        "level": "corpus",
+        "query": "expand",
+        "allowReadOnlyDegraded": true
+      }
+    ]
+  },
+  "steps": [
+    {
+      "id": "plan-information-architecture",
+      "title": "Plan information architecture",
+      "kind": "host-operation",
+      "operation": "ia-plan",
+      "skill": "tpl-design-ia",
+      "mode": "read-only",
+      "prompt": "Produce the requested revision-bound IA plan from supplied governed hierarchy and navigation search evidence when configured; never infer missing host evidence or modify repository files.",
+      "searchMode": "observe",
+      "searchPlan": "information-architecture-discovery"
+    }
+  ]
+}

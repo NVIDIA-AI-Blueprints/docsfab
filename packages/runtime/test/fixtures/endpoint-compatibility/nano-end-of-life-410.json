@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "provenance": "Sanitized serving-route exchange for the endpoint compatibility probe. Provider messages (410 end of life, 404 function not found, in-stream 503) are the text recorded from the hosted NVIDIA API Catalog session of 2026-09-30 (evidence report on MR !1390), which retained no raw captures; stream framing follows that route's OpenAI-compatible chunk shape. Account, function, call, and completion identifiers are replaced with [redacted-...] placeholders. Responses are returned in request order and the last one repeats.",
+  "description": "The retired Nemotron 3 Nano 30B-A3B id answers HTTP 410 with its end-of-life notice.",
+  "route": "nvidia-api-catalog",
+  "model": "nvidia/nemotron-3-nano-30b-a3b",
+  "responses": [
+    {
+      "status": 410,
+      "contentType": "application/json",
+      "body": "{\"status\":410,\"title\":\"Gone\",\"detail\":\"The model 'nvidia/nemotron-3-nano-30b-a3b' has reached its end of life on 2026-09-01T09:00:00Z and is no longer available.\"}"
+    }
+  ]
+}

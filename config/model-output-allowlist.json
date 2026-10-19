@@ -1,0 +1,412 @@
+{
+  "schemaVersion": 1,
+  "kind": "docsfab-model-output-allowlist",
+  "entries": [
+    {
+      "check": "hand-written-row",
+      "path": "packages/runtime/src/operator/failure-classification/inference-codes.ts",
+      "subject": "revision-accounting-invalid-json",
+      "lexeme": "invalid-json",
+      "rationale": "A row for another family's own \"invalid-json\" code (technical review, source obligation, or run outcome), which shares its diagnostic spelling with revision-accounting-invalid-json; it is not a revision-accounting row. It goes stale when #1289 declares that code in its own family."
+    },
+    {
+      "check": "hand-written-row",
+      "path": "packages/runtime/src/operator/failure-classification/inference-codes.ts",
+      "subject": "revision-accounting-unsafe-disclosure",
+      "lexeme": "unsafe-disclosure",
+      "rationale": "A row for another family's own \"unsafe-disclosure\" code (technical review, source obligation, or run outcome), which shares its diagnostic spelling with revision-accounting-unsafe-disclosure; it is not a revision-accounting row. It goes stale when #1289 declares that code in its own family."
+    },
+    {
+      "check": "hand-written-row",
+      "path": "packages/runtime/src/operator/run-result.ts",
+      "subject": "revision-accounting-invalid-json",
+      "lexeme": "invalid-json",
+      "rationale": "A row for another family's own \"invalid-json\" code (technical review, source obligation, or run outcome), which shares its diagnostic spelling with revision-accounting-invalid-json; it is not a revision-accounting row. It goes stale when #1289 declares that code in its own family."
+    },
+    {
+      "check": "hand-written-row",
+      "path": "packages/runtime/src/operator/run-resumability.ts",
+      "subject": "revision-accounting-invalid-json",
+      "lexeme": "invalid-json",
+      "rationale": "A row for another family's own \"invalid-json\" code (technical review, source obligation, or run outcome), which shares its diagnostic spelling with revision-accounting-invalid-json; it is not a revision-accounting row. It goes stale when #1289 declares that code in its own family."
+    },
+    {
+      "check": "hand-written-row",
+      "path": "packages/runtime/src/workflow-execution/plan-binding.ts",
+      "subject": "revision-accounting-invalid-json",
+      "lexeme": "invalid-json",
+      "rationale": "A row for another family's own \"invalid-json\" code (technical review, source obligation, or run outcome), which shares its diagnostic spelling with revision-accounting-invalid-json; it is not a revision-accounting row. It goes stale when #1289 declares that code in its own family."
+    },
+    {
+      "check": "hand-written-row",
+      "path": "packages/runtime/src/workflow-execution/review-response-rule-hints.ts",
+      "subject": "revision-accounting-unsafe-disclosure",
+      "lexeme": "unsafe-disclosure",
+      "rationale": "A row for another family's own \"unsafe-disclosure\" code (technical review, source obligation, or run outcome), which shares its diagnostic spelling with revision-accounting-unsafe-disclosure; it is not a revision-accounting row. It goes stale when #1289 declares that code in its own family."
+    },
+    {
+      "check": "hand-written-row",
+      "path": "packages/runtime/src/workflow-execution/review-response.ts",
+      "subject": "revision-accounting-invalid-json",
+      "lexeme": "invalid-json",
+      "rationale": "A row for another family's own \"invalid-json\" code (technical review, source obligation, or run outcome), which shares its diagnostic spelling with revision-accounting-invalid-json; it is not a revision-accounting row. It goes stale when #1289 declares that code in its own family."
+    },
+    {
+      "check": "hand-written-row",
+      "path": "packages/runtime/src/workflow-execution/source-obligation-rejection-retryability.ts",
+      "subject": "revision-accounting-invalid-json",
+      "lexeme": "invalid-json",
+      "rationale": "false positive; tracked by #1300. The row is the source-obligation family's own \"invalid-json\" code in its #1292 retry table, which shares its diagnostic spelling with revision-accounting-invalid-json; it is not a revision-accounting row. It goes stale when #1289 declares that code in its own family."
+    },
+    {
+      "check": "hand-written-row",
+      "path": "packages/runtime/src/workflow-execution/source-obligation-rule-hints.ts",
+      "subject": "revision-accounting-invalid-json",
+      "lexeme": "invalid-json",
+      "rationale": "A row for another family's own \"invalid-json\" code (technical review, source obligation, or run outcome), which shares its diagnostic spelling with revision-accounting-invalid-json; it is not a revision-accounting row. It goes stale when #1289 declares that code in its own family."
+    },
+    {
+      "check": "hand-written-row",
+      "path": "packages/runtime/src/workflow-execution/technical-rejection-retryability.ts",
+      "subject": "revision-accounting-invalid-json",
+      "lexeme": "invalid-json",
+      "rationale": "A row for another family's own \"invalid-json\" code (technical review, source obligation, or run outcome), which shares its diagnostic spelling with revision-accounting-invalid-json; it is not a revision-accounting row. It goes stale when #1289 declares that code in its own family."
+    },
+    {
+      "check": "hand-written-row",
+      "path": "packages/runtime/src/workflow-execution/technical-rejection-retryability.ts",
+      "subject": "revision-accounting-unsafe-disclosure",
+      "lexeme": "unsafe-disclosure",
+      "rationale": "A row for another family's own \"unsafe-disclosure\" code (technical review, source obligation, or run outcome), which shares its diagnostic spelling with revision-accounting-unsafe-disclosure; it is not a revision-accounting row. It goes stale when #1289 declares that code in its own family."
+    },
+    {
+      "check": "legacy-table",
+      "path": "packages/knowledge/src/first-pass/assess.mjs",
+      "subject": "FIRST_PASS_CORRECTIONS",
+      "lexeme": "FIRST_PASS_CORRECTIONS",
+      "rationale": "Hand-written correction catalog for the first-pass family, built before the catalog. Slice 2 (#1289) migrates the family into config/model-output/rules/ and deletes this table; until then it is the reviewed baseline, and a new table of this kind fails the gate."
+    },
+    {
+      "check": "legacy-table",
+      "path": "packages/runtime/src/harness/response-correction.ts",
+      "subject": "EDITORIAL_RESPONSE_RULE_HINTS",
+      "lexeme": "EDITORIAL_RESPONSE_RULE_HINTS",
+      "rationale": "Hand-written hint catalog for the editorial-assessment family, built before the catalog. Slice 2 (#1289) migrates the family into config/model-output/rules/ and deletes this table; until then it is the reviewed baseline, and a new table of this kind fails the gate."
+    },
+    {
+      "check": "legacy-table",
+      "path": "packages/runtime/src/operator/failure-classification/run-codes.ts",
+      "subject": "AUTHORING_CANDIDATE_REJECTION_FAILURE_CLASSES",
+      "lexeme": "AUTHORING_CANDIDATE_REJECTION_FAILURE_CLASSES",
+      "rationale": "Hand-written failure-class rows for the CREATE authoring-candidate selection family (#1293), built before the catalog; only unverified-coverage classifies model-authored content, and the other rows re-check host-built bindings. Slice 2 (#1289) migrates the family into config/model-output/rules/ and deletes this table; until then it is the reviewed baseline, and a new table of this kind fails the gate."
+    },
+    {
+      "check": "legacy-table",
+      "path": "packages/runtime/src/operator/failure-classification/run-codes.ts",
+      "subject": "CLI_REFUSAL_FAILURE_CLASSES",
+      "lexeme": "CLI_REFUSAL_FAILURE_CLASSES",
+      "rationale": "Not a table of rules on model output: it classifies CLI refusals before a run exists. It stays in the failure-classification domain after slice 2 (ADR: 'failure-classification.ts keeps only its non-rule tables')."
+    },
+    {
+      "check": "legacy-table",
+      "path": "packages/runtime/src/operator/failure-classification/quality-codes.ts",
+      "subject": "EVALUATION_DIAGNOSTIC_FAILURE_CLASSES",
+      "lexeme": "EVALUATION_DIAGNOSTIC_FAILURE_CLASSES",
+      "rationale": "Hand-written failure-class rows for the quality family, built before the catalog. Slice 2 (#1289) migrates the family into config/model-output/rules/ and deletes this table; until then it is the reviewed baseline, and a new table of this kind fails the gate."
+    },
+    {
+      "check": "legacy-table",
+      "path": "packages/runtime/src/operator/failure-classification/inference-codes.ts",
+      "subject": "INFERENCE_CATEGORY_FAILURE_CLASSES",
+      "lexeme": "INFERENCE_CATEGORY_FAILURE_CLASSES",
+      "rationale": "Not a table of rules on model output: it classifies inference failure categories (timeout, throttled, and so on), not rejection codes. It stays in the failure-classification domain after slice 2 (ADR: 'failure-classification.ts keeps only its non-rule tables')."
+    },
+    {
+      "check": "legacy-table",
+      "path": "packages/runtime/src/operator/failure-classification/inference-codes.ts",
+      "subject": "INVENTORY_REJECTION_CLASSES",
+      "lexeme": "INVENTORY_REJECTION_CLASSES",
+      "rationale": "Hand-written failure-class rows for the technical-review family, built before the catalog. Slice 2 (#1289) migrates the family into config/model-output/rules/ and deletes this table; until then it is the reviewed baseline, and a new table of this kind fails the gate."
+    },
+    {
+      "check": "legacy-table",
+      "path": "packages/runtime/src/operator/failure-classification/inference-codes.ts",
+      "subject": "JSON_PARSE_REJECTION_CLASSES",
+      "lexeme": "JSON_PARSE_REJECTION_CLASSES",
+      "rationale": "Hand-written failure-class rows for the common family, built before the catalog. Slice 2 (#1289) migrates the family into config/model-output/rules/ and deletes this table; until then it is the reviewed baseline, and a new table of this kind fails the gate."
+    },
+    {
+      "check": "legacy-table",
+      "path": "packages/runtime/src/operator/failure-classification/inference-codes.ts",
+      "subject": "NAMED_INFERENCE_REJECTION_CLASSES",
+      "lexeme": "NAMED_INFERENCE_REJECTION_CLASSES",
+      "rationale": "Hand-written failure-class rows for the technical-review and source-obligation family, built before the catalog. Slice 2 (#1289) migrates the family into config/model-output/rules/ and deletes this table; until then it is the reviewed baseline, and a new table of this kind fails the gate."
+    },
+    {
+      "check": "legacy-table",
+      "path": "packages/runtime/src/operator/failure-classification/inference-codes.ts",
+      "subject": "OPERATOR_CODE_FAMILY_FAILURE_CLASSES",
+      "lexeme": "OPERATOR_CODE_FAMILY_FAILURE_CLASSES",
+      "rationale": "Not a table of rules on model output: it classifies operator-code families such as repository bootstrap refusals. It stays in the failure-classification domain after slice 2 (ADR: 'failure-classification.ts keeps only its non-rule tables')."
+    },
+    {
+      "check": "legacy-table",
+      "path": "packages/runtime/src/operator/failure-classification/inference-codes.ts",
+      "subject": "PROVIDER_STATUS_ERROR_FAILURE_CLASSES",
+      "lexeme": "PROVIDER_STATUS_ERROR_FAILURE_CLASSES",
+      "rationale": "Not a table of rules on model output: it classifies provider HTTP status errors. It stays in the failure-classification domain after slice 2 (ADR: 'failure-classification.ts keeps only its non-rule tables')."
+    },
+    {
+      "check": "legacy-table",
+      "path": "packages/runtime/src/operator/failure-classification/inference-codes.ts",
+      "subject": "PROVIDER_UNANSWERED_ERROR_FAILURE_CLASSES",
+      "lexeme": "PROVIDER_UNANSWERED_ERROR_FAILURE_CLASSES",
+      "rationale": "Not a table of rules on model output: it classifies provider errors that returned no answer. It stays in the failure-classification domain after slice 2 (ADR: 'failure-classification.ts keeps only its non-rule tables')."
+    },
+    {
+      "check": "legacy-table",
+      "path": "packages/runtime/src/operator/failure-classification/quality-codes.ts",
+      "subject": "QUALITY_ARTIFACT_FAILURE_CLASSES",
+      "lexeme": "QUALITY_ARTIFACT_FAILURE_CLASSES",
+      "rationale": "Hand-written failure-class rows for the quality family, built before the catalog. Slice 2 (#1289) migrates the family into config/model-output/rules/ and deletes this table; until then it is the reviewed baseline, and a new table of this kind fails the gate."
+    },
+    {
+      "check": "legacy-table",
+      "path": "packages/runtime/src/operator/failure-classification/quality-codes.ts",
+      "subject": "QUALITY_CHECK_FAILURE_CLASSES",
+      "lexeme": "QUALITY_CHECK_FAILURE_CLASSES",
+      "rationale": "Hand-written failure-class rows for the quality family, built before the catalog. Slice 2 (#1289) migrates the family into config/model-output/rules/ and deletes this table; until then it is the reviewed baseline, and a new table of this kind fails the gate."
+    },
+    {
+      "check": "legacy-table",
+      "path": "packages/runtime/src/operator/failure-classification/inference-codes.ts",
+      "subject": "REJECTION_FAMILY_FAILURE_CLASSES",
+      "lexeme": "REJECTION_FAMILY_FAILURE_CLASSES",
+      "rationale": "Hand-written failure-class rows for the schema-keyword prefix for the technical-review and quality family, built before the catalog. Slice 2 (#1289) migrates the family into config/model-output/rules/ and deletes this table; until then it is the reviewed baseline, and a new table of this kind fails the gate."
+    },
+    {
+      "check": "legacy-table",
+      "path": "packages/runtime/src/operator/failure-classification/run-codes.ts",
+      "subject": "RUN_STORE_FAILURE_CLASSES",
+      "lexeme": "RUN_STORE_FAILURE_CLASSES",
+      "rationale": "Not a table of rules on model output: it classifies run-store errors. It stays in the failure-classification domain after slice 2 (ADR: 'failure-classification.ts keeps only its non-rule tables')."
+    },
+    {
+      "check": "legacy-table",
+      "path": "packages/runtime/src/operator/failure-classification/inference-codes.ts",
+      "subject": "SOURCE_OBLIGATION_REJECTION_CLASSES",
+      "lexeme": "SOURCE_OBLIGATION_REJECTION_CLASSES",
+      "rationale": "Hand-written failure-class rows for the source-obligation family, built before the catalog. Slice 2 (#1289) migrates the family into config/model-output/rules/ and deletes this table; until then it is the reviewed baseline, and a new table of this kind fails the gate."
+    },
+    {
+      "check": "legacy-table",
+      "path": "packages/runtime/src/operator/failure-classification/inference-codes.ts",
+      "subject": "TECHNICAL_REVIEW_REJECTION_CLASSES",
+      "lexeme": "TECHNICAL_REVIEW_REJECTION_CLASSES",
+      "rationale": "Hand-written failure-class rows for the technical-review family, built before the catalog. Slice 2 (#1289) migrates the family into config/model-output/rules/ and deletes this table; until then it is the reviewed baseline, and a new table of this kind fails the gate."
+    },
+    {
+      "check": "legacy-table",
+      "path": "packages/runtime/src/operator/failure-classification/run-codes.ts",
+      "subject": "WORKFLOW_OUTCOME_REJECTION_FAILURE_CLASSES",
+      "lexeme": "WORKFLOW_OUTCOME_REJECTION_FAILURE_CLASSES",
+      "rationale": "Hand-written failure-class rows for the editorial-assessment family, built before the catalog. Slice 2 (#1289) migrates the family into config/model-output/rules/ and deletes this table; until then it is the reviewed baseline, and a new table of this kind fails the gate."
+    },
+    {
+      "check": "legacy-table",
+      "path": "packages/runtime/src/operator/first-pass-rejection-retryability.ts",
+      "subject": "FIRST_PASS_REJECTION_RETRYABILITY",
+      "lexeme": "FIRST_PASS_REJECTION_RETRYABILITY",
+      "rationale": "Hand-written retry table for the first-pass family, built before the catalog. Slice 2 (#1289) migrates the family into config/model-output/rules/ and deletes this table; until then it is the reviewed baseline, and a new table of this kind fails the gate."
+    },
+    {
+      "check": "legacy-table",
+      "path": "packages/runtime/src/workflow-execution/contract-placeholder-rule-hints.ts",
+      "subject": "CONTRACT_PLACEHOLDER_RULE_HINTS",
+      "lexeme": "CONTRACT_PLACEHOLDER_RULE_HINTS",
+      "rationale": "Hand-written hint catalog for the shared contract-placeholder rule (#1282), built before the catalog. Slice 2 (#1289) migrates the family into config/model-output/rules/ and deletes this table; until then it is the reviewed baseline, and a new table of this kind fails the gate."
+    },
+    {
+      "check": "legacy-table",
+      "path": "packages/runtime/src/workflow-execution/editorial-assessment-rule-hints.ts",
+      "subject": "EDITORIAL_ASSESSMENT_RULE_HINTS",
+      "lexeme": "EDITORIAL_ASSESSMENT_RULE_HINTS",
+      "rationale": "Hand-written hint catalog for the editorial-assessment family, built before the catalog. Slice 2 (#1289) migrates the family into config/model-output/rules/ and deletes this table; until then it is the reviewed baseline, and a new table of this kind fails the gate."
+    },
+    {
+      "check": "legacy-table",
+      "path": "packages/runtime/src/workflow-execution/quality-rejection-retryability.ts",
+      "subject": "QUALITY_REJECTION_RETRYABILITY",
+      "lexeme": "QUALITY_REJECTION_RETRYABILITY",
+      "rationale": "Hand-written retry table for the quality family, built before the catalog. Slice 2 (#1289) migrates the family into config/model-output/rules/ and deletes this table; until then it is the reviewed baseline, and a new table of this kind fails the gate."
+    },
+    {
+      "check": "legacy-table",
+      "path": "packages/runtime/src/workflow-execution/quality-rejection-rule-hints.ts",
+      "subject": "EVALUATION_RULES",
+      "lexeme": "EVALUATION_RULES",
+      "rationale": "Hand-written hint rules for the quality family, built before the catalog. Slice 2 (#1289) migrates the family into config/model-output/rules/ and deletes this table; until then it is the reviewed baseline, and a new table of this kind fails the gate."
+    },
+    {
+      "check": "legacy-table",
+      "path": "packages/runtime/src/workflow-execution/quality-rejection-rule-hints.ts",
+      "subject": "EVALUATION_SCHEMA_KEYWORD_RULES",
+      "lexeme": "EVALUATION_SCHEMA_KEYWORD_RULES",
+      "rationale": "Hand-written hint rules for the schema-keyword prefix for the quality family, built before the catalog. Slice 2 (#1289) migrates the family into config/model-output/rules/ and deletes this table; until then it is the reviewed baseline, and a new table of this kind fails the gate."
+    },
+    {
+      "check": "legacy-table",
+      "path": "packages/runtime/src/workflow-execution/quality-rejection-rule-hints.ts",
+      "subject": "QUALITY_CANDIDATE_RULES",
+      "lexeme": "QUALITY_CANDIDATE_RULES",
+      "rationale": "Hand-written hint rules for the quality family, built before the catalog. Slice 2 (#1289) migrates the family into config/model-output/rules/ and deletes this table; until then it is the reviewed baseline, and a new table of this kind fails the gate."
+    },
+    {
+      "check": "legacy-table",
+      "path": "packages/runtime/src/workflow-execution/quality-rejection-rule-hints.ts",
+      "subject": "QUALITY_RESPONSE_RULE_HINTS",
+      "lexeme": "QUALITY_RESPONSE_RULE_HINTS",
+      "rationale": "Hand-written hint catalog for the quality family, built before the catalog. Slice 2 (#1289) migrates the family into config/model-output/rules/ and deletes this table; until then it is the reviewed baseline, and a new table of this kind fails the gate."
+    },
+    {
+      "check": "legacy-table",
+      "path": "packages/runtime/src/workflow-execution/quality-rejection-rule-hints.ts",
+      "subject": "QUALITY_SCORE_RULES",
+      "lexeme": "QUALITY_SCORE_RULES",
+      "rationale": "Hand-written hint rules for the quality family, built before the catalog. Slice 2 (#1289) migrates the family into config/model-output/rules/ and deletes this table; until then it is the reviewed baseline, and a new table of this kind fails the gate."
+    },
+    {
+      "check": "legacy-table",
+      "path": "packages/runtime/src/workflow-execution/quality-rejection-rule-hints.ts",
+      "subject": "TECHNICAL_TRACE_RULES",
+      "lexeme": "TECHNICAL_TRACE_RULES",
+      "rationale": "Hand-written hint rules for the quality family, built before the catalog. Slice 2 (#1289) migrates the family into config/model-output/rules/ and deletes this table; until then it is the reviewed baseline, and a new table of this kind fails the gate."
+    },
+    {
+      "check": "legacy-table",
+      "path": "packages/runtime/src/workflow-execution/rejection-rule-hints.ts",
+      "subject": "JSON_EVIDENCE_ERROR_RULES",
+      "lexeme": "JSON_EVIDENCE_ERROR_RULES",
+      "rationale": "Hand-written hint rules for the common family, built before the catalog. Slice 2 (#1289) migrates the family into config/model-output/rules/ and deletes this table; until then it is the reviewed baseline, and a new table of this kind fails the gate."
+    },
+    {
+      "check": "legacy-table",
+      "path": "packages/runtime/src/workflow-execution/rejection-rule-hints.ts",
+      "subject": "JSON_EVIDENCE_SYNTAX_RULES",
+      "lexeme": "JSON_EVIDENCE_SYNTAX_RULES",
+      "rationale": "Hand-written hint rules for the common family, built before the catalog. Slice 2 (#1289) migrates the family into config/model-output/rules/ and deletes this table; until then it is the reviewed baseline, and a new table of this kind fails the gate."
+    },
+    {
+      "check": "legacy-table",
+      "path": "packages/runtime/src/workflow-execution/review-response-rule-hints.ts",
+      "subject": "DIMENSION_DEMOTION_RULES",
+      "lexeme": "DIMENSION_DEMOTION_RULES",
+      "rationale": "Hand-written hint rules for the applicable-dimension demotion refusals (#1254) of the technical-review family, built before the catalog. Slice 2 (#1289) migrates the family into config/model-output/rules/ and deletes this table; until then it is the reviewed baseline, and a new table of this kind fails the gate."
+    },
+    {
+      "check": "legacy-table",
+      "path": "packages/runtime/src/workflow-execution/review-response-rule-hints.ts",
+      "subject": "FACT_INVENTORY_RULE_HINTS",
+      "lexeme": "FACT_INVENTORY_RULE_HINTS",
+      "rationale": "Hand-written hint catalog for the technical-review family, built before the catalog. Slice 2 (#1289) migrates the family into config/model-output/rules/ and deletes this table; until then it is the reviewed baseline, and a new table of this kind fails the gate."
+    },
+    {
+      "check": "legacy-table",
+      "path": "packages/runtime/src/workflow-execution/review-response-rule-hints.ts",
+      "subject": "FACT_LINK_RULE_HINTS",
+      "lexeme": "FACT_LINK_RULE_HINTS",
+      "rationale": "Hand-written hint catalog for the technical-review family, built before the catalog. Slice 2 (#1289) migrates the family into config/model-output/rules/ and deletes this table; until then it is the reviewed baseline, and a new table of this kind fails the gate."
+    },
+    {
+      "check": "legacy-table",
+      "path": "packages/runtime/src/workflow-execution/review-response-rule-hints.ts",
+      "subject": "ISSUE_JUDGMENT_VOCABULARY_RULES",
+      "lexeme": "ISSUE_JUDGMENT_VOCABULARY_RULES",
+      "rationale": "Hand-written hint rules for the technical-review family, built before the catalog. Slice 2 (#1289) migrates the family into config/model-output/rules/ and deletes this table; until then it is the reviewed baseline, and a new table of this kind fails the gate."
+    },
+    {
+      "check": "legacy-table",
+      "path": "packages/runtime/src/workflow-execution/review-response-rule-hints.ts",
+      "subject": "REVIEW_SCHEMA_KEYWORD_RULES",
+      "lexeme": "REVIEW_SCHEMA_KEYWORD_RULES",
+      "rationale": "Hand-written hint rules for the schema-keyword prefix for the technical-review family, built before the catalog. Slice 2 (#1289) migrates the family into config/model-output/rules/ and deletes this table; until then it is the reviewed baseline, and a new table of this kind fails the gate."
+    },
+    {
+      "check": "legacy-table",
+      "path": "packages/runtime/src/workflow-execution/review-response-rule-hints.ts",
+      "subject": "TECHNICAL_REJECTION_RULES",
+      "lexeme": "TECHNICAL_REJECTION_RULES",
+      "rationale": "Hand-written hint rules for the technical-review family, built before the catalog. Slice 2 (#1289) migrates the family into config/model-output/rules/ and deletes this table; until then it is the reviewed baseline, and a new table of this kind fails the gate."
+    },
+    {
+      "check": "legacy-table",
+      "path": "packages/runtime/src/workflow-execution/review-response-rule-hints.ts",
+      "subject": "TECHNICAL_RESPONSE_RULE_HINTS",
+      "lexeme": "TECHNICAL_RESPONSE_RULE_HINTS",
+      "rationale": "Hand-written hint catalog for the technical-review family, built before the catalog. Slice 2 (#1289) migrates the family into config/model-output/rules/ and deletes this table; until then it is the reviewed baseline, and a new table of this kind fails the gate."
+    },
+    {
+      "check": "legacy-table",
+      "path": "packages/runtime/src/workflow-execution/review-result-rejection-retryability.ts",
+      "subject": "REVIEW_RESULT_REJECTION_RETRYABILITY",
+      "lexeme": "REVIEW_RESULT_REJECTION_RETRYABILITY",
+      "rationale": "Hand-written retry table for the review-result family (#1292), built before the catalog. Slice 2 (#1289) migrates the family into config/model-output/rules/ and deletes this table; until then it is the reviewed baseline, and a new table of this kind fails the gate."
+    },
+    {
+      "check": "legacy-table",
+      "path": "packages/runtime/src/workflow-execution/source-obligation-rejection-retryability.ts",
+      "subject": "SOURCE_OBLIGATION_REJECTION_RETRYABILITY",
+      "lexeme": "SOURCE_OBLIGATION_REJECTION_RETRYABILITY",
+      "rationale": "Hand-written retry table for the source-obligation family (#1292), built before the catalog. Slice 2 (#1289) migrates the family into config/model-output/rules/ and deletes this table; until then it is the reviewed baseline, and a new table of this kind fails the gate."
+    },
+    {
+      "check": "legacy-table",
+      "path": "packages/runtime/src/workflow-execution/source-obligation-rule-hints.ts",
+      "subject": "SOURCE_OBLIGATION_RULE_HINTS",
+      "lexeme": "SOURCE_OBLIGATION_RULE_HINTS",
+      "rationale": "Hand-written hint catalog for the source-obligation family, built before the catalog. Slice 2 (#1289) migrates the family into config/model-output/rules/ and deletes this table; until then it is the reviewed baseline, and a new table of this kind fails the gate."
+    },
+    {
+      "check": "legacy-table",
+      "path": "packages/runtime/src/workflow-execution/technical-rejection-retryability.ts",
+      "subject": "TECHNICAL_REJECTION_RETRYABILITY",
+      "lexeme": "TECHNICAL_REJECTION_RETRYABILITY",
+      "rationale": "Hand-written retry table for the technical-review family, built before the catalog. Slice 2 (#1289) migrates the family into config/model-output/rules/ and deletes this table; until then it is the reviewed baseline, and a new table of this kind fails the gate."
+    },
+    {
+      "check": "numeric-literal",
+      "path": "config/model-output/retry-policy.yaml",
+      "subject": "reset-write-step",
+      "lexeme": "candidate 0",
+      "rationale": "\"candidate 0\" names the sealed first authoring candidate, the host's own ordinal for the unrevised patch that revision records and prompts use; it is an identifier, not an operational bound, so there is no limit to reference."
+    },
+    {
+      "check": "numeric-literal",
+      "path": "config/model-output/rules/revision-accounting.yaml",
+      "subject": "revision-accounting-changed-path-mismatch",
+      "lexeme": "candidate 0",
+      "rationale": "\"candidate 0\" names the sealed first authoring candidate, the host's own ordinal for the unrevised patch that revision records and prompts use; it is an identifier, not an operational bound, so there is no limit to reference."
+    },
+    {
+      "check": "numeric-literal",
+      "path": "config/model-output/rules/revision-accounting.yaml",
+      "subject": "revision-accounting-unchanged-applied",
+      "lexeme": "candidate 0",
+      "rationale": "\"candidate 0\" names the sealed first authoring candidate, the host's own ordinal for the unrevised patch that revision records and prompts use; it is an identifier, not an operational bound, so there is no limit to reference."
+    },
+    {
+      "check": "hand-written-row",
+      "path": "packages/runtime/src/profile/answer-record-probe/codecs.ts",
+      "subject": "answer-record-duplicate-key",
+      "lexeme": "answer-record-duplicate-key",
+      "rationale": "Not a table: the premise probe's own strict decoder (#1967, slice 1a) picks between two codes with a ternary whose colon follows the string. The probe predates the answer-record family; it goes stale when the probe decodes through src/harness/answer-records.ts (decodeAnswerRecordCall)."
+    },
+    {
+      "check": "hand-written-row",
+      "path": "packages/runtime/src/workflow-execution/quality-rejection-retryability.ts",
+      "subject": "evaluation-layer-residual-invalid",
+      "lexeme": "evaluation-layer-residual-invalid",
+      "rationale": "The runtime retry table classifies the catalogued MR 5 text-path residual refusal; the code remains owned by config/model-output/rules/quality-envelope.yaml."
+    }
+  ]
+}

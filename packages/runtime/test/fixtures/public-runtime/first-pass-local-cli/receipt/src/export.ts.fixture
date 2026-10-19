@@ -1,0 +1,10 @@
+// SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+// SPDX-License-Identifier: Apache-2.0
+
+// Receipt helper: persists a receipt on disk.
+// Usage: receipt-export PATH [text|json]
+// The comment is deliberately inaccurate: the function returns text only.
+export function renderReceipt(path: string, mode: 'text' | 'json' = 'text'): string {
+  if (!path) throw new Error('A receipt path is required.');
+  return mode === 'json' ? JSON.stringify({ destination: path }) : `destination=${path}`;
+}

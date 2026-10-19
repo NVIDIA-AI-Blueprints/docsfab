@@ -1,0 +1,305 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://docsfab.example.invalid/schemas/model-role-qualification-record-v1.schema.json",
+  "title": "DocsFab model role qualification record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "kind",
+    "qualification_id",
+    "subject",
+    "bindings",
+    "role",
+    "role_score",
+    "hard_gates",
+    "campaign",
+    "independent_evaluation",
+    "sanitization",
+    "technical_profile_approval",
+    "decision",
+    "role_generalization",
+    "requalification_triggers",
+    "evaluated_at"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "kind": {"const": "docsfab-model-role-qualification-record"},
+    "qualification_id": {
+      "type": "string",
+      "pattern": "^mrq-[a-z0-9][a-z0-9-]{7,127}$"
+    },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate_id",
+        "model_id",
+        "observed_model_id",
+        "route_class",
+        "harness_id",
+        "adapter_version",
+        "auth_mechanism_class",
+        "executable_sha256"
+      ],
+      "properties": {
+        "candidate_id": {"$ref": "#/$defs/identifier"},
+        "model_id": {"$ref": "#/$defs/identifier"},
+        "observed_model_id": {"$ref": "#/$defs/identifier"},
+        "route_class": {"const": "opaque-cli-managed"},
+        "harness_id": {"enum": ["claude-code", "codex"]},
+        "adapter_version": {"$ref": "#/$defs/identifier"},
+        "auth_mechanism_class": {"enum": ["enterprise-oauth", "api-key", "unknown"]},
+        "executable_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "bindings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "corpus_id",
+        "corpus_manifest_sha256",
+        "private_manifest_sha256",
+        "case_id",
+        "case_sha256",
+        "clean_case_id",
+        "clean_case_sha256",
+        "workflow_sha256",
+        "skill_sha256",
+        "quality_sha256",
+        "output_schema_sha256",
+        "thresholds_sha256",
+        "scorer_sha256",
+        "mutation_sha256",
+        "baseline_sha256",
+        "oracle_sha256",
+        "governed_inputs_sha256",
+        "seeded_prompt_sha256",
+        "seeded_staging_manifest_sha256",
+        "clean_prompt_sha256",
+        "clean_staging_manifest_sha256"
+      ],
+      "properties": {
+        "corpus_id": {"const": "docsfab-harness-role-qualification-v1"},
+        "corpus_manifest_sha256": {"$ref": "#/$defs/sha256"},
+        "private_manifest_sha256": {"$ref": "#/$defs/sha256"},
+        "case_id": {"const": "seeded-comprehensive-evaluation-v1"},
+        "case_sha256": {"$ref": "#/$defs/sha256"},
+        "clean_case_id": {"const": "clean-comparison-v1"},
+        "clean_case_sha256": {"$ref": "#/$defs/sha256"},
+        "workflow_sha256": {"$ref": "#/$defs/sha256"},
+        "skill_sha256": {"$ref": "#/$defs/sha256"},
+        "quality_sha256": {"$ref": "#/$defs/sha256"},
+        "output_schema_sha256": {"$ref": "#/$defs/sha256"},
+        "thresholds_sha256": {"$ref": "#/$defs/sha256"},
+        "scorer_sha256": {"$ref": "#/$defs/sha256"},
+        "mutation_sha256": {"$ref": "#/$defs/sha256"},
+        "baseline_sha256": {"$ref": "#/$defs/sha256"},
+        "oracle_sha256": {"$ref": "#/$defs/sha256"},
+        "governed_inputs_sha256": {"$ref": "#/$defs/sha256"},
+        "seeded_prompt_sha256": {"$ref": "#/$defs/sha256"},
+        "seeded_staging_manifest_sha256": {"$ref": "#/$defs/sha256"},
+        "clean_prompt_sha256": {"$ref": "#/$defs/sha256"},
+        "clean_staging_manifest_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "role": {"const": "technical-review"},
+    "role_score": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rubric_id", "score", "threshold", "decision"],
+      "properties": {
+        "rubric_id": {"const": "technical-review-source-drift-v1"},
+        "score": {"type": "integer", "minimum": 0, "maximum": 5},
+        "threshold": {"const": 5},
+        "decision": {"enum": ["pass", "fail"]}
+      }
+    },
+    "hard_gates": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["check_id", "status"],
+        "properties": {
+          "check_id": {
+            "enum": [
+              "schema-conformance",
+              "harness-attestation-controls",
+              "exact-model-identity",
+              "zero-unsupported-findings",
+              "clean-negative-control",
+              "independent-review"
+            ]
+          },
+          "status": {"enum": ["pass", "fail"]}
+        }
+      }
+    },
+    "campaign": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "required_runs",
+        "passing_runs",
+        "all_runs_passed",
+        "runs",
+        "negative_control"
+      ],
+      "properties": {
+        "required_runs": {"const": 5},
+        "passing_runs": {"type": "integer", "minimum": 0, "maximum": 5},
+        "all_runs_passed": {"type": "boolean"},
+        "runs": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "items": {"$ref": "#/$defs/run"}
+        },
+        "negative_control": {"$ref": "#/$defs/negative_control"}
+      }
+    },
+    "independent_evaluation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evaluator_id",
+        "session_id",
+        "prior_context_policy",
+        "subject_sha256",
+        "report_sha256",
+        "attestation_sha256",
+        "decision",
+        "unresolved_finding_count"
+      ],
+      "properties": {
+        "evaluator_id": {"$ref": "#/$defs/identifier"},
+        "session_id": {"$ref": "#/$defs/session_id"},
+        "prior_context_policy": {"const": "none"},
+        "subject_sha256": {"$ref": "#/$defs/sha256"},
+        "report_sha256": {"$ref": "#/$defs/sha256"},
+        "attestation_sha256": {"$ref": "#/$defs/sha256"},
+        "decision": {"enum": ["accepted", "rejected"]},
+        "unresolved_finding_count": {"type": "integer", "minimum": 0, "maximum": 1000}
+      }
+    },
+    "sanitization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "credential_scan",
+        "raw_capture_retained",
+        "record_contains_content"
+      ],
+      "properties": {
+        "credential_scan": {"const": "passed"},
+        "raw_capture_retained": {"const": false},
+        "record_contains_content": {"const": false}
+      }
+    },
+    "technical_profile_approval": {"const": "not-established"},
+    "decision": {"enum": ["qualification-candidate", "not-qualified"]},
+    "role_generalization": {"const": "none"},
+    "requalification_triggers": {
+      "type": "array",
+      "minItems": 11,
+      "maxItems": 11,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "model-identity-change",
+          "route-change",
+          "harness-change",
+          "adapter-change",
+          "executable-change",
+          "corpus-change",
+          "skill-change",
+          "quality-policy-change",
+          "output-schema-change",
+          "threshold-change",
+          "scorer-change"
+        ]
+      }
+    },
+    "evaluated_at": {"type": "string", "format": "date-time"}
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "identifier": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/+@-]{0,255}$"
+    },
+    "session_id": {
+      "type": "string",
+      "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"
+    },
+    "run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "run_id",
+        "session_id",
+        "attestation_sha256",
+        "result_sha256",
+        "observed_model_id",
+        "role",
+        "detected_defect_ids",
+        "unsupported_findings",
+        "decision"
+      ],
+      "properties": {
+        "run_id": {"type": "string", "pattern": "^run-[1-5]$"},
+        "session_id": {"$ref": "#/$defs/session_id"},
+        "attestation_sha256": {"$ref": "#/$defs/sha256"},
+        "result_sha256": {"$ref": "#/$defs/sha256"},
+        "observed_model_id": {"$ref": "#/$defs/identifier"},
+        "role": {"const": "technical-review"},
+        "detected_defect_ids": {
+          "type": "array",
+          "maxItems": 5,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "SOURCE-DRIFT-001",
+              "SOURCE-DRIFT-002",
+              "SOURCE-DRIFT-003",
+              "SOURCE-DRIFT-004",
+              "SOURCE-DRIFT-005"
+            ]
+          }
+        },
+        "unsupported_findings": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 16
+        },
+        "decision": {"enum": ["pass", "fail"]}
+      }
+    },
+    "negative_control": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "case_id",
+        "session_id",
+        "attestation_sha256",
+        "result_sha256",
+        "finding_count",
+        "decision"
+      ],
+      "properties": {
+        "case_id": {"const": "clean-comparison-v1"},
+        "session_id": {"$ref": "#/$defs/session_id"},
+        "attestation_sha256": {"$ref": "#/$defs/sha256"},
+        "result_sha256": {"$ref": "#/$defs/sha256"},
+        "finding_count": {"type": "integer", "minimum": 0, "maximum": 16},
+        "decision": {"enum": ["pass", "fail"]}
+      }
+    }
+  }
+}

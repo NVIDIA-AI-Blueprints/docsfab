@@ -1,0 +1,8 @@
+{
+  "name": "docsfab-bootstrap-nested",
+  "private": true,
+  "description": "A documentation utility.",
+  "scripts": {
+    "check": "node --test"
+  }
+}

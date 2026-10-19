@@ -1,0 +1,39 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+
+set timeout 840
+log_user 0
+proc stop {} {
+  global spawn_id
+  catch {exec kill -TERM -- -[exp_pid]}
+  after 500
+  catch {exec kill -KILL -- -[exp_pid]}
+  exit 124
+}
+trap stop SIGTERM
+set command [list [lindex $argv 0] live-agent --new --repo [lindex $argv 1]]
+if {[lindex $argv 3] eq "1"} { lappend command --allow-write }
+spawn -noecho {*}$command
+expect {
+  -re {Session +([a-f0-9-]+)} { puts "SESSION $expect_out(1,string)" }
+  timeout { stop }
+  eof { exit 125 }
+}
+expect {
+  "You: " {}
+  timeout { stop }
+  eof { exit 125 }
+}
+send -- "[lindex $argv 2]\r"
+expect {
+  "You: " {}
+  timeout { stop }
+  eof { exit 125 }
+}
+send -- "/exit\r"
+expect {
+  eof {}
+  timeout { stop }
+}
+set result [wait]
+exit [lindex $result 3]

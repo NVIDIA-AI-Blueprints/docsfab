@@ -1,0 +1,297 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://docsfab.example/schemas/private-v1-campaign.schema.json",
+  "title": "DocsFab private-v1 campaign plan or evidence index",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "mode", "campaign_id"],
+  "properties": {
+    "schema_version": {"const": "docsfab.quality.private-v1-campaign/v1"},
+    "mode": {"enum": ["plan", "evidence"]},
+    "campaign_id": {"type": "string", "minLength": 1},
+    "description": {"type": "string", "minLength": 1},
+    "profile_slots": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {"$ref": "#/$defs/profileSlot"}
+    },
+    "entry_points": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {"$ref": "#/$defs/entryPoint"}
+    },
+    "case_files": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/fileReference"}
+    },
+    "freeze": {"$ref": "#/$defs/freeze"},
+    "audience": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["protocol_id", "required_populations"],
+      "properties": {
+        "protocol_id": {"type": "string", "minLength": 1},
+        "required_populations": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "uniqueItems": true,
+          "items": {"enum": ["agent", "human"]}
+        }
+      }
+    },
+    "allowed_evidence_kinds": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "unresolved_inputs": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/unresolvedInput"}
+    },
+    "non_gates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["page_polish", "signal_followup"],
+      "properties": {
+        "page_polish": {"const": "catalog-smoke"},
+        "signal_followup": {"const": "deferred:#109"}
+      }
+    },
+    "benchmark_references": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "path", "use"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "path": {"type": "string", "minLength": 1},
+          "use": {"const": "reference-only"}
+        }
+      }
+    },
+    "plan_reference": {"$ref": "#/$defs/fileReference"},
+    "freeze_reference": {"$ref": "#/$defs/fileReference"},
+    "evidence_origin": {"enum": ["retained-live-campaign", "synthetic-fixture"]},
+    "repositories": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {"$ref": "#/$defs/resolvedRepository"}
+    },
+    "runs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/run"}
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"mode": {"const": "plan"}}},
+      "then": {
+        "required": [
+          "description",
+          "profile_slots",
+          "entry_points",
+          "case_files",
+          "freeze",
+          "audience",
+          "allowed_evidence_kinds",
+          "unresolved_inputs",
+          "non_gates",
+          "benchmark_references"
+        ]
+      }
+    },
+    {
+      "if": {"properties": {"mode": {"const": "evidence"}}},
+      "then": {"required": ["evidence_origin", "plan_reference", "freeze_reference", "repositories", "runs"]}
+    }
+  ],
+  "$defs": {
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "case_id", "profile", "entry_point", "journeys", "expected_outcomes", "required_evidence", "required_artifacts", "scenario_ids", "freeze_subjects"],
+      "properties": {
+        "schema_version": {"const": "docsfab.quality.private-v1-case/v1"},
+        "case_id": {"type": "string", "minLength": 1},
+        "profile": {"enum": ["new-product", "mature-docs", "intent-gap"]},
+        "entry_point": {"enum": ["direct-cli", "live-agent-cli", "automatic-gitlab-ci"]},
+        "journeys": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "expected_outcomes": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "required_evidence": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "required_artifacts": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "scenario_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "freeze_subjects": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "sha256": {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"},
+    "fileReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "artifactReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "path", "sha256"],
+      "properties": {
+        "kind": {"type": "string", "minLength": 1},
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "population": {"enum": ["agent", "human"]},
+        "profile": {"$ref": "#/$defs/fileReference"},
+        "run_id": {"type": "string", "minLength": 1},
+        "independent_of_authors": {"type": "boolean"}
+      }
+    },
+    "repositorySlot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "canonical_id", "owner", "allowed_inputs", "owner_issue"],
+      "properties": {
+        "status": {"enum": ["resolved", "unresolved"]},
+        "canonical_id": {"type": ["string", "null"]},
+        "owner": {"type": "string", "minLength": 1},
+        "allowed_inputs": {
+          "type": ["array", "null"],
+          "items": {"type": "string", "minLength": 1}
+        },
+        "owner_issue": {"type": "string", "minLength": 1}
+      }
+    },
+    "profileSlot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["profile", "repository", "case_ids"],
+      "properties": {
+        "profile": {"enum": ["new-product", "mature-docs", "intent-gap"]},
+        "repository": {"$ref": "#/$defs/repositorySlot"},
+        "case_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "entryPoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "definition"],
+      "properties": {
+        "id": {"enum": ["direct-cli", "live-agent-cli", "automatic-gitlab-ci"]},
+        "definition": {"type": "string", "minLength": 1}
+      }
+    },
+    "freeze": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "owner", "owner_issue", "scenario_digest", "oracle_digest", "protocol_digest"],
+      "properties": {
+        "status": {"enum": ["resolved", "unresolved"]},
+        "owner": {"type": "string", "minLength": 1},
+        "owner_issue": {"type": "string", "minLength": 1},
+        "scenario_digest": {"type": ["string", "null"]},
+        "oracle_digest": {"type": ["string", "null"]},
+        "protocol_digest": {"type": ["string", "null"]},
+        "scenario_reference": {"$ref": "#/$defs/fileReference"},
+        "oracle_reference": {"$ref": "#/$defs/fileReference"},
+        "protocol_reference": {"$ref": "#/$defs/fileReference"}
+      }
+    },
+    "unresolvedInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "owner", "owner_issue", "reason"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "owner": {"type": "string", "minLength": 1},
+        "owner_issue": {"type": "string", "minLength": 1},
+        "reason": {"type": "string", "minLength": 1}
+      }
+    },
+    "resolvedRepository": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["profile", "canonical_id", "aliases", "owner", "allowed_inputs", "revision", "candidate"],
+      "properties": {
+        "profile": {"enum": ["new-product", "mature-docs", "intent-gap"]},
+        "canonical_id": {"type": "string", "minLength": 1},
+        "aliases": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "owner": {"type": "string", "minLength": 1},
+        "allowed_inputs": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "revision": {"type": "string", "minLength": 1},
+        "candidate": {"type": "string", "minLength": 1}
+      }
+    },
+    "run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["run_id", "case_id", "status", "repository_id", "revision", "source_range", "candidate", "entry_point", "identities", "knowledge", "usage", "human_disposition", "limitations", "recovery_references", "artifacts"],
+      "properties": {
+        "run_id": {"type": "string", "minLength": 1},
+        "case_id": {"type": "string", "minLength": 1},
+        "status": {"enum": ["passed", "failed", "blocked", "unrun"]},
+        "repository_id": {"type": "string", "minLength": 1},
+        "revision": {"type": "string", "minLength": 1},
+        "source_range": {"type": "string", "minLength": 1},
+        "candidate": {"type": "string", "minLength": 1},
+        "entry_point": {"enum": ["direct-cli", "live-agent-cli", "automatic-gitlab-ci"]},
+        "identities": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["package", "model", "composition", "quality_pack", "profile"],
+          "properties": {
+            "package": {"type": "string", "minLength": 1},
+            "model": {"type": "string", "minLength": 1},
+            "composition": {"type": "string", "minLength": 1},
+            "quality_pack": {"type": "string", "minLength": 1},
+            "profile": {"type": "string", "minLength": 1}
+          }
+        },
+        "knowledge": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "snapshot": {"type": "string", "minLength": 1},
+            "unavailable_reason": {"type": "string", "minLength": 1}
+          }
+        },
+        "usage": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "elapsed_seconds": {"type": "number", "minimum": 0},
+            "tokens": {"type": "integer", "minimum": 0},
+            "cost": {"type": "number", "minimum": 0},
+            "unavailable_reason": {"type": "string", "minLength": 1}
+          }
+        },
+        "human_disposition": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "reviewer", "evidence_reference"],
+          "properties": {
+            "status": {"enum": ["accepted", "rejected", "pending"]},
+            "reviewer": {"type": "string", "minLength": 1},
+            "evidence_reference": {"type": "string", "minLength": 1}
+          }
+        },
+        "limitations": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "recovery_references": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "artifacts": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/artifactReference"}}
+      }
+    }
+  }
+}

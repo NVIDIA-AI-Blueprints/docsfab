@@ -1,0 +1,127 @@
+{
+  "binding": {
+    "runIdSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "repository": {
+      "identitySha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "revision": "2222222222222222222222222222222222222222"
+    }
+  },
+  "supplier": {
+    "kind": "operator",
+    "identitySha256": "3333333333333333333333333333333333333333333333333333333333333333"
+  },
+  "entries": [
+    {
+      "inputId": "input:repo-guide",
+      "sourceKind": "repository-document",
+      "safeTitle": "Guide",
+      "canonicalLocator": "repo://docs/guide.md",
+      "visibility": "internal",
+      "disclosurePolicy": "cite-and-quote",
+      "intendedRoles": ["evidence", "context"],
+      "version": {
+        "kind": "repository-revision",
+        "revision": "2222222222222222222222222222222222222222"
+      },
+      "body": "# Guide\n\nBounded documentation improvement."
+    },
+    {
+      "inputId": "input:slack-thread",
+      "sourceKind": "slack-thread",
+      "safeTitle": "Maintainers request",
+      "canonicalLocator": "slack://T123/C456/p789",
+      "visibility": "restricted",
+      "disclosurePolicy": "cite-only",
+      "intendedRoles": ["requirement"],
+      "version": {
+        "kind": "timestamp",
+        "observedAt": "2026-08-05T17:00:00.000Z"
+      },
+      "body": "Please tighten the publication narrative."
+    },
+    {
+      "inputId": "input:confluence-page",
+      "sourceKind": "confluence-page",
+      "safeTitle": "Publishing policy",
+      "canonicalLocator": "confluence://SPACE/page/42",
+      "visibility": "internal",
+      "disclosurePolicy": "cite-only",
+      "intendedRoles": ["background", "validation"],
+      "version": {
+        "kind": "etag",
+        "etagSha256": "4444444444444444444444444444444444444444444444444444444444444444"
+      },
+      "body": "Draft MRs must name the task origin."
+    },
+    {
+      "inputId": "input:upload",
+      "sourceKind": "upload",
+      "safeTitle": "Attached notes",
+      "canonicalLocator": "upload://notes.txt",
+      "visibility": "private",
+      "disclosurePolicy": "identity-only",
+      "intendedRoles": ["context"],
+      "version": {
+        "kind": "content-digest",
+        "contentDigestSha256": "5555555555555555555555555555555555555555555555555555555555555555"
+      },
+      "body": null
+    },
+    {
+      "inputId": "input:gitlab-issue",
+      "sourceKind": "gitlab-issue",
+      "safeTitle": "Issue 126",
+      "canonicalLocator": "gitlab://example-user/docsfab/issues/126",
+      "visibility": "internal",
+      "disclosurePolicy": "cite-and-quote",
+      "intendedRoles": ["requirement", "evidence"],
+      "version": {
+        "kind": "timestamp",
+        "observedAt": "2026-08-05T13:54:20.000Z"
+      },
+      "body": "Define a host-controlled external input manifest."
+    },
+    {
+      "inputId": "input:gitlab-mr-note",
+      "sourceKind": "gitlab-mr-note",
+      "safeTitle": "MR discussion note",
+      "canonicalLocator": "gitlab://example-user/docsfab/merge_requests/22/notes/9",
+      "visibility": "restricted",
+      "disclosurePolicy": "cite-only",
+      "intendedRoles": ["requirement"],
+      "version": {
+        "kind": "timestamp",
+        "observedAt": "2026-08-05T17:00:00.000Z"
+      },
+      "body": "Please register gitlab-mr-note without overloading gitlab-issue."
+    },
+    {
+      "inputId": "input:url",
+      "sourceKind": "url",
+      "safeTitle": "Architecture note",
+      "canonicalLocator": "https://example.invalid/architecture",
+      "visibility": "public",
+      "disclosurePolicy": "cite-only",
+      "intendedRoles": ["background"],
+      "version": {
+        "kind": "unavailable",
+        "reasonCode": "fetch-not-attempted"
+      },
+      "body": "Architecture overview for governed workflows."
+    },
+    {
+      "inputId": "input:direct",
+      "sourceKind": "direct-instruction",
+      "safeTitle": "Operator instruction",
+      "canonicalLocator": "instruction://bounded-request",
+      "visibility": "restricted",
+      "disclosurePolicy": "cite-only",
+      "intendedRoles": ["requirement"],
+      "version": {
+        "kind": "content-digest",
+        "contentDigestSha256": "6666666666666666666666666666666666666666666666666666666666666666"
+      },
+      "body": "Register every supplied source before tool access."
+    }
+  ]
+}

@@ -1,0 +1,174 @@
+# DocsFab operational limits. Canonical source for generated mirrors.
+# Each limit lives in config/limits/<owner>.yaml, where <owner> is the first
+# dot-segment of its name. This root registers every fragment; the generator
+# composes them in the order listed here, which is also the row order of the
+# generated mirrors, `docsfab doctor --limits`, and service-status.
+# Do not edit generated files; change a fragment (or this registry) and run
+# `npm run generate:limits` from packages/runtime.
+schemaVersion: 1
+kind: docsfab-limits
+fragments:
+  - file: alerting.yaml
+    owner: alerting
+  - file: compositionExecution.yaml
+    owner: compositionExecution
+  - file: retry.yaml
+    owner: retry
+  - file: firstPass.yaml
+    owner: firstPass
+  - file: liveAgent.yaml
+    owner: liveAgent
+  - file: hostInvoker.yaml
+    owner: hostInvoker
+  - file: context.yaml
+    owner: context
+  - file: foundation.yaml
+    owner: foundation
+  - file: init.yaml
+    owner: init
+  - file: publishPackage.yaml
+    owner: publishPackage
+  - file: ia.yaml
+    owner: ia
+  - file: siteBootstrap.yaml
+    owner: siteBootstrap
+  - file: inference.yaml
+    owner: inference
+  - file: sealed.yaml
+    owner: sealed
+  - file: recovery.yaml
+    owner: recovery
+  - file: deploy.yaml
+    owner: deploy
+  - file: sources.yaml
+    owner: sources
+  - file: changeSources.yaml
+    owner: changeSources
+  - file: changeSourcesGithub.yaml
+    owner: changeSourcesGithub
+  - file: changeSourcesRelease.yaml
+    owner: changeSourcesRelease
+  - file: sourceCitation.yaml
+    owner: sourceCitation
+  - file: toolOutput.yaml
+    owner: toolOutput
+  - file: gitHistory.yaml
+    owner: gitHistory
+  - file: searchBrief.yaml
+    owner: searchBrief
+  - file: repository.yaml
+    owner: repository
+  - file: contentIndex.yaml
+    owner: contentIndex
+  - file: runs.yaml
+    owner: runs
+  - file: diagnosis.yaml
+    owner: diagnosis
+  - file: slackRoutes.yaml
+    owner: slackRoutes
+  - file: operatorAmendment.yaml
+    owner: operatorAmendment
+  - file: manifest.yaml
+    owner: manifest
+  - file: runtime.yaml
+    owner: runtime
+  - file: nativePreflight.yaml
+    owner: nativePreflight
+  - file: autonomy.yaml
+    owner: autonomy
+  - file: dogfood.yaml
+    owner: dogfood
+  - file: modelMatrix.yaml
+    owner: modelMatrix
+  - file: host.yaml
+    owner: host
+  - file: reviewScope.yaml
+    owner: reviewScope
+  - file: reviewDelivery.yaml
+    owner: reviewDelivery
+  - file: githubReview.yaml
+    owner: githubReview
+  - file: reviewFindings.yaml
+    owner: reviewFindings
+  - file: productFeedback.yaml
+    owner: productFeedback
+  - file: technicalCorrection.yaml
+    owner: technicalCorrection
+  - file: sourceObligation.yaml
+    owner: sourceObligation
+  - file: benchmarkMining.yaml
+    owner: benchmarkMining
+  - file: factInventory.yaml
+    owner: factInventory
+  - file: sourceAcquisitionProof.yaml
+    owner: sourceAcquisitionProof
+  - file: localWorkflows.yaml
+    owner: localWorkflows
+  - file: runtimeContribution.yaml
+    owner: runtimeContribution
+  - file: bench.yaml
+    owner: bench
+  - file: benchmarks.yaml
+    owner: benchmarks
+  - file: nightly.yaml
+    owner: nightly
+  - file: dashboard.yaml
+    owner: dashboard
+  - file: sourceAcquisitionChecker.yaml
+    owner: sourceAcquisitionChecker
+  - file: ci.yaml
+    owner: ci
+  - file: churn.yaml
+    owner: churn
+  - file: conflictPrediction.yaml
+    owner: conflictPrediction
+  - file: judgement.yaml
+    owner: judgement
+  - file: test.yaml
+    owner: test
+  - file: delivery.yaml
+    owner: delivery
+  - file: providerAttempt.yaml
+    owner: providerAttempt
+  - file: secrets.yaml
+    owner: secrets
+  - file: authority.yaml
+    owner: authority
+  - file: semantic.yaml
+    owner: semantic
+  - file: feedback.yaml
+    owner: feedback
+  - file: governance.yaml
+    owner: governance
+  - file: execution.yaml
+    owner: execution
+  - file: writeAuthority.yaml
+    owner: writeAuthority
+  - file: authoring.yaml
+    owner: authoring
+  - file: reconciliation.yaml
+    owner: reconciliation
+  - file: projectDecision.yaml
+    owner: projectDecision
+  - file: publicExport.yaml
+    owner: publicExport
+  - file: modelProfile.yaml
+    owner: modelProfile
+  - file: endpointProbe.yaml
+    owner: endpointProbe
+  - file: answerRecords.yaml
+    owner: answerRecords
+  - file: qualityValidator.yaml
+    owner: qualityValidator
+  - file: requestIntent.yaml
+    owner: requestIntent
+  - file: artifacts.yaml
+    owner: artifacts
+  - file: checks.yaml
+    owner: checks
+  - file: derived.yaml
+    owner: derived
+  - file: conversion.yaml
+    owner: conversion
+  - file: tensorrtPilot.yaml
+    owner: tensorrtPilot

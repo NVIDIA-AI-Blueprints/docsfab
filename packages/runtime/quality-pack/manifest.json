@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "id": "docsfab-default",
+  "version": "1.0.0",
+  "skillCrate": {
+    "lockPath": "../skill-crate/lock.json",
+    "lockSha256": "4a3584125b983eabf40b995066436d2d709204ae409b7bef59e90dc00edbe49c",
+    "skillIds": [
+      "assess-documentation-readiness",
+      "audit-documentation",
+      "doc-context-analyzer",
+      "evaluate-document-quality",
+      "lint-documentation",
+      "plan-documentation",
+      "reconcile-product-behavior",
+      "repo-bootstrap",
+      "review-documentation",
+      "template-scaffold-site",
+      "test-audience-understanding",
+      "tpl-design-ia",
+      "verify-technical-accuracy",
+      "write-documentation"
+    ]
+  },
+  "quality": {
+    "lockPath": "../quality/lock.json",
+    "lockSha256": "d940dc0e318e72d2afca75edcfd59f638c2a89fa9330d0340765b69bcac1301c",
+    "bundleSha256": "ffc35c00f9daaf69be1303c069ac399e25cea53935db47a7f66f8caf4d45c787",
+    "barIds": [
+      "check:collect-doc-quality-signals",
+      "check:derive-documentation-quality-evaluation",
+      "check:quality-decision-policy",
+      "check:validate-audience-understanding-evaluation",
+      "check:validate-documentation-partial",
+      "check:validate-documentation-quality-evaluation",
+      "check:validate-html",
+      "check:validate-json-artifact",
+      "check:validate-package",
+      "check:validate-private-v1-campaign",
+      "check:validate-quality-report",
+      "check:validate-quality-score",
+      "profile:docsfab-documentation-quality",
+      "profile:example-public-docs-v0.1",
+      "profile:nvidia-technical-documentation",
+      "rubric:api-reference-v0.1",
+      "rubric:concept-guide-v0.1",
+      "rubric:task-guide-v0.1"
+    ]
+  },
+  "bindingSha256": "c204eb79882f46127295974cf2c0970bb039610eec7ff003f4da41f05072177a"
+}

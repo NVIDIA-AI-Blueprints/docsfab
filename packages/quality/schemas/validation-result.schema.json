@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/validation-result.schema.json",
+  "title": "Validation result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["passed", "checks"],
+  "properties": {
+    "passed": {"type": "boolean"},
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "status", "location", "message"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "status": {"enum": ["pass", "fail", "warning"]},
+          "location": {"type": "string"},
+          "message": {"type": "string", "minLength": 1}
+        }
+      }
+    }
+  }
+}

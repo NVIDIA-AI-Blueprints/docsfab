@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://docsfab.nvidia.internal/schemas/knowledge/source-event-v1.schema.json",
+  "title": "DocsFab knowledge source-thread event v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "event_id",
+    "thread_id",
+    "sequence",
+    "occurred_at",
+    "actor",
+    "event_type",
+    "item_id",
+    "parent_event_ids",
+    "payload"
+  ],
+  "properties": {
+    "schema_version": {"const": "docsfab.knowledge.source-event/v1"},
+    "event_id": {"type": "string", "minLength": 1},
+    "thread_id": {"type": "string", "minLength": 1},
+    "sequence": {"type": "integer", "minimum": 1},
+    "occurred_at": {"type": "string", "format": "date-time"},
+    "actor": {"type": "string", "minLength": 1},
+    "event_type": {
+      "enum": [
+        "thread.created",
+        "item.registered",
+        "item.corrected",
+        "item.superseded",
+        "representation.added",
+        "relation.added",
+        "classification.corrected",
+        "format.migrated",
+        "other"
+      ]
+    },
+    "item_id": {"type": ["string", "null"]},
+    "parent_event_ids": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "payload": {"type": "object"}
+  }
+}

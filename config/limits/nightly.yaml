@@ -1,0 +1,111 @@
+# DocsFab operational limits owned by the `nightly` name prefix.
+# Registered in config/limits.yaml. Run `npm run generate:limits` from
+# packages/runtime after changing a value.
+limits:
+  - name: nightly.panelTasks
+    value: 20
+    unit: count
+    scope: per-run
+    warnAt: 1
+    override: null
+    min: 20
+    max: 20
+    refusal: nightly-panel-tasks-bound
+    remediation: Restore the owner-approved daily-v1 panel of 20 tasks; a different panel needs a new recorded selection and comparability key.
+    rationale: The owner confirmed 20 admitted real-world tasks, 13 update and 7 no-change, for the frozen daily-v1 panel on 2026-10-08. A partial panel is reported through cells and run status, never silently treated as a smaller benchmark.
+
+  - name: nightly.cellParallelism
+    value: 1
+    unit: count
+    scope: per-run
+    warnAt: 1
+    override: null
+    min: 1
+    max: 1
+    refusal: nightly-cell-parallelism-bound
+    remediation: Keep the source stub's one-at-a-time execution, or qualify a new runner and shared-ledger design before raising this bound.
+    rationale: The Phase 0 source-stub harness executes its 60 synthetic cells sequentially and has no qualified parallel shared-ledger path. One active cell is the supported journey until the live arm shards are implemented and measured.
+
+  - name: nightly.ciJobTimeoutMs
+    value: 28800000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 28800000
+    max: 28800000
+    refusal: nightly-ci-job-timeout-ms-bound
+    remediation: Keep the paid 20-cell arm on a dedicated runner with a verified maximum timeout of at least 480 minutes; retain a partial checkpoint when time admission refuses a cell.
+    rationale: Pipeline 73185690 (2026-10-12) measured the DocsFab arm. Setup before the first cell took about 31 minutes, and its 13 executed cells took 8244 seconds including J1, a mean of 634 seconds, or 743 seconds excluding two early failures. Its 230-minute script admitted only 13 of the 20 cells. At 743 seconds per cell the twentieth cell starts after about 31 + 19*12.4 = 266 minutes, and its full 60-minute agent-plus-J1 admission plus the five-minute seal reserve run to about 331 minutes. Following the owner's standing direction of generous time budgets with about 2x headroom, the script gets 470 minutes, which still admits the twentieth cell when cells run up to 58 percent slower than measured (the exact limit is 58.96 percent). The 8-hour job leaves ten further minutes for after_script and artifact upload. The dedicated runners' maximum job timeout was raised to 28800 seconds on 2026-10-12. Job and script time are CI bounds outside the comparison series; time admission still labels any unstarted slot arm-time-exhausted.
+
+  - name: nightly.ciScriptTimeoutMs
+    value: 28200000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 28200000
+    max: 28200000
+    refusal: nightly-ci-script-timeout-ms-bound
+    remediation: Stop admitting cells when the remaining script window cannot fit a complete cell and seal reserve; let after_script upload the retained partial artifacts.
+    rationale: The paid arm script gets 470 minutes of the 8-hour GitLab job timeout, leaving ten minutes for artifact handoff. Pipeline 73185690 measured about 31 minutes of setup and 743 seconds per full DocsFab cell including J1, so the twentieth cell starts after about 266 minutes. Its full 60-minute agent-plus-J1 admission and the five-minute seal reserve then fit with 139 minutes to spare, so cells may run up to 58 percent slower than measured. This follows the owner's standing direction of generous time budgets with about 2x headroom. The judge's retries and repair turns reuse the same budgeted judge boundary and so share the judge call's deadline. The skills-agent and basic-agent paces were not yet measured when it was set.
+
+  - name: nightly.ciSealReserveMs
+    value: 300000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 300000
+    max: 300000
+    refusal: nightly-ci-seal-reserve-ms-bound
+    remediation: Keep five minutes before the script timeout for the final ledger settlement, checkpoint readback and safe artifact handoff; change only after an executing runner measurement.
+    rationale: A cell is admitted only if its declared agent and judge deadlines fit before this reserve. Five minutes is the controller's final settlement window within the 230-minute script envelope, while ten further minutes remain before GitLab's job timeout for artifact upload.
+
+  - name: nightly.ciHeartbeatMs
+    value: 300000
+    unit: ms
+    scope: per-run
+    warnAt: 1
+    override: null
+    min: 300000
+    max: 300000
+    refusal: nightly-ci-heartbeat-ms-bound
+    remediation: Keep a safe controller heartbeat while a paid arm runs; GitLab drops a job that produces no output for an hour.
+    rationale: One complete agent-plus-judge cell may occupy the declared 60-minute maximum without other stdout. A fixed five-minute static heartbeat prevents GitLab's 60-minute inactivity drop without exposing participant text, environment or provider details.
+
+  - name: nightly.ciArmAutomaticRetries
+    value: 0
+    unit: count
+    scope: per-run
+    warnAt: 1
+    override: null
+    min: 0
+    max: 0
+    refusal: nightly-ci-arm-automatic-retries-bound
+    remediation: Keep automatic GitLab retries disabled for paid arm jobs. Inspect the retained arm checkpoint and job-local ledger, then start a new pipeline; a replay inside one pipeline needs independently qualified cross-job accounting.
+    rationale: GitLab's inherited default retries a runner-system or timeout failure once. A paid arm has a job-local gateway ledger, so automatic job replay could recreate a fresh ledger after prior requests or unknown reservations. A replayed arm of a scheduled run would get a second share of the run cap, so zero automatic retries keeps the run within its cap and the arm's partial artifact truthful.
+
+  - name: nightly.gateReadyPollIntervalMs
+    value: 250
+    unit: ms
+    scope: per-run
+    warnAt: 1
+    override: null
+    min: 250
+    max: 250
+    refusal: nightly-gate-ready-poll-interval-ms-bound
+    remediation: Keep the gate's fixed marker-check cadence; the existing sandbox seam timeout owns the authorization wait, and a cadence change requires a measured Linux qualification.
+    rationale: A bind-mounted marker can arrive without a reliable cross-container filesystem watch notification. Four checks per second let the participant see trusted registration promptly without busy-spinning. This is a planning cadence, not a second timeout or spend bound; the Phase 0 Linux qualification must prove the complete path.
+
+  - name: nightly.pipelinePageSize
+    value: 100
+    unit: count
+    scope: per-run
+    warnAt: 1
+    override: null
+    min: 100
+    max: 100
+    refusal: nightly-pipeline-page-size-bound
+    remediation: Keep GitLab pipeline discovery at its documented 100-item REST page maximum; review the API contract before changing this value.
+    rationale: GitLab's pipelines listing has a maximum page size of 100. The selector follows every returned page until it finds a successful main push ancestor or exhausts the listing; it never treats a partial page scan as proof that no green build exists.

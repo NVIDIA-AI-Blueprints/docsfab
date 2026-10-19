@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "kind": "docsfab-output-rule-fixture",
+  "code": "quality-envelope-shape",
+  "location": "$",
+  "input": {
+    "workflow": "review-documentation"
+  },
+  "reply": "{\"evaluation_id\":\"eval-1\",\"overall_decision\":\"insufficient-evidence\",\"target\":{\"paths\":[\"docs/index.md\"]}}"
+}

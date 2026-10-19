@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "catalogVersion": "1.0.0",
+  "gateOrder": ["G0", "G1", "G2", "G3", "G4", "G5"],
+  "applicability": [
+    "always",
+    "explicit-product-need",
+    "explicit-product-need",
+    "explicit-product-need",
+    "explicit-product-need",
+    "explicit-product-need"
+  ],
+  "checkCounts": [4, 5, 4, 4, 4, 4],
+  "defectClasses": [
+    "governance-defect",
+    "missing-content",
+    "missing-infrastructure",
+    "quality-defect",
+    "structural-defect"
+  ],
+  "forbiddenEvidence": [
+    "folder-name-applicability",
+    "prompt-claim",
+    "self-rehashed-source",
+    "unbounded-absence"
+  ]
+}

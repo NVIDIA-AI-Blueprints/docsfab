@@ -1,0 +1,11 @@
+{
+  "base_sha": "@base",
+  "start_sha": "@base",
+  "head_sha": "@head",
+  "old_path": "@old_path",
+  "new_path": "@new_path",
+  "position_type": "@position_type",
+  "old_line": "@old_line",
+  "new_line": "@new_line",
+  "line_range": "@line_range"
+}

@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "kind": "docsfab-output-rule-fixture",
+  "code": "answer-record-exhausted",
+  "location": "$",
+  "input": {
+    "contract": "quality-evaluation",
+    "prior": [
+      "{\"type\":\"dimension\",\"key\":\"factual-accuracy\",\"record\":[{\"assessment\":\"met\"}]}",
+      "{\"type\":\"dimension\",\"key\":\"factual-accuracy\",\"record\":[{\"assessment\":\"met\"}]}",
+      "{\"type\":\"dimension\",\"key\":\"factual-accuracy\",\"record\":[{\"assessment\":\"met\"}]}"
+    ]
+  },
+  "reply": "{\"type\":\"dimension\",\"key\":\"factual-accuracy\",\"record\":[{\"assessment\":\"met\"}]}"
+}

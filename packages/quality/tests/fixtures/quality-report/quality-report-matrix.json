@@ -1,0 +1,783 @@
+[
+  {
+    "name": "available rubric with layered insufficient evidence",
+    "valid": true,
+    "summary": {
+      "report_contract": "docsfab-quality-report-v0.1",
+      "target": {
+        "paths": [
+          "docs/"
+        ],
+        "repository_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "documentation_revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "profile": {
+        "id": "docsfab-documentation-quality",
+        "version": "v0.1"
+      },
+      "evaluation": {
+        "decision": "insufficient-evidence",
+        "confidence": 0,
+        "hard_gate_failures": []
+      },
+      "rubric": {
+        "status": "available",
+        "id": "task-guide-v0.1",
+        "dimension_scores": {
+          "technical_accuracy": 30,
+          "completeness": 20,
+          "task_success": 20,
+          "source_grounding": 15,
+          "clarity": 10,
+          "style_compliance": 5
+        },
+        "total": 100,
+        "threshold": 90,
+        "interpretation_band": "Green",
+        "decision": "pass",
+        "confidence": 0.9,
+        "hard_gates": {
+          "critical_factual_errors": 0,
+          "unsupported_critical_claims": 0,
+          "broken_required_examples": 0,
+          "missing_mandatory_content": 0,
+          "security_compliance_violations": 0,
+          "invalid_required_artifacts": 0
+        }
+      },
+      "validation": {
+        "evaluation": "passed",
+        "quality_score": "passed",
+        "report_binding": "passed"
+      },
+      "artifact_locators": {
+        "evaluation": "run/evaluation.json",
+        "quality_score": "run/quality-score.json",
+        "quality_report": "run/quality-report.md"
+      }
+    }
+  },
+  {
+    "name": "unavailable rubric with hard gates fails",
+    "valid": true,
+    "summary": {
+      "report_contract": "docsfab-quality-report-v0.1",
+      "target": {
+        "paths": [
+          "docs/"
+        ],
+        "repository_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "documentation_revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "profile": {
+        "id": "docsfab-documentation-quality",
+        "version": "v0.1"
+      },
+      "evaluation": {
+        "decision": "fail",
+        "confidence": 0,
+        "hard_gate_failures": [
+          "critical-factual-error"
+        ]
+      },
+      "rubric": {
+        "status": "unavailable",
+        "reason": "No unambiguous content-type rubric was evidenced."
+      },
+      "validation": {
+        "evaluation": "passed",
+        "quality_score": "unavailable",
+        "report_binding": "passed"
+      },
+      "artifact_locators": {
+        "evaluation": "run/evaluation.json",
+        "quality_score": null,
+        "quality_report": "run/quality-report.md"
+      }
+    }
+  },
+  {
+    "name": "unavailable rubric without hard gates is insufficient evidence",
+    "valid": true,
+    "summary": {
+      "report_contract": "docsfab-quality-report-v0.1",
+      "target": {
+        "paths": [
+          "docs/"
+        ],
+        "repository_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "documentation_revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "profile": {
+        "id": "docsfab-documentation-quality",
+        "version": "v0.1"
+      },
+      "evaluation": {
+        "decision": "insufficient-evidence",
+        "confidence": 0,
+        "hard_gate_failures": []
+      },
+      "rubric": {
+        "status": "unavailable",
+        "reason": "No unambiguous content-type rubric was evidenced."
+      },
+      "validation": {
+        "evaluation": "passed",
+        "quality_score": "unavailable",
+        "report_binding": "passed"
+      },
+      "artifact_locators": {
+        "evaluation": "run/evaluation.json",
+        "quality_score": null,
+        "quality_report": "run/quality-report.md"
+      }
+    }
+  },
+  {
+    "name": "available rubric rejects unavailable-only decision",
+    "valid": false,
+    "summary": {
+      "report_contract": "docsfab-quality-report-v0.1",
+      "target": {
+        "paths": [
+          "docs/"
+        ],
+        "repository_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "documentation_revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "profile": {
+        "id": "docsfab-documentation-quality",
+        "version": "v0.1"
+      },
+      "evaluation": {
+        "decision": "insufficient-evidence",
+        "confidence": 0,
+        "hard_gate_failures": []
+      },
+      "rubric": {
+        "status": "available",
+        "id": "task-guide-v0.1",
+        "dimension_scores": {},
+        "total": 0,
+        "threshold": 90,
+        "interpretation_band": "Red",
+        "decision": "insufficient-evidence",
+        "confidence": 0,
+        "hard_gates": {}
+      },
+      "validation": {
+        "evaluation": "passed",
+        "quality_score": "passed",
+        "report_binding": "passed"
+      },
+      "artifact_locators": {
+        "evaluation": "run/evaluation.json",
+        "quality_score": "run/quality-score.json",
+        "quality_report": "run/quality-report.md"
+      }
+    }
+  },
+  {
+    "name": "hard gates contradict insufficient evidence",
+    "valid": false,
+    "summary": {
+      "report_contract": "docsfab-quality-report-v0.1",
+      "target": {
+        "paths": [
+          "docs/"
+        ],
+        "repository_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "documentation_revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "profile": {
+        "id": "docsfab-documentation-quality",
+        "version": "v0.1"
+      },
+      "evaluation": {
+        "decision": "insufficient-evidence",
+        "confidence": 0.2,
+        "hard_gate_failures": [
+          "critical-factual-error"
+        ]
+      },
+      "rubric": {
+        "status": "unavailable",
+        "reason": "No unambiguous content-type rubric was evidenced."
+      },
+      "validation": {
+        "evaluation": "passed",
+        "quality_score": "unavailable",
+        "report_binding": "passed"
+      },
+      "artifact_locators": {
+        "evaluation": "run/evaluation.json",
+        "quality_score": null,
+        "quality_report": "run/quality-report.md"
+      }
+    }
+  },
+  {
+    "name": "unavailable rubric without hard gates contradicts fail",
+    "valid": false,
+    "summary": {
+      "report_contract": "docsfab-quality-report-v0.1",
+      "target": {
+        "paths": [
+          "docs/"
+        ],
+        "repository_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "documentation_revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "profile": {
+        "id": "docsfab-documentation-quality",
+        "version": "v0.1"
+      },
+      "evaluation": {
+        "decision": "fail",
+        "confidence": 0,
+        "hard_gate_failures": []
+      },
+      "rubric": {
+        "status": "unavailable",
+        "reason": "No unambiguous content-type rubric was evidenced."
+      },
+      "validation": {
+        "evaluation": "passed",
+        "quality_score": "unavailable",
+        "report_binding": "passed"
+      },
+      "artifact_locators": {
+        "evaluation": "run/evaluation.json",
+        "quality_score": null,
+        "quality_report": "run/quality-report.md"
+      }
+    }
+  },
+  {
+    "name": "unavailable rubric rejects extra fields",
+    "valid": false,
+    "summary": {
+      "report_contract": "docsfab-quality-report-v0.1",
+      "target": {
+        "paths": [
+          "docs/"
+        ],
+        "repository_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "documentation_revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "profile": {
+        "id": "docsfab-documentation-quality",
+        "version": "v0.1"
+      },
+      "evaluation": {
+        "decision": "insufficient-evidence",
+        "confidence": 0,
+        "hard_gate_failures": []
+      },
+      "rubric": {
+        "status": "unavailable",
+        "reason": "No unambiguous content-type rubric was evidenced.",
+        "id": "task-guide-v0.1"
+      },
+      "validation": {
+        "evaluation": "passed",
+        "quality_score": "unavailable",
+        "report_binding": "passed"
+      },
+      "artifact_locators": {
+        "evaluation": "run/evaluation.json",
+        "quality_score": null,
+        "quality_report": "run/quality-report.md"
+      }
+    }
+  },
+  {
+    "name": "wrong evaluation confidence type",
+    "valid": false,
+    "summary": {
+      "report_contract": "docsfab-quality-report-v0.1",
+      "target": {
+        "paths": [
+          "docs/"
+        ],
+        "repository_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "documentation_revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "profile": {
+        "id": "docsfab-documentation-quality",
+        "version": "v0.1"
+      },
+      "evaluation": {
+        "decision": "insufficient-evidence",
+        "confidence": "low",
+        "hard_gate_failures": []
+      },
+      "rubric": {
+        "status": "unavailable",
+        "reason": "No unambiguous content-type rubric was evidenced."
+      },
+      "validation": {
+        "evaluation": "passed",
+        "quality_score": "unavailable",
+        "report_binding": "passed"
+      },
+      "artifact_locators": {
+        "evaluation": "run/evaluation.json",
+        "quality_score": null,
+        "quality_report": "run/quality-report.md"
+      }
+    }
+  },
+  {
+    "name": "root rejects extra fields",
+    "valid": false,
+    "summary": {
+      "report_contract": "docsfab-quality-report-v0.1",
+      "target": {
+        "paths": [
+          "docs/"
+        ],
+        "repository_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "documentation_revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "profile": {
+        "id": "docsfab-documentation-quality",
+        "version": "v0.1"
+      },
+      "evaluation": {
+        "decision": "insufficient-evidence",
+        "confidence": 0,
+        "hard_gate_failures": []
+      },
+      "rubric": {
+        "status": "unavailable",
+        "reason": "No unambiguous content-type rubric was evidenced."
+      },
+      "validation": {
+        "evaluation": "passed",
+        "quality_score": "unavailable",
+        "report_binding": "passed"
+      },
+      "artifact_locators": {
+        "evaluation": "run/evaluation.json",
+        "quality_score": null,
+        "quality_report": "run/quality-report.md"
+      },
+      "unexpected": true
+    }
+  },
+  {
+    "name": "v0.2 retains only exact profile-backed gaps and leaves a technical gap unclassified",
+    "valid": true,
+    "summary": {
+      "report_contract": "docsfab-quality-report-v0.2",
+      "target": {
+        "paths": [
+          "docs/"
+        ],
+        "repository_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "documentation_revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "profile": {
+        "id": "docsfab-documentation-quality",
+        "version": "v0.1"
+      },
+      "evaluation": {
+        "decision": "insufficient-evidence",
+        "confidence": 0,
+        "hard_gate_failures": []
+      },
+      "rubric": {
+        "status": "unavailable",
+        "reason": "No unambiguous content-type rubric was evidenced."
+      },
+      "validation": {
+        "evaluation": "passed",
+        "quality_score": "unavailable",
+        "report_binding": "passed"
+      },
+      "artifact_locators": {
+        "evaluation": "run/evaluation.json",
+        "quality_score": null,
+        "quality_report": "run/quality-report.md"
+      },
+      "limitations": [
+        "The selected quality profile caps decisions at insufficient-evidence while it remains experimental.",
+        "The selected quality profile has pending human and agent outcome baselines.",
+        "Technical verification did not cover an optional example."
+      ],
+      "retained_gap_evidence": [
+        {
+          "limitation": "The selected quality profile caps decisions at insufficient-evidence while it remains experimental.",
+          "reason": "experimental-profile-ceiling",
+          "evidence": {
+            "kind": "profile-decision-policy",
+            "artifact_locator": "profiles/docsfab-documentation-quality/profile.json",
+            "artifact_sha256": "579023cebc031149d559c070e86dfc0c43f596c0dac8fa68eb2f8dd65ad555a1",
+            "profile_id": "docsfab-documentation-quality",
+            "profile_version": "v0.1",
+            "profile_status": "experimental",
+            "release_gate_eligible": false,
+            "decision_policy_field": "experimental_profile_maximum_decision",
+            "decision_policy_value": "insufficient-evidence"
+          }
+        },
+        {
+          "limitation": "The selected quality profile has pending human and agent outcome baselines.",
+          "reason": "audience-prerequisites-missing",
+          "evidence": {
+            "kind": "audience-prerequisite-policy",
+            "artifact_locator": "profiles/docsfab-documentation-quality/profile.json",
+            "artifact_sha256": "579023cebc031149d559c070e86dfc0c43f596c0dac8fa68eb2f8dd65ad555a1",
+            "profile_id": "docsfab-documentation-quality",
+            "profile_version": "v0.1",
+            "prerequisites": [
+              {
+                "field": "calibration.human_outcome_baseline",
+                "value": "pending"
+              },
+              {
+                "field": "calibration.agent_outcome_baseline",
+                "value": "pending"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "v0.2 rejects audience prerequisite field substitution",
+    "valid": false,
+    "summary": {
+      "report_contract": "docsfab-quality-report-v0.2",
+      "target": {
+        "paths": [
+          "docs/"
+        ],
+        "repository_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "documentation_revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "profile": {
+        "id": "docsfab-documentation-quality",
+        "version": "v0.1"
+      },
+      "evaluation": {
+        "decision": "insufficient-evidence",
+        "confidence": 0,
+        "hard_gate_failures": []
+      },
+      "rubric": {
+        "status": "unavailable",
+        "reason": "No unambiguous content-type rubric was evidenced."
+      },
+      "validation": {
+        "evaluation": "passed",
+        "quality_score": "unavailable",
+        "report_binding": "passed"
+      },
+      "artifact_locators": {
+        "evaluation": "run/evaluation.json",
+        "quality_score": null,
+        "quality_report": "run/quality-report.md"
+      },
+      "limitations": [
+        "The selected quality profile caps decisions at insufficient-evidence while it remains experimental.",
+        "The selected quality profile has pending human and agent outcome baselines.",
+        "Technical verification did not cover an optional example."
+      ],
+      "retained_gap_evidence": [
+        {
+          "limitation": "The selected quality profile caps decisions at insufficient-evidence while it remains experimental.",
+          "reason": "experimental-profile-ceiling",
+          "evidence": {
+            "kind": "profile-decision-policy",
+            "artifact_locator": "profiles/docsfab-documentation-quality/profile.json",
+            "artifact_sha256": "579023cebc031149d559c070e86dfc0c43f596c0dac8fa68eb2f8dd65ad555a1",
+            "profile_id": "docsfab-documentation-quality",
+            "profile_version": "v0.1",
+            "profile_status": "experimental",
+            "release_gate_eligible": false,
+            "decision_policy_field": "experimental_profile_maximum_decision",
+            "decision_policy_value": "insufficient-evidence"
+          }
+        },
+        {
+          "limitation": "The selected quality profile has pending human and agent outcome baselines.",
+          "reason": "audience-prerequisites-missing",
+          "evidence": {
+            "kind": "audience-prerequisite-policy",
+            "artifact_locator": "profiles/docsfab-documentation-quality/profile.json",
+            "artifact_sha256": "579023cebc031149d559c070e86dfc0c43f596c0dac8fa68eb2f8dd65ad555a1",
+            "profile_id": "docsfab-documentation-quality",
+            "profile_version": "v0.1",
+            "prerequisites": [
+              {
+                "field": "calibration.agent_outcome_baseline",
+                "value": "pending"
+              },
+              {
+                "field": "calibration.agent_outcome_baseline",
+                "value": "pending"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "v0.2 rejects profile artifact digest substitution",
+    "valid": false,
+    "summary": {
+      "report_contract": "docsfab-quality-report-v0.2",
+      "target": {
+        "paths": [
+          "docs/"
+        ],
+        "repository_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "documentation_revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "profile": {
+        "id": "docsfab-documentation-quality",
+        "version": "v0.1"
+      },
+      "evaluation": {
+        "decision": "insufficient-evidence",
+        "confidence": 0,
+        "hard_gate_failures": []
+      },
+      "rubric": {
+        "status": "unavailable",
+        "reason": "No unambiguous content-type rubric was evidenced."
+      },
+      "validation": {
+        "evaluation": "passed",
+        "quality_score": "unavailable",
+        "report_binding": "passed"
+      },
+      "artifact_locators": {
+        "evaluation": "run/evaluation.json",
+        "quality_score": null,
+        "quality_report": "run/quality-report.md"
+      },
+      "limitations": [
+        "The selected quality profile caps decisions at insufficient-evidence while it remains experimental.",
+        "The selected quality profile has pending human and agent outcome baselines.",
+        "Technical verification did not cover an optional example."
+      ],
+      "retained_gap_evidence": [
+        {
+          "limitation": "The selected quality profile caps decisions at insufficient-evidence while it remains experimental.",
+          "reason": "experimental-profile-ceiling",
+          "evidence": {
+            "kind": "profile-decision-policy",
+            "artifact_locator": "profiles/docsfab-documentation-quality/profile.json",
+            "artifact_sha256": "9999999999999999999999999999999999999999999999999999999999999999",
+            "profile_id": "docsfab-documentation-quality",
+            "profile_version": "v0.1",
+            "profile_status": "experimental",
+            "release_gate_eligible": false,
+            "decision_policy_field": "experimental_profile_maximum_decision",
+            "decision_policy_value": "insufficient-evidence"
+          }
+        },
+        {
+          "limitation": "The selected quality profile has pending human and agent outcome baselines.",
+          "reason": "audience-prerequisites-missing",
+          "evidence": {
+            "kind": "audience-prerequisite-policy",
+            "artifact_locator": "profiles/docsfab-documentation-quality/profile.json",
+            "artifact_sha256": "579023cebc031149d559c070e86dfc0c43f596c0dac8fa68eb2f8dd65ad555a1",
+            "profile_id": "docsfab-documentation-quality",
+            "profile_version": "v0.1",
+            "prerequisites": [
+              {
+                "field": "calibration.human_outcome_baseline",
+                "value": "pending"
+              },
+              {
+                "field": "calibration.agent_outcome_baseline",
+                "value": "pending"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "v0.2 rejects retained evidence omitted from limitations",
+    "valid": false,
+    "summary": {
+      "report_contract": "docsfab-quality-report-v0.2",
+      "target": {
+        "paths": [
+          "docs/"
+        ],
+        "repository_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "documentation_revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "profile": {
+        "id": "docsfab-documentation-quality",
+        "version": "v0.1"
+      },
+      "evaluation": {
+        "decision": "insufficient-evidence",
+        "confidence": 0,
+        "hard_gate_failures": []
+      },
+      "rubric": {
+        "status": "unavailable",
+        "reason": "No unambiguous content-type rubric was evidenced."
+      },
+      "validation": {
+        "evaluation": "passed",
+        "quality_score": "unavailable",
+        "report_binding": "passed"
+      },
+      "artifact_locators": {
+        "evaluation": "run/evaluation.json",
+        "quality_score": null,
+        "quality_report": "run/quality-report.md"
+      },
+      "limitations": [
+        "The selected quality profile caps decisions at insufficient-evidence while it remains experimental.",
+        "Technical verification did not cover an optional example."
+      ],
+      "retained_gap_evidence": [
+        {
+          "limitation": "The selected quality profile caps decisions at insufficient-evidence while it remains experimental.",
+          "reason": "experimental-profile-ceiling",
+          "evidence": {
+            "kind": "profile-decision-policy",
+            "artifact_locator": "profiles/docsfab-documentation-quality/profile.json",
+            "artifact_sha256": "579023cebc031149d559c070e86dfc0c43f596c0dac8fa68eb2f8dd65ad555a1",
+            "profile_id": "docsfab-documentation-quality",
+            "profile_version": "v0.1",
+            "profile_status": "experimental",
+            "release_gate_eligible": false,
+            "decision_policy_field": "experimental_profile_maximum_decision",
+            "decision_policy_value": "insufficient-evidence"
+          }
+        },
+        {
+          "limitation": "The selected quality profile has pending human and agent outcome baselines.",
+          "reason": "audience-prerequisites-missing",
+          "evidence": {
+            "kind": "audience-prerequisite-policy",
+            "artifact_locator": "profiles/docsfab-documentation-quality/profile.json",
+            "artifact_sha256": "579023cebc031149d559c070e86dfc0c43f596c0dac8fa68eb2f8dd65ad555a1",
+            "profile_id": "docsfab-documentation-quality",
+            "profile_version": "v0.1",
+            "prerequisites": [
+              {
+                "field": "calibration.human_outcome_baseline",
+                "value": "pending"
+              },
+              {
+                "field": "calibration.agent_outcome_baseline",
+                "value": "pending"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "v0.2 rejects duplicate retained evidence",
+    "valid": false,
+    "summary": {
+      "report_contract": "docsfab-quality-report-v0.2",
+      "target": {
+        "paths": [
+          "docs/"
+        ],
+        "repository_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "documentation_revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "profile": {
+        "id": "docsfab-documentation-quality",
+        "version": "v0.1"
+      },
+      "evaluation": {
+        "decision": "insufficient-evidence",
+        "confidence": 0,
+        "hard_gate_failures": []
+      },
+      "rubric": {
+        "status": "unavailable",
+        "reason": "No unambiguous content-type rubric was evidenced."
+      },
+      "validation": {
+        "evaluation": "passed",
+        "quality_score": "unavailable",
+        "report_binding": "passed"
+      },
+      "artifact_locators": {
+        "evaluation": "run/evaluation.json",
+        "quality_score": null,
+        "quality_report": "run/quality-report.md"
+      },
+      "limitations": [
+        "The selected quality profile caps decisions at insufficient-evidence while it remains experimental.",
+        "The selected quality profile has pending human and agent outcome baselines.",
+        "Technical verification did not cover an optional example."
+      ],
+      "retained_gap_evidence": [
+        {
+          "limitation": "The selected quality profile caps decisions at insufficient-evidence while it remains experimental.",
+          "reason": "experimental-profile-ceiling",
+          "evidence": {
+            "kind": "profile-decision-policy",
+            "artifact_locator": "profiles/docsfab-documentation-quality/profile.json",
+            "artifact_sha256": "579023cebc031149d559c070e86dfc0c43f596c0dac8fa68eb2f8dd65ad555a1",
+            "profile_id": "docsfab-documentation-quality",
+            "profile_version": "v0.1",
+            "profile_status": "experimental",
+            "release_gate_eligible": false,
+            "decision_policy_field": "experimental_profile_maximum_decision",
+            "decision_policy_value": "insufficient-evidence"
+          }
+        },
+        {
+          "limitation": "The selected quality profile has pending human and agent outcome baselines.",
+          "reason": "audience-prerequisites-missing",
+          "evidence": {
+            "kind": "audience-prerequisite-policy",
+            "artifact_locator": "profiles/docsfab-documentation-quality/profile.json",
+            "artifact_sha256": "579023cebc031149d559c070e86dfc0c43f596c0dac8fa68eb2f8dd65ad555a1",
+            "profile_id": "docsfab-documentation-quality",
+            "profile_version": "v0.1",
+            "prerequisites": [
+              {
+                "field": "calibration.human_outcome_baseline",
+                "value": "pending"
+              },
+              {
+                "field": "calibration.agent_outcome_baseline",
+                "value": "pending"
+              }
+            ]
+          }
+        },
+        {
+          "limitation": "The selected quality profile caps decisions at insufficient-evidence while it remains experimental.",
+          "reason": "experimental-profile-ceiling",
+          "evidence": {
+            "kind": "profile-decision-policy",
+            "artifact_locator": "profiles/docsfab-documentation-quality/profile.json",
+            "artifact_sha256": "579023cebc031149d559c070e86dfc0c43f596c0dac8fa68eb2f8dd65ad555a1",
+            "profile_id": "docsfab-documentation-quality",
+            "profile_version": "v0.1",
+            "profile_status": "experimental",
+            "release_gate_eligible": false,
+            "decision_policy_field": "experimental_profile_maximum_decision",
+            "decision_policy_value": "insufficient-evidence"
+          }
+        }
+      ]
+    }
+  }
+]

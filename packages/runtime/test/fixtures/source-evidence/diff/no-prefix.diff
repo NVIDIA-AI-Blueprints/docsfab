@@ -1,0 +1,13 @@
+diff --git docs/install.md docs/install.md
+index 4f39e0a..a7ad97b 100644
+--- docs/install.md
++++ docs/install.md
+@@ -1,7 +1,7 @@
+ # Install
+ 
+ Download the archive from https://downloads.example.test/tool.tar.gz.
+-Run the installer.
++Run the installer as an administrator.
+ The default limit is 500 rows.
+ 
+ See docs/export.md for the export options.

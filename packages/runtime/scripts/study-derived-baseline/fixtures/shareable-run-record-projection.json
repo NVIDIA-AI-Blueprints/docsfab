@@ -1,0 +1,177 @@
+{
+  "schemaVersion": 2,
+  "fixtureId": "create-mr-class-shareable-projection",
+  "id": "fixture-create-mr-class-0001",
+  "workflow": "create-documentation",
+  "status": "succeeded",
+  "createdAt": "2026-08-21T00:00:00.000Z",
+  "repository": {
+    "project": "example/fixture-docs",
+    "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "workspace": {
+    "strategy": "tracked-export",
+    "disposable": true
+  },
+  "models": [],
+  "skills": [],
+  "usage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "cacheWrite": 0,
+    "total": 0,
+    "turns": 0
+  },
+  "tools": {
+    "totalCalls": 5,
+    "failedCalls": 0,
+    "byTool": [
+      {
+        "name": "read",
+        "calls": 4,
+        "failures": 0
+      },
+      {
+        "name": "write",
+        "calls": 1,
+        "failures": 0
+      }
+    ]
+  },
+  "steps": [
+    {
+      "id": "plan-documentation",
+      "kind": "evaluate",
+      "status": "succeeded",
+      "tools": {
+        "totalCalls": 1,
+        "failedCalls": 0,
+        "byTool": [
+          {
+            "name": "read",
+            "calls": 1,
+            "failures": 0
+          }
+        ]
+      },
+      "contextPreflight": {
+        "status": "ready",
+        "consultedNodeIds": ["node-a", "node-b"]
+      },
+      "searchFindings": [
+        {
+          "schemaVersion": 1,
+          "kind": "docsfab-documentation-search-finding",
+          "target": {
+            "id": "documentation-nav-graph"
+          },
+          "disposition": "found"
+        }
+      ],
+      "searchEvidence": {
+        "schemaVersion": 1,
+        "kind": "docsfab-workflow-search-evidence",
+        "searches": [
+          {
+            "targetId": "documentation-nav-graph",
+            "bounded": {
+              "finding": {
+                "disposition": "found"
+              }
+            }
+          }
+        ]
+      },
+      "inference": {
+        "attempts": [
+          {
+            "attempt": 1,
+            "retryScheduled": false,
+            "turns": [
+              {
+                "turn": 1,
+                "toolCalls": 1
+              },
+              {
+                "turn": 2,
+                "toolCalls": 0
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "write-documentation",
+      "kind": "inference",
+      "status": "succeeded",
+      "tools": {
+        "totalCalls": 4,
+        "failedCalls": 0,
+        "byTool": [
+          {
+            "name": "read",
+            "calls": 3,
+            "failures": 0
+          },
+          {
+            "name": "write",
+            "calls": 1,
+            "failures": 0
+          }
+        ]
+      },
+      "contextPreflight": {
+        "status": "ready",
+        "consultedNodeIds": ["node-a"]
+      },
+      "inference": {
+        "attempts": [
+          {
+            "attempt": 1,
+            "retryScheduled": false,
+            "turns": [
+              {
+                "turn": 1,
+                "toolCalls": 2
+              },
+              {
+                "turn": 2,
+                "toolCalls": 1
+              },
+              {
+                "turn": 3,
+                "toolCalls": 1
+              },
+              {
+                "turn": 4,
+                "toolCalls": 0
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "lint-documentation",
+      "kind": "evaluate",
+      "status": "succeeded"
+    },
+    {
+      "id": "verify-technical-accuracy",
+      "kind": "evaluate",
+      "status": "succeeded"
+    },
+    {
+      "id": "peer-review-documentation",
+      "kind": "evaluate",
+      "status": "succeeded"
+    },
+    {
+      "id": "evaluate-document-quality",
+      "kind": "evaluate",
+      "status": "succeeded"
+    }
+  ]
+}

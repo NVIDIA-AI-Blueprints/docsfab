@@ -1,0 +1,87 @@
+# DocsFab operational limits owned by the `context` name prefix.
+# Registered in config/limits.yaml; every limit here is named `context.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: context.localPacketInputShareBasisPoints
+    value: 313
+    unit: basis-points
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_CONTEXT_LOCAL_PACKET_INPUT_SHARE_BASIS_POINTS
+    min: 1
+    max: 10000
+    refusal: context-local-packet-input-share-basis-points-bound
+    remediation: Raise DOCSFAB_CONTEXT_LOCAL_PACKET_INPUT_SHARE_BASIS_POINTS, up to 10000 (the whole input window), so a local or change-scoped context packet fits. A run without an attested input window sizes packets from DOCSFAB_CONTEXT_PACKET_FALLBACK_INPUT_TOKENS; raise that instead, or bind an installed composition or a model profile with current metadata so packets follow its window.
+    rationale: Share of the bound model's input window, in basis points, that one local or change-scoped context packet may use. The packet is pasted into the step's prompt, so its budget follows that window instead of a fixed figure; node, edge, and path counts never bind before this token budget. 313 basis points of the smallest window an installed composition seals (65,536 tokens) is 2,051 tokens, at least the former fixed 2,048-token budget, and the 1,050,000-token window gets 32,865. A packet over its budget is trimmed, lowest-ranked paths, edges, and nodes first, and the step records this bound. A read-only step whose packet cannot fit even trimmed to its first target continues without one; a write step stops with this bound named.
+    docValue: 313 basis points (3.13% of the input window)
+    docSummary: Input-window share of one local or change-scoped context packet. A larger packet is trimmed, and the step records the bound.
+
+  - name: context.corpusPacketInputShareBasisPoints
+    value: 1250
+    unit: basis-points
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_CONTEXT_CORPUS_PACKET_INPUT_SHARE_BASIS_POINTS
+    min: 1
+    max: 10000
+    refusal: context-corpus-packet-input-share-basis-points-bound
+    remediation: Raise DOCSFAB_CONTEXT_CORPUS_PACKET_INPUT_SHARE_BASIS_POINTS, up to 10000 (the whole input window), so a corpus context packet fits. A run without an attested input window sizes packets from DOCSFAB_CONTEXT_PACKET_FALLBACK_INPUT_TOKENS; raise that instead, or bind an installed composition or a model profile with current metadata so packets follow its window.
+    rationale: Share of the bound model's input window, in basis points, that one corpus context packet may use. The packet is pasted into the step's prompt, so its budget follows that window instead of a fixed figure; node, edge, and path counts never bind before this token budget. 1,250 basis points of the smallest window an installed composition seals (65,536 tokens) is the former fixed 8,192-token corpus budget, and the 1,050,000-token window gets 131,250. A packet over its budget is trimmed, lowest-ranked paths, edges, and nodes first, and the step records this bound. A read-only step whose packet cannot fit even trimmed to its first target continues without one; a write step stops with this bound named.
+    docValue: 1,250 basis points (12.5% of the input window)
+    docSummary: Input-window share of one corpus context packet. A larger packet is trimmed, and the step records the bound.
+
+  - name: context.packetFallbackInputTokens
+    value: 65536
+    unit: tokens
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_CONTEXT_PACKET_FALLBACK_INPUT_TOKENS
+    min: 1
+    max: 16777216
+    refusal: context-packet-fallback-input-tokens-bound
+    remediation: Raise DOCSFAB_CONTEXT_PACKET_FALLBACK_INPUT_TOKENS so runs without an attested input window, and models whose window is smaller, get larger context packets, or bind a composition or attested model profile so the packet follows its window.
+    rationale: Input window the context packet shares are taken of when the run has no attested window, and the floor for one that is smaller. A run has none with an injected harness, the offline acceptance chain, the hosted offline fixture, or an endpoint that matches no installed composition, whose setup window is a placeholder DocsFab does not admit against. An installed composition or a profile with current metadata supplies its own window. 65,536 tokens is the smallest window an installed composition seals; there the shares give the former fixed budgets, so no setup gets a smaller packet than before.
+    docValue: 65,536 tokens
+    docSummary: Input window the context packet shares use when the run has no attested window, and the floor for a smaller one.
+
+  - name: context.packetMaxDepth
+    value: 2
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_CONTEXT_PACKET_MAX_DEPTH
+    min: 0
+    max: 16
+    refusal: context-packet-max-depth-bound
+    remediation: Raise DOCSFAB_CONTEXT_PACKET_MAX_DEPTH, up to 16, so a context packet walks further from its targets; the input-window share still bounds the packet's size.
+    rationale: Structural hops a context packet walks from its targets. Two hops reach a page's sections, their subsections, and directly linked or sibling pages. The input-window share, not this depth, bounds the packet's size, so a host may raise it; 16 hops is deeper than any heading or link structure a documentation tree needs.
+    docValue: 2 hops
+    docSummary: Structural hops a context packet walks from its targets.
+
+  - name: context.semanticEvidenceBytes
+    value: 131072
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_CONTEXT_SEMANTIC_EVIDENCE_BYTES
+    min: 4096
+    max: 131072
+    refusal: context-semantic-evidence-bytes-bound
+    remediation: Raise DOCSFAB_CONTEXT_SEMANTIC_EVIDENCE_BYTES up to 131072, the most one capsule carries; split a larger file.
+    rationale: Bytes of one authorized evidence file the Global Context Manager reads from Git for a context capsule (issue 2521). A merge reconciliation reads the approved model generation's canon here. The pilot's activation canon (v0.28) was 13,691 bytes, so the former fixed 32 KiB passed; its promoted generations are 58,406 to 61,220 bytes (v0.32 to v0.38), and every merge stalled on the old bound. 128 KiB is about twice the current canon, holds the largest model file in the repository (98,429 bytes, v0.29), and equals the largest context budget. That budget (131,072 bytes) is also the maximum, because one capsule cannot carry a larger file, so a higher allowance would only move the refusal to an unnamed capsule overflow.
+    docValue: 131,072 bytes (128 KiB)
+    docSummary: Bytes of one evidence file read from Git into a context capsule.
+
+  - name: context.semanticSnapshotBytes
+    value: 262144
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_CONTEXT_SEMANTIC_SNAPSHOT_BYTES
+    min: 4096
+    max: 2097152
+    refusal: context-semantic-snapshot-bytes-bound
+    remediation: Raise DOCSFAB_CONTEXT_SEMANTIC_SNAPSHOT_BYTES up to 2097152, or seal fewer evidence files for the project.
+    rationale: Total bytes of all evidence files one context snapshot reads from Git, formerly a fixed 256 KiB in the reader and moved here unchanged (issue 2521). Two evidence files at context.semanticEvidenceBytes fit; the pilot reads one 61,220-byte canon, about a quarter of it. The maximum is 16 evidence files, the snapshot's record cap, at the per-file maximum; what one capsule carries stays bounded by the context budget.
+    docValue: 262,144 bytes (256 KiB)
+    docSummary: Total bytes of the evidence files one context snapshot reads from Git.

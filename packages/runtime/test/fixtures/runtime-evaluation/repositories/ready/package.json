@@ -1,0 +1,7 @@
+{
+  "name": "docsfab-ready-fixture",
+  "private": true,
+  "scripts": {
+    "test": "node --test"
+  }
+}

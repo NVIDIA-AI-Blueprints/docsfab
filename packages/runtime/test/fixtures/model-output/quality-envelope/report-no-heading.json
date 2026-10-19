@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "kind": "docsfab-output-rule-fixture",
+  "code": "quality-envelope-report",
+  "location": "$.reportMarkdown",
+  "input": {
+    "workflow": "review-documentation"
+  },
+  "reply": "{\"evaluation\":{\"evaluation_id\":\"eval-1\",\"overall_decision\":\"insufficient-evidence\"},\"qualityScore\":null}\n\nThe page needs one more example.\n"
+}

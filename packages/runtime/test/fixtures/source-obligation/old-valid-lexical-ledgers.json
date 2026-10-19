@@ -1,0 +1,230 @@
+{
+  "v1": {
+    "kind": "docsfab-source-obligation-ledger",
+    "schemaVersion": 1,
+    "identity": {
+      "repositoryRevision": "4ab7462ffc7f95622cbac18d6df09b1eea550a27",
+      "scopeSha256": "a1b25542c323a0dfbdba0fa1304aedc05329991f905aec2cce12edd004f81ccf",
+      "sourceEvidenceSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "workspaceSnapshotSha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "sources": [
+        {
+          "path": "src/sprout.mjs",
+          "sha256": "069f43351b2b3c7de73bf4145973b46a9cb7d3cab48d72807c60e1067c597671"
+        }
+      ]
+    },
+    "completeness": "bounded-not-proven",
+    "dimensions": [
+      {
+        "dimension": "input-representations",
+        "status": "applicable",
+        "reason": "The legacy fixture establishes two distinct input behaviors.",
+        "sourceLocators": [],
+        "obligations": [
+          {
+            "id": "OBL-INPUT-1",
+            "dimension": "input-representations",
+            "sourceLocators": ["src/api.ts:42"],
+            "statement": "Zulu source statement establishes the first behavior.",
+            "evidenceClass": "source-observation",
+            "uncertainty": "This statement is bounded to the admitted source span."
+          },
+          {
+            "id": "OBL-INPUT-2",
+            "dimension": "input-representations",
+            "sourceLocators": ["src/api.ts:42"],
+            "statement": "Alpha source statement establishes the second behavior.",
+            "evidenceClass": "source-observation",
+            "uncertainty": "This statement is bounded to the admitted source span."
+          }
+        ]
+      },
+      {
+        "dimension": "defaults-and-overrides",
+        "status": "not-applicable",
+        "reason": "The bounded fixture establishes no defaults-and-overrides obligation.",
+        "sourceLocators": ["src/api.ts:42"],
+        "obligations": []
+      },
+      {
+        "dimension": "mutable-state",
+        "status": "not-applicable",
+        "reason": "The bounded fixture establishes no mutable-state obligation.",
+        "sourceLocators": ["src/api.ts:42"],
+        "obligations": []
+      },
+      {
+        "dimension": "destination-and-trust",
+        "status": "not-applicable",
+        "reason": "The bounded fixture establishes no destination-and-trust obligation.",
+        "sourceLocators": ["src/api.ts:42"],
+        "obligations": []
+      },
+      {
+        "dimension": "error-status-retry",
+        "status": "not-applicable",
+        "reason": "The bounded fixture establishes no error-status-retry obligation.",
+        "sourceLocators": ["src/api.ts:42"],
+        "obligations": []
+      },
+      {
+        "dimension": "environment-prerequisite",
+        "status": "applicable",
+        "reason": "The entry point names its interpreter.",
+        "sourceLocators": [],
+        "obligations": [
+          {
+            "id": "OBL-ENVIRONMENT-PREREQUISITE-1",
+            "dimension": "environment-prerequisite",
+            "sourceLocators": ["src/sprout.mjs:1"],
+            "statement": "src/sprout.mjs starts with `#!/usr/bin/env node`, so the CLI runs under Node.js.",
+            "evidenceClass": "source-observation",
+            "uncertainty": "The shebang names no minimum Node.js version."
+          }
+        ]
+      }
+    ],
+    "limitations": [],
+    "digest": "5eb95b2f83e928bb66170485dd8eba89fe04f94e1ff3f25d085c4f2b350bdd1c"
+  },
+  "v2": {
+    "kind": "docsfab-source-obligation-ledger",
+    "schemaVersion": 2,
+    "identity": {
+      "repositoryRevision": "4ab7462ffc7f95622cbac18d6df09b1eea550a27",
+      "scopeSha256": "a1b25542c323a0dfbdba0fa1304aedc05329991f905aec2cce12edd004f81ccf",
+      "sourceEvidenceSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "workspaceSnapshotSha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "sources": [
+        {
+          "path": "src/sprout.mjs",
+          "sha256": "069f43351b2b3c7de73bf4145973b46a9cb7d3cab48d72807c60e1067c597671"
+        }
+      ],
+      "originalSourceAuthority": {
+        "kind": "docsfab-original-source-authority",
+        "schemaVersion": 1,
+        "scope": "review-tracked-workspace",
+        "repositoryRevision": "4ab7462ffc7f95622cbac18d6df09b1eea550a27",
+        "scopeSha256": "a1b25542c323a0dfbdba0fa1304aedc05329991f905aec2cce12edd004f81ccf",
+        "workspaceSnapshotSha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "memberCount": 3,
+        "membersSha256": "8c75191d3f30cbb30555792df0090ba535b0a913a40de518c763b691b43f1de0",
+        "digest": "ccabeb468901c2da185e6b1daa346146c904f9de94a28dd3267004e1f8f61f40"
+      }
+    },
+    "completeness": "bounded-not-proven",
+    "dimensions": [
+      {
+        "dimension": "input-representations",
+        "status": "applicable",
+        "reason": "The legacy fixture establishes two distinct input behaviors.",
+        "sourceLocators": [],
+        "obligations": [
+          {
+            "id": "OBL-INPUT-1",
+            "dimension": "input-representations",
+            "sourceLocators": ["src/api.ts:42"],
+            "statement": "Zulu source statement establishes the first behavior.",
+            "evidenceClass": "source-observation",
+            "uncertainty": "This statement is bounded to the admitted source span."
+          },
+          {
+            "id": "OBL-INPUT-2",
+            "dimension": "input-representations",
+            "sourceLocators": ["src/api.ts:42"],
+            "statement": "Alpha source statement establishes the second behavior.",
+            "evidenceClass": "source-observation",
+            "uncertainty": "This statement is bounded to the admitted source span."
+          }
+        ]
+      },
+      {
+        "dimension": "defaults-and-overrides",
+        "status": "not-applicable",
+        "reason": "The bounded fixture establishes no defaults-and-overrides obligation.",
+        "sourceLocators": ["src/api.ts:42"],
+        "obligations": []
+      },
+      {
+        "dimension": "mutable-state",
+        "status": "not-applicable",
+        "reason": "The bounded fixture establishes no mutable-state obligation.",
+        "sourceLocators": ["src/api.ts:42"],
+        "obligations": []
+      },
+      {
+        "dimension": "destination-and-trust",
+        "status": "not-applicable",
+        "reason": "The bounded fixture establishes no destination-and-trust obligation.",
+        "sourceLocators": ["src/api.ts:42"],
+        "obligations": []
+      },
+      {
+        "dimension": "error-status-retry",
+        "status": "not-applicable",
+        "reason": "The bounded fixture establishes no error-status-retry obligation.",
+        "sourceLocators": ["src/api.ts:42"],
+        "obligations": []
+      },
+      {
+        "dimension": "environment-prerequisite",
+        "status": "applicable",
+        "reason": "The entry point names its interpreter.",
+        "sourceLocators": [],
+        "obligations": [
+          {
+            "id": "OBL-ENVIRONMENT-PREREQUISITE-1",
+            "dimension": "environment-prerequisite",
+            "sourceLocators": ["src/sprout.mjs:1"],
+            "statement": "src/sprout.mjs starts with `#!/usr/bin/env node`, so the CLI runs under Node.js.",
+            "evidenceClass": "source-observation",
+            "uncertainty": "The shebang names no minimum Node.js version."
+          }
+        ]
+      }
+    ],
+    "limitations": [],
+    "repositoryPathTokenSha256": [
+      "21cc473fde0050ab4e993a0078a14935a8f56a0d8208ebaf38730b19449ca4a9"
+    ],
+    "digest": "3cd1c04ada6c8730305b578238337ecba8e51e84d137b044ba05aff0e27ad2b1"
+  },
+  "originalSourceAuthority": {
+    "kind": "docsfab-original-source-authority-evidence",
+    "schemaVersion": 1,
+    "descriptor": {
+      "kind": "docsfab-original-source-authority",
+      "schemaVersion": 1,
+      "scope": "review-tracked-workspace",
+      "repositoryRevision": "4ab7462ffc7f95622cbac18d6df09b1eea550a27",
+      "scopeSha256": "a1b25542c323a0dfbdba0fa1304aedc05329991f905aec2cce12edd004f81ccf",
+      "workspaceSnapshotSha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "memberCount": 3,
+      "membersSha256": "8c75191d3f30cbb30555792df0090ba535b0a913a40de518c763b691b43f1de0",
+      "digest": "ccabeb468901c2da185e6b1daa346146c904f9de94a28dd3267004e1f8f61f40"
+    },
+    "members": [
+      {
+        "path": "docs/guide.md",
+        "mode": 420,
+        "byteLength": 26,
+        "sourceSha256": "45d0ad974f3fa34cb092adc528f624b4db056f86e1e50916adf0d6896c7f4457"
+      },
+      {
+        "path": "src/api.ts",
+        "mode": 420,
+        "byteLength": 24,
+        "sourceSha256": "5d8f65d2774e206bc9f7a7a4ad39ca2dc563b5c31e46ab57ef4874961237ce29"
+      },
+      {
+        "path": "src/sprout.mjs",
+        "mode": 420,
+        "byteLength": 85,
+        "sourceSha256": "069f43351b2b3c7de73bf4145973b46a9cb7d3cab48d72807c60e1067c597671"
+      }
+    ],
+    "digest": "84d23f7fe6eb1bd33a50f36cf502b64227b2300a5c8a725e8f9113ed4fd4c847"
+  }
+}

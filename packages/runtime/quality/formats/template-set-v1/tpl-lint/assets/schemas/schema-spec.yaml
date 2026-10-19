@@ -1,0 +1,217 @@
+# Schema Specification v1.0
+# Defines the structure of template-derived structural schemas
+
+schema_spec_version: "1.0"
+description: |
+  This specification defines the format for structural schemas derived from
+  documentation templates. These schemas enable automated validation of
+  document structure against template requirements.
+
+# Required fields in every schema
+required_fields:
+  schema_version:
+    type: string
+    description: "Version of this schema (e.g., '1.0')"
+    example: "1.0"
+
+  name:
+    type: string
+    description: "Unique identifier for this document type"
+    example: "quickstart"
+
+  description:
+    type: string
+    description: "Human-readable description of this document type"
+    example: "Fast-track getting started experience"
+
+  source_template:
+    type: string
+    description: "Path to the source template file"
+    example: "templates/get-started/quickstart.md"
+
+  structure:
+    type: object
+    description: "Structural requirements for documents of this type"
+    properties:
+      headings:
+        type: object
+        description: "Heading requirements organized by level (h1, h2, h3, etc.)"
+        example:
+          h1:
+            required:
+              - pattern: "Quickstart|Quick Start"
+                description: "Main title"
+            max_count: 1
+          h2:
+            required:
+              - pattern: "Before You (Start|Begin)"
+                description: "Prerequisites section"
+
+      elements:
+        type: array
+        description: "Required structural elements (grids, in-page tabs, admonitions)"
+        items:
+          type: object
+          properties:
+            type:
+              type: string
+              enum: [admonition, grid, tab-set, mermaid, list-table, image, dropdown, card]
+            context:
+              type: string
+              description: "Where in document this element should appear"
+            required:
+              type: boolean
+              default: false
+            attributes:
+              type: object
+              description: "Element-specific attributes to validate"
+
+      section_order:
+        type: array
+        description: "Expected order of H2 sections"
+        items:
+          type: string
+
+# Optional fields
+optional_fields:
+  library_version:
+    type: string
+    description: "Template library pack release this schema belongs to (semver, e.g. '1.0.0')"
+    example: "1.0.0"
+
+  min_compatible_version:
+    type: string
+    description: "Oldest schema version this is compatible with"
+    example: "0.9"
+
+  frontmatter:
+    type: object
+    description: "Frontmatter requirements (delegates to enforce_frontmatter.py)"
+    properties:
+      required:
+        type: array
+        items:
+          type: string
+      recommended:
+        type: array
+        items:
+          type: string
+
+  content:
+    type: object
+    description: "Content guidelines for AI and human review"
+
+  severity:
+    type: object
+    description: "Severity level overrides for validation rules"
+    properties:
+      missing_required_section:
+        type: string
+        enum: [error, warning, info]
+        default: error
+      missing_optional_section:
+        type: string
+        enum: [error, warning, info]
+        default: info
+      wrong_section_order:
+        type: string
+        enum: [error, warning, info]
+        default: warning
+      missing_element:
+        type: string
+        enum: [error, warning, info]
+        default: warning
+      duplicate_h1:
+        type: string
+        enum: [error, warning, info]
+        default: error
+
+  lint:
+    type: object
+    description: "Per-schema configuration for non-structural lint rules"
+    properties:
+      orphan_heading:
+        type: object
+        description: |
+          Flags headings whose next non-blank token is not a paragraph (i.e.,
+          a heading, list, code fence, table, or directive). Encourages a
+          one-sentence orientation under each heading. Inline escape:
+          `<!-- lint-disable: orphan-heading -->` immediately after a heading.
+        properties:
+          mode:
+            type: string
+            enum: [error, warning, info, skip]
+            default: warning
+          skip_patterns:
+            type: array
+            description: "Regex patterns matched against heading text; matches are skipped"
+            items:
+              type: string
+      long_file:
+        type: object
+        description: |
+          Flags oversized pages that should be decomposed into an `overview.md`
+          plus per-topic child pages. Fires when total line count exceeds
+          `max_lines` OR when the page has `max_h2_subtrees` or more H2
+          sections whose content each exceeds `min_subtree_lines`.
+        properties:
+          mode:
+            type: string
+            enum: [error, warning, info, skip]
+            default: info
+          max_lines:
+            type: integer
+            default: 600
+            description: "Total-line threshold that triggers the rule"
+          max_h2_subtrees:
+            type: integer
+            default: 4
+            description: "Number of substantive H2 subtrees that triggers the rule"
+          min_subtree_lines:
+            type: integer
+            default: 80
+            description: "Minimum lines for an H2 subtree to count as substantive"
+
+# Heading requirement structure
+heading_requirement:
+  pattern:
+    type: string
+    description: "Regex pattern to match heading text"
+  description:
+    type: string
+    description: "Human-readable description of this heading"
+  required:
+    type: boolean
+    default: true
+  min_count:
+    type: integer
+    default: 1
+  max_count:
+    type: integer
+    description: "Maximum occurrences (null = unlimited)"
+
+# Element requirement structure
+element_requirement:
+  type:
+    type: string
+    description: "Element type (admonition, grid, tab-set for in-page tabs, etc.)"
+  context:
+    type: string
+    description: "Location context (e.g., 'within Steps section')"
+  required:
+    type: boolean
+    default: false
+  attributes:
+    type: object
+    description: "Type-specific attributes"
+    examples:
+      admonition:
+        class: tip  # note, warning, tip, important, etc.
+      grid:
+        min_items: 2
+        max_items: 6
+      tab-set:
+        min_tabs: 2
+
+
+

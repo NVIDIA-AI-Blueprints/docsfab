@@ -1,0 +1,50 @@
+{
+  "description": "Page one reads cleanly and page two fails. The page-two items exist so the same fixture, with the injected failure removed, is the positive control for the failure tests.",
+  "window": {
+    "timeZone": "America/Los_Angeles",
+    "startDate": "2026-09-14",
+    "endDate": "2026-09-14"
+  },
+  "targetBranch": "main",
+  "pages": [
+    {
+      "page": 1,
+      "nextPage": 2,
+      "truncated": false,
+      "items": [
+        {
+          "iid": 9801,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/9801",
+          "title": "Read cleanly on page one",
+          "description": "Selected before the later page fails.",
+          "state": "merged",
+          "mergedAt": "2026-09-14T17:05:00.000Z",
+          "targetBranch": "main",
+          "sourceBranch": "feature/first-page-change",
+          "mergeCommitSha": "98a1c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        }
+      ]
+    },
+    {
+      "page": 2,
+      "nextPage": null,
+      "truncated": false,
+      "failure": "authentication",
+      "items": [
+        {
+          "iid": 9802,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/9802",
+          "title": "Hidden behind the failed page",
+          "description": "Reachable only when the injected failure is removed.",
+          "state": "merged",
+          "mergedAt": "2026-09-14T09:55:00.000Z",
+          "targetBranch": "main",
+          "sourceBranch": "feature/second-page-change",
+          "mergeCommitSha": "98a2c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        }
+      ]
+    }
+  ]
+}

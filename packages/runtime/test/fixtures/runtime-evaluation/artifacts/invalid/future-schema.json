@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 2,
+  "kind": "ontology",
+  "repository": {
+    "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "contentDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "digest": "not-trusted",
+  "payload": {
+    "entities": [],
+    "relationships": []
+  }
+}

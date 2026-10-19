@@ -1,0 +1,290 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://docsfab.invalid/schemas/documentation-quality-evaluation.schema.json",
+  "title": "Layered documentation quality evaluation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "evaluation_id",
+    "evaluation_version",
+    "evaluated_at",
+    "model_version",
+    "profile",
+    "evaluator",
+    "target",
+    "layers",
+    "constraints",
+    "outcomes",
+    "hard_gate_failures",
+    "overall_decision",
+    "conditions",
+    "confidence",
+    "findings",
+    "limitations"
+  ],
+  "properties": {
+    "evaluation_id": {"type": "string", "minLength": 1},
+    "evaluation_version": {"type": "string", "minLength": 1},
+    "evaluated_at": {"type": "string", "format": "date-time"},
+    "model_version": {"const": "documentation-quality-model-v0.2"},
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "version": {"type": "string", "minLength": 1}
+      }
+    },
+    "evaluator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provider_id", "provider_type", "independent_of_authors", "independence_evidence"],
+      "properties": {
+        "provider_id": {"type": "string", "minLength": 1},
+        "provider_type": {"enum": ["human", "agent", "mixed"]},
+        "independent_of_authors": {"type": "boolean"},
+        "independence_evidence": {"type": "string", "minLength": 1}
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scope_type",
+        "documentation_families",
+        "documentation_family_evidence",
+        "repository_revision",
+        "documentation_revision",
+        "paths",
+        "product_reference_model",
+        "approved_evidence_revision",
+        "product_version",
+        "environment",
+        "delivery_surface_locator",
+        "risk_boundary",
+        "risk_classes",
+        "audiences",
+        "intended_outcomes",
+        "intended_outcome_classes"
+      ],
+      "properties": {
+        "scope_type": {"enum": ["individual-page", "documentation-set"]},
+        "documentation_families": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"enum": ["about", "conceptual", "get-started", "procedural", "reference", "release-notes", "resources", "troubleshooting"]}
+        },
+        "documentation_family_evidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["family", "paths", "method", "evidence_locator", "rationale"],
+            "properties": {
+              "family": {"enum": ["about", "conceptual", "get-started", "procedural", "reference", "release-notes", "resources", "troubleshooting"]},
+              "paths": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+              "method": {"enum": ["path-convention", "information-architecture-record", "manual-reviewed"]},
+              "evidence_locator": {"type": "string", "minLength": 1},
+              "rationale": {"type": "string", "minLength": 1}
+            }
+          }
+        },
+        "repository_revision": {"type": "string", "minLength": 1},
+        "documentation_revision": {"type": "string", "minLength": 1},
+        "paths": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "product_reference_model": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "version"],
+          "properties": {
+            "id": {"type": "string", "minLength": 1},
+            "version": {"type": "string", "minLength": 1}
+          }
+        },
+        "approved_evidence_revision": {"type": "string", "minLength": 1},
+        "product_version": {"type": "string", "minLength": 1},
+        "environment": {"type": "string", "minLength": 1},
+        "delivery_surface_locator": {"type": "string", "minLength": 1},
+        "risk_boundary": {"type": "string", "minLength": 1},
+        "risk_classes": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"enum": ["general-information", "task-execution", "production-operation", "security-sensitive", "regulated-or-safety-critical"]}
+        },
+        "audiences": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "intended_outcomes": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "intended_outcome_classes": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"enum": ["orientation", "conceptual-reasoning", "task-completion", "reference-lookup", "problem-recovery", "change-awareness"]}
+        }
+      }
+    },
+    "layers": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["trustworthy_information", "transferable_understanding", "effective_experience"],
+      "properties": {
+        "trustworthy_information": {"$ref": "#/$defs/layerResult"},
+        "transferable_understanding": {"$ref": "#/$defs/layerResult"},
+        "effective_experience": {"$ref": "#/$defs/layerResult"}
+      }
+    },
+    "constraints": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "accessibility_and_inclusion",
+        "global_and_localization_readiness",
+        "safety_security_privacy",
+        "legal_policy_support",
+        "human_agent_representation_parity"
+      ],
+      "properties": {
+        "accessibility_and_inclusion": {"$ref": "#/$defs/dimensionResult"},
+        "global_and_localization_readiness": {"$ref": "#/$defs/dimensionResult"},
+        "safety_security_privacy": {"$ref": "#/$defs/dimensionResult"},
+        "legal_policy_support": {"$ref": "#/$defs/dimensionResult"},
+        "human_agent_representation_parity": {"$ref": "#/$defs/dimensionResult"}
+      }
+    },
+    "outcomes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["human", "agent"],
+      "properties": {
+        "human": {"type": "array", "items": {"$ref": "#/$defs/outcome"}},
+        "agent": {"type": "array", "items": {"$ref": "#/$defs/outcome"}}
+      }
+    },
+    "hard_gate_failures": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "overall_decision": {"enum": ["pass", "conditional-pass", "fail", "human-review", "insufficient-evidence"]},
+    "conditions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["condition", "owner", "expires_at"],
+        "properties": {
+          "condition": {"type": "string", "minLength": 1},
+          "owner": {"type": "string", "minLength": 1},
+          "expires_at": {"type": "string", "format": "date-time"}
+        }
+      }
+    },
+    "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+    "findings": {"type": "array", "items": {"$ref": "#/$defs/finding"}},
+    "limitations": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+  },
+  "$defs": {
+    "layerResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["decision", "confidence", "dimensions", "hard_gate_failures", "limitations"],
+      "properties": {
+        "decision": {"enum": ["pass", "conditional-pass", "fail", "human-review", "insufficient-evidence", "not-applicable"]},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+        "dimensions": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/dimensionResult"}},
+        "hard_gate_failures": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "limitations": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "dimensionResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dimension_id", "applicability", "assessment", "confidence", "evidence", "measures", "rationale"],
+      "properties": {
+        "dimension_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$"},
+        "applicability": {"enum": ["required", "optional", "not-applicable"]},
+        "assessment": {"enum": ["met", "partially-met", "not-met", "not-assessed", "not-applicable"]},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+        "evidence": {"type": "array", "items": {"$ref": "#/$defs/evidence"}},
+        "measures": {"type": "array", "items": {"$ref": "#/$defs/measure"}},
+        "rationale": {"type": "string", "minLength": 1}
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evidence_class", "strength", "locator", "description"],
+      "properties": {
+        "evidence_class": {"enum": ["deterministic-conformance", "grounded-judgment", "outcome-evaluation", "longitudinal-observation"]},
+        "strength": {"enum": ["direct", "derived", "proxy", "none"]},
+        "population": {"enum": ["human", "agent", "mixed", "not-applicable"]},
+        "provider_id": {"type": "string", "minLength": 1},
+        "task_or_scenario_id": {"type": "string", "minLength": 1},
+        "locator": {"type": "string", "minLength": 1},
+        "description": {"type": "string", "minLength": 1}
+      }
+    },
+    "measure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["metric_id", "value", "method", "interpretation"],
+      "properties": {
+        "metric_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$"},
+        "value": {"type": ["number", "string", "boolean"]},
+        "unit": {"type": "string"},
+        "sample_size": {"type": "integer", "minimum": 0},
+        "population": {"enum": ["human", "agent", "mixed", "not-applicable"]},
+        "task_or_scenario_id": {"type": "string", "minLength": 1},
+        "method": {"type": "string", "minLength": 1},
+        "interpretation": {"type": "string", "minLength": 1}
+      }
+    },
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "severity", "dimension_id", "description", "evidence", "owner", "acceptance_condition", "status"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "severity": {"enum": ["critical", "major", "moderate", "minor"]},
+        "dimension_id": {"type": "string", "minLength": 1},
+        "description": {"type": "string", "minLength": 1},
+        "evidence": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/evidence"}},
+        "owner": {"type": "string", "minLength": 1},
+        "acceptance_condition": {"type": "string", "minLength": 1},
+        "status": {"enum": ["open", "addressed-awaiting-verification", "verified", "dismissed-with-rationale"]},
+        "resolution": {"type": "string", "minLength": 1},
+        "verification_evidence": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/evidence"}},
+        "dismissal_rationale": {"type": "string", "minLength": 1}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"status": {"const": "verified"}}, "required": ["status"]},
+          "then": {"required": ["resolution", "verification_evidence"]}
+        },
+        {
+          "if": {"properties": {"status": {"const": "dismissed-with-rationale"}}, "required": ["status"]},
+          "then": {"required": ["dismissal_rationale"]}
+        }
+      ]
+    },
+    "outcome": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["population_id", "task_or_scenario_id", "attempt_id", "outcome", "verified", "evidence", "measures", "limitations"],
+      "properties": {
+        "population_id": {"type": "string", "minLength": 1},
+        "task_or_scenario_id": {"type": "string", "minLength": 1},
+        "attempt_id": {"type": "string", "minLength": 1},
+        "outcome": {"enum": ["success", "partial", "failure", "not-completed"]},
+        "verified": {"type": "boolean"},
+        "evidence": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/evidence"}},
+        "measures": {"type": "array", "items": {"$ref": "#/$defs/measure"}},
+        "limitations": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"overall_decision": {"const": "conditional-pass"}}, "required": ["overall_decision"]},
+      "then": {"properties": {"conditions": {"minItems": 1}}}
+    }
+  ]
+}

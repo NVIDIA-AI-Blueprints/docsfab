@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "name": "Multi-turn governed live readiness",
+  "assertions": [
+    { "type": "run-count", "minimum": 5 },
+    { "type": "workflow", "equals": "readiness" },
+    { "type": "governed-terminal-status" },
+    { "type": "step-skills", "equals": ["doc-context-analyzer"] },
+    { "type": "governed-skill-evidence" },
+    { "type": "allowed-tools", "tools": ["read", "grep", "find", "ls"] },
+    { "type": "forbidden-tools", "tools": ["edit", "write"] },
+    { "type": "turn-governance-evidence" },
+    { "type": "evidence-identity-consistent" }
+  ]
+}

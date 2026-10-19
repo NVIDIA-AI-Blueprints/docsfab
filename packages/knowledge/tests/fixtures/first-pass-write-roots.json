@@ -1,0 +1,31 @@
+{
+  "description": "First-pass write roots: the case table both packages' isFirstPassWriteRoot tests run, so the knowledge provider and the runtime cannot disagree.",
+  "cases": [
+    { "root": "docs/", "admitted": true },
+    { "root": "fern/", "admitted": true },
+    { "root": "docs/user/", "admitted": true },
+    { "root": "fern/pages/guides/", "admitted": true },
+    { "root": "docs/v2.1_notes/", "admitted": true },
+    { "root": "docs", "admitted": false },
+    { "root": "site/content/docs/", "admitted": false },
+    { "root": "content/", "admitted": false },
+    { "root": "documentation/", "admitted": false },
+    { "root": "src/docs/", "admitted": false },
+    { "root": "packages/web/docs/", "admitted": false },
+    { "root": ".github/docs/", "admitted": false },
+    { "root": ".docsfab/docs/", "admitted": false },
+    { "root": "docs/.hidden/", "admitted": false },
+    { "root": "docs/node_modules/", "admitted": false },
+    { "root": "fern/vendor/pages/", "admitted": false },
+    { "root": "docs/vendored/", "admitted": true },
+    { "root": "docs/../src/", "admitted": false },
+    { "root": "docs/./user/", "admitted": false },
+    { "root": "docs//user/", "admitted": false },
+    { "root": "/docs/", "admitted": false },
+    { "root": "DOCS/", "admitted": false },
+    { "root": "docs/a b/", "admitted": false },
+    { "root": "docs/évolution/", "admitted": false },
+    { "root": "docs\\user/", "admitted": false },
+    { "root": "docs/evil\nname/", "admitted": false }
+  ]
+}

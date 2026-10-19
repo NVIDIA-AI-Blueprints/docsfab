@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "name": "bootstrap",
+  "title": "Repository documentation bootstrap",
+  "outcome": "A minimal, evidence-backed guidance patch, verified no-change result, or explicit unresolved questions.",
+  "contextPolicy": {
+    "schemaVersion": 1,
+    "steps": [
+      {
+        "stepId": "bootstrap-guidance",
+        "required": true,
+        "level": "corpus",
+        "query": "expand",
+        "allowReadOnlyDegraded": false
+      }
+    ]
+  },
+  "steps": [
+    {
+      "id": "bootstrap-guidance",
+      "title": "Prepare repository guidance",
+      "kind": "inference",
+      "skill": "repo-bootstrap",
+      "mode": "write",
+      "prompt": "Inspect tracked repository facts and applicable guidance. Add or minimally update only authorized README.md and correctly scoped AGENTS.md files. Preserve useful existing and nested guidance. Conflicts or missing facts require explicit questions without a patch. Return the exact host-bound bootstrap result."
+    }
+  ]
+}

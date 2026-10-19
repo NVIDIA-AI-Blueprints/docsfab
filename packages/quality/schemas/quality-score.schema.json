@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/quality-score.schema.json",
+  "title": "Quality score",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["rubric", "scores", "total", "hard_gates", "decision", "confidence", "rationale"],
+  "properties": {
+    "rubric": {"enum": ["task-guide-v0.1", "concept-guide-v0.1", "api-reference-v0.1"]},
+    "scores": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["technical_accuracy", "completeness", "task_success", "source_grounding", "clarity", "style_compliance"],
+      "properties": {
+        "technical_accuracy": {"type": "number", "minimum": 0, "maximum": 100},
+        "completeness": {"type": "number", "minimum": 0, "maximum": 100},
+        "task_success": {"type": "number", "minimum": 0, "maximum": 100},
+        "source_grounding": {"type": "number", "minimum": 0, "maximum": 100},
+        "clarity": {"type": "number", "minimum": 0, "maximum": 100},
+        "style_compliance": {"type": "number", "minimum": 0, "maximum": 5}
+      }
+    },
+    "total": {"type": "number", "minimum": 0, "maximum": 100},
+    "hard_gates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["critical_factual_errors", "unsupported_critical_claims", "broken_required_examples", "missing_mandatory_content", "security_compliance_violations", "invalid_required_artifacts"],
+      "properties": {
+        "critical_factual_errors": {"type": "integer", "minimum": 0},
+        "unsupported_critical_claims": {"type": "integer", "minimum": 0},
+        "broken_required_examples": {"type": "integer", "minimum": 0},
+        "missing_mandatory_content": {"type": "integer", "minimum": 0},
+        "security_compliance_violations": {"type": "integer", "minimum": 0},
+        "invalid_required_artifacts": {"type": "integer", "minimum": 0}
+      }
+    },
+    "decision": {"enum": ["pass", "conditional-pass", "fail", "human-review"]},
+    "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+    "rationale": {"type": "string", "minLength": 1}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"rubric": {"const": "task-guide-v0.1"}}, "required": ["rubric"]},
+      "then": {"properties": {"scores": {"properties": {
+        "technical_accuracy": {"maximum": 30},
+        "completeness": {"maximum": 20},
+        "task_success": {"maximum": 20},
+        "source_grounding": {"maximum": 15},
+        "clarity": {"maximum": 10},
+        "style_compliance": {"maximum": 5}
+      }}}}
+    },
+    {
+      "if": {"properties": {"rubric": {"const": "concept-guide-v0.1"}}, "required": ["rubric"]},
+      "then": {"properties": {"scores": {"properties": {
+        "technical_accuracy": {"maximum": 30},
+        "completeness": {"maximum": 20},
+        "task_success": {"maximum": 10},
+        "source_grounding": {"maximum": 20},
+        "clarity": {"maximum": 15},
+        "style_compliance": {"maximum": 5}
+      }}}}
+    },
+    {
+      "if": {"properties": {"rubric": {"const": "api-reference-v0.1"}}, "required": ["rubric"]},
+      "then": {"properties": {"scores": {"properties": {
+        "technical_accuracy": {"maximum": 35},
+        "completeness": {"maximum": 25},
+        "task_success": {"maximum": 10},
+        "source_grounding": {"maximum": 20},
+        "clarity": {"maximum": 5},
+        "style_compliance": {"maximum": 5}
+      }}}}
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Audit Documentation"
+  short_description: "Audit focused documentation or a documentation set read-only"
+  default_prompt: "Within a DocsFab runtime workflow, use focused-document scope for scope, coverage, and documentation-set problems, and documentation-set scope for a coverage baseline, without editing files, invoking another skill, or treating source-vs-claim as the audit job."

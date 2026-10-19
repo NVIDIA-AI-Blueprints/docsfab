@@ -1,0 +1,811 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/quality-report.schema.json",
+  "title": "DocsFab quality report summary v0.1/v0.2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "report_contract",
+    "target",
+    "profile",
+    "evaluation",
+    "rubric",
+    "validation",
+    "artifact_locators"
+  ],
+  "properties": {
+    "report_contract": {
+      "enum": [
+        "docsfab-quality-report-v0.1",
+        "docsfab-quality-report-v0.2"
+      ]
+    },
+    "target": {
+      "$ref": "#/$defs/target"
+    },
+    "profile": {
+      "$ref": "#/$defs/profile"
+    },
+    "evaluation": {
+      "$ref": "#/$defs/evaluation"
+    },
+    "rubric": {
+      "$ref": "#/$defs/rubric"
+    },
+    "validation": {
+      "$ref": "#/$defs/validation"
+    },
+    "artifact_locators": {
+      "$ref": "#/$defs/artifactLocators"
+    },
+    "limitations": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/limitationString"
+      }
+    },
+    "retained_gap_evidence": {
+      "type": "array",
+      "maxItems": 2,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/retainedGapEvidence"
+      }
+    }
+  },
+  "$defs": {
+    "boundedString": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "pattern": "^(?:\\S|\\S.*\\S)$"
+    },
+    "limitationString": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?:[^\\u0009-\\u000d\\u0020\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]|[^\\u0009-\\u000d\\u0020\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff][\\s\\S]*[^\\u0009-\\u000d\\u0020\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff])(?![\\s\\S])"
+    },
+    "identifier": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+    },
+    "decision": {
+      "enum": [
+        "pass",
+        "conditional-pass",
+        "fail",
+        "human-review",
+        "insufficient-evidence"
+      ]
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "paths",
+        "repository_revision",
+        "documentation_revision"
+      ],
+      "properties": {
+        "paths": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/boundedString"
+          }
+        },
+        "repository_revision": {
+          "$ref": "#/$defs/boundedString"
+        },
+        "documentation_revision": {
+          "$ref": "#/$defs/boundedString"
+        }
+      }
+    },
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "version": {
+          "$ref": "#/$defs/boundedString"
+        }
+      }
+    },
+    "evaluation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decision",
+        "confidence",
+        "hard_gate_failures"
+      ],
+      "properties": {
+        "decision": {
+          "$ref": "#/$defs/decision"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "hard_gate_failures": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^(?:\\S|\\S.*\\S)$"
+          }
+        }
+      }
+    },
+    "rubric": {
+      "type": "object",
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "available",
+            "unavailable"
+          ]
+        },
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "dimension_scores": {
+          "type": "object"
+        },
+        "total": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "threshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "interpretation_band": {
+          "enum": [
+            "Green",
+            "Yellow",
+            "Red"
+          ]
+        },
+        "decision": {
+          "enum": [
+            "pass",
+            "conditional-pass",
+            "fail",
+            "human-review"
+          ]
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "hard_gates": {
+          "type": "object"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?:\\S|\\S.*\\S)$"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "available"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "required": [
+              "status",
+              "id",
+              "dimension_scores",
+              "total",
+              "threshold",
+              "interpretation_band",
+              "decision",
+              "confidence",
+              "hard_gates"
+            ],
+            "properties": {
+              "status": {
+                "const": "available"
+              },
+              "id": {
+                "$ref": "#/$defs/identifier"
+              },
+              "dimension_scores": {
+                "type": "object"
+              },
+              "total": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "threshold": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "interpretation_band": {
+                "enum": [
+                  "Green",
+                  "Yellow",
+                  "Red"
+                ]
+              },
+              "decision": {
+                "enum": [
+                  "pass",
+                  "conditional-pass",
+                  "fail",
+                  "human-review"
+                ]
+              },
+              "confidence": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "hard_gates": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "unavailable"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "required": [
+              "status",
+              "reason"
+            ],
+            "properties": {
+              "status": {
+                "const": "unavailable"
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^(?:\\S|\\S.*\\S)$"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evaluation",
+        "quality_score",
+        "report_binding"
+      ],
+      "properties": {
+        "evaluation": {
+          "const": "passed"
+        },
+        "quality_score": {
+          "enum": [
+            "passed",
+            "unavailable"
+          ]
+        },
+        "report_binding": {
+          "const": "passed"
+        }
+      }
+    },
+    "artifactLocators": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evaluation",
+        "quality_score",
+        "quality_report"
+      ],
+      "properties": {
+        "evaluation": {
+          "$ref": "#/$defs/boundedString"
+        },
+        "quality_score": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "quality_report": {
+          "$ref": "#/$defs/boundedString"
+        }
+      }
+    },
+    "hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "profileEvidence": {
+      "type": "object",
+      "required": [
+        "kind"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "profile-decision-policy",
+            "audience-prerequisite-policy"
+          ]
+        },
+        "artifact_locator": {
+          "$ref": "#/$defs/boundedString"
+        },
+        "artifact_sha256": {
+          "$ref": "#/$defs/hash"
+        },
+        "profile_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "profile_version": {
+          "$ref": "#/$defs/boundedString"
+        },
+        "profile_status": {
+          "const": "experimental"
+        },
+        "release_gate_eligible": {
+          "const": false
+        },
+        "decision_policy_field": {
+          "const": "experimental_profile_maximum_decision"
+        },
+        "decision_policy_value": {
+          "const": "insufficient-evidence"
+        },
+        "prerequisites": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/audiencePrerequisite"
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "profile-decision-policy"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "artifact_locator",
+              "artifact_sha256",
+              "profile_id",
+              "profile_version",
+              "profile_status",
+              "release_gate_eligible",
+              "decision_policy_field",
+              "decision_policy_value"
+            ],
+            "properties": {
+              "kind": {
+                "const": "profile-decision-policy"
+              },
+              "artifact_locator": {
+                "$ref": "#/$defs/boundedString"
+              },
+              "artifact_sha256": {
+                "$ref": "#/$defs/hash"
+              },
+              "profile_id": {
+                "$ref": "#/$defs/identifier"
+              },
+              "profile_version": {
+                "$ref": "#/$defs/boundedString"
+              },
+              "profile_status": {
+                "const": "experimental"
+              },
+              "release_gate_eligible": {
+                "const": false
+              },
+              "decision_policy_field": {
+                "const": "experimental_profile_maximum_decision"
+              },
+              "decision_policy_value": {
+                "const": "insufficient-evidence"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "audience-prerequisite-policy"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "artifact_locator",
+              "artifact_sha256",
+              "profile_id",
+              "profile_version",
+              "prerequisites"
+            ],
+            "properties": {
+              "kind": {
+                "const": "audience-prerequisite-policy"
+              },
+              "artifact_locator": {
+                "$ref": "#/$defs/boundedString"
+              },
+              "artifact_sha256": {
+                "$ref": "#/$defs/hash"
+              },
+              "profile_id": {
+                "$ref": "#/$defs/identifier"
+              },
+              "profile_version": {
+                "$ref": "#/$defs/boundedString"
+              },
+              "prerequisites": {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
+                "uniqueItems": true,
+                "items": {
+                  "$ref": "#/$defs/audiencePrerequisite"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "audiencePrerequisite": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "field",
+        "value"
+      ],
+      "properties": {
+        "field": {
+          "enum": [
+            "calibration.human_outcome_baseline",
+            "calibration.agent_outcome_baseline"
+          ]
+        },
+        "value": {
+          "const": "pending"
+        }
+      }
+    },
+    "retainedGapEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "limitation",
+        "reason",
+        "evidence"
+      ],
+      "properties": {
+        "limitation": {
+          "$ref": "#/$defs/boundedString"
+        },
+        "reason": {
+          "enum": [
+            "experimental-profile-ceiling",
+            "audience-prerequisites-missing"
+          ]
+        },
+        "evidence": {
+          "$ref": "#/$defs/profileEvidence"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "reason": {
+                "const": "experimental-profile-ceiling"
+              }
+            },
+            "required": [
+              "reason"
+            ]
+          },
+          "then": {
+            "properties": {
+              "limitation": {
+                "const": "The selected quality profile caps decisions at insufficient-evidence while it remains experimental."
+              },
+              "evidence": {
+                "properties": {
+                  "kind": {
+                    "const": "profile-decision-policy"
+                  }
+                },
+                "required": [
+                  "kind"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "reason": {
+                "const": "audience-prerequisites-missing"
+              }
+            },
+            "required": [
+              "reason"
+            ]
+          },
+          "then": {
+            "properties": {
+              "limitation": {
+                "const": "The selected quality profile has pending human and agent outcome baselines."
+              },
+              "evidence": {
+                "properties": {
+                  "kind": {
+                    "const": "audience-prerequisite-policy"
+                  }
+                },
+                "required": [
+                  "kind"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "report_contract": {
+            "const": "docsfab-quality-report-v0.2"
+          }
+        },
+        "required": [
+          "report_contract"
+        ]
+      },
+      "then": {
+        "required": [
+          "limitations",
+          "retained_gap_evidence"
+        ],
+        "properties": {
+          "limitations": {
+            "items": {
+              "$ref": "#/$defs/limitationString"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "report_contract": {
+            "const": "docsfab-quality-report-v0.1"
+          }
+        },
+        "required": [
+          "report_contract"
+        ]
+      },
+      "then": {
+        "properties": {
+          "limitations": {
+            "items": {
+              "$ref": "#/$defs/boundedString"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "evaluation": {
+            "properties": {
+              "hard_gate_failures": {
+                "minItems": 1
+              }
+            },
+            "required": [
+              "hard_gate_failures"
+            ]
+          }
+        },
+        "required": [
+          "evaluation"
+        ]
+      },
+      "then": {
+        "properties": {
+          "evaluation": {
+            "properties": {
+              "decision": {
+                "const": "fail"
+              }
+            },
+            "required": [
+              "decision"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "evaluation": {
+            "properties": {
+              "hard_gate_failures": {
+                "maxItems": 0
+              }
+            },
+            "required": [
+              "hard_gate_failures"
+            ]
+          },
+          "rubric": {
+            "properties": {
+              "status": {
+                "const": "unavailable"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          }
+        },
+        "required": [
+          "evaluation",
+          "rubric"
+        ]
+      },
+      "then": {
+        "properties": {
+          "evaluation": {
+            "properties": {
+              "decision": {
+                "const": "insufficient-evidence"
+              }
+            },
+            "required": [
+              "decision"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "rubric": {
+            "properties": {
+              "status": {
+                "const": "available"
+              }
+            }
+          }
+        },
+        "required": [
+          "rubric"
+        ]
+      },
+      "then": {
+        "properties": {
+          "validation": {
+            "properties": {
+              "quality_score": {
+                "const": "passed"
+              }
+            }
+          },
+          "artifact_locators": {
+            "properties": {
+              "quality_score": {
+                "$ref": "#/$defs/boundedString"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "rubric": {
+            "properties": {
+              "status": {
+                "const": "unavailable"
+              }
+            }
+          }
+        },
+        "required": [
+          "rubric"
+        ]
+      },
+      "then": {
+        "properties": {
+          "validation": {
+            "properties": {
+              "quality_score": {
+                "const": "unavailable"
+              }
+            }
+          },
+          "artifact_locators": {
+            "properties": {
+              "quality_score": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

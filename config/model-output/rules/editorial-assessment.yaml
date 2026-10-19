@@ -1,0 +1,45 @@
+# Model-output rules for an independent editorial assessment proposal (#1423)
+# that no shared code states. Canonical source; generated bindings are
+# produced by `npm run generate:model-output` from packages/runtime.
+#
+# The editorial assessment reply admission
+# (harness/reply-admission/editorial-assessment.ts) records every refusal of
+# the envelope and its proposal with a closed code and a location. Shape,
+# value, and credential refusals use the shared codes at a proposal location.
+# The limitation-grammar rule (#1268) still lives in
+# workflow-execution/editorial-assessment-rule-hints.ts until #1289 migrates
+# this family. The predicate lives in
+# workflow-execution/editorial-evidence-host.ts
+# (`decodeEditorialAssessmentProposalV1`).
+schemaVersion: 1
+kind: docsfab-output-rules
+family: editorial-assessment
+# Every editorial assessment step is read-only: a retry re-asks from the same
+# repository and admitted evidence.
+replay: read-only
+rules:
+  - code: editorial-assessment-evidence-unavailable
+    locations:
+      - $.editorialAssessmentProposal.evidenceRefs[]
+    kind: content
+    retry: model-correctable
+    reason: >-
+      The assessment cited an artifact reference outside the host's admitted
+      set; the contract lists every admitted reference, so the model can select
+      from them.
+    statement: >-
+      Every editorialAssessmentProposal evidenceRefs entry is copied exactly
+      from the admitted artifact references the contract lists. Never cite
+      another artifact, and never change a digest, revision, or kind.
+    operator:
+      kind: correct
+      meaning: >-
+        An independent editorial assessment cited evidence the host did not
+        admit to that step, and its bounded retries did not correct it.
+      next: >-
+        Inspect the saved run's assessment attempts, then start a new run. If
+        the step keeps citing unadmitted evidence, check that its contract
+        lists the admitted references.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/editorial-assessment/evidence-unavailable.json
+    docs: editorial-assessment-evidence-unavailable

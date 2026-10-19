@@ -1,0 +1,39 @@
+# DocsFab operational limits owned by the `governance` name prefix.
+# Registered in config/limits.yaml; every limit here is named `governance.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: governance.maxCompactions
+    value: 512
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_GOVERNANCE_MAX_COMPACTIONS
+    min: 0
+    max: 512
+    refusal: compaction-limit
+    remediation: Lower the override or reduce context pressure.
+    rationale: Successful compaction spends one provider turn. The effective allowance is clamped to the admitted attempt turn envelope; this catalog ceiling follows the largest admitted provider-turn envelope, not a separately guessed compaction cap.
+
+  - name: governance.maxConsecutiveLengthStoppedToolTurns
+    value: 512
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_GOVERNANCE_MAX_LENGTH_STOPPED_TOOL_TURNS
+    min: 1
+    max: 512
+    refusal: tool-arguments-truncated
+    remediation: Keep tool arguments within the output limit or lower the override.
+    rationale: A rejected truncated tool batch still spends one admitted provider turn. Default permits recovery through the admitted turn envelope; the effective allowance and remaining turns both bound continuation, while cumulative tokens and elapsed time remain authoritative.
+
+  - name: governance.minRecentToolTurns
+    value: 1
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_GOVERNANCE_MIN_RECENT_TOOL_TURNS
+    min: 1
+    max: 512
+    refusal: context-exhausted
+    remediation: Reduce context pressure or lower the preservation minimum to at least one group.
+    rationale: Inherited preservation policy retains one recent complete tool group. This is a minimum rather than a capacity allowance; increasing it reduces compaction freedom. The largest useful preservation count is the largest admitted provider-turn envelope; the default deliberately preserves existing semantics.

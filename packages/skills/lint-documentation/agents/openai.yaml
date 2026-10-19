@@ -1,0 +1,4 @@
+interface:
+  display_name: "Lint Documentation"
+  short_description: "Run repository-native documentation checks"
+  default_prompt: "Within a DocsFab runtime workflow, run the applicable deterministic checks for these documentation changes."

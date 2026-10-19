@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "kind": "ia-plan",
+  "repository": {
+    "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "contentDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "digest": "60d25c789076d2f7caf9ebc108acf0eb8705c0bd545712ef74b16e6437301993",
+  "payload": {
+    "planId": "plan:reader-job",
+    "candidateId": "candidate:reader-job",
+    "candidateArtifact": {
+      "kind": "ia-candidates",
+      "schemaVersion": 1,
+      "digest": "de0bcd34c201b8d5471b3398f1447bcb9fe7bc3d49380dfe9310c4ab4b78ecd8",
+      "repositoryRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "repositoryContentDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    },
+    "scope": "site",
+    "primaryAxis": "reader-job",
+    "secondaryAxes": ["lifecycle"],
+    "groups": [
+      {
+        "id": "group:get-started",
+        "label": "Get started",
+        "axis": "reader-job",
+        "members": ["document:home", "document:guide"],
+        "canonicalPath": "docs/get-started",
+        "evidence": [{ "path": "docs/index.md", "nodeId": "document:home" }]
+      }
+    ],
+    "useCases": [
+      {
+        "id": "use-case:first-run",
+        "actor": "entity:operator",
+        "trigger": "DocsFab is installed",
+        "goal": "Run a governed documentation workflow",
+        "input": "A local documentation repository",
+        "outcome": "A reviewable patch and evidence record",
+        "evidence": [{ "path": "docs/index.md", "nodeId": "section:introduction" }]
+      }
+    ],
+    "rejectedCandidates": [{ "candidateId": "candidate:component", "reason": "lower-score" }],
+    "openDecisions": [],
+    "redirects": [{ "from": "docs/guide.md", "to": "docs/get-started/guide.md" }],
+    "inboundLinkConsequences": [{ "nodeId": "document:guide", "disposition": "move" }],
+    "navigationEvaluation": {
+      "kind": "navigation-evaluation",
+      "schemaVersion": 1,
+      "digest": "015238257c9e76c076affb336a3d9f4cb1a6a8731682aba34049f844714f725c",
+      "repositoryRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "repositoryContentDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    },
+    "policyBindings": [
+      {
+        "id": "policy:stable-urls",
+        "version": "1",
+        "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+      }
+    ],
+    "approval": {
+      "requirement": "maintainer",
+      "status": "approved",
+      "approvedBy": "maintainer:example",
+      "approvedAt": "2026-08-03T15:00:00.000Z"
+    },
+    "expiresAt": "2026-08-04T16:00:00.000Z",
+    "outputScope": [
+      { "path": "docs/get-started/index.md", "operation": "create" },
+      { "path": "docs/get-started/guide.md", "operation": "move" }
+    ]
+  }
+}

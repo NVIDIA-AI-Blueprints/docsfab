@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "skillId": "review-documentation",
+  "profiles": [
+    {
+      "id": "plain-guidance",
+      "operation": "load-guidance",
+      "contextPhase": "absent",
+      "acceptedCallerFields": [],
+      "requiredCallerFields": [],
+      "schemaReferences": [],
+      "immediateToolResultKind": "instructions-loaded",
+      "applicationResultKind": "none",
+      "participantContext": "not-applicable"
+    },
+    {
+      "id": "supporting-reference",
+      "operation": "load-supporting-reference",
+      "contextPhase": "absent",
+      "acceptedCallerFields": [],
+      "requiredCallerFields": [],
+      "schemaReferences": [],
+      "immediateToolResultKind": "reference-loaded",
+      "applicationResultKind": "none",
+      "participantContext": "not-applicable"
+    },
+    {
+      "id": "workflow-step-absent",
+      "operation": "execute-workflow-step",
+      "contextPhase": "absent",
+      "acceptedCallerFields": [],
+      "requiredCallerFields": [],
+      "schemaReferences": [],
+      "immediateToolResultKind": "workflow-step-result",
+      "applicationResultKind": "review-result",
+      "participantContext": "not-applicable"
+    },
+    {
+      "id": "workflow-step-completed-reader-context",
+      "operation": "execute-workflow-step",
+      "contextPhase": "completed-reader-context",
+      "acceptedCallerFields": [],
+      "requiredCallerFields": [],
+      "schemaReferences": [
+        "reader-context.schema.json#/$defs/readerContextV1"
+      ],
+      "immediateToolResultKind": "workflow-step-result",
+      "applicationResultKind": "review-result",
+      "participantContext": "not-applicable"
+    }
+  ]
+}

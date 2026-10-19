@@ -1,0 +1,76 @@
+schema_version: "1.0"
+library_version: "1.0.0"
+name: about-feature
+description: "Individual feature documentation with capabilities and use cases"
+source_template: "templates/about/about-feature.md"
+
+structure:
+  headings:
+    h1:
+      required:
+        - pattern: "About .+|.+ (Feature|Overview)"
+          description: "Feature title"
+      max_count: 1
+    h2:
+      required:
+        - pattern: "How It Works"
+          description: "Explanation of how the feature works"
+        - pattern: "Related Use Cases|When to Use.*|Use Cases?"
+          description: "Use cases section"
+        - pattern: "Getting Started"
+          description: "Getting started links"
+      optional:
+        - pattern: "Limitations?( and Considerations)?"
+          description: "Limitations section"
+        - pattern: "Integration"
+          description: "Integration points"
+        - pattern: "Comparison.*"
+          description: "Comparison with alternatives"
+    h3:
+      optional:
+        - pattern: ".*"
+          description: "Component details and sub-sections"
+
+  elements:
+    - type: image
+      context: "within How It Works section"
+      required: false
+    - type: list-table
+      context: "within Comparison section"
+      required: false
+    - type: grid
+      context: "within Getting Started section"
+      required: true
+      attributes:
+        min_items: 2
+    - type: admonition
+      context: "within Limitations section"
+      required: false
+      attributes:
+        class: tip
+
+  section_order:
+    - "How It Works"
+    - "Related Use Cases"
+    - "Limitations and Considerations"
+    - "Getting Started"
+    - "Integration"
+    - "Comparison"
+
+severity:
+  missing_required_section: error
+  missing_optional_section: info
+  wrong_section_order: warning
+  missing_element: warning
+  duplicate_h1: error
+
+content:
+  intro:
+    paragraphs: 2
+    include_key_capabilities: true
+  use_cases:
+    min_count: 2
+    include_benefits: true
+
+
+

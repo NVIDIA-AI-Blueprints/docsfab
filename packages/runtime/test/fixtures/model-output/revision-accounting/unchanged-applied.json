@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "kind": "docsfab-output-rule-fixture",
+  "code": "revision-accounting-unchanged-applied",
+  "location": "$.issueAccounting[].disposition",
+  "input": {
+    "revision": {
+      "writePaths": ["docs/guide.md"],
+      "actionableFacts": [
+        {
+          "id": "FACT_A",
+          "issueIds": ["TECH-001"],
+          "sourceLocators": ["src/contract.ts:1-3"]
+        }
+      ]
+    },
+    "mutation": {
+      "actualChangedPaths": ["docs/guide.md"],
+      "unchanged": true
+    }
+  },
+  "reply": "{\"issueAccounting\": [{\"issueId\": \"TECH-001\", \"disposition\": \"applied\", \"reason\": \"The admitted source establishes the bounded correction.\", \"sourceLocators\": [\"src/contract.ts:1-3\"]}], \"changedPaths\": [\"docs/guide.md\"], \"unresolvedFacts\": []}"
+}

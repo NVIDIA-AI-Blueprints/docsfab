@@ -1,0 +1,15 @@
+# DocsFab operational limits owned by the `searchBrief` name prefix.
+# Registered in config/limits.yaml; every limit here is named `searchBrief.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: searchBrief.totalMaxChars
+    value: 98304
+    unit: characters
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 4096
+    max: 98304
+    refusal: search-brief-total-max-chars-bound
+    remediation: Narrow the step's search plan to fewer targets or required probes, or raise searchBrief.totalMaxChars in config/limits/searchBrief.yaml after confirming the supported context windows still fit.
+    rationale: Budget. Characters of the search-brief section one model step prompt carries, framing included (its two header lines, the brief's JSON, and the omission notice); the run record keeps the full search evidence. 96 KiB is 24,576 tokens at the estimator's 4 characters per token, 30,720 with its 5/4 safety margin, under a quarter (30,976) of the 123,904 input tokens the smallest shipped profile window admits (contextWindow 128,000 minus contextReserveTokens 4,096 in packages/runtime/config/profiles/nvidia-llama-3.3-nemotron-super-49b-v1.5.yaml). The largest shipped plan (release-documentation-readiness, 30 targets) measured a 32,826-character JSON brief on a 20-file repository, against 604,810 characters of raw evidence; the whole first request then estimated 22,274 input tokens at a 131,072-token window, against 201,004 before. Cited paths are the only part cut to fit, shared across targets smallest demand first; the brief, the run record's evidenceWarnings, and the operator LIMITATIONS footer state how many were left out. Fixed content that alone exceeds this refuses; every shipped search plan's worst case fits (test-proven). The 32,768-token conservative fallback window that setup writes for an unmatched endpoint is not admitted by the host (such profiles skip context admission), and 32,768 minus the measured 22,274-token release request leaves 10,494 tokens, below that profile's 16,384-token output allowance, so an endpoint on the fallback needs its real window configured; this budget is not sized for it.

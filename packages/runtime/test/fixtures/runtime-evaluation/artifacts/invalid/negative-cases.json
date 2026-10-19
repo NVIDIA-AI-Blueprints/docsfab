@@ -1,0 +1,100 @@
+[
+  {
+    "name": "unknown nested ontology field",
+    "base": "ontology",
+    "mutation": "payload.entities[0].promptInjection",
+    "value": true,
+    "expectedError": "unknown-field"
+  },
+  {
+    "name": "stale repository revision",
+    "base": "ontology",
+    "mutation": "repository.revision",
+    "value": "9999999999999999999999999999999999999999",
+    "expectedError": "repository-mismatch"
+  },
+  {
+    "name": "stale repository content digest",
+    "base": "ontology",
+    "mutation": "repository.contentDigest",
+    "value": "9999999999999999999999999999999999999999999999999999999999999999",
+    "expectedError": "repository-mismatch"
+  },
+  {
+    "name": "unresolved relationship endpoint",
+    "base": "ontology",
+    "mutation": "payload.relationships[0].object",
+    "value": "entity:missing",
+    "expectedError": "unresolved-endpoint"
+  },
+  {
+    "name": "unresolved structural node",
+    "base": "context-packet",
+    "mutation": "payload.targetNodeId",
+    "value": "section:missing",
+    "expectedError": "unresolved-endpoint"
+  },
+  {
+    "name": "absolute evidence path",
+    "base": "ontology",
+    "mutation": "payload.entities[0].evidence[0].path",
+    "value": "/tmp/evidence.md",
+    "expectedError": "unsafe-path"
+  },
+  {
+    "name": "traversing evidence path",
+    "base": "ontology",
+    "mutation": "payload.entities[0].evidence[0].path",
+    "value": "docs/../../outside.md",
+    "expectedError": "unsafe-path"
+  },
+  {
+    "name": "backslash evidence path",
+    "base": "ontology",
+    "mutation": "payload.entities[0].evidence[0].path",
+    "value": "docs\\index.md",
+    "expectedError": "unsafe-path"
+  },
+  {
+    "name": "NUL evidence path",
+    "base": "ontology",
+    "mutation": "payload.entities[0].evidence[0].path",
+    "value": "docs/index.md\u0000secret",
+    "expectedError": "unsafe-path"
+  },
+  {
+    "name": "invalid entity kind",
+    "base": "ontology",
+    "mutation": "payload.entities[0].kind",
+    "value": "persona",
+    "expectedError": "invalid-enum"
+  },
+  {
+    "name": "duplicate entity ID",
+    "base": "ontology",
+    "mutation": "payload.entities[1].id",
+    "value": "entity:operator",
+    "expectedError": "duplicate-id"
+  },
+  {
+    "name": "artifact digest mismatch",
+    "base": "ontology",
+    "mutation": "digest",
+    "value": "0000000000000000000000000000000000000000000000000000000000000000",
+    "expectedError": "digest-mismatch"
+  },
+  {
+    "name": "expired plan",
+    "base": "ia-plan",
+    "mutation": "payload.expiresAt",
+    "value": "2026-08-03T15:59:59.000Z",
+    "expectedError": "plan-expired"
+  },
+  {
+    "name": "navigation metric drift",
+    "base": "navigation-evaluation",
+    "mutation": "payload.metrics.recallAt3",
+    "value": 0.75,
+    "expectedError": "invalid-metrics"
+  }
+]

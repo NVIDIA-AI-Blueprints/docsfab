@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "kind": "docsfab-output-rule-fixture",
+  "code": "revision-accounting-unsafe-disclosure",
+  "location": "$",
+  "input": {
+    "revision": {
+      "writePaths": ["docs/guide.md"],
+      "actionableFacts": [
+        {
+          "id": "FACT_A",
+          "issueIds": ["TECH-001"],
+          "sourceLocators": ["src/contract.ts:1-3"]
+        }
+      ]
+    },
+    "syntheticCredential": "{synthetic-credential}"
+  },
+  "reply": "{\"issueAccounting\": [{\"issueId\": \"TECH-001\", \"disposition\": \"applied\", \"reason\": \"The correction quotes the deploy token {synthetic-credential} for support.\", \"sourceLocators\": [\"src/contract.ts:1-3\"]}], \"changedPaths\": [\"docs/guide.md\"], \"unresolvedFacts\": []}"
+}

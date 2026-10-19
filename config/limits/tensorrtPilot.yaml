@@ -1,0 +1,40 @@
+# DocsFab operational limits owned by the `tensorrtPilot` name prefix.
+# Registered in config/limits.yaml; every limit here is named `tensorrtPilot.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+# These bound the offline installed-candidate preparation harness, not model work.
+limits:
+  - name: tensorrtPilot.commandOutputBytes
+    value: 16384
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 16384
+    refusal: tensorrt-pilot-command-output-bytes-bound
+    remediation: Inspect the named offline command and retained Stage A report without copying private child output into the report. If a supported installed command needs more output, measure it and raise tensorrtPilot.commandOutputBytes in config/limits/tensorrtPilot.yaml through review, then regenerate mirrors and rerun the same candidate.
+    rationale: Maximum bytes captured from each local Git, tar, npm, or installed-CLI child stdout or stderr stream in pilot preparation. Isolated offline source-CLI measurements on 2026-10-14 were 57 bytes for --version, 3298 bytes for --help and 1875 bytes for test --json, each with zero stderr, so 16384 bytes leaves almost five times the largest observed output while preventing unbounded child diagnostics from entering memory. The retained-artifact verifier and offline installer receive this bound only from the pilot harness; their other callers preserve existing behavior. Installed-candidate qualification has not run. No host override is provided for this one-off repository-owned harness.
+
+  - name: tensorrtPilot.commandTimeoutMs
+    value: 30000
+    unit: milliseconds
+    scope: per-run
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 30000
+    refusal: tensorrt-pilot-command-timeout-ms-bound
+    remediation: Inspect the named offline command and the isolated host load. If a representative installed command legitimately takes longer, measure it and raise tensorrtPilot.commandTimeoutMs in config/limits/tensorrtPilot.yaml through review, then regenerate mirrors and rerun the same candidate.
+    rationale: Per-command wall clock ceiling for local Git, tar, npm, and installed --version, --help, and test --json children. Isolated offline source-CLI measurements on 2026-10-14 were 299, 1570 and 1181 milliseconds respectively; clean-install acceptance documents a 10000 millisecond offline cycle budget. This preparation permits up to three times that accepted cycle budget so a loaded developer host can still report a slow installed check honestly. The retained-artifact verifier and offline installer receive this timeout only from the pilot harness; their other callers preserve existing behavior. These source timings are not installed-candidate qualification. No host override is provided.
+
+  - name: tensorrtPilot.installedManifestBytes
+    value: 65536
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 65536
+    refusal: tensorrt-pilot-installed-manifest-bytes-bound
+    remediation: Inspect the installed candidate identity and package.json in the isolated prefix. If the exact supported package legitimately needs a larger manifest, measure it and raise tensorrtPilot.installedManifestBytes in config/limits/tensorrtPilot.yaml through review, then regenerate mirrors and rerun the same candidate.
+    rationale: Maximum bytes read from the installed package.json before JSON parsing. The current runtime source package manifest is 9064 bytes on 2026-10-14; 65536 bytes leaves more than seven times that size for a distributed manifest while limiting one package-identity read. The harness opens a regular single-link file without following symlinks and reads at most this bound plus one byte to classify overflow. No host override is provided.

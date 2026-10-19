@@ -1,0 +1,298 @@
+# DocsFab operational limits owned by the `dashboard` name prefix.
+# Registered in config/limits.yaml; every limit here is named `dashboard.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+#
+# These bound the benchmark dashboard (benchmarks/dashboard/): what the
+# campaign export publishes from a DocsFab Bench report, how much history the
+# page keeps and reads back, when a change counts as better or worse, when a
+# failing streak reaches the attention list, and how far back the CI fetch
+# reads. The significance level of a rate comparison is not declared here; the
+# dashboard reuses localWorkflows.canaryAlertMaxPValue.
+limits:
+  - name: dashboard.maxCodeChars
+    value: 96
+    unit: characters
+    scope: per-project
+    warnAt: 0.8
+    override: null
+    min: 32
+    max: 256
+    refusal: dashboard-max-code-chars-bound
+    remediation: Read the field path the exporter names; a stop code, class, layer, or route is one kebab-case token, so a longer value is prose, not a code, and stays withheld. If a real product code is legitimately longer, raise dashboard.maxCodeChars in config/limits/dashboard.yaml.
+    rationale: Longest stop code, failure class, failure layer, or route that the benchmark dashboard's campaign export publishes from a DocsFab Bench report, and that the dashboard accepts from a snapshot. A longer value is withheld and named by its field path. Measured basis, the 654 distinct kebab-case code tokens in packages/runtime/src on 2026-10-05 had a median of 34 characters, a 95th percentile of 51, and a longest of 65 (a limit refusal code); 96 keeps every one with room for longer refusal codes while a pasted sentence still exceeds it.
+
+  - name: dashboard.maxModelIdChars
+    value: 96
+    unit: characters
+    scope: per-project
+    warnAt: 0.8
+    override: null
+    min: 32
+    max: 256
+    refusal: dashboard-max-model-id-chars-bound
+    remediation: Read the field path the exporter names; a model id is a short provider and model name, so a longer value is a pasted path, URL, or credential and stays withheld. If a real model id is legitimately longer, raise dashboard.maxModelIdChars in config/limits/dashboard.yaml.
+    rationale: Longest model id that the benchmark dashboard's campaign export publishes from a DocsFab Bench report, and that the dashboard accepts from a snapshot. A longer value is withheld and named by its field path. Measured basis, the model ids in the repository's model profiles and retained benchmark reports on 2026-10-05 had a median of 33 characters and a longest of 40 (nvidia/llama-3.3-nemotron-super-49b-v1.5); 96 leaves room for longer published model names while a pasted URL path or token still exceeds it.
+
+  - name: dashboard.maxModelIdSegments
+    value: 4
+    unit: count
+    scope: per-project
+    warnAt: 0.8
+    override: null
+    min: 2
+    max: 8
+    refusal: dashboard-max-model-id-segments-bound
+    remediation: Read the field path the exporter names; a model id with more slash-separated segments looks like a path or a URL and stays withheld. If a real model id legitimately has more, raise dashboard.maxModelIdSegments in config/limits/dashboard.yaml.
+    rationale: Most slash-separated segments in a model id that the benchmark dashboard's campaign export publishes, and that the dashboard accepts from a snapshot. A model id with more is withheld and named by its field path. Measured basis, every model id in the repository's model profiles and retained benchmark reports on 2026-10-05 had one to three segments (model, provider/model, or route/provider/model); four leaves one level of headroom while a file path or URL path is refused.
+
+  - name: dashboard.maxPhraseChars
+    value: 128
+    unit: characters
+    scope: per-project
+    warnAt: 0.8
+    override: null
+    min: 32
+    max: 512
+    refusal: dashboard-max-phrase-chars-bound
+    remediation: Read the field path the exporter names; a product entry point or stage is a short phrase, so a longer value is prose and stays withheld. If a real entry point or stage is legitimately longer, raise dashboard.maxPhraseChars in config/limits/dashboard.yaml.
+    rationale: Longest product entry point or stage that the benchmark dashboard's campaign export publishes from a DocsFab Bench report, and that the dashboard accepts from a snapshot. A longer value is withheld and named by its field path. Measured basis, the stage names in packages/runtime/src on 2026-10-05 were at most 11 characters, and an entry point is a command such as docsfab run update-documentation (32 characters) with at most a short note; 128 keeps a command with a note while a pasted paragraph exceeds it.
+
+  - name: dashboard.history.maxPeriods
+    value: 104
+    unit: count
+    scope: per-project
+    warnAt: 0.8
+    override: null
+    min: 4
+    max: 520
+    refusal: dashboard-history-max-periods-bound
+    remediation: Read which metric the dashboard names; a series longer than this was not written weekly or was never pruned. If the page should keep more history, raise dashboard.history.maxPeriods in config/limits/dashboard.yaml.
+    rationale: Most periods of history the dashboard keeps for one metric and reads back for its trend. 104 is two years of weekly periods, long enough to show a seasonal change and short enough that a series written daily by mistake is refused instead of read. Provisional planning value, not measured; the first quarter of real history.jsonl rows on the pilot host is the basis to revisit it.
+
+  - name: dashboard.history.maxBytes
+    value: 8388608
+    unit: bytes
+    scope: per-project
+    warnAt: 0.8
+    override: null
+    min: 65536
+    max: 67108864
+    refusal: dashboard-history-max-bytes-bound
+    remediation: Inspect history.jsonl for a repeated or runaway writer. If the history legitimately grew past it, raise dashboard.history.maxBytes in config/limits/dashboard.yaml.
+    rationale: Largest history.jsonl the dashboard reads. Sizing arithmetic, 8 vital signs x 104 weekly periods is 832 rows, and a nightly series and a per-build series over the same horizon add about 728 rows each at one row a day, so about 2,300 rows; at about 400 bytes a row that is about 0.9 MB, under 1 MiB. 8 MiB leaves about 8 times the headroom while a pasted log or a binary stays out of the parser. Provisional planning value; the first quarter of real history.jsonl size is the basis to revisit it.
+
+  - name: dashboard.trend.minPeriodCount
+    value: 10
+    unit: count
+    scope: per-project
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 1000
+    refusal: dashboard-trend-min-period-count-bound
+    remediation: Read the metric the page names as not enough history; wait for more runs in the period, or widen the period. If a smaller denominator is a fair basis, lower dashboard.trend.minPeriodCount in config/limits/dashboard.yaml.
+    rationale: Smallest denominator in either period for a rate change to be called better or worse. Below it the page says there is not enough history instead of naming a direction. With ten runs in a period one failure moves a rate by at most ten points; the significance of the comparison itself comes from localWorkflows.canaryAlertMaxPValue. Provisional planning value, not measured; the spread of weekly denominators across the first real quarter is the basis to revisit it.
+
+  - name: dashboard.trend.minEffectPoints
+    value: 5
+    unit: percentage-points
+    scope: per-project
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 50
+    refusal: dashboard-trend-min-effect-points-bound
+    remediation: Review the measured rate and its impact, then change dashboard.trend.minEffectPoints in config/limits/dashboard.yaml if a different minimum matters to operators.
+    rationale: A statistical result also needs a five percentage point effect before the dashboard colors it. Pilot jobs are correlated during outages, so high volume alone must not color a tiny shift. Provisional planning value pending a quarter of observed weekly rates.
+
+  - name: dashboard.history.settleHours
+    value: 24
+    unit: hours
+    scope: per-project
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 168
+    refusal: dashboard-history-settle-hours-bound
+    remediation: Inspect late source delivery, then change dashboard.history.settleHours in config/limits/dashboard.yaml if a different closing delay is justified.
+    rationale: One day after an ISO week ends lets nightly and exported source records arrive before a week freezes. Later arrivals remain visible as revisions. Provisional planning value pending measured source delivery delay.
+
+  - name: dashboard.attention.maxItems
+    value: 6
+    unit: count
+    scope: per-project
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 30
+    refusal: dashboard-attention-max-items-bound
+    remediation: Change dashboard.attention.maxItems in config/limits/dashboard.yaml if the front page can show a different number while retaining the full ranked list.
+    rationale: Six attention items fit the one-screen front page while additional items remain behind its expansion control. Provisional planning value pending the rendered page at 1440 by 900.
+
+  - name: dashboard.page.trendPeriods
+    value: 12
+    unit: count
+    scope: per-project
+    warnAt: 0.8
+    override: null
+    min: 2
+    max: 104
+    refusal: dashboard-page-trend-periods-bound
+    remediation: Change dashboard.page.trendPeriods in config/limits/dashboard.yaml if operators need a different visible span without changing retained history.
+    rationale: Twelve points show roughly a quarter of weekly direction within a compact vital row. Retained history remains longer. Provisional planning value pending front-page layout evidence.
+
+  - name: dashboard.attention.minStreak
+    value: 3
+    unit: count
+    scope: per-project
+    warnAt: 0.8
+    override: null
+    min: 2
+    max: 30
+    refusal: dashboard-attention-min-streak-bound
+    remediation: Read the attention list for the streak and its first failing night or build. If a shorter or longer streak should reach the list, change dashboard.attention.minStreak in config/limits/dashboard.yaml.
+    rationale: Consecutive failing nights or builds that put a streak on the attention list. Three is the smallest streak that is not a single flake and not a pair coinciding with one bad merge. Provisional planning value, not measured; the false-alarm count on the attention list over the first month is the basis to revisit it.
+
+  - name: dashboard.ci.historyWeeks
+    value: 12
+    unit: count
+    scope: per-project
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 104
+    refusal: dashboard-ci-history-weeks-bound
+    remediation: Lower dashboard.ci.historyWeeks if the fetch reaches dashboard.ci.maxPages; raise it in config/limits/dashboard.yaml for a longer CI history, and raise dashboard.ci.maxPages with it.
+    rationale: Weeks of main and nightly pipelines that the dashboard's CI fetch reads back, so a CI trend has a quarter of builds to compare. Twelve weeks is one quarter; the history file, not this fetch, keeps anything older. Provisional planning value, not measured; the weekly span the CI trend needs once real history exists is the basis to revisit it.
+
+  - name: dashboard.ci.maxPages
+    value: 100
+    unit: count
+    scope: per-project
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 1000
+    refusal: dashboard-ci-max-pages-bound
+    remediation: Read which listing the fetch names. Lower dashboard.ci.historyWeeks, or raise dashboard.ci.maxPages in config/limits/dashboard.yaml; the fetch never keeps a partial listing.
+    rationale: Most API pages the dashboard's CI fetch reads for one pipeline listing before it refuses. Sizing arithmetic, about 30 main pipelines in 13 hours on 2026-10-07 is roughly 400 a week, so 12 weeks is about 4,800 pipelines; at 100 per page (the fetch page size) that is 48 pages. 100 pages leaves a little more than twice that for faster merging while a runaway listing is refused. Provisional planning value; the pipeline rate after the first quarter is the basis to revisit it.
+
+  - name: dashboard.ci.fetchConcurrency
+    value: 4
+    unit: count
+    scope: per-project
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 16
+    refusal: dashboard-ci-fetch-concurrency-bound
+    remediation: If the hourly refresh nears its unit time limit in the CI fetch, raise dashboard.ci.fetchConcurrency in config/limits/dashboard.yaml; if GitLab answers with rate limits, lower it. The fetch log names how many pipelines it fetched and how many it reused.
+    rationale: Most GitLab requests the dashboard's CI fetch keeps in flight at once for per-pipeline reads (a main pipeline's test report summary, a schedule pipeline's jobs). On 2026-10-16 main saw 80 to 100 merges a day, about 2,100 main pipelines in the 12-week window, and each request took 2.3 to 3.9 seconds, so a full fetch one request at a time ran past the refresh unit's 50 minutes. Measured from a Mac the same day with four in flight, a full fetch of 2,110 main pipelines made 2,182 requests in 26.7 minutes, and an incremental fetch that reused all but 3 to 8 of them made 75 to 80 requests in 2.8 to 5.3 minutes. Four is a modest load on GitLab for one read-only client. Value chosen with the fix of 2026-10-16, not measured against GitLab's rate limits.
+
+  - name: dashboard.ci.fetchAttempts
+    value: 3
+    unit: count
+    scope: per-project
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 10
+    refusal: dashboard-ci-fetch-attempts-bound
+    remediation: If the refresh fails with refresh-ci-fetch and fetch-ci.mjs, run by hand as the service account, logs a failure that usually passes (HTTP 429 or 5xx, or a connection error before GitLab answered) on its last attempt at a read, raise dashboard.ci.fetchAttempts or dashboard.ci.retryBackoffSeconds in config/limits/dashboard.yaml; for HTTP 429 lower dashboard.ci.fetchConcurrency first. An error that every attempt gets is a GitLab or network fault to report, not a limit to raise.
+    rationale: How many times in all the dashboard's CI fetch asks GitLab for one document after a failure that usually passes, which is GitLab answering HTTP 429 or 5xx, or a connection error before any answer. On 2026-10-16 GitLab answered one test_report_summary read of a full fetch with HTTP 500, which failed the whole fetch, and the same read succeeded three times when asked again; a full fetch made 2,182 reads that day, so one brief error can stop it. Three attempts ride out a brief error without hiding a lasting one; any other failure is not asked again. Value chosen with the fix of 2026-10-16, not measured against GitLab's error rate.
+
+  - name: dashboard.ci.retryBackoffSeconds
+    value: 2
+    unit: seconds
+    scope: per-project
+    warnAt: 0.8
+    override: null
+    min: 0
+    max: 60
+    refusal: dashboard-ci-retry-backoff-seconds-bound
+    remediation: If reads that the CI fetch asks again still fail with HTTP 429 or connection errors, raise dashboard.ci.retryBackoffSeconds in config/limits/dashboard.yaml so the fetch waits longer before asking again; lower it if the waits make the refresh too slow.
+    rationale: How long the dashboard's CI fetch waits before asking GitLab again after a failure that usually passes, doubling before each later attempt, so with three attempts in all a read waits 2 seconds and then 4. A brief server error or a dropped connection usually passes within seconds, and the wait keeps the fetch from asking again at once while GitLab is struggling. Value chosen with the fix of 2026-10-16, not measured; a GitLab rate limit that lasts a minute needs a longer wait or a lower dashboard.ci.fetchConcurrency.
+
+  - name: dashboard.ci.reuseSettleMinutes
+    value: 60
+    unit: minutes
+    scope: per-project
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 1440
+    refusal: dashboard-ci-reuse-settle-minutes-bound
+    remediation: If a finished pipeline's test totals on the dashboard differ from GitLab's, raise dashboard.ci.reuseSettleMinutes in config/limits/dashboard.yaml so the fetch reads each finished pipeline again later; lower it only if every hourly fetch rereads too many.
+    rationale: How long after a main pipeline's last update the previous CI snapshot must have been taken before the fetch reuses that pipeline's test totals instead of asking GitLab again. GitLab parses each build's test report asynchronously after the build finishes, so a summary read just after the pipeline's last update can miss a build; reusing it would keep that gap for good. Sixty minutes, one hourly refresh, lets every finished pipeline be read once more before its totals are reused. Provisional planning value, not measured against GitLab's report parsing time.
+
+  - name: dashboard.progress.trendWindowDays
+    value: 7
+    unit: days
+    scope: per-project
+    warnAt: 0.8
+    override: null
+    min: 2
+    max: 28
+    refusal: dashboard-progress-trend-window-days-bound
+    remediation: Read the window the progress page names beside its trailing average. If the owner moves the goal to another window, change dashboard.progress.trendWindowDays in config/limits/dashboard.yaml; a shorter window can only resolve larger changes.
+    rationale: Days of comparable daily runs that the progress page pools for its trailing average, its chance band, its margins over the two alternative agents, and the goal check, and that it compares with the same span before. The owner set the goal on the seven-day pooled done-well rate on 2026-10-08. At 20 tasks a day, seven days pool 140 paired tasks per agent, which resolves a change of about 8 to 10 points where a single day swings by 2 or 3 tasks by chance. Owner decision, not measured.
+
+  - name: dashboard.progress.sparklineDays
+    value: 14
+    unit: days
+    scope: per-project
+    warnAt: 0.8
+    override: null
+    min: 2
+    max: 90
+    refusal: dashboard-progress-sparkline-days-bound
+    remediation: Read the span the progress page's chart and sparklines name. If readers need a longer or shorter view, change dashboard.progress.sparklineDays in config/limits/dashboard.yaml; the local history keeps every run either way.
+    rationale: Days of daily runs drawn in the progress page's chart and in each headline sparkline, and counted for the daily run's on-schedule share. Fourteen days show two trailing windows side by side, so this week's average can be read against last week's on the same axis. Approved with the page's mockup on 2026-10-08. Provisional planning value, not measured; revisit once a month of daily runs exists.
+
+  - name: dashboard.progress.staleHours
+    value: 26
+    unit: hours
+    scope: per-project
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 168
+    refusal: dashboard-progress-stale-hours-bound
+    remediation: Read which source the progress page marks stale and its age. Restart the missed source, such as the nightly benchmark schedule, the pilot snapshot, or the CI fetch. If a source legitimately reports less often, change dashboard.progress.staleHours in config/limits/dashboard.yaml.
+    rationale: Age at which the progress page marks a daily source stale, turns its chip red, greys its numbers, and keeps them out of the headline row. The daily benchmark, the pilot snapshot, and the CI snapshot are each expected at least once a day. Twenty-four hours plus two hours of grace lets a run that starts late or runs long stay current, while a missed day turns red before the next morning's reading. Owner rule for the daily run, 2026-10-08.
+
+  - name: dashboard.progress.monthlyKeyLimitUsd
+    value: 9000
+    unit: USD
+    scope: per-project
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 1000000
+    refusal: dashboard-progress-monthly-key-limit-usd-bound
+    remediation: Read the month-to-date benchmark spend the progress page shows, and the runs whose spend is unknown. When the owner raises the benchmark provider key's monthly limit, raise dashboard.progress.monthlyKeyLimitUsd in config/limits/dashboard.yaml to match; the page only warns and never stops a run.
+    rationale: The benchmark provider key's monthly spending limit. The owner raised the bench Hub key to 9000 USD per month on 2026-10-12, from 4000 USD. The progress page warns when this month's benchmark spend reaches its warnAt share, or could have reached it once each run of unknown spend is counted at its cap, so the six-hourly DocsFab runs and the full nightly never reach the key's limit unannounced. It is a warning only, and nothing refuses or stops on it.
+
+  - name: dashboard.progress.historyDays
+    value: 28
+    unit: days
+    scope: per-project
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 366
+    refusal: dashboard-progress-history-days-bound
+    remediation: Read the window fetch-nightly.mjs names in its manifest. If the fetch was paused for longer, raise dashboard.progress.historyDays in config/limits/dashboard.yaml for one run, or pass --pipeline for each missed pipeline; files already in the history are kept either way.
+    rationale: Days of bench:nightly pipelines each fetch looks back over before it stops. The fetch copies every run it finds into a local history and never deletes one, so the page keeps showing runs after their CI artifacts expire. Four weeks covers the chart's two weeks plus the trailing window behind its first point and leaves two weeks to recover from a paused fetch, while a pipeline whose artifact has expired is not requested again on every refresh. Provisional planning value, not measured.
+
+  - name: dashboard.progress.providerOutageShare
+    value: 0.25
+    unit: ratio
+    scope: per-project
+    warnAt: 1
+    override: null
+    min: 0.05
+    max: 1
+    refusal: dashboard-progress-provider-outage-share-bound
+    remediation: Read the run the progress page flags (it names its provider errors or timeouts and a count such as 12 of 20 cells that ran) and its cause table. The flag only labels a run; it changes no rate and stops nothing. If provider noise of that size is ordinary, raise dashboard.progress.providerOutageShare in config/limits/dashboard.yaml; if a smaller burst should be flagged, lower it.
+    rationale: Share of the cells one agent ran in a daily run (a cell that never ran, or whose execution is unknown, could not end on a provider cause) that ended on a provider error, a model-unavailable stop, or a cell timeout, above which the progress page flags the run for provider errors or timeouts and names the count, such as 12 of 20 cells that ran. The benchmark contract counts those cells as failures of the agent that stopped on them, so a burst of them lowers DocsFab's done-well rate; the flag tells the reader the dip may be infrastructure and changes no rate. A run is flagged when its share is strictly above this value. Measured basis, the eight measured daily runs of 2026-10-11 to 2026-10-13 (160 DocsFab cells, 27 of them on those causes) had 0 to 2 of the cells that ran on those causes in six runs (0 to 10 percent, one of them 1 of 13 that ran) and 10 and 12 of 20 in the other two (50 and 60 percent). 0.25, more than five of 20 cells, sits between the two groups, so ordinary provider noise stays unflagged and a burst is flagged. Provisional planning value; revisit after a month of runs.

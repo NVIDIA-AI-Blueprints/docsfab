@@ -1,0 +1,63 @@
+# DocsFab operational limits owned by the `reviewFindings` name prefix.
+# Registered in config/limits.yaml; every limit here is named `reviewFindings.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: reviewFindings.resultSummaryMaxChars
+    value: 512
+    unit: characters
+    scope: sealed
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 512
+    refusal: review-findings-result-summary-max-chars-bound
+    remediation: Shorten a legacy standalone review summary or preserve the full source issue in the V3 issue graph without clipping it.
+    rationale: Legacy V1 and V2 review result finding, question, and check prose was admitted at this length before V3. This declared structural ceiling preserves those closed envelopes while complete V3 issue actions and source fact text retain their own original length. It is not a cap on the new issue graph.
+
+  - name: reviewFindings.coverageDeferredMaxCount
+    value: 256
+    unit: count
+    scope: sealed
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 256
+    refusal: review-findings-coverage-deferred-max-count-bound
+    remediation: Continue the review in another focused scope or use the existing durable continuation plan to account for further deferred pages.
+    rationale: The closed review result coverage block admits at most this many explicitly named deferred pages. This is a per-result transport list, separate from the number of requested review targets even though both historical values happen to be 256. The remaining scope must be retained by the review plan and reported as unlisted or deferred rather than silently omitted.
+
+  - name: reviewFindings.coverageContinuationMinChars
+    value: 256
+    unit: characters
+    scope: sealed
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 256
+    refusal: review-findings-coverage-continuation-min-chars-bound
+    remediation: Use a continuation allowance large enough for the complete command and its source bindings.
+    rationale: Historical review result admission refused an accounting continuation allowance below this value because a useful bound command needs room for its scope, revision, and at least one path. This is the lower validity threshold of the coverage field, not a limit on issue facts, actions, or host output.
+
+  - name: reviewFindings.summaryTopN
+    value: 5
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 256
+    refusal: review-findings-summary-top-n-bound
+    remediation: Read every admitted finding with docsfab runs show <run-id> --json, or raise reviewFindings.summaryTopN in config/limits/reviewFindings.yaml to print more of them in the human result.
+    rationale: Admitted review findings the human REVIEW FINDINGS section prints as sentences for review-documentation and authoring runs, ranked by severity, error then warning then info, then by finding id. Presentation only; the JSON reviewFindings array and the run record always carry every admitted finding, and the section always prints a Findings shown N of M line with a pointer to that JSON when it prints fewer than it admitted, so a clipped tail is never silent. Each finding takes four lines, so 5 keeps the section to about 20 finding lines. The first retained review measured in Epic(#1436), run 1aba893c, admitted 27 findings, and its top 5 by this ranking are the evaluator's five warning-level synthesized findings. The maximum matches the review projector's own admitted-finding ceiling, 256, so the bound can show every finding a run can admit. No override tier; a caller who needs every finding reads the JSON.
+
+  - name: reviewFindings.auditFooterFindings
+    value: 3
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 256
+    refusal: review-findings-audit-footer-findings-bound
+    remediation: Read every product finding code with docsfab runs show <run-id> --json, where product.findings lists them all, or raise reviewFindings.auditFooterFindings in config/limits/reviewFindings.yaml.
+    rationale: Workflow outcome finding codes the review-documentation PRODUCT section prints, one line per code with its glossary phrase, before a Product findings omitted count. Migrated unchanged from a hand-declared presenter constant of the same value, previously an allowlisted literal, Task(#1027) identifier-rule expansion. Separate from reviewFindings.summaryTopN because these are one-line workflow outcome codes, not the four-line admitted review findings, and the audit outcome rarely carries more than a few codes. Presentation only; the JSON product.findings array always carries every code.

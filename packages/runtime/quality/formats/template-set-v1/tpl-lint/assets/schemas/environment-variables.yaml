@@ -1,0 +1,44 @@
+schema_version: "1.0"
+library_version: "1.0.0"
+name: environment-variables
+description: "Environment variables reference page"
+source_template: "templates/reference/environment-variables/environment-variables.md"
+
+structure:
+  headings:
+    h1:
+      required:
+        - pattern: "Environment Variables.*"
+          description: "Environment variables title"
+      max_count: 1
+    h2:
+      required:
+        - pattern: "General Environment Variables|Common Environment Variables"
+          description: "General environment variables section"
+      optional:
+        - pattern: "Related Topics?"
+          description: "Related topics section"
+    h3:
+      optional:
+        - pattern: ".*"
+          description: "Variable group subsections"
+
+  elements: []
+
+  section_order: []
+
+severity:
+  missing_required_section: error
+  missing_optional_section: info
+  wrong_section_order: info
+  missing_element: info
+  duplicate_h1: error
+
+lint:
+  # Env-var reference pages are intentionally long catalogs.
+  long_file:
+    mode: skip
+
+content:
+  variables:
+    format: "table with Name, Description, Default, Required columns"

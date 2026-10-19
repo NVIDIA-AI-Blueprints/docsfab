@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "kind": "docsfab-limits",
+  "recovery": {
+    "logicalObjectMaxBytes": 536870887,
+    "legacyLogicalObjectMaxBytes": 16777216,
+    "minimumLogicalObjectMaxBytes": 1048576,
+    "manifestMaxBytes": 2097152,
+    "logicalCiphertextOverheadBytes": 1048576,
+    "headroomWarnRatio": 0.75,
+    "headroomDegradedRatio": 0.9
+  }
+}

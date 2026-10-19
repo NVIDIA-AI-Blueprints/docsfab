@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "kind": "docsfab-output-rule-fixture",
+  "code": "revision-accounting-invalid-json",
+  "location": "$",
+  "input": {
+    "revision": {
+      "writePaths": ["docs/guide.md"],
+      "actionableFacts": [
+        {
+          "id": "FACT_A",
+          "issueIds": ["TECH-001"],
+          "sourceLocators": ["src/contract.ts:1-3"]
+        }
+      ]
+    }
+  },
+  "reply": "{"
+}

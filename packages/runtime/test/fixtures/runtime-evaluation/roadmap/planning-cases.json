@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "cases": [
+    {
+      "id": "release-boundary",
+      "mode": "release",
+      "disposition": "needs-new-doc",
+      "relation": "none",
+      "confidence": 0.95,
+      "cap": 5,
+      "expectedAction": "create"
+    },
+    {
+      "id": "post-freeze-sweep",
+      "mode": "sweep",
+      "disposition": "repair",
+      "relation": "none",
+      "confidence": 0.95,
+      "cap": 5,
+      "expectedAction": "create"
+    },
+    {
+      "id": "whole-repo-health",
+      "mode": "health",
+      "disposition": "repair",
+      "relation": "none",
+      "confidence": 0.95,
+      "cap": 5,
+      "expectedAction": "create"
+    },
+    {
+      "id": "scoped-health",
+      "mode": "health",
+      "scope": "docs",
+      "disposition": "repair",
+      "relation": "none",
+      "confidence": 0.95,
+      "cap": 5,
+      "expectedAction": "create"
+    },
+    {
+      "id": "existing-duplicate",
+      "mode": "health",
+      "disposition": "repair",
+      "relation": "exact",
+      "confidence": 0.95,
+      "cap": 5,
+      "expectedAction": "link"
+    },
+    {
+      "id": "partial-overlap",
+      "mode": "health",
+      "disposition": "repair",
+      "relation": "extend",
+      "confidence": 0.95,
+      "cap": 5,
+      "expectedAction": "extend"
+    },
+    {
+      "id": "conflicting-issue",
+      "mode": "health",
+      "disposition": "repair",
+      "relation": "conflict",
+      "confidence": 0.95,
+      "cap": 5,
+      "expectedAction": "investigate"
+    },
+    {
+      "id": "low-confidence",
+      "mode": "health",
+      "disposition": "repair",
+      "relation": "none",
+      "confidence": 0.4,
+      "cap": 5,
+      "expectedAction": "investigate"
+    },
+    {
+      "id": "proposal-cap",
+      "mode": "health",
+      "disposition": "repair",
+      "relation": "none",
+      "confidence": 0.95,
+      "cap": 1,
+      "candidateCount": 2,
+      "expectedAction": "none"
+    }
+  ]
+}

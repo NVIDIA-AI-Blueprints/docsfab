@@ -1,0 +1,4 @@
+{
+  "workflows": ["review-documentation", "readiness", "release-documentation-readiness"],
+  "repoRoots": ["/absolute/path/to/an/allowed/repository"]
+}

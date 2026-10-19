@@ -1,0 +1,183 @@
+{
+  "verdict": "needs-revision",
+  "coverage": [
+    {
+      "path": "docs/quickstart.md",
+      "status": "verified",
+      "evidence": ["docs/quickstart.md:1-21", "src/sprout.mjs:1-27"],
+      "reason": "Compared the frozen quickstart page against the frozen CLI source."
+    }
+  ],
+  "issueJudgments": [
+    {
+      "id": "TECH-001",
+      "severity": "major",
+      "category": "technical_accuracy",
+      "location": "docs/quickstart.md:11",
+      "obligationIds": ["OBL-DEFAULTS-AND-OVERRIDES-3"]
+    },
+    {
+      "id": "TECH-002",
+      "severity": "major",
+      "category": "technical_accuracy",
+      "location": "docs/quickstart.md:19",
+      "obligationIds": ["OBL-DESTINATION-AND-TRUST-1"]
+    },
+    {
+      "id": "TECH-003",
+      "severity": "major",
+      "category": "completeness",
+      "location": "docs/quickstart.md:3",
+      "obligationIds": ["OBL-DESTINATION-AND-TRUST-2", "OBL-ENVIRONMENT-PREREQUISITE-2"]
+    },
+    {
+      "id": "TECH-004",
+      "severity": "minor",
+      "category": "source_grounding",
+      "location": "docs/quickstart.md:3",
+      "obligationIds": ["OBL-ENVIRONMENT-PREREQUISITE-3"]
+    },
+    {
+      "id": "TECH-005",
+      "severity": "major",
+      "category": "completeness",
+      "location": "docs/quickstart.md:21",
+      "obligationIds": [
+        "OBL-INPUT-REPRESENTATIONS-2",
+        "OBL-INPUT-REPRESENTATIONS-3",
+        "OBL-DEFAULTS-AND-OVERRIDES-1",
+        "OBL-DEFAULTS-AND-OVERRIDES-2",
+        "OBL-MUTABLE-STATE-1",
+        "OBL-DESTINATION-AND-TRUST-3",
+        "OBL-ERROR-STATUS-RETRY-1",
+        "OBL-ERROR-STATUS-RETRY-2",
+        "OBL-ERROR-STATUS-RETRY-3",
+        "OBL-ERROR-STATUS-RETRY-4",
+        "OBL-ERROR-STATUS-RETRY-5"
+      ]
+    }
+  ],
+  "obligationJudgments": [
+    {
+      "obligationId": "OBL-INPUT-REPRESENTATIONS-1",
+      "disposition": "retained",
+      "documentationDisposition": "documented",
+      "issueIds": []
+    },
+    {
+      "obligationId": "OBL-INPUT-REPRESENTATIONS-2",
+      "disposition": "retained",
+      "documentationDisposition": "omitted",
+      "issueIds": ["TECH-005"]
+    },
+    {
+      "obligationId": "OBL-INPUT-REPRESENTATIONS-3",
+      "disposition": "retained",
+      "documentationDisposition": "omitted",
+      "issueIds": ["TECH-005"]
+    },
+    {
+      "obligationId": "OBL-DEFAULTS-AND-OVERRIDES-1",
+      "disposition": "retained",
+      "documentationDisposition": "omitted",
+      "issueIds": ["TECH-005"]
+    },
+    {
+      "obligationId": "OBL-DEFAULTS-AND-OVERRIDES-2",
+      "disposition": "retained",
+      "documentationDisposition": "omitted",
+      "issueIds": ["TECH-005"]
+    },
+    {
+      "obligationId": "OBL-DEFAULTS-AND-OVERRIDES-3",
+      "disposition": "retained",
+      "documentationDisposition": "conflicting",
+      "issueIds": ["TECH-001"]
+    },
+    {
+      "obligationId": "OBL-MUTABLE-STATE-1",
+      "disposition": "retained",
+      "documentationDisposition": "omitted",
+      "issueIds": ["TECH-005"]
+    },
+    {
+      "obligationId": "OBL-DESTINATION-AND-TRUST-1",
+      "disposition": "refined",
+      "reason": "The source writes greeting output and help output to standard output on separate paths.",
+      "replacements": [
+        {
+          "statement": "Successful greeting output is written to standard output via console.log.",
+          "documentationDisposition": "documented",
+          "uncertainty": "Derived from source inspection only; stdout behavior was not executed.",
+          "issueIds": []
+        },
+        {
+          "statement": "A top-level --help invocation writes usage and defaults text to standard output via console.log.",
+          "documentationDisposition": "omitted",
+          "uncertainty": "Derived from source inspection only; help-path stdout behavior was not executed.",
+          "issueIds": ["TECH-002"]
+        }
+      ]
+    },
+    {
+      "obligationId": "OBL-DESTINATION-AND-TRUST-2",
+      "disposition": "retained",
+      "documentationDisposition": "omitted",
+      "issueIds": ["TECH-003"]
+    },
+    {
+      "obligationId": "OBL-DESTINATION-AND-TRUST-3",
+      "disposition": "retained",
+      "documentationDisposition": "omitted",
+      "issueIds": ["TECH-005"]
+    },
+    {
+      "obligationId": "OBL-ERROR-STATUS-RETRY-1",
+      "disposition": "retained",
+      "documentationDisposition": "omitted",
+      "issueIds": ["TECH-005"]
+    },
+    {
+      "obligationId": "OBL-ERROR-STATUS-RETRY-2",
+      "disposition": "retained",
+      "documentationDisposition": "omitted",
+      "issueIds": ["TECH-005"]
+    },
+    {
+      "obligationId": "OBL-ERROR-STATUS-RETRY-3",
+      "disposition": "retained",
+      "documentationDisposition": "omitted",
+      "issueIds": ["TECH-005"]
+    },
+    {
+      "obligationId": "OBL-ERROR-STATUS-RETRY-4",
+      "disposition": "retained",
+      "documentationDisposition": "omitted",
+      "issueIds": ["TECH-005"]
+    },
+    {
+      "obligationId": "OBL-ERROR-STATUS-RETRY-5",
+      "disposition": "retained",
+      "documentationDisposition": "omitted",
+      "issueIds": ["TECH-005"]
+    },
+    {
+      "obligationId": "OBL-ENVIRONMENT-PREREQUISITE-1",
+      "disposition": "retained",
+      "documentationDisposition": "documented",
+      "issueIds": []
+    },
+    {
+      "obligationId": "OBL-ENVIRONMENT-PREREQUISITE-2",
+      "disposition": "retained",
+      "documentationDisposition": "omitted",
+      "issueIds": ["TECH-003"]
+    },
+    {
+      "obligationId": "OBL-ENVIRONMENT-PREREQUISITE-3",
+      "disposition": "retained",
+      "documentationDisposition": "unverified-policy",
+      "issueIds": ["TECH-004"]
+    }
+  ]
+}

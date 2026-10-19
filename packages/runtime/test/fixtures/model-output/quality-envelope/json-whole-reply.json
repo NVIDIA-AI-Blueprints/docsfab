@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "kind": "docsfab-output-rule-fixture",
+  "code": "quality-envelope-json",
+  "location": "$",
+  "input": {
+    "workflow": "review-documentation"
+  },
+  "reply": "The evaluation is complete."
+}

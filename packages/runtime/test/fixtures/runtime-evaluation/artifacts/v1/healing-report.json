@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "kind": "healing-report",
+  "repository": {
+    "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "contentDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "digest": "65ae1fb87aa8b9b4b20802fdd9d8ff3d6cbe2c0ec70990555185aec12addb6eb",
+  "payload": {
+    "impactReport": {
+      "kind": "impact-report",
+      "schemaVersion": 1,
+      "digest": "d0af7b6695aa3d276456784628439c224cb9682d015afb5091b0e157b53d6661",
+      "repositoryRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "repositoryContentDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    },
+    "recommendations": [
+      {
+        "id": "recommendation:update-navigation",
+        "level": "bounded-repair",
+        "disposition": "cross-link",
+        "targetNodeIds": ["document:home", "document:guide"],
+        "outputPaths": ["docs/index.md"],
+        "evidence": [{ "path": "docs/index.md", "nodeId": "document:home" }]
+      }
+    ],
+    "requiredApproval": "maintainer"
+  }
+}

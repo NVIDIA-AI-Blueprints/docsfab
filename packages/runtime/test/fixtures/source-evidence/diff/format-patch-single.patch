@@ -1,0 +1,22 @@
+From ea8d3842a5059c104719d01aea1b8670eaccfa60 Mon Sep 17 00:00:00 2001
+From: Fixture Author <fixture@example.test>
+Date: Mon, 5 Jan 2026 10:00:00 +0000
+Subject: [PATCH] Raise the default limit
+
+---
+ docs/install.md | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/docs/install.md b/docs/install.md
+index 47cb360..adddf67 100644
+--- a/docs/install.md
++++ b/docs/install.md
+@@ -2,4 +2,4 @@
+ 
+ Download the archive from https://downloads.example.test/tool.tar.gz.
+ Run the installer.
+-The default limit is 100 rows.
++The default limit is 500 rows.
+-- 
+2.47.0
+

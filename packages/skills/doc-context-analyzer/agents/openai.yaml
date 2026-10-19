@@ -1,0 +1,4 @@
+interface:
+  display_name: "Inspect Documentation Foundation"
+  short_description: "Inspect a repository foundation and report evidence gaps and next questions."
+  default_prompt: "Inspect the selected repository and host-bound approved model without writing files or accepting product decisions."

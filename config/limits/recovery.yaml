@@ -1,0 +1,129 @@
+# DocsFab operational limits owned by the `recovery` name prefix.
+# Registered in config/limits.yaml; every limit here is named `recovery.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: recovery.logicalObjectMaxBytes
+    value: 536870887
+    unit: bytes
+    scope: per-host
+    warnAt: 0.75
+    override: null
+    min: 1
+    max: 536870887
+    refusal: recovery-logical-object-max-bytes-bound
+    remediation: Reduce the individual logical object size, or qualify a reader representation for larger objects before raising this value. Existing manifest-recorded limits remain binding.
+    rationale: Largest logical project object admitted by the current whole-string reader. Defaults to one code unit below the qualified 64-bit Node MAX_STRING_LENGTH for worst-case ASCII, 25 bytes below the approved 512 MiB allowance. The former 256 MiB value was an agent-selected heap margin, not a platform ceiling or owner decision. Restore memory remains a separate qualification.
+
+  - name: recovery.legacyLogicalObjectMaxBytes
+    value: 16777216
+    unit: bytes
+    scope: per-host
+    warnAt: 0.75
+    override: null
+    min: 1
+    max: 16777216
+    refusal: recovery-legacy-logical-object-max-bytes-bound
+    remediation: Raise recovery.legacyLogicalObjectMaxBytes in config/limits/recovery.yaml for legacy manifests.
+    rationale: Bound assumed by producers that predate a manifest-recorded bound.
+
+  - name: recovery.minimumLogicalObjectMaxBytes
+    value: 1048576
+    unit: bytes
+    scope: per-host
+    warnAt: 0.75
+    override: null
+    min: 1
+    max: 1048576
+    refusal: recovery-minimum-logical-object-max-bytes-bound
+    remediation: Keep recovery.minimumLogicalObjectMaxBytes at or above 1 MiB outside a test fixture.
+    rationale: Floor for any recovery bound, configured here or recorded in a manifest.
+
+  - name: recovery.manifestMaxBytes
+    value: 2097152
+    unit: bytes
+    scope: per-host
+    warnAt: 0.75
+    override: null
+    min: 1
+    max: 2097152
+    refusal: recovery-manifest-max-bytes-bound
+    remediation: Raise recovery.manifestMaxBytes in config/limits/recovery.yaml, or shrink the manifest.
+    rationale: Largest bundle manifest, object inventory, or restore receipt a verifier reads.
+
+  - name: recovery.logicalCiphertextOverheadBytes
+    value: 1048576
+    unit: bytes
+    scope: per-host
+    warnAt: 0.75
+    override: null
+    min: 1
+    max: 1048576
+    refusal: recovery-logical-ciphertext-overhead-bytes-bound
+    remediation: Raise recovery.logicalCiphertextOverheadBytes in config/limits/recovery.yaml.
+    rationale: Ciphertext allowance the storage adapter adds to the logical bound.
+
+  - name: recovery.headroomWarnRatio
+    value: 0.75
+    unit: ratio
+    scope: per-host
+    warnAt: 1
+    override: null
+    min: 0
+    max: 1
+    refusal: recovery-headroom-warn-ratio-bound
+    remediation: Keep recovery.headroomWarnRatio in (0, 1] and at or below the degraded ratio.
+    rationale: Share of the recovery bound at which a headroom report warns.
+
+  - name: recovery.headroomDegradedRatio
+    value: 0.9
+    unit: ratio
+    scope: per-host
+    warnAt: 1
+    override: null
+    min: 0
+    max: 1
+    refusal: recovery-headroom-degraded-ratio-bound
+    remediation: Keep recovery.headroomDegradedRatio in (0, 1] and at or above the warn ratio.
+    rationale: Share of the recovery bound at which a headroom report is degraded.
+
+  - name: recovery.serviceHistoryMaxHostJobs
+    value: 65536
+    unit: count
+    scope: per-host
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 65536
+    refusal: recovery-service-history-max-host-jobs-bound
+    remediation: Raise recovery.serviceHistoryMaxHostJobs in config/limits/recovery.yaml, or accept that the logical export keeps only the newest host-job rows and leaves the rest in the physical image.
+    rationale: Newest host-job rows retained in the logical recovery export, defaulting to the existing admitted maximum. Older rows remain in the source cluster and encrypted physical image. A larger row window can enlarge the export; the independent logical object byte bound still applies.
+    docValue: 65,536 jobs
+    docSummary: Newest host-job rows in a logical recovery export; older rows remain in the physical image.
+
+  - name: recovery.backupRetentionDays
+    value: 30
+    unit: days
+    scope: per-host
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 30
+    refusal: recovery-backup-retention-days-bound
+    remediation: Keep recovery.backupRetentionDays within 1 to 30 days in config/limits/recovery.yaml. Raising the maximum needs a Privacy-approved change to the recorded retention commitment first.
+    rationale: Age in whole days after which pilot backup packages and local staging bundles expire. After each backup that is stored and verified, the backup tool deletes Generic Package versions in the private GitLab recovery project and local staging bundles older than this, and always keeps the newest verified backup. Git history in the recovery repository (manifests, receipts, and logical exports) is not pruned by this bound; its cleanup needs owner and Privacy authorization (#1790). 30 days is the commitment in the DocsFab 0.0.1 record of processing activities, so the maximum equals the value and there is no host override. A lower value shortens the restore window.
+    docValue: 30 days
+    docSummary: Age after which pilot backup packages and local staging bundles are pruned; recovery-repository Git history is not pruned.
+
+  - name: recovery.credentialStoreRequestTimeoutSeconds
+    value: 30
+    unit: seconds
+    scope: per-host
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 30
+    refusal: recovery-credential-store-request-timeout-seconds-bound
+    remediation: Keep recovery.credentialStoreRequestTimeoutSeconds within 1 to 30 seconds in config/limits/recovery.yaml. A store that needs longer is unhealthy; the failed backup reports recovery-credential-store-unreachable and the next scheduled run retries.
+    rationale: Deadline for each request a recovery operation makes to the external secret store that provides its credentials (login, one data read and one metadata read per credential, and token revocation). A healthy store answers in well under a second, so 30 seconds leaves wide headroom for a slow network without letting a scheduled backup hang on an unreachable store. A request that misses it fails the operation with a coded refusal; there is no retry inside the operation.
+    docValue: 30 seconds
+    docSummary: Deadline for each request to the external secret store that provides recovery credentials.

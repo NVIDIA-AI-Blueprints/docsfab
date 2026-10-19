@@ -1,0 +1,121 @@
+# Model-output rules for a technical judgment reply (#1342) that no shared
+# code states. Canonical source; generated bindings are produced by
+# `npm run generate:model-output` from packages/runtime.
+#
+# The provisional-technical-verification judgment and the V3
+# verify-technical-accuracy correction share one judgment fill
+# (workflow-execution/source-obligation.ts
+# `fillTechnicalCorrectionProposalFromJudgmentV3`). Since #1342 the model links
+# issues to facts in one direction only, issueJudgments[].obligationIds, and
+# the host derives each retained or replacement fact's issueIds from those
+# links. An issueIds field left on an obligation judgment or replacement is
+# ignored. Codes this fill already raised before #1342 keep their hand-written
+# rows until the technical-review family migrates (#1289), which may fold this
+# family into it without changing a recorded code.
+schemaVersion: 1
+kind: docsfab-output-rules
+family: technical-judgment
+# Both judgment steps are read-only: a retry re-asks from the same repository.
+replay: read-only
+rules:
+  - code: judgment-fact-unlinked
+    locations:
+      - $.issueJudgments[].obligationIds
+    kind: content
+    retry: model-correctable
+    reason: >-
+      The judgment kept a fact that is not documented but linked no issue to
+      its obligation; the model can link the obligation from an issue judgment
+      or judge the fact documented.
+    statement: >-
+      Link issues to facts only through issueJudgments[].obligationIds; the
+      host derives each fact's issue links from them, so obligation judgments
+      and replacements carry no issueIds. An issue judgment that links an
+      obligation links every fact of that obligation that is not documented,
+      including every such replacement of a refined obligation. Every retained
+      obligation, and every refined obligation with a replacement, whose
+      documentationDisposition is not "documented" must be linked by at least
+      one issueJudgment.
+    operator:
+      kind: correct
+      meaning: >-
+        A technical judgment kept a source fact that the documentation does not
+        cover but raised no issue for it, and its bounded retries did not link
+        one.
+      next: >-
+        Inspect the saved run's judgment attempts, then start a new run. If the
+        model keeps leaving such facts unlinked, record it as
+        model-compatibility evidence; the host cannot invent the issue's
+        severity, category, or location.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/technical-judgment/fact-unlinked.json
+    docs: judgment-fact-unlinked
+  # #1342 decision (critic P3-1, decided on Lawrence's behalf): an issue
+  # judgment that links no fact that is not documented was silently omitted
+  # before; it is now refused, so a contradicted issue is re-asked, not lost.
+  - code: judgment-links-no-open-fact
+    locations:
+      - $.issueJudgments[]
+    kind: content
+    retry: model-correctable
+    reason: >-
+      An issue judgment linked only obligations whose facts are documented or
+      rejected, so no fact supports it; the model can link the obligation the
+      issue concerns, judge that fact not documented, or drop the issue.
+    statement: >-
+      Every issueJudgment must link at least one retained or refined obligation
+      with a fact whose documentationDisposition is not "documented". A
+      documented or rejected obligation cannot support an issue, so link the
+      obligation the issue concerns, or remove an issue that no such fact
+      supports.
+    operator:
+      kind: correct
+      meaning: >-
+        A technical judgment raised an issue that linked only documented or
+        rejected obligations, so no source fact supported it, and its bounded
+        retries did not correct it.
+      next: >-
+        Inspect the saved run's judgment attempts, then start a new run. If the
+        model keeps raising unsupported issues, record it as
+        model-compatibility evidence; the host does not drop an issue the
+        model raised.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/technical-judgment/links-no-open-fact.json
+    docs: judgment-links-no-open-fact
+  # #1401 (probe 7): every judgment row of three attempts omitted
+  # documentationDisposition. The judgment contract named the member but never
+  # its values, and the retry hint pointed at $.factInventory, a member the
+  # judgment reply may not return. The rule is now stated where the model
+  # reads it and raised at the member the model wrote.
+  - code: judgment-documentation-disposition-invalid
+    locations:
+      - $.obligationJudgments[].documentationDisposition
+      - $.obligationJudgments[].replacements[].documentationDisposition
+    kind: content
+    retry: model-correctable
+    reason: >-
+      A retained obligation judgment or a refined replacement omitted its
+      documentation disposition or named a value outside the five the contract
+      lists; the model can set one of them.
+    statement: >-
+      Every retained row of obligationJudgments, and every replacement of a
+      refined row, sets documentationDisposition to exactly one of
+      "documented", "omitted", "conflicting", "unverified-policy", or
+      "product-defect"; a rejected row sets none. No other value is admitted,
+      including a working value such as "unassessed": decide each disposition
+      before answering.
+    operator:
+      kind: correct
+      meaning: >-
+        A technical judgment kept a source fact without a documentation
+        disposition the host admits, and its bounded retries did not supply
+        one.
+      next: >-
+        Inspect the saved run's judgment attempts, then start a new run. If the
+        model keeps omitting the disposition, record it as model-compatibility
+        evidence; the host cannot decide whether the documentation covers a
+        fact.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/technical-judgment/documentation-disposition-missing.json
+      - packages/runtime/test/fixtures/model-output/technical-judgment/replacement-documentation-disposition-missing.json
+    docs: judgment-documentation-disposition-invalid

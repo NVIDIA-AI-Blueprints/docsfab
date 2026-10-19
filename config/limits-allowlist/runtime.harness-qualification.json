@@ -1,0 +1,154 @@
+{
+  "literals": [
+    {
+      "path": "packages/runtime/src/harness-qualification/adapters.ts",
+      "kind": "kib-product",
+      "lexeme": "1024 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/harness-qualification/adapters.ts",
+      "kind": "kib-product",
+      "lexeme": "2 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/harness-qualification/adapters.ts",
+      "kind": "kib-product",
+      "lexeme": "256 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/harness-qualification/adapters.ts",
+      "kind": "kib-product",
+      "lexeme": "64 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/harness-qualification/adapters.ts",
+      "kind": "max-assign",
+      "lexeme": "maxBudgetUsd: 5",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/harness-qualification/adapters.ts",
+      "kind": "max-assign",
+      "lexeme": "maxOutputSchemaBytes: 6",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/harness-qualification/adapters.ts",
+      "kind": "max-assign",
+      "lexeme": "maxPromptBytes: 2",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/harness-qualification/adapters.ts",
+      "kind": "max-assign",
+      "lexeme": "maxStderrBytes: 2",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/harness-qualification/adapters.ts",
+      "kind": "max-assign",
+      "lexeme": "maxStdoutBytes: 1",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/harness-qualification/adapters.ts",
+      "kind": "max-assign",
+      "lexeme": "maxTurns: 1",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/harness-qualification/adapters.ts",
+      "kind": "timeout-assign",
+      "lexeme": "timeoutMs: 5",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/harness-qualification/linux-containment.ts",
+      "kind": "max-assign",
+      "lexeme": "maxStderrBytes: 4",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/harness-qualification/linux-containment.ts",
+      "kind": "max-assign",
+      "lexeme": "maxStdoutBytes: 4",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/harness-qualification/linux-containment.ts",
+      "kind": "timeout-assign",
+      "lexeme": "ESCAPE_WAIT_MS = 6",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/harness-qualification/linux-containment.ts",
+      "kind": "timeout-assign",
+      "lexeme": "PROVE_TIMEOUT_MS = 5",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/harness-qualification/linux-qualification-host.ts",
+      "kind": "kib-product",
+      "lexeme": "1024 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/harness-qualification/linux-qualification-host.ts",
+      "kind": "kib-product",
+      "lexeme": "512 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/harness-qualification/linux-qualification-host.ts",
+      "kind": "max-assign",
+      "lexeme": "HASH_CHUNK_BYTES = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/harness-qualification/linux-qualification-host.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_EXECUTABLE_BYTES = 5",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/harness-qualification/linux-qualification-host.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_SYMLINK_HOPS = 8",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/harness-qualification/linux-qualification-host.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_VERSION_BYTES = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/harness-qualification/linux-qualification-host.ts",
+      "kind": "max-assign",
+      "lexeme": "maxStderrBytes: 4",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/harness-qualification/linux-qualification-host.ts",
+      "kind": "max-assign",
+      "lexeme": "maxStdoutBytes: 4",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/harness-qualification/linux-qualification-host.ts",
+      "kind": "timeout-assign",
+      "lexeme": "timeoutMs: 3",
+      "count": 1
+    }
+  ]
+}

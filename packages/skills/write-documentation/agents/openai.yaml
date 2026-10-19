@@ -1,0 +1,4 @@
+interface:
+  display_name: "Write Documentation"
+  short_description: "Apply an approved documentation change"
+  default_prompt: "Create or edit the requested documentation, including focused polish. For direct edits, use the authorized request and target as the brief; within a DocsFab runtime workflow, follow the supplied plan and sources."

@@ -1,0 +1,280 @@
+{
+  "adapters": [
+    {
+      "deploymentIdentitySha256": "c437edd5b2cc6f292d7b051dfc728989336ca4dee8b89a48c70266e768b4a6f7",
+      "id": "nvidia-api-catalog-route",
+      "kind": "route-evidence",
+      "routeId": "nvidia-api-catalog",
+      "schemaVersion": 1,
+      "status": "implemented",
+      "transport": "openai-chat-completions",
+      "version": "1.0.0"
+    },
+    {
+      "credentialFamily": "nvidia-api-catalog",
+      "environmentPolicySha256": "fb3d7ba1d2a789b18475a32a04957d1f4087b1f65fa9cc4861058253a193989b",
+      "executablePolicySha256": "0c7170f63160a0db8fe102e69ee497a145532f6d452bb2dbf9f2725369e1c72b",
+      "id": "nvidia-developer-api-key",
+      "kind": "authentication",
+      "mechanism": "host-secret-handle",
+      "routeId": "nvidia-api-catalog",
+      "schemaVersion": 1,
+      "sourceNames": [
+        "DOCSFAB_NVIDIA_API_KEY"
+      ],
+      "status": "implemented",
+      "version": "1.0.0"
+    },
+    {
+      "deploymentIdentitySha256": "c437edd5b2cc6f292d7b051dfc728989336ca4dee8b89a48c70266e768b4a6f7",
+      "executionClass": "pi-provider",
+      "id": "pi-openai-compatible-nvidia-catalog",
+      "kind": "provider-connection",
+      "routeId": "nvidia-api-catalog",
+      "schemaVersion": 1,
+      "status": "implemented",
+      "transport": "openai-chat-completions",
+      "version": "1.0.0"
+    },
+    {
+      "executionClass": "pi-provider",
+      "harnessId": "pi",
+      "harnessPolicySha256": "994bce456ec8a5efc97fd6f1b455039520df005ca089ec12f09e31e1ba7b65c4",
+      "id": "pi-governed",
+      "kind": "harness",
+      "schemaVersion": 1,
+      "status": "implemented",
+      "version": "1.0.0"
+    },
+    {
+      "deploymentIdentitySha256": "989d119c54111139c9982497471399971fb113647677620e4307a81bf7d73807",
+      "id": "openai-api-route",
+      "kind": "route-evidence",
+      "routeId": "openai-api",
+      "schemaVersion": 1,
+      "status": "implemented",
+      "transport": "openai-responses",
+      "version": "1.0.0"
+    },
+    {
+      "credentialFamily": "openai-api",
+      "environmentPolicySha256": "d275076263895072fee27c489af1534de54b6e2481feb2edca2cb023d5913a5d",
+      "executablePolicySha256": "25cd38055343745a0df859773df0ed9be47f65616a029bb5bf8f3579a8e5ffab",
+      "id": "openai-api-key",
+      "kind": "authentication",
+      "mechanism": "host-secret-handle",
+      "routeId": "openai-api",
+      "schemaVersion": 1,
+      "sourceNames": [
+        "MODEL_API_KEY",
+        "OPENAI_API_KEY"
+      ],
+      "status": "implemented",
+      "version": "1.0.0"
+    },
+    {
+      "deploymentIdentitySha256": "989d119c54111139c9982497471399971fb113647677620e4307a81bf7d73807",
+      "executionClass": "pi-provider",
+      "id": "pi-openai-responses",
+      "kind": "provider-connection",
+      "routeId": "openai-api",
+      "schemaVersion": 1,
+      "status": "implemented",
+      "transport": "openai-responses",
+      "version": "1.0.0"
+    },
+    {
+      "deploymentIdentitySha256": "d90f988b6dc289f6638be606f64b99732ec9015f536ff5e7d84c91eb48fa2651",
+      "id": "anthropic-api-route",
+      "kind": "route-evidence",
+      "routeId": "anthropic-api",
+      "schemaVersion": 1,
+      "status": "implemented",
+      "transport": "anthropic-messages",
+      "version": "1.0.0"
+    },
+    {
+      "credentialFamily": "anthropic-api",
+      "environmentPolicySha256": "fa990910174005a28bc610ed18297be7161a4c1846a193ad785affa60e646cce",
+      "executablePolicySha256": "522f7446fb4e591c71a336a49a23485caebb5bb7fbe9aa44114e52717df16e2a",
+      "id": "anthropic-api-key",
+      "kind": "authentication",
+      "mechanism": "host-secret-handle",
+      "routeId": "anthropic-api",
+      "schemaVersion": 1,
+      "sourceNames": [
+        "MODEL_API_KEY",
+        "ANTHROPIC_API_KEY"
+      ],
+      "status": "implemented",
+      "version": "1.0.0"
+    },
+    {
+      "deploymentIdentitySha256": "d90f988b6dc289f6638be606f64b99732ec9015f536ff5e7d84c91eb48fa2651",
+      "executionClass": "pi-provider",
+      "id": "pi-anthropic-messages",
+      "kind": "provider-connection",
+      "routeId": "anthropic-api",
+      "schemaVersion": 1,
+      "status": "implemented",
+      "transport": "anthropic-messages",
+      "version": "1.0.0"
+    },
+    {
+      "deploymentIdentitySha256": "adb4ffb984c32bd1f64096ec27a4b64c7471f867d04c8b75fb2732dd215ef2f8",
+      "id": "codex-chatgpt-managed-route",
+      "kind": "route-evidence",
+      "routeId": "codex-chatgpt-managed",
+      "schemaVersion": 1,
+      "status": "preflight-only",
+      "transport": "opaque-cli-managed",
+      "version": "1.0.0"
+    },
+    {
+      "credentialFamily": "chatgpt-subscription",
+      "environmentPolicySha256": "8c40f0b77cbffae8a8c795f5392a4bd9dfc8227d34bb57c248617cd87576b7a3",
+      "executablePolicySha256": "04fd94b48afe2d6b4f3b86a5e6af93180c16f9fbb45fa3b7edccf01d302ab837",
+      "id": "codex-chatgpt-auth",
+      "kind": "authentication",
+      "mechanism": "cli-managed-oauth",
+      "routeId": "codex-chatgpt-managed",
+      "schemaVersion": 1,
+      "sourceNames": [
+        "codex-auth-store"
+      ],
+      "status": "preflight-only",
+      "version": "1.0.0"
+    },
+    {
+      "credentialFamily": "chatgpt-subscription",
+      "environmentPolicySha256": "8c40f0b77cbffae8a8c795f5392a4bd9dfc8227d34bb57c248617cd87576b7a3",
+      "executablePolicySha256": "2786ea42bf6ea6f5412918b76ba0060a1eb2efc3840d4c1f3cd643876e0d42a2",
+      "id": "codex-chatgpt-auth",
+      "kind": "authentication",
+      "mechanism": "cli-managed-oauth",
+      "routeId": "codex-chatgpt-managed",
+      "schemaVersion": 1,
+      "sourceNames": [
+        "codex-auth-store"
+      ],
+      "status": "preflight-only",
+      "version": "1.1.0"
+    },
+    {
+      "deploymentIdentitySha256": "adb4ffb984c32bd1f64096ec27a4b64c7471f867d04c8b75fb2732dd215ef2f8",
+      "executionClass": "preflight-only",
+      "id": "codex-preflight-no-egress",
+      "kind": "provider-connection",
+      "routeId": "codex-chatgpt-managed",
+      "schemaVersion": 1,
+      "status": "preflight-only",
+      "transport": "opaque-cli-managed",
+      "version": "1.0.0"
+    },
+    {
+      "executionClass": "preflight-only",
+      "harnessId": "codex",
+      "harnessPolicySha256": "0cf7bff90bb7c0a91786672ae7cdbb4da4afc7c6456152d609d213896114d8e4",
+      "id": "codex-preflight",
+      "kind": "harness",
+      "schemaVersion": 1,
+      "status": "preflight-only",
+      "version": "1.0.0"
+    },
+    {
+      "executionClass": "preflight-only",
+      "harnessId": "codex",
+      "harnessPolicySha256": "3099931dc00c4238b9387b96b014c0e10be04b846b93966ca9f9c9388a23b3b3",
+      "id": "codex-preflight",
+      "kind": "harness",
+      "schemaVersion": 1,
+      "status": "preflight-only",
+      "version": "1.1.0"
+    },
+    {
+      "deploymentIdentitySha256": "439e4895b29529a7b1e4646de98aeafe614be16856bd19757b9e630bc8bc74cf",
+      "id": "claude-ai-managed-route",
+      "kind": "route-evidence",
+      "routeId": "claude-ai-managed",
+      "schemaVersion": 1,
+      "status": "preflight-only",
+      "transport": "opaque-cli-managed",
+      "version": "1.0.0"
+    },
+    {
+      "credentialFamily": "claude-ai-enterprise",
+      "environmentPolicySha256": "0b8922709c0ee752fa30c43c1506ea30df395ff7e5b750f073fb091ed8dff7d5",
+      "executablePolicySha256": "6699a7e5ac176f1feaa044f285a73573d09543689a24a1b910a43fe4ff58fd3a",
+      "id": "claude-ai-oauth",
+      "kind": "authentication",
+      "mechanism": "cli-managed-oauth",
+      "routeId": "claude-ai-managed",
+      "schemaVersion": 1,
+      "sourceNames": [
+        "claude-auth-store"
+      ],
+      "status": "preflight-only",
+      "version": "1.0.0"
+    },
+    {
+      "deploymentIdentitySha256": "439e4895b29529a7b1e4646de98aeafe614be16856bd19757b9e630bc8bc74cf",
+      "executionClass": "preflight-only",
+      "id": "claude-code-preflight-no-egress",
+      "kind": "provider-connection",
+      "routeId": "claude-ai-managed",
+      "schemaVersion": 1,
+      "status": "preflight-only",
+      "transport": "opaque-cli-managed",
+      "version": "1.0.0"
+    },
+    {
+      "executionClass": "preflight-only",
+      "harnessId": "claude-code",
+      "harnessPolicySha256": "7a8f61bba138c0e0c5fb66e102a71f44e9f62928065ccab21495356b52cc8b7f",
+      "id": "claude-code-preflight",
+      "kind": "harness",
+      "schemaVersion": 1,
+      "status": "preflight-only",
+      "version": "1.0.0"
+    },
+    {
+      "deploymentIdentitySha256": "0918664a7485ec0cac594e00ee03ddff80ae340213d859135e348ae3119369f9",
+      "id": "nvidia-inference-api-route",
+      "kind": "route-evidence",
+      "routeId": "nvidia-inference-api",
+      "schemaVersion": 1,
+      "status": "implemented",
+      "transport": "openai-chat-completions",
+      "version": "1.0.0"
+    },
+    {
+      "credentialFamily": "nvidia-inference-api",
+      "environmentPolicySha256": "c54fa1fceacc5c12d157c228e3a675f7df4dd70bb9d3a3fa4ee19965145472c6",
+      "executablePolicySha256": "fa2c08fcd410c7a1baf8e571c4fb8264b34a6bf4e2fa9ca45ae66aba8f4a1c00",
+      "id": "nvidia-inference-api-key",
+      "kind": "authentication",
+      "mechanism": "host-secret-handle",
+      "routeId": "nvidia-inference-api",
+      "schemaVersion": 1,
+      "sourceNames": [
+        "MODEL_API_KEY"
+      ],
+      "status": "implemented",
+      "version": "1.0.0"
+    },
+    {
+      "deploymentIdentitySha256": "0918664a7485ec0cac594e00ee03ddff80ae340213d859135e348ae3119369f9",
+      "executionClass": "pi-provider",
+      "id": "pi-openai-compatible-nvidia-inference",
+      "kind": "provider-connection",
+      "routeId": "nvidia-inference-api",
+      "schemaVersion": 1,
+      "status": "implemented",
+      "transport": "openai-chat-completions",
+      "version": "1.0.0"
+    }
+  ],
+  "kind": "docsfab-model-composition-adapter-registry/v1",
+  "registrySha256": "81ac8618257d8b0b0462793bcf597821dac40d1ba62d791132e7f2bc23c10bbe",
+  "schemaVersion": 1
+}

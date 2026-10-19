@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "kind": "sanitized-first-use-run-summary",
+  "fixtureId": "create-mr-class-checked-in-receipt",
+  "id": "f0f5521d-9cae-445d-8781-b8cef57003ba",
+  "workflow": "create-documentation",
+  "status": "succeeded",
+  "steps": [
+    {
+      "id": "plan-documentation",
+      "status": "succeeded"
+    },
+    {
+      "id": "write-documentation",
+      "status": "succeeded"
+    },
+    {
+      "id": "lint-documentation",
+      "status": "succeeded"
+    },
+    {
+      "id": "verify-technical-accuracy",
+      "status": "succeeded"
+    },
+    {
+      "id": "peer-review-documentation",
+      "status": "succeeded"
+    },
+    {
+      "id": "evaluate-document-quality",
+      "status": "succeeded"
+    }
+  ]
+}

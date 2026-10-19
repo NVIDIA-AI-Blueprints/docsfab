@@ -1,0 +1,11 @@
+[
+  {
+    "id": 8110,
+    "body": "Review summary\n\nReviewed head: `source-head-sha`\n\nSee the linked report for findings.",
+    "author": { "id": 65356, "username": "docsfab-bot" },
+    "system": false,
+    "noteable_type": "MergeRequest",
+    "noteable_iid": 83,
+    "project_id": 914
+  }
+]

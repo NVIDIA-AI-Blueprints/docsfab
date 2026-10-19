@@ -1,0 +1,226 @@
+{
+  "literals": [
+    {
+      "path": "packages/runtime/src/workflow-execution/authoring-candidate.ts",
+      "kind": "kib-product",
+      "lexeme": "1024 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/workflow-execution/authoring-candidate.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_FACTS = 2",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/workflow-execution/authoring-candidate.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_ISSUES_PER_FACT = 3",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/workflow-execution/authoring-candidate.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_PATCH_BYTES = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/workflow-execution/authoring-candidate.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_SOURCE_LOCATORS = 6",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/workflow-execution/authoring-candidate.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_SUMMARY_BYTES = 6",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/workflow-execution/authoring-candidate.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_WRITE_PATHS = 5",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/workflow-execution/authoring-candidate.ts",
+      "kind": "max-assign",
+      "lexeme": "minLength = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/workflow-execution/authoring-revision.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 512",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/workflow-execution/authoring-revision.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 64",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/workflow-execution/authoring-revision.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_ROWS = 2",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/workflow-execution/authoring-revision.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_TEXT = 4",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/workflow-execution/check-sandbox.ts",
+      "kind": "timeout-assign",
+      "lexeme": "timeoutMs: 5",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/workflow-execution/editorial-evidence-host.ts",
+      "kind": "kib-product",
+      "lexeme": "1024 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/workflow-execution/editorial-evidence-host.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 128",
+      "count": 5
+    },
+    {
+      "path": "packages/runtime/src/workflow-execution/editorial-evidence-host.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 32",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/workflow-execution/editorial-evidence-host.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_RATIONALE_CHARACTERS = 4",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/workflow-execution/editorial-evidence-host.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_SOURCE_BYTES = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/workflow-execution/plan-binding.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 4096",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/workflow-execution/retry.ts",
+      "kind": "max-assign",
+      "lexeme": "maxDelayMs: 0",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/workflow-execution/retry.ts",
+      "kind": "max-assign",
+      "lexeme": "maxRetries: 0",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/workflow-execution/review-response.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_FACTS = 2",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/workflow-execution/review-response.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_FACTS_PER_DIMENSION = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/workflow-execution/review-response.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_LOCATORS = 6",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/workflow-execution/review-response.ts",
+      "kind": "max-assign",
+      "lexeme": "minLength = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/workflow-execution/runner-step.ts",
+      "kind": "max-assign",
+      "lexeme": "maxDelayMs: 0",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/workflow-execution/runner-step.ts",
+      "kind": "max-assign",
+      "lexeme": "maxRetries: 0",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/workflow-execution/source-obligation-observer.ts",
+      "kind": "kib-product",
+      "lexeme": "1024 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/workflow-execution/source-obligation-observer.ts",
+      "kind": "kib-product",
+      "lexeme": "8 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/workflow-execution/source-obligation-observer.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_SOURCE_BYTES = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/workflow-execution/source-obligation-observer.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_TOTAL_BYTES = 8",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/workflow-execution/source-obligation.ts",
+      "kind": "slice-cap",
+      "lexeme": ".slice(0, 5)",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/workflow-execution/source-obligation/ledger-value-codecs.ts",
+      "kind": "max-assign",
+      "lexeme": "minLength = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/workflow-execution/workflow-checks.ts",
+      "kind": "kib-product",
+      "lexeme": "1024 * 1024",
+      "count": 1
+    }
+  ]
+}

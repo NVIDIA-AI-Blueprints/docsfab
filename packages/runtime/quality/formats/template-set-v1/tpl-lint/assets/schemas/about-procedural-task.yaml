@@ -1,0 +1,56 @@
+schema_version: "1.0"
+library_version: "1.0.0"
+name: about-procedural-task
+description: "Conceptual overview of a procedural task with workflow and approaches"
+source_template: "templates/about/about-procedural-task.md"
+
+structure:
+  headings:
+    h1:
+      required:
+        - pattern: "About .+"
+          description: "About [task] title"
+      max_count: 1
+    h2:
+      required:
+        - pattern: "Workflow Overview|Process Overview"
+          description: "Workflow overview section"
+        - pattern: "Key Concepts?"
+          description: "Key concepts section"
+      optional:
+        - pattern: "Common Approaches|Approaches"
+          description: "Common approaches section"
+        - pattern: "Decision Factors?|When to Use.*"
+          description: "Decision factors section"
+    h3:
+      optional:
+        - pattern: ".*"
+          description: "Phase, concept, and approach subsections"
+
+  elements:
+    - type: mermaid
+      context: "within workflow overview"
+      required: false
+    - type: list-table
+      context: "within decision factors"
+      required: false
+    - type: admonition
+      context: "within sections"
+      required: false
+
+  section_order:
+    - "Workflow Overview"
+    - "Key Concepts"
+    - "Common Approaches"
+    - "Decision Factors"
+
+severity:
+  missing_required_section: error
+  missing_optional_section: info
+  wrong_section_order: warning
+  missing_element: info
+  duplicate_h1: error
+
+content:
+  intro:
+    max_sentences: 3

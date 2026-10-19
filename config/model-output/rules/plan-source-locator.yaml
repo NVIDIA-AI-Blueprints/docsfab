@@ -1,0 +1,76 @@
+# Model-output rules for the source locators a documentation planner binds to
+# its pages (#1370). Canonical source; generated bindings are produced by
+# `npm run generate:model-output` from packages/runtime.
+#
+# The grammar lives in packages/runtime/src/workflow-execution/repository-locator.ts
+# (`admitPlanSourceLocator`). Plan admission (plan-binding.ts) and
+# source-obligation derivation (source-obligation.ts) both call it, so a
+# locator the planner step admits is one the derivation step can resolve. The
+# catalog owns the facts about each refusal, not the predicate.
+#
+# Only CREATE and RESTRUCTURE plans are parsed: those are the plans whose
+# sources the host resolves to repository files. An UPDATE plan's sources stay
+# free evidence text.
+schemaVersion: 1
+kind: docsfab-output-rules
+family: plan-source-locator
+# The planner is a read-only step: a retry re-asks from the same repository.
+replay: read-only
+# Recorded codes keep this prefix; a persisted code is never renamed.
+recordedPrefix: plan-source-locator-
+rules:
+  - code: plan-source-locator-grammar
+    locations:
+      - $.planBinding.sourceBindings[].sources[]
+    kind: content
+    retry: model-correctable
+    reason: >-
+      The planner chose a source spelling the host cannot resolve to one
+      repository file; it can restate the same source in the stated grammar.
+    statement: >-
+      Each sourceBindings source is one safe repository-relative file path,
+      optionally followed by a physical :line or :start-end line locator or a
+      #section anchor, and optionally ending with @ and the exact
+      host-supplied repository revision, written last. Use @ only before that
+      revision, and no URL, glob, directory, symbolic revision such as HEAD,
+      or free text.
+    operator:
+      kind: correct
+      meaning: >-
+        The documentation planner bound a page to a source locator outside the
+        plan source locator grammar, and its bounded retries did not correct
+        it.
+      next: >-
+        Inspect the saved run's planner attempts, then start a new run; if the
+        planner keeps choosing the same spelling, correct the planner contract
+        or the plan source locator grammar.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/plan-source-locator/grammar.json
+    docs: plan-source-locator-grammar
+
+  - code: plan-source-locator-revision-mismatch
+    locations:
+      - $.planBinding.sourceBindings[].sources[]
+    kind: content
+    retry: model-correctable
+    reason: >-
+      The planner named a repository revision other than the one the host
+      supplied; it can copy the supplied revision or omit it.
+    statement: >-
+      A source that names a revision after @ names exactly the host-supplied
+      repository revision for this run. Copy that revision verbatim, or omit
+      the revision; never write another commit, a shortened revision, or a
+      branch name.
+    operator:
+      kind: correct
+      meaning: >-
+        The documentation planner bound a page to a source at a repository
+        revision other than the run's, and its bounded retries did not correct
+        it.
+      next: >-
+        Inspect the saved run's planner attempts, then start a new run; if the
+        planner keeps naming another revision, check that the planner prompt
+        carries the run's repository revision.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/plan-source-locator/revision-mismatch.json
+    docs: plan-source-locator-revision-mismatch

@@ -1,0 +1,123 @@
+# DocsFab operational limits owned by the `feedback` name prefix.
+# Registered in config/limits.yaml; every limit here is named `feedback.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: feedback.git.metadataOutputBytes
+    value: 536870888
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: null
+    min: 4096
+    max: 536870888
+    refusal: feedback-git-metadata-output-bytes-bound
+    remediation: Inspect the sealed Git configuration. Restore a lowered allowance to the declared maximum if appropriate; larger metadata requires streaming or paging instead of one buffered string.
+    rationale: Git config stdout is decoded as UTF-8 into one JavaScript string before NUL-separated key parsing. The maximum and default use the supported Node single-string capacity, 536870888 bytes, also used for projector output. This is representable capacity, not a measured working-set promise. Parsing and protected-path checks apply independently.
+
+  - name: feedback.git.commandTimeoutMs
+    value: 2147483647
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_FEEDBACK_GIT_COMMAND_TIMEOUT_MS
+    min: 1000
+    max: 2147483647
+    refusal: feedback-git-command-timeout-ms-bound
+    remediation: Raise DOCSFAB_FEEDBACK_GIT_COMMAND_TIMEOUT_MS within max on a slow host or change feedback.git.commandTimeoutMs in config/limits/feedback.yaml; then rerun the complete witness.
+    rationale: Largest supported Node timer delay for one fixed local Git command. The default is 2147483647 ms; this is a completion allowance, not a retry delay. Cancellation and outer job deadlines remain effective.
+
+  - name: feedback.git.commandOutputBytes
+    value: 536870888
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_FEEDBACK_GIT_COMMAND_OUTPUT_BYTES
+    min: 1
+    max: 536870888
+    refusal: feedback-git-commandOutputBytes-bound
+    remediation: Inspect the complete Git observation; adjust this protected allowance within the supported representation range and retry the complete observation.
+    rationale: Fixed local Git command output is consumed as UTF-8 tree and commit metadata or exact blob bytes. The default admits the full supported 64-bit Node single-string representation for worst-case ASCII; current read grants and complete source custody remain independent. This is not measured machine throughput.
+
+  - name: feedback.git.blobBytes
+    value: 536870888
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_FEEDBACK_GIT_BLOB_BYTES
+    min: 1
+    max: 536870888
+    refusal: feedback-git-blobBytes-bound
+    remediation: Inspect the complete Git observation; adjust this protected allowance within the supported representation range and retry the complete observation.
+    rationale: Complete Git source blobs are independently retained and interpreted as UTF-8 when supported. The default admits the full supported 64-bit Node single-string representation for worst-case ASCII, with explicit extraction obligations for other content. No source is truncated to this allowance.
+
+  - name: feedback.deliveryRequestMaxBytes
+    value: 16777216
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1048576
+    max: 16777216
+    refusal: feedback-delivery-request-max-bytes-bound
+    remediation: Reduce the candidate's retained file set or cited source inventories, or raise feedback.deliveryRequestMaxBytes in config/limits/feedback.yaml and re-freeze the service catalog so the SQL mirror moves with it.
+    rationale: Largest canonical JSON a single feedback delivery request may occupy in the mailbox. The default, 16777216 bytes, matches the existing content-addressed object bound so a submitted request cannot exceed what its custody store already admits. The PostgreSQL retain function repeats this number as a frozen mirror because the database refuses independently of the caller.
+
+  - name: feedback.mailboxReadBatch
+    value: 100
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 1000
+    refusal: feedback-mailbox-read-batch-bound
+    remediation: Lower feedback.mailboxReadBatch in config/limits/feedback.yaml so one anchor lookup reads fewer rows before the delivery pump refuses; raising it only widens what a duplicated or corrupted namespace may stream back.
+    rationale: Rows one merged-change anchor lookup may read before the delivery pump refuses. The lookup is pinned to exactly one merge request key, so a healthy namespace answers with exactly one row and the pump refuses every other count as a source collision. The default, 100 rows, is the ceiling on what a duplicated or corrupted namespace can stream back before that refusal. There is no cursor and no second pass, so one lookup reads one anchor.
+
+  - name: feedback.workerLeaseMs
+    value: 30000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1000
+    max: 300000
+    refusal: feedback-worker-lease-ms-bound
+    remediation: Raise or lower feedback.workerLeaseMs in config/limits/feedback.yaml within its declared range; the database refuses the same range independently, so a value outside it is rejected at the claim rather than silently clamped.
+    rationale: How long one publication-authority claim on a delivery request stays valid before another worker may take it. The default, 30000 ms, leaves a crashed worker's request claimable within half a minute while a live worker renews well inside it. The declared minimum and maximum are mirrored verbatim by the SQL claim and renew functions, which refuse independently of the caller.
+
+  - name: feedback.workerPollMs
+    value: 5000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1000
+    max: 60000
+    refusal: feedback-worker-poll-ms-bound
+    remediation: Lower feedback.workerPollMs in config/limits/feedback.yaml for a shorter wait between publication passes, or raise it within max to reduce idle database load; it is a wait, never a deadline.
+    rationale: How long a released delivery request waits before the publication authority may claim it again, and the cadence at which an idle worker asks for one. The default, 5000 ms, matches the component status heartbeat cadence so one idle pass and one heartbeat share a rhythm. This is a retry delay, not an operation timeout.
+
+  - name: feedback.workerHeartbeatFloorMs
+    value: 100
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 10
+    max: 30000
+    refusal: feedback-worker-heartbeat-floor-ms-bound
+    remediation: Raise feedback.workerHeartbeatFloorMs in config/limits/feedback.yaml if a very short lease makes renewals too frequent for the database; the effective cadence is the larger of this floor and a quarter of the lease.
+    rationale: Shortest interval between two lease renewals while a publication pass holds a claim. The effective cadence is the larger of this floor and one quarter of the lease, so a lease at its declared minimum still renews three times before expiry without issuing renewals faster than this floor. The default, 100 ms, keeps a minimum-lease renewal loop off the busy path.
+
+  - name: feedback.claimRetryMaxMs
+    value: 86400000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1000
+    max: 86400000
+    refusal: feedback-claim-retry-max-ms-bound
+    remediation: Lower feedback.claimRetryMaxMs in config/limits/feedback.yaml to shorten the longest accepted back-off a release may ask for; the SQL release and advance functions repeat this ceiling and refuse a larger value independently.
+    rationale: Largest back-off a publication pass may request when it releases or advances a delivery request. The default, 86400000 ms, is one day, and a request parked longer than that is an operator matter, not a retry. The SQL release and advance functions carry this number as a frozen mirror because the database refuses independently of the caller.

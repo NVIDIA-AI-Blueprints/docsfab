@@ -1,0 +1,8 @@
+{
+  "name": "docsfab-bootstrap-conflicting",
+  "private": true,
+  "description": "A fixture with contradictory checked-in documentation guidance.",
+  "scripts": {
+    "check": "node --test"
+  }
+}

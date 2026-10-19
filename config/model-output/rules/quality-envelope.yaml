@@ -1,0 +1,372 @@
+# Model-output rules for the final quality evaluator's answer in
+# review-documentation. The contract asks for one strict JSON object holding
+# `evaluation` and `qualityScore`, then the report as plain Markdown after it,
+# which the host stores as `reportMarkdown`. That report opens with a Markdown
+# heading line, as the report template does, and carries no answer JSON outside
+# fenced or inline code. Each way the text after the object fails to be only a
+# report has its own code, so the retry names that exact problem. The
+# three-member JSON envelope `{evaluation, qualityScore, reportMarkdown}` is
+# still read.
+# Canonical source; generated bindings are produced by
+# `npm run generate:model-output` from packages/runtime.
+#
+# The admission (harness/reply-admission/quality-artifact.ts) records every
+# refusal of that answer with one of these codes. A syntax break is located at
+# the top-level member it happened in, so a retry and the run index can tell a
+# broken reportMarkdown string from a broken evaluation object. The predicate
+# lives in harness/quality-candidate-tool.ts (`decodeQualityArtifactResponse`).
+# The artifact is then checked by the quality validators, whose codes stay in
+# evaluation-report/quality-check-rejections.ts.
+schemaVersion: 1
+kind: docsfab-output-rules
+family: quality-envelope
+# The final evaluator is read-only: a retry re-asks from the same repository
+# and admitted evidence.
+replay: read-only
+rules:
+  - code: quality-envelope-json
+    locations:
+      - $
+      - $.evaluation
+      - $.qualityScore
+      - $.reportMarkdown
+    kind: syntax
+    retry: model-correctable
+    reason: >-
+      The answer's JSON object was not strict JSON; the evaluator can re-emit
+      the same content as strict JSON.
+    statement: >-
+      Start the response with exactly one strict JSON object holding evaluation
+      and qualityScore: no Markdown fence or text before it, no comments or
+      trailing commas, and every brace and bracket closed exactly once. Then
+      write the report as plain Markdown after that object, not inside any JSON
+      string.
+    hint:
+      atLocation:
+        $.evaluation: >-
+          The response stopped being strict JSON in or right after the
+          evaluation object. Check every comma, bracket, brace, and string
+          quote in evaluation, and close the JSON object after qualityScore.
+        $.qualityScore: >-
+          The response stopped being strict JSON in or right after
+          qualityScore. Check every comma, bracket, brace, and string quote in
+          qualityScore, close the JSON object right after it, and write the
+          report as plain Markdown after the object.
+        $.reportMarkdown: >-
+          The response stopped being strict JSON in or right after a
+          reportMarkdown string. Do not put the report inside JSON: close the
+          JSON object after qualityScore, then write the report as plain
+          Markdown after it. Do not put a Validated result summary section or
+          any JSON code block in the report; the host writes that section after
+          validation.
+    operator:
+      kind: correct
+      meaning: >-
+        The final quality evaluator's answer did not open with one strict JSON
+        object, and its bounded retries did not correct it.
+      next: >-
+        Inspect the saved run's evaluator attempts and the rejection location,
+        then start a new run. If the evaluator keeps breaking JSON at the same
+        member, record it as model-compatibility evidence for this model.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/quality-envelope/json-report-markdown.json
+      - packages/runtime/test/fixtures/model-output/quality-envelope/json-whole-reply.json
+      - packages/runtime/test/fixtures/model-output/quality-envelope/json-answer-evaluation.json
+    docs: quality-envelope-json
+
+  - code: quality-envelope-json-after-object
+    locations:
+      - $
+    kind: syntax
+    retry: model-correctable
+    reason: >-
+      More JSON after the answer's closed object means the object closed early
+      or the report was written as a JSON member; the evaluator can close the
+      object once and write the report after it.
+    statement: >-
+      Close the JSON object exactly once, right after qualityScore, and start
+      the report's heading line after that closing brace, with no comma, colon,
+      key, string, brace, bracket, or other JSON between them.
+    hint:
+      atLocation:
+        $: >-
+          The JSON object closed, and more JSON followed it instead of the
+          report: a comma, a colon, a key, a string, another object, or an extra
+          closing brace or bracket. Close the object exactly once, right after
+          qualityScore, never write reportMarkdown as a JSON key, and start the
+          report's heading line right after the closing brace.
+    operator:
+      kind: correct
+      meaning: >-
+        The final quality evaluator's answer went on with more JSON after its
+        JSON object closed, and its bounded retries did not correct it.
+      next: >-
+        Inspect the saved run's evaluator attempts, then start a new run. If the
+        evaluator keeps closing its object early or writing the report as a JSON
+        member, record it as model-compatibility evidence for this model.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/quality-envelope/json-after-answer-object.json
+    docs: quality-envelope-json-after-object
+
+  - code: quality-envelope-duplicate-key
+    locations:
+      - $
+      - $.evaluation
+      - $.qualityScore
+      - $.reportMarkdown
+    kind: syntax
+    retry: model-correctable
+    reason: >-
+      Strict JSON admits each key once per object; the evaluator can re-emit
+      the answer with every key written once.
+    statement: >-
+      Write each key once in every JSON object of the answer: evaluation and
+      qualityScore appear exactly once, in the leading JSON object, and the
+      report never repeats them.
+    hint:
+      atLocation:
+        $.evaluation: >-
+          A key is repeated in or right after the evaluation object: either
+          evaluation appears twice at the top level, or an object inside
+          evaluation names the same key twice. Write evaluation once and each
+          key inside it once.
+        $.qualityScore: >-
+          A key is repeated in or right after qualityScore: either qualityScore
+          appears twice at the top level, or an object inside it names the same
+          key twice. Write qualityScore exactly once, as the last key of the
+          JSON object, then write the report as plain Markdown after the object
+          and never repeat qualityScore after it.
+        $.reportMarkdown: >-
+          reportMarkdown appears twice. Write the report once, as plain
+          Markdown after the JSON object, not as a JSON key.
+    operator:
+      kind: correct
+      meaning: >-
+        The final quality evaluator's answer repeated a key in one JSON object,
+        and its bounded retries did not correct it.
+      next: >-
+        Inspect the saved run's evaluator attempts and the rejection location,
+        then start a new run. If the evaluator keeps repeating the same member,
+        record it as model-compatibility evidence for this model.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/quality-envelope/duplicate-key-top-level.json
+      - packages/runtime/test/fixtures/model-output/quality-envelope/duplicate-key-nested.json
+    docs: quality-envelope-duplicate-key
+
+  - code: quality-envelope-shape
+    locations:
+      - $
+      - $.evaluation
+      - $.qualityScore
+      - $.reportMarkdown
+    kind: shape
+    retry: model-correctable
+    reason: >-
+      The answer must carry exactly the members the contract states, each of
+      its declared type; the evaluator can move its result into them.
+    statement: >-
+      The leading JSON object has exactly two keys, evaluation and
+      qualityScore, and no others, and a Markdown report follows it.
+      evaluation is a JSON object, and qualityScore is a JSON object or null.
+    hint:
+      atLocation:
+        $: >-
+          Start the response with a bare JSON object whose only keys are
+          evaluation and qualityScore, with no Markdown fence, heading, or other
+          text before it, then write the report as plain Markdown after it.
+          Put the whole evaluation object inside evaluation; never return its
+          fields, or any other wrapper object, at the top level.
+        $.evaluation: >-
+          evaluation must be the evaluation JSON object itself, not a string,
+          array, or null.
+        $.qualityScore: >-
+          qualityScore must be the quality score JSON object itself, or null
+          when no single content-type rubric is supported by evidence; never a
+          string or array.
+        $.reportMarkdown: >-
+          Write a non-empty Markdown report after the JSON object, within the
+          host's size bound. Condense it rather than dropping a required
+          section.
+    operator:
+      kind: correct
+      meaning: >-
+        The final quality evaluator's answer did not carry the evaluation, the
+        quality score, and a report with their declared types, and its bounded
+        retries did not correct it.
+      next: >-
+        Inspect the saved run's evaluator attempts and the rejection location,
+        then start a new run. If the evaluator keeps returning another shape,
+        record it as model-compatibility evidence for this model.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/quality-envelope/shape-top-level.json
+      - packages/runtime/test/fixtures/model-output/quality-envelope/shape-quality-score.json
+    docs: quality-envelope-shape
+
+  - code: quality-envelope-report
+    locations:
+      - $.reportMarkdown
+    kind: shape
+    retry: model-correctable
+    reason: >-
+      The host stores the text after the answer's JSON object as the report, so
+      it must open as one; the evaluator can write the report's heading line
+      first.
+    statement: >-
+      After the JSON object's closing brace, write the report as Markdown that
+      starts with its heading line, the way the report template does.
+    hint:
+      atLocation:
+        $.reportMarkdown: >-
+          The text after the JSON object was empty or did not start with a
+          Markdown heading line. Start the report with its heading line, such as
+          the report template's title, right after the closing brace, with no
+          code fence, sentence, or other text before it.
+    operator:
+      kind: correct
+      meaning: >-
+        The text after the final quality evaluator's JSON object was missing or
+        did not open with a heading line, and its bounded retries did not
+        correct it.
+      next: >-
+        Inspect the saved run's evaluator attempts, then start a new run. If the
+        evaluator keeps omitting the report or wrapping it, record it as
+        model-compatibility evidence for this model.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/quality-envelope/report-missing.json
+      - packages/runtime/test/fixtures/model-output/quality-envelope/report-no-heading.json
+    docs: quality-envelope-report
+
+  - code: quality-envelope-report-fence
+    locations:
+      - $.reportMarkdown
+    kind: shape
+    retry: model-correctable
+    reason: >-
+      An unclosed or nested code block can hide a restarted answer inside the
+      stored report; the evaluator can end each code block where its content
+      ends.
+    statement: >-
+      End every code block in the report with its own closing fence line
+      before any report text that follows it, and never start a second code
+      block with the same fence characters inside one.
+    hint:
+      atLocation:
+        $.reportMarkdown: >-
+          A code block in the report was still open when more report text
+          followed it, or a fence line inside a code block started another
+          block with the same fence characters. End each code block with one
+          closing fence line right after its content, before the report text
+          that follows, and remove any fence line that does not open or close a
+          block.
+    operator:
+      kind: correct
+      meaning: >-
+        The final quality evaluator's report left a code block open before more
+        text or nested a same-kind fence inside one, and its bounded retries did
+        not correct it.
+      next: >-
+        Inspect the saved run's evaluator attempts, then start a new run. If the
+        evaluator keeps leaving code blocks open, record it as
+        model-compatibility evidence for this model.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/quality-envelope/report-fence-open.json
+    docs: quality-envelope-report-fence
+
+  - code: quality-envelope-report-member
+    locations:
+      - $.reportMarkdown
+    kind: shape
+    retry: model-correctable
+    reason: >-
+      An answer member in the report's text is answer JSON stored as the
+      report; the evaluator can keep that JSON in the leading object only.
+    statement: >-
+      Write evaluation and qualityScore only in the leading JSON object. The
+      report's text never names an evaluation, qualityScore, or reportMarkdown
+      JSON member outside a fenced code block or inline code.
+    hint:
+      atLocation:
+        $.reportMarkdown: >-
+          The report's text names an evaluation, qualityScore, or
+          reportMarkdown JSON member outside a fenced code block or inline
+          code. Remove that JSON from the report and keep evaluation and
+          qualityScore only in the leading JSON object. Omit the template's
+          Validated result summary section, including its JSON; the host writes
+          that section after validation.
+    operator:
+      kind: correct
+      meaning: >-
+        The final quality evaluator's report carried answer JSON members in its
+        text, and its bounded retries did not correct it.
+      next: >-
+        Inspect the saved run's evaluator attempts, then start a new run. If the
+        evaluator keeps writing JSON into its report, record it as
+        model-compatibility evidence for this model.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/quality-envelope/report-json-after-report.json
+    docs: quality-envelope-report-member
+
+  - code: quality-envelope-report-envelope
+    locations:
+      - $.reportMarkdown
+    kind: shape
+    retry: model-correctable
+    reason: >-
+      A report holding a whole three-member envelope reads as two answers, so
+      which one the evaluator meant is a guess; the evaluator can remove the
+      second one.
+    statement: >-
+      The report never holds a JSON object with evaluation, qualityScore, and
+      reportMarkdown together, even inside a code block; the leading JSON
+      object is the only answer.
+    hint:
+      atLocation:
+        $.reportMarkdown: >-
+          The report holds a JSON object with evaluation, qualityScore, and
+          reportMarkdown together, so the response reads as two answers. Remove
+          that object from the report; the leading JSON object with
+          evaluation and qualityScore is the only answer.
+    operator:
+      kind: correct
+      meaning: >-
+        The final quality evaluator's report held a whole answer envelope, and
+        its bounded retries did not correct it.
+      next: >-
+        Inspect the saved run's evaluator attempts, then start a new run. If the
+        evaluator keeps repeating its answer in the report, record it as
+        model-compatibility evidence for this model.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/quality-envelope/report-envelope-in-report.json
+    docs: quality-envelope-report-envelope
+
+  - code: evaluation-layer-residual-invalid
+    locations:
+      - $.evaluation.layers
+    kind: content
+    retry: model-correctable
+    reason: >-
+      An open layer's residual decision must state an allowed terminal outcome;
+      the evaluator can choose the fail or human-review decision the contract names.
+    statement: >-
+      When a required layer has no attributable record-backed gate decision,
+      its decision must be exactly "fail" or "human-review". Do not use
+      "open", "not-applicable", or another value as a residual decision.
+    hint:
+      atLocation:
+        $.evaluation.layers: >-
+          A required layer remains open after the host applies the profile's
+          decision rules. Set each such layer's decision to exactly "fail" or
+          "human-review"; do not use "open", "not-applicable", or another
+          residual value.
+    operator:
+      kind: correct
+      meaning: >-
+        A required layer remained open without an allowed residual decision,
+        and the evaluator's bounded retries did not correct it.
+      next: >-
+        Inspect the saved run's evaluator attempts and layer evidence, then
+        start a new run. If the evaluator keeps returning an unallowed residual,
+        record it as model-compatibility evidence.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/quality-envelope/layer-residual-invalid.json
+    docs: evaluation-layer-residual-invalid

@@ -1,0 +1,255 @@
+# DocsFab operational limits owned by the `ci` name prefix.
+# Registered in config/limits.yaml; every limit here is named `ci.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: ci.liveModel.jobTimeoutMs
+    value: 2700000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 60000
+    max: 2700000
+    refusal: ci-live-model-job-timeout-ms-bound
+    remediation: Shorten the job or raise ci.liveModel.jobTimeoutMs in config/limits/ci.yaml.
+    rationale: GitLab job timeout for the jobs that reach a real model provider, currently runtime:mr-assessment (#1087) and runtime:workflow-canary (#1183), plus the canary's model-free runtime:workflow-canary:trend job. All three extend the same generated .ci_live_model_platform_bounds include, which projects this catalog value as a GitLab duration; GitLab cannot call limit(). The canary ends its matrix localWorkflows.canaryJobReserveMs before this timeout, counted from CI_JOB_STARTED_AT, and refuses a reserve that is not below it, so raising this value also lets more canary rounds start. runtime:live-model and runtime:live-journey (#1046) are deliberately NOT on this list -- neither fits 45 minutes, so each carries its own ceiling (ci.liveModelAcceptance.jobTimeoutMs and ci.liveJourney.jobTimeoutMs) and extends its own generated include.
+
+  - name: ci.liveModelAcceptance.jobTimeoutMs
+    value: 10800000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 60000
+    max: 10800000
+    refusal: ci-live-model-acceptance-job-timeout-ms-bound
+    remediation: Raise ci.liveModelAcceptance.jobTimeoutMs in config/limits/ci.yaml, or shorten the acceptance run. GitLab admits a job timeout longer than the project build timeout but not longer than a runner's maximum timeout, and the bwrap-userns runners set none.
+    rationale: GitLab job timeout for runtime:live-model, which runs the whole acceptance harness in one job -- clean install, the repository's full npm run check, build, catalog, the offline and live doctors, and two live readiness runs. The check runs the whole runtime suite on CI test budgets (test.ciTimeoutMs) with two Vitest workers. On main pipeline 73039655 the four two-worker runtime:test shards took 3679 s together and the heavy test files CI runs in separate jobs another 819 s, so the check should take roughly 60 to 75 minutes; the 2026-10-11 scheduled check took 1790 s on four workers with 5 s local budgets, and the live phases after it have never run. Three hours is about twice the expected total, so only an extreme run reaches it. GitLab admits a job timeout longer than the project's 3600 s build timeout but not longer than a runner's maximum, and the bwrap-userns runners report no maximum_timeout (read 2026-10-12). Separate from ci.liveModel.jobTimeoutMs so the canary's round deadline and runtime:mr-assessment keep their own ceiling. The generated .ci_live_model_acceptance_platform_bounds include projects this catalog value as a GitLab duration; GitLab cannot call limit().
+
+  - name: ci.liveModel.evidenceRetentionDays
+    value: 30
+    unit: days
+    scope: per-project
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 30
+    refusal: ci-live-model-evidence-retention-days-bound
+    remediation: Shorten artifact retention or raise ci.liveModel.evidenceRetentionDays in config/limits/ci.yaml.
+    rationale: GitLab artifact expiry for the minimized terminal evidence of jobs that reach a real model provider, currently runtime:live-model, runtime:mr-assessment (#1087), and runtime:workflow-canary (#1183), plus runtime:workflow-canary:trend, whose trend.json carries the canary baseline chain, and runtime:live-journey (#1046). runtime:mr-assessment and the two canary jobs extend the generated .ci_live_model_platform_bounds include, runtime:live-model extends .ci_live_model_acceptance_platform_bounds, and runtime:live-journey extends .ci_live_journey_platform_bounds; all three project this one catalog value as expire_in, so every real-model evidence artifact expires together. Each trend.json carries the whole baseline window forward, so only the newest intact one must survive this expiry; the trend job reports expired canary artifacts as a broken chain instead of starting over.
+
+  - name: ci.artifacts.handoffRetentionDays
+    value: 3
+    unit: days
+    scope: per-project
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 14
+    refusal: ci-artifacts-handoff-retention-days-bound
+    remediation: Shorten handoff artifact retention to reclaim project storage, or raise ci.artifacts.handoffRetentionDays in config/limits/ci.yaml when a later job must read a handoff after that many days.
+    rationale: GitLab artifact expiry for artifacts that exist to hand files to later jobs in the same pipeline -- runtime:prepare's derived trees and package candidate, the runtime:test and runtime:isolation coverage lanes that runtime:coverage merges, and runtime:package:verify's verified tarball that the agent-image and npm publish jobs consume. They were the bulk of the project's 50 GB of job artifacts on 2026-09-28 (about 17 MB per pipeline at about 400 pipelines a day, kept 14 to 30 days). The durable copies are the published npm package and agent image, and each coverage lane's failure message names its failures in the job trace. Three days keeps a failed lane's blob and the handoffs available for a retry of a downstream job across a weekend. Each job extends the generated .ci_handoff_artifacts include; GitLab artifact expiry cannot call limit().
+
+  - name: ci.artifacts.reportRetentionDays
+    value: 14
+    unit: days
+    scope: per-project
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 30
+    refusal: ci-artifacts-report-retention-days-bound
+    remediation: Shorten report artifact retention to reclaim project storage, or raise ci.artifacts.reportRetentionDays in config/limits/ci.yaml when reviewers need older reports.
+    rationale: GitLab artifact expiry for the small reports reviewers read after a pipeline -- runtime:smoke's JUnit, runtime:coverage's summary, runtime:comparison-model's JUnit, and documentation:freshness's report. Fourteen days is the value those jobs declared by hand before this entry and covers a normal merge-request review window. Real-model evidence keeps its own ci.liveModel.evidenceRetentionDays, and the semgrep-sast report keeps GitLab's instance default because governance/security/sast-baseline.md pins individual reports by job. Each job extends the generated .ci_report_artifacts include; GitLab artifact expiry cannot call limit().
+
+  - name: ci.liveJourney.jobTimeoutMs
+    value: 10800000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 60000
+    max: 10800000
+    refusal: ci-live-journey-job-timeout-ms-bound
+    remediation: Scope the journey gate down, or raise ci.liveJourney.jobTimeoutMs in config/limits/ci.yaml. GitLab admits a job timeout longer than the project build timeout but not longer than a runner's maximum timeout, and the bwrap-userns runners set none.
+    rationale: GitLab job timeout for runtime:live-journey (#1046), the one job that runs a governed review-documentation review and a live-agent-turn ask end to end through the hosted invoker against a real provider. Separate from ci.liveModel.jobTimeoutMs, whose 45 minutes one journey does not fit -- the review workflow has eight steps, and the measured 2026-09-24 run of its first three and a half steps over three pages took 2600 s (423, 954, 30 and 1192 s per step). The scheduled job had not reached a journey before 2026-10-12, so the whole run is unmeasured; three hours leaves about twice the time eight such steps would take over three pages, while the gate reviews one page. GitLab admits a job timeout longer than the project's 3600 s build timeout but not longer than a runner's maximum, and the bwrap-userns runners report no maximum_timeout (read 2026-10-12). The gate writes its evidence after each journey, so a platform stop still leaves the completed journey's record behind. The generated .ci_live_journey_platform_bounds include projects this catalog value as a GitLab duration; GitLab cannot call limit(). The journey gate expires its evidence capsule at this same value, so a capsule can never outlive the job that minted it.
+
+  - name: ci.wsl2.jobTimeoutMs
+    value: 3600000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 3600000
+    max: 3600000
+    refusal: ci-wsl2-job-timeout-ms-bound
+    remediation: Scope the installed-product lane to fit the project build timeout; do not raise the GitLab job timeout above the project ceiling.
+    rationale: GitLab's 3600-second project build timeout read on 2026-10-11 is the ceiling for the converted-host installed-product lane. The generated CI mirror projects this ceiling because GitLab cannot call limit(). The guest work deadline and cleanup reserve remain separate and must be set from admitted-host measurements before activation; this entry does not assert that the full journey fits yet.
+
+  - name: ci.wsl2.automaticRetries
+    value: 0
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 0
+    max: 0
+    refusal: ci-wsl2-automatic-retries-bound
+    remediation: Reconcile the prior owned guest run before starting a fresh protected-main job; do not replay uncertain host work automatically.
+    rationale: A Runner system failure or timeout can leave owned Linux or Windows work alive on the persistent converted host. This safety policy disables GitLab's inherited automatic retry for the installed-product job; a fresh invocation must pass the guest lock and exact recovery controls before another payload starts. The generated CI mirror projects the zero retry value because GitLab cannot call limit().
+
+  - name: ci.wsl2.cleanupReserveMs
+    value: 600000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 600000
+    max: 600000
+    refusal: ci-wsl2-cleanup-reserve-ms-bound
+    remediation: Preserve one original job clock and reserve the final ten minutes for exact Windows and Linux descendant cleanup and evidence; reduce the candidate work scope if it cannot finish before this boundary.
+    rationale: The accepted converted host completed package install/offline, six standard/two alias controls, and the fixture in 263.067 seconds at UID 1001. Actual Job Object and guest broker-loss controls then showed scoped termination and recovery within seconds. A 600-second cleanup reserve under the fixed 3600-second project ceiling leaves 3000 seconds for the combined installed journey while giving the independent supervisors time to close both OS process sets and retain evidence after a failed phase. No phase resets either deadline.
+
+  - name: ci.wsl2.windowsCommandMaxChars
+    value: 8191
+    unit: chars
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 8191
+    max: 8191
+    refusal: ci-wsl2-windows-command-max-chars-bound
+    remediation: Stage the exact pinned helper through the short SFTP launcher and execute it by path; never split or truncate an oversized encoded command.
+    rationale: The converted Windows host's cmd.exe command-line boundary of 8191 characters was observed during conversion when an inline launcher exceeded it before any action. The broker checks its actual encoded remote PowerShell command against this platform capacity before SSH. Larger owned helpers must use staged files with verified digests and a short invocation, rather than a guessed smaller output cap or a hidden truncation.
+
+  - name: ci.wsl2.controlPollMs
+    value: 100
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 100
+    max: 100
+    refusal: ci-wsl2-control-poll-ms-bound
+    remediation: Keep the exact Windows child and cleanup observations under the original run deadline; change the control poll interval only with a measured host control review.
+    rationale: Poll interval for the Windows Job Object control's owned child-generation file and process-exit readback. One tenth of a second resolves child creation and teardown without resetting the original job deadline; it is observation granularity, not a work, output, or corpus cap. A timed-out control refuses with retained evidence instead of omitting a child.
+
+  - name: ci.wsl2.unixSocketPathMaxBytes
+    value: 107
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 107
+    max: 107
+    refusal: ci-wsl2-unix-socket-path-max-bytes-bound
+    remediation: Use the uniquely owned short native TMPDIR for WSL alias controls; refuse a projected alias socket path longer than Linux sockaddr_un permits.
+    rationale: Linux unix(7) specifies 108 bytes for sockaddr_un.sun_path including a terminating NUL, leaving 107 pathname bytes. The accepted source17 conversion alias path measured 102 bytes; the first composed run used a 148-byte alias path and failed the WSL socket hop with ENOENT. The guest computes the qualifier's projected alias pathname from its actual selected WSL_INTEROP basename and refuses overlong paths before package work.
+
+  - name: ci.wsl2.shortTmpTokenHexChars
+    value: 16
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 16
+    max: 16
+    refusal: ci-wsl2-short-tmp-token-hex-chars-bound
+    remediation: Derive the exact short TMPDIR token from the full run ID and retain the owner ledger; refuse any pre-existing token directory rather than adopting it.
+    rationale: A 16-hex-character SHA-256 run token gives a 64-bit run-specific directory name under /home/docsfab/c. Exclusive creation and a full run-ID owner ledger make a collision a refusal. This keeps the unchanged source17 bwrap alias socket path below Linux's 107-byte pathname capacity without weakening its Windows/UNC positive controls or using a symlink to a long path.
+
+  - name: ci.sast.semgrepRuleTimeoutSeconds
+    value: 15
+    unit: s
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 5
+    max: 120
+    refusal: ci-sast-semgrep-rule-timeout-seconds-bound
+    remediation: Lower the Semgrep per-rule/file timeout, or raise ci.sast.semgrepRuleTimeoutSeconds in config/limits/ci.yaml and repeat the same-revision before/after trace comparison governance/security/sast-baseline.md requires.
+    rationale: Per-rule/file timeout for the semgrep-sast job, raised per governance/security/sast-baseline.md's "Bounded remediation and next evidence" section from the Semgrep analyzer's five-second default to a finite reviewed value. The generated CI include projects this catalog value into the job's SAST_SCANNER_ALLOWED_CLI_OPTS variable; GitLab job variables cannot call limit().
+
+  - name: ci.sast.maxTargetBytes
+    value: 1000000
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 100000
+    max: 10000000
+    refusal: ci-sast-max-target-bytes-bound
+    remediation: Raise ci.sast.maxTargetBytes in config/limits/ci.yaml to scan larger files, or lower it to skip more and speed the job, and repeat the same-revision before/after trace comparison governance/security/sast-baseline.md requires.
+    rationale: Per-file size skip bound for the semgrep-sast job, matching governance/security/sast-baseline.md's "Bounded remediation and next evidence" section's instruction to preserve the one-megabyte target bound while making path coverage explicit elsewhere. Was previously the analyzer's own unconfigured 1,000,000-byte default (Semgrep's own --max-target-bytes default); now an explicit, governed value. The generated CI include projects this catalog value into the job's SAST_SCANNER_ALLOWED_CLI_OPTS variable; GitLab job variables cannot call limit().
+
+  - name: ci.coverageShard.failureReportMaxEntries
+    value: 25
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 100
+    refusal: ci-coverage-shard-failure-report-max-entries-bound
+    remediation: Open the lane's blob artifact for the omitted entries, or raise ci.coverageShard.failureReportMaxEntries in config/limits/ci.yaml.
+    rationale: Failed or incomplete files, tests, and unhandled errors that one runtime coverage lane failure message names before it states how many it omitted (issue 1050). The recorded train-car failures named one file and one test each; 25 lists every entry of a typical flake or small regression while keeping a whole-lane collapse readable in the job trace. The complete list stays in the lane's blob artifact.
+
+  - name: ci.coverageShard.failureMessageMaxChars
+    value: 400
+    unit: characters
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 80
+    max: 2000
+    refusal: ci-coverage-shard-failure-message-max-chars-bound
+    remediation: Open the lane's blob artifact for the full error, or raise ci.coverageShard.failureMessageMaxChars in config/limits/ci.yaml.
+    rationale: Characters of the first error line that one runtime coverage lane failure entry quotes before it states how many it omitted (issue 1050). The recorded receipt-store failures had first lines of 49 and 110 characters; 400 keeps a typical assertion message whole without letting a serialized value flood the trace.
+
+  - name: ci.trainReuse.apiPageSize
+    value: 100
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_LIMIT_CI_TRAIN_REUSE_API_PAGE_SIZE
+    min: 1
+    max: 100
+    refusal: ci-train-reuse-api-page-size-bound
+    remediation: Keep the protocol page size within the supported range in config/limits/ci.yaml; all returned pages must still be consumed.
+    rationale: GitLab REST API page size for offline-qualified train metadata discovery. This is the server page size, never a total-row or total-page ceiling; discovery must follow every valid next link.
+
+  - name: ci.trainReuse.apiResponseMaxBytes
+    value: 1048576
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_LIMIT_CI_TRAIN_REUSE_API_RESPONSE_MAX_BYTES
+    min: 4096
+    max: 16777216
+    refusal: ci-train-reuse-api-response-max-bytes-bound
+    remediation: Reduce an individual metadata response or adjust ci.trainReuse.apiResponseMaxBytes within its supported range in config/limits/ci.yaml.
+    rationale: Maximum streamed wire body for one GitLab metadata response. The observed complete 62-job response was 209276 bytes; 1 MiB provides roughly five times that response while the independent aggregate budget bounds the whole discovery.
+
+  - name: ci.trainReuse.evidenceMaxBytes
+    value: 16777216
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 16777216
+    max: 16777216
+    refusal: ci-train-reuse-evidence-max-bytes-bound
+    remediation: Retry the metadata discovery after the provider returns smaller complete responses; do not omit pages or records. See config/limits/ci.yaml.
+    rationale: Fixed aggregate allowance for all received metadata bodies across list/detail/jobs rereads plus normalized public output. Four observed 62-job inventories for retried/default reconciliation total about 837104 bytes before small overhead, so 16 MiB admits roughly twenty such units without introducing a row or page cap.
+
+  - name: ci.trainReuse.discoveryTimeoutMs
+    value: 30000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 30000
+    max: 30000
+    refusal: ci-train-reuse-discovery-timeout-ms-bound
+    remediation: Retry discovery when the GitLab metadata API is responsive; do not reset or extend the single discovery deadline per request. See config/limits/ci.yaml.
+    rationale: Fixed elapsed-time budget for the entire metadata discovery, including all pages, rereads, normalization, and output. Developer-host API round trips were about 0.4 to 1.1 seconds; native-runner qualification remains required before any future activation.

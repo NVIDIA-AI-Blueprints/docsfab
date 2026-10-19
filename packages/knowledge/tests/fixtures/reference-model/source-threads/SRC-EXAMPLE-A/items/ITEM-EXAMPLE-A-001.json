@@ -1,0 +1,68 @@
+{
+  "schema_version": "docsfab.knowledge.source-item/v1",
+  "item_id": "ITEM-EXAMPLE-A-001",
+  "thread_id": "SRC-EXAMPLE-A",
+  "artifact_type": "document",
+  "title": "Example product notes",
+  "summary": "Synthetic source item for the knowledge package tests.",
+  "attribution": {
+    "author": "example-author",
+    "contributors": [],
+    "collector": "test"
+  },
+  "timestamps": {
+    "source_created_at": "2026-08-18T00:00:00Z",
+    "ingested_at": "2026-08-18T00:00:00Z"
+  },
+  "version": {
+    "kind": "content-hash",
+    "value": "1ff68730190e3f3289f2bcf62bb2f39d576bc8c6e6ba80c4b36d3f9c29c7141c"
+  },
+  "scope": {
+    "product_version": "example",
+    "deployment": "test",
+    "audience": "test",
+    "model_region": "test"
+  },
+  "representations": [
+    {
+      "representation_id": "original",
+      "role": "original",
+      "media_type": "text/markdown",
+      "original_filename": "example-notes.md",
+      "size_bytes": 203,
+      "locator": {
+        "scheme": "thread-artifact",
+        "uri": "artifacts/sha256/1f/1ff68730190e3f3289f2bcf62bb2f39d576bc8c6e6ba80c4b36d3f9c29c7141c",
+        "repository": null,
+        "commit": null,
+        "path": null,
+        "external_version": null,
+        "retained_copy": "artifacts/sha256/1f/1ff68730190e3f3289f2bcf62bb2f39d576bc8c6e6ba80c4b36d3f9c29c7141c"
+      },
+      "integrity": {
+        "algorithm": "sha256",
+        "value": "1ff68730190e3f3289f2bcf62bb2f39d576bc8c6e6ba80c4b36d3f9c29c7141c"
+      },
+      "derived_from": [],
+      "transform": null,
+      "access_override": null
+    }
+  ],
+  "members": [],
+  "governance": {
+    "consent": "test",
+    "citation_boundary": "test",
+    "retention_boundary": "test",
+    "redistribution_boundary": "test",
+    "access_classification": "test"
+  },
+  "lineage": {
+    "parent_item_ids": [],
+    "supersedes": [],
+    "related_item_ids": []
+  },
+  "transforms": [],
+  "evidence_state": "source-authored",
+  "limitations": []
+}

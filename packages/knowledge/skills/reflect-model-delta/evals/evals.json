@@ -1,0 +1,47 @@
+{
+  "skill_name": "reflect-model-delta",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Reflect five newly extracted claims to an engineer. A polished architecture diagram is already available, but two of its edges are unsupported by transcript evidence.",
+      "expected_output": "Create a smaller provisional reflection; omit or explicitly label unsupported edges as agent inference; trace every shown element to claim IDs; ask what is wrong, missing, or misleading before requesting confirmation; preserve later corrections without treating syntax or polish as validation.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Reflect one atomic claim: the participant said a workspace owns audit history. Decide whether to generate a diagram.",
+      "expected_output": "Prefer concise attributed prose and the claim ID unless a relationship or ownership boundary specifically needs testing; do not force a diagram for completeness.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "A participant confirms that the reflected routing diagram matches their view. No code, test, decision owner, or second participant has been checked.",
+      "expected_output": "Mark only representation as speaker-confirmed; keep behavior verification not checked, intent approval not requested or unauthorized, and model state participant-only; list the remaining validation and reconciliation work.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "The participant says the reflected transition is true in version 0.8 but not 0.9, and the arrow direction is reversed for self-hosted deployments.",
+      "expected_output": "Preserve the exact correction; split or scope the claims by version and deployment; record which edge changed; show only the revised delta; keep both scoped alternatives rather than flattening them into one statement.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "A compressed Mermaid gitGraph parses and produces SVG, but branch lines and labels are unreadable at the Fern review viewport.",
+      "expected_output": "Mark syntax_rendered successful and visually_legible failed, preserve the rejected version or receipt, revise the projection without changing claim status, and rerun the actual-theme viewport inspection.",
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "A source participant likes a visually attractive diagram that contains one unsupported edge. No unfamiliar reader has reviewed it.",
+      "expected_output": "Fail claim-to-element semantic tracing for the unsupported edge, record source representation review separately, and keep conceptually_understood pending for an unfamiliar reader.",
+      "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "A diagram distinguishes supported and disputed paths only with red and green line colors.",
+      "expected_output": "Fail visual accessibility, add text or line-pattern distinctions, and repeat legibility inspection without treating parser success as visual approval.",
+      "files": []
+    }
+  ]
+}

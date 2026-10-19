@@ -1,0 +1,73 @@
+schema_version: "1.0"
+library_version: "1.0.0"
+name: tutorial
+description: "Hands-on beginner tutorial with learning objectives"
+source_template: "templates/get-started/beginner-tutorial.md"
+
+structure:
+  headings:
+    h1:
+      required:
+        - pattern: ".+"
+          description: "Tutorial title (any descriptive title)"
+      max_count: 1
+    h2:
+      required:
+        - pattern: "Prerequisites"
+          description: "Prerequisites section"
+        - pattern: "Concepts? Overview"
+          description: "Key concepts introduction"
+        - pattern: "Summary|Conclusion"
+          description: "Summary of what was learned"
+        - pattern: "(What'?s )?Next( Steps)?\\??"
+          description: "Next steps section"
+      optional:
+        - pattern: "Troubleshooting"
+          description: "Common issues section"
+    h3:
+      optional:
+        - pattern: ".*"
+          description: "Substeps and details"
+
+  elements:
+    - type: card
+      context: "at start of document"
+      required: false
+    - type: mermaid
+      context: "within Concepts Overview section"
+      required: false
+    - type: tab-set
+      context: "within tutorial steps"
+      required: false
+    - type: grid
+      context: "within What's Next section"
+      required: true
+    - type: dropdown
+      context: "within Troubleshooting section"
+      required: false
+
+  section_order:
+    - "Prerequisites"
+    - "Concepts Overview"
+    - "Summary"
+    - "Next"
+    - "Troubleshooting"
+
+severity:
+  missing_required_section: error
+  missing_optional_section: info
+  wrong_section_order: warning
+  missing_element: warning
+  duplicate_h1: error
+
+content:
+  learning_objectives:
+    format: "numbered list in card"
+    min_items: 3
+    max_items: 6
+  steps:
+    numbered_h2_sections: true
+    include_success_checks: true
+  summary:
+    format: "checklist of learned items"
+

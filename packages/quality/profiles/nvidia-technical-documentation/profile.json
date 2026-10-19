@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0",
+  "license": "CC-BY-4.0",
+  "copyright": "Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.",
+  "profile_id": "nvidia-technical-documentation",
+  "profile_version": "2026-08-08.upstream-4f67851687853fed86fa8b4a329793279168ba68",
+  "publisher": "NVIDIA",
+  "title": "NVIDIA Technical Documentation Style Baseline",
+  "canonical_source": {
+    "title": "NVIDIA Writing and Style Guide",
+    "url": "https://brand.nvidia.com/d/5A6pohfVy9eb/nvidia-writing-guidelines#/nvidia-writing-guidelines/nvidia-style-guide",
+    "upstream": "documentation-skill-collection",
+    "revision": "4f67851687853fed86fa8b4a329793279168ba68",
+    "complete_guide_sha256": "cf5a592dea668ea950b87e6ace949b3caad5fa04b95b49491aebec9738743dc5",
+    "compact_source_sha256": "04467055f723ea33d561fbdfaeacfbc24bf02bd61b84a693a46d5280bf6c8c26",
+    "paths": [
+      "nvidia-style-guide.md",
+      "skills/toolbox/docs-agent-setup/assets/writing-style-guide.md"
+    ]
+  },
+  "derivation": {
+    "method": "curated-subset",
+    "notes": "The packaged Markdown adapts the upstream skill collection's compact technical-documentation baseline derived from the complete NVIDIA Writing and Style Guide. NVIDIA-specific brand and spelling rules were removed for generic publication. Consult the current complete guide for uncovered or load-bearing legal, trademark, brand, localization, and product rules."
+  },
+  "overlays": [
+    {
+      "overlay_id": "docsfab-fern",
+      "path": "overlays/docsfab-fern.md",
+      "sha256": "49c9b7df0b36e6324cb1fc34dd4d951d3a5bcc8a0f162838edaf1b75fc43ed30",
+      "purpose": "Prevent duplicate rendered page titles and map template-set layouts to Fern MDX components."
+    }
+  ],
+  "packaged_path": "style-guide.md",
+  "packaged_guide_sha256": "4ff571ec647295c9d3308c2e52491d65cae06c28c71883466af12edd9e5a808b"
+}

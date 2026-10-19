@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "kind": "ia-candidates",
+  "repository": {
+    "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "contentDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "digest": "de0bcd34c201b8d5471b3398f1447bcb9fe7bc3d49380dfe9310c4ab4b78ecd8",
+  "payload": {
+    "scope": "site",
+    "candidates": [
+      {
+        "id": "candidate:reader-job",
+        "primaryAxis": "reader-job",
+        "secondaryAxes": ["lifecycle"],
+        "score": 92,
+        "groups": [
+          {
+            "id": "group:get-started",
+            "label": "Get started",
+            "axis": "reader-job",
+            "members": ["document:home", "document:guide"],
+            "canonicalPath": "docs/get-started",
+            "evidence": [{ "path": "docs/index.md", "nodeId": "document:home" }]
+          }
+        ],
+        "evidence": [{ "path": "docs/index.md", "nodeId": "document:home" }]
+      },
+      {
+        "id": "candidate:component",
+        "primaryAxis": "component",
+        "secondaryAxes": [],
+        "score": 64,
+        "groups": [
+          {
+            "id": "group:docsfab",
+            "label": "DocsFab",
+            "axis": "component",
+            "members": ["document:home", "document:guide"],
+            "canonicalPath": "docs/docsfab",
+            "evidence": [{ "path": "docs/guide.md", "nodeId": "document:guide" }]
+          }
+        ],
+        "evidence": [{ "path": "docs/guide.md", "nodeId": "document:guide" }]
+      }
+    ],
+    "recommendedCandidateId": "candidate:reader-job",
+    "rejectedCandidates": [{ "candidateId": "candidate:component", "reason": "lower-score" }],
+    "openDecisions": [
+      {
+        "id": "decision:keep-quickstart",
+        "kind": "canonical-home",
+        "evidence": [{ "path": "docs/index.md", "nodeId": "document:home" }]
+      }
+    ]
+  }
+}

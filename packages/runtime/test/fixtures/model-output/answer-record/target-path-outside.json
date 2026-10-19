@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "kind": "docsfab-output-rule-fixture",
+  "code": "answer-record-target-path",
+  "location": "$.record",
+  "input": {
+    "contract": "quality-evaluation",
+    "allowedTargetPaths": ["docs/page.md"]
+  },
+  "reply": "{\"type\":\"target-judgment\",\"record\":{\"documentation_families\":[\"reference\"],\"documentation_family_evidence\":[{\"family\":\"reference\",\"paths\":[\"private/rejected-path.md\"],\"method\":\"path-convention\",\"evidence_locator\":\"README.md\",\"rationale\":\"Fixture evidence.\"}],\"product_reference_model\":{\"id\":\"fixture\",\"version\":\"1\"},\"product_version\":\"1\",\"environment\":\"fixture\",\"risk_boundary\":\"fixture\",\"risk_classes\":[\"general-information\"],\"audiences\":[\"readers\"],\"intended_outcomes\":[\"understand\"],\"intended_outcome_classes\":[\"reference-lookup\"]}}"
+}

@@ -1,0 +1,48 @@
+schema_version: "1.0"
+library_version: "1.0.0"
+name: troubleshooting
+description: "Troubleshooting page with issue-solution pairs"
+source_template: "templates/troubleshooting/troubleshooting.md"
+
+structure:
+  headings:
+    h1:
+      required:
+        - pattern: "Troubleshoot.*"
+          description: "Troubleshooting page title"
+      max_count: 1
+    h2:
+      required:
+        - pattern: ".+"
+          description: "Issue entries (issue name or error message)"
+          min_count: 1
+      optional:
+        - pattern: "Error Message Reference"
+          description: "Error message reference table"
+        - pattern: "Related Topics?"
+          description: "Related topics section"
+    h3:
+      optional:
+        - pattern: ".*"
+          description: "Sub-issue details"
+
+  elements:
+    - type: admonition
+      context: "within issue entries"
+      required: false
+      attributes:
+        class: note
+
+  section_order: []
+
+severity:
+  missing_required_section: error
+  missing_optional_section: info
+  wrong_section_order: info
+  missing_element: info
+  duplicate_h1: error
+
+content:
+  issues:
+    format: "H2 per issue with Symptom, Cause, Solution structure"
+    min_count: 1

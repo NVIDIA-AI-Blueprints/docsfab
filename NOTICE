@@ -1,0 +1,26 @@
+DocsFab
+Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+
+This product is licensed under the Apache License, Version 2.0. See the LICENSE
+file distributed with it. The skills it includes are dual-licensed: their
+instructions and documentation are licensed under the Creative Commons
+Attribution 4.0 International License (see LICENSE-CC-BY-4.0), and their
+scripts under the Apache License, Version 2.0.
+
+NVIDIA Technical Documentation Style Baseline
+
+The style-guide.md, TERMINOLOGY.md, and profile.json files in the
+nvidia-technical-documentation quality profile, including generated copies,
+are licensed under CC-BY-4.0. See LICENSE-CC-BY-4.0 for the full license text.
+This notice covers only those three baseline files and their generated copies.
+
+Third-party software and source
+
+The docsfab npm package does not bundle its npm runtime dependencies. npm
+installs those packages from the registry at the exact versions pinned in
+npm-shrinkwrap.json, which ships with the package; each installed dependency
+carries its own license file. This statement concerns the npm package only.
+
+No Apache-2.0 runtime dependency pinned in npm-shrinkwrap.json includes a
+NOTICE file, so this file reproduces no third-party NOTICE text for those npm
+dependencies.

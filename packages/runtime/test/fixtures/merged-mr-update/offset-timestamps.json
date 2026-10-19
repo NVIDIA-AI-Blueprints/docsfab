@@ -1,0 +1,90 @@
+{
+  "description": "Timestamps in the shapes the live API actually returns for the 25-hour 2026-11-01 Los Angeles day: local offsets, arbitrary fractional seconds, and two designator-less strings whose meaning would otherwise depend on the host zone.",
+  "window": {
+    "timeZone": "America/Los_Angeles",
+    "startDate": "2026-11-01",
+    "endDate": "2026-11-01"
+  },
+  "targetBranch": "main",
+  "pages": [
+    {
+      "page": 1,
+      "nextPage": null,
+      "truncated": false,
+      "items": [
+        {
+          "iid": 7701,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/7701",
+          "title": "Land exactly at the window start, stamped in local time",
+          "description": "Selected: 2026-11-01T00:00:00.000-07:00 is the inclusive start instant.",
+          "state": "merged",
+          "mergedAt": "2026-11-01T00:00:00.000-07:00",
+          "targetBranch": "main",
+          "sourceBranch": "feature/local-window-start",
+          "mergeCommitSha": "77a1c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        },
+        {
+          "iid": 7702,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/7702",
+          "title": "Land midday with an arbitrary fractional second",
+          "description": "Selected: the shape the live API returns.",
+          "state": "merged",
+          "mergedAt": "2026-11-01T13:22:41.272-07:00",
+          "targetBranch": "main",
+          "sourceBranch": "feature/fractional-second",
+          "mergeCommitSha": "77a2c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        },
+        {
+          "iid": 7703,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/7703",
+          "title": "Land exactly at the window end, stamped after the fall-back",
+          "description": "Excluded: 2026-11-02T00:00:00.000-08:00 is the exclusive end instant.",
+          "state": "merged",
+          "mergedAt": "2026-11-02T00:00:00.000-08:00",
+          "targetBranch": "main",
+          "sourceBranch": "feature/local-window-end",
+          "mergeCommitSha": "77a3c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        },
+        {
+          "iid": 7704,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/7704",
+          "title": "Land one millisecond before the local window start",
+          "description": "Excluded: before-window.",
+          "state": "merged",
+          "mergedAt": "2026-10-31T23:59:59.999-07:00",
+          "targetBranch": "main",
+          "sourceBranch": "feature/local-before-start",
+          "mergeCommitSha": "77a4c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        },
+        {
+          "iid": 7705,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/7705",
+          "title": "Carry a merged_at with no UTC designator",
+          "description": "Unusable: a host-zone-dependent reading is never guessed.",
+          "state": "merged",
+          "mergedAt": "2026-11-01T12:00:00",
+          "targetBranch": "main",
+          "sourceBranch": "feature/no-designator",
+          "mergeCommitSha": "77a5c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        },
+        {
+          "iid": 7706,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/7706",
+          "title": "Carry a merged_at only a lenient parser would accept",
+          "description": "Unusable: not an ISO-8601 instant.",
+          "state": "merged",
+          "mergedAt": "Nov 1 2026 12:00:00",
+          "targetBranch": "main",
+          "sourceBranch": "feature/lenient-parse-only",
+          "mergeCommitSha": "77a6c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,158 @@
+# DocsFab operational limits owned by the `publishPackage` name prefix.
+# Registered in config/limits.yaml; every limit here is named `publishPackage.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: publishPackage.commandOutputBytes
+    value: 16777216
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 16777216
+    refusal: publish-package-command-output-bytes-bound
+    remediation: Inspect the release job's command and the exact npm version and dist-tag in the registry before retrying, because npm publish may have reached the registry even when its output was cut off. If a qualified package legitimately needs more command output, raise publishPackage.commandOutputBytes in config/limits/publishPackage.yaml and regenerate the mirrors through a reviewed change.
+    rationale: Maximum stdout or stderr bytes captured from each child command in the package publisher, including tar extraction, npm version and dist-tag views, exact-version tarball metadata views, and npm publish. The inherited 16 MiB ceiling is retained so this migration introduces no new refusal for a previously accepted release. Version and dist-tag views are small JSON documents, while publication output may grow with npm diagnostics. Current release output distribution has not been measured, so this is a provisional technical memory ceiling and the first qualified release should record captured output sizes for review. Node terminates a child stream that exceeds maxBuffer and may truncate it; the publisher names this bound and never treats truncated output as success. Publication state is unknown if npm publish or its tag readback overflows. The bound applies to the repository-controlled CI release script only, so no host override widens it without reviewed source and regenerated mirrors.
+  - name: publishPackage.ancestryFetchDepth
+    value: 5000
+    unit: commits
+    scope: per-run
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 5000
+    refusal: publish-package-ancestry-fetch-depth-bound
+    remediation: Keep the publication refusal when the current channel winner falls outside retained local history. Reconcile the source ancestry or raise publishPackage.ancestryFetchDepth in config/limits/publishPackage.yaml through a reviewed qualification and regenerate the mirrors.
+    rationale: Maximum additional protected-default-branch commits fetched to prove that the candidate is eligible and the existing channel winner is its ancestor. It bounds history needed by local Git ancestry checks without granting repository API access to CI_JOB_TOKEN. The default allows a typical release train while refusing to promote if an older winner cannot be proven within the fetched graph. No successful-depth distribution is recorded yet; the first qualified promotion should record observed depth and retained history for review. An unavailable or incomplete graph remains unknown and never promotes.
+  - name: publishPackage.diagnosticArchiveBytes
+    value: 67108864
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 67108864
+    refusal: publish-package-diagnostic-archive-bound
+    remediation: Preserve the failed reproducibility gate and review the retained archive sizes before raising this bound through a reviewed change.
+    rationale: Maximum compressed archive bytes accepted by the hash-only reproducibility diagnostic. This bound permits diagnostics for the current product package while limiting memory and prevents an oversized or malformed archive from producing unbounded diagnostic work. The diagnostic emits hashes and member metadata only, never member bytes.
+  - name: publishPackage.registryArchiveBytes
+    value: 67108864
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 67108864
+    refusal: publish-package-registry-archive-bound
+    remediation: Keep registry reconciliation unknown and inspect the exact package version before retrying. Raise this bound only after measuring qualified archive sizes through a reviewed change.
+    rationale: Maximum retained tarball bytes accepted from either the verified artifact or an exact-version registry readback. The publisher checks file size before reading or comparing the archive in memory, and an oversized readback remains unknown rather than green. The value is a technical bound chosen above the current package size; release evidence should record observed archives before any increase.
+  - name: publishPackage.registryArchiveDownloadTimeoutMs
+    value: 300000
+    unit: milliseconds
+    scope: per-run
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 300000
+    refusal: publish-package-registry-archive-download-timeout
+    remediation: Keep exact-version reconciliation unknown and inspect registry availability before retrying. Raise this timeout only after recording qualified transfer durations through a reviewed change.
+    rationale: Maximum elapsed time to retrieve one exact-version registry archive, including redirects and streamed body receipt. The five-minute ceiling is provisional because archive transfer distributions are not yet recorded. An aborted request removes its partial temporary file, preserves unknown state, and cannot pass the byte digest check.
+  - name: publishPackage.registryArchiveRedirects
+    value: 3
+    unit: redirects
+    scope: per-run
+    warnAt: 0.8
+    override: none
+    min: 0
+    max: 3
+    refusal: publish-package-registry-archive-redirect-bound
+    remediation: Keep the readback unknown and verify the registry's documented tarball URL. Increase this redirect count only through a reviewed qualification and regenerated mirrors.
+    rationale: Maximum HTTPS redirects followed for one exact-version tarball request. Registry-origin credentials are sent only while the redirected URL remains under the configured project registry path; external signed-download hops receive no bearer token. The small bound permits expected object-store redirects while preventing unbounded redirect chains.
+  - name: publishPackage.versionReadbackAttempts
+    value: 5
+    unit: attempts
+    scope: per-run
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 5
+    refusal: publish-package-version-readback-attempt-bound
+    remediation: Leave immutable upload unknown after the bounded exact-version reads and inspect the registry before retrying. Raise attempts only after measuring qualified registry propagation behavior.
+    rationale: Maximum exact-version archive readback attempts after one npm publish call, including a lost publish response. Only an absent exact version retries; all other failures and byte conflicts stop immediately. The five-attempt budget is provisional and mirrors the existing channel readback policy until qualified package visibility data is available.
+  - name: publishPackage.versionReadbackDelayMs
+    value: 1000
+    unit: milliseconds
+    scope: per-run
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 1000
+    refusal: publish-package-version-readback-delay-bound
+    remediation: Leave immutable upload unknown if exact-version visibility exceeds the bounded interval. Change this delay only through reviewed qualification and regenerated mirrors.
+    rationale: Delay between absent exact-version reads after one upload. Four waits cap intentional sleep at four seconds; each metadata request has its own governed timeout. This is provisional pending measured registry propagation data.
+  - name: publishPackage.versionReadbackTimeoutMs
+    value: 30000
+    unit: milliseconds
+    scope: per-run
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 30000
+    refusal: publish-package-version-readback-timeout-bound
+    remediation: Keep immutable upload unknown if an exact-version metadata request times out. Raise the per-request timeout only after recording qualified registry response durations.
+    rationale: Maximum elapsed time for one npm exact-version metadata read after upload. A timeout stops the retry loop because it does not establish absence. The 30-second budget is provisional and matches the channel metadata readback policy.
+  - name: publishPackage.channelReadbackAttempts
+    value: 5
+    unit: attempts
+    scope: per-run
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 5
+    refusal: publish-package-channel-readback-attempt-bound
+    remediation: Leave promotion unknown after the bounded readback attempts and inspect the channel before retrying. Raise attempts only after measuring qualified registry propagation behavior.
+    rationale: Maximum channel readback attempts after a dist-tag update. The bounded retries allow a short registry propagation delay; malformed and authorization failures stop immediately, and exhaustion remains non-success. Each npm request also has the separately governed publishPackage.channelReadbackTimeoutMs ceiling.
+  - name: publishPackage.channelReadbackDelayMs
+    value: 1000
+    unit: milliseconds
+    scope: per-run
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 1000
+    refusal: publish-package-channel-readback-delay-bound
+    remediation: Keep promotion unknown if channel propagation exceeds the bounded interval. Change this delay only through reviewed qualification and regenerated mirrors.
+    rationale: Delay between transient channel readback attempts. Together with publishPackage.channelReadbackAttempts, this caps intentional sleep time at four seconds; request runtime is separately bounded by publishPackage.channelReadbackTimeoutMs. This permits eventual visibility without treating unknown, malformed, or unauthorized reads as success.
+  - name: publishPackage.channelReadbackTimeoutMs
+    value: 30000
+    unit: milliseconds
+    scope: per-run
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 30000
+    refusal: publish-package-channel-readback-timeout-bound
+    remediation: Keep promotion unknown if the registry readback times out. Raise the per-attempt timeout only after recording qualified registry response durations.
+    rationale: Maximum elapsed time for one npm channel readback attempt. The bounded attempt count and delay cap aggregate retry work; a timed-out attempt may retry within that policy, while exhausted outcomes remain unknown and never green.
+  - name: publishPackage.diagnosticExpandedBytes
+    value: 268435456
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 268435456
+    refusal: publish-package-diagnostic-expanded-bound
+    remediation: Preserve the failed reproducibility gate and review expanded archive size before raising this bound through a reviewed change.
+    rationale: Maximum decompressed tar bytes accepted by the hash-only reproducibility diagnostic. Gunzip is capped at this size, so a compressed expansion bomb cannot consume unbounded memory. The diagnostic remains advisory and never changes a failed byte-reproducibility gate into success.
+  - name: publishPackage.diagnosticMembers
+    value: 20000
+    unit: members
+    scope: per-run
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 20000
+    refusal: publish-package-diagnostic-member-bound
+    remediation: Preserve the failed reproducibility gate and review archive member counts before raising this bound through a reviewed change.
+    rationale: Maximum tar members inspected per archive by the hash-only reproducibility diagnostic. It bounds per-member metadata allocation and comparison work while accommodating the current package file set. Exceeding the bound fails diagnostic generation and does not relax the strict reproducibility gate.

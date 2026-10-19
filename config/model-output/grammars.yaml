@@ -1,0 +1,25 @@
+# Shared grammars for values a model authors or cites. Canonical source;
+# generated bindings are produced by `npm run generate:model-output` from
+# packages/runtime.
+#
+# #1130 lands the format only. #1290 migrates the outcome and limitation code,
+# source locator, and issued-ID grammars here. Each record:
+#
+#   - id: outcome-code
+#     form: token                # token or composite
+#     first: a-z0-9              # token: first-character class
+#     rest: a-z0-9.-             # token: class for every later character
+#     maxLength: limit.name      # token: a config/limits.yaml limit name
+#     statement: >-              # model-facing sentence; no numerals
+#       ...
+#     examples:
+#       accept: [...]            # values the grammar must admit
+#       reject: [...]            # values the grammar must refuse
+#       illustrative: [...]      # the only examples a prompt may show
+#     flowsInto: [other-id]      # grammars this value must also satisfy
+#
+# A composite grammar declares `parts` (each a token grammar id) and
+# `separators` instead of `first`, `rest`, and `maxLength`.
+schemaVersion: 1
+kind: docsfab-output-grammars
+grammars: []

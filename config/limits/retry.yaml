@@ -1,0 +1,125 @@
+# DocsFab operational limits owned by the `retry` name prefix.
+# Registered in config/limits.yaml; every limit here is named `retry.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: retry.maxRetries
+    value: 3
+    unit: count
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_READ_ONLY_MAX_RETRIES
+    min: 0
+    max: 3
+    refusal: retry-max-retries-bound
+    remediation: Set DOCSFAB_READ_ONLY_MAX_RETRIES to an integer from 0 through 3.
+    rationale: Read-only step retries default to the existing admitted maximum. Operators may lower the retry count, including zero; retry delays are unchanged. Write steps remain single-attempt, except the CREATE revision writer (replay reset-write-step), which retries any retryable malformed-response, such as a model-correctable accounting refusal, within this count after its host restores candidate 0 (#1266). The override keeps its historical name DOCSFAB_READ_ONLY_MAX_RETRIES for host compatibility and bounds that revision writer too. It also bounds the hinted correction rounds of one read-only first pass (#1284). Each round re-asks the model after a model-correctable first-pass rejection, and the first-pass model-turn budget grows by this count, so a round never spends a mandatory phase or evidence-expansion turn.
+    docValue: 3 retries
+    docSummary: Contract-correction retries for read-only inference failures, and retryable malformed replies of the `create-documentation` revision writer, such as model-correctable revision-accounting refusals. Throttled and transport-fault attempts use `retry.maxTransportRetries` instead, so a read-only step makes at most 1 + 3 + 6 = 10 attempts.
+
+  - name: retry.baseDelayMs
+    value: 1000
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_RETRY_BASE_DELAY_MS
+    min: 0
+    max: 30000
+    refusal: retry-base-delay-ms-bound
+    remediation: Set DOCSFAB_RETRY_BASE_DELAY_MS to an integer from 0 through 30000.
+    rationale: Closed backoff floor for the read-only retry policy.
+
+  - name: retry.maxDelayMs
+    value: 2000
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_RETRY_MAX_DELAY_MS
+    min: 0
+    max: 30000
+    refusal: retry-max-delay-ms-bound
+    remediation: Set DOCSFAB_RETRY_MAX_DELAY_MS to an integer from 0 through 30000 that is at least the base delay.
+    rationale: Closed backoff ceiling for the read-only retry policy.
+
+  - name: retry.maxTimeoutRetries
+    value: 1
+    unit: count
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_READ_ONLY_MAX_TIMEOUT_RETRIES
+    min: 0
+    max: 3
+    refusal: retry-max-timeout-retries-bound
+    remediation: Set DOCSFAB_READ_ONLY_MAX_TIMEOUT_RETRIES to an integer from 0 through 3 that is at most the read-only retry count.
+    rationale: Read-only retries for an attempt that ended in a timeout, counted as timeout retries already scheduled in the step and held under retry.maxRetries, so the worst case stays (retry.maxRetries + 1) attempt timers. The retry is not the same ask - its prompt says the previous attempt reached its time limit and to read only what the answer needs - and the attempt records which timer fired (attempt-deadline or provider-timeout). Measured basis, Inference Hub matrix 2026-10-01 (development evidence) - all three timed-out cells timed out once and were declined with retries unused - update Super derive-source-obligations ef1c1dfc stalled after 24 turns and 49 s of provider time inside a 300 s attempt, update Ultra evaluate-document-quality 9e5c3a84 ran 41 reading turns, focused review Ultra test-audience-understanding bad283ee looped on reads. One retry recovers a stall and costs at most one more attempt timer. A catalog default above a lowered DOCSFAB_READ_ONLY_MAX_RETRIES applies as that count and doctor shows the applied value; only an explicit override above it is refused.
+    docValue: 1 retry
+    docSummary: Retries of a step attempt that timed out, counted per step and held under the read-only retry count.
+
+  - name: retry.maxCutAnswerRetries
+    value: 1
+    unit: count
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_READ_ONLY_MAX_CUT_ANSWER_RETRIES
+    min: 0
+    max: 3
+    refusal: retry-max-cut-answer-retries-bound
+    remediation: Set DOCSFAB_READ_ONLY_MAX_CUT_ANSWER_RETRIES to an integer from 0 through 3 that is at most the read-only retry count.
+    rationale: Read-only retries for a structured answer cut at the output limit with no continuation left, or completed by continuation and then refused, counted as cut-answer retries already scheduled in the step and held under retry.maxRetries. Each such attempt pays the whole output allowance, so the count is small, and the retry tells the model its answer ran past the limit and to return it complete and well inside it. Measured basis - step 8 baseline 41ae5075 (2026-09-30) had one degenerate cut in five answers and the fresh sample succeeded; Ultra plan-documentation ran away twice in two runs on Inference Hub (61ba16da 16,384 tokens in 130 s, e2f4c3d4 18,428 tokens in 251 s), so further fresh samples are unlikely to pay for their cost. A catalog default above a lowered DOCSFAB_READ_ONLY_MAX_RETRIES applies as that count; only an explicit override above it is refused.
+    docValue: 1 retry
+    docSummary: Retries of a step whose structured answer was cut at the output limit, or completed by continuation and then refused.
+
+  - name: retry.maxNoProgressRetries
+    value: 1
+    unit: count
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_READ_ONLY_MAX_NO_PROGRESS_RETRIES
+    min: 0
+    max: 3
+    refusal: retry-max-no-progress-retries-bound
+    remediation: Set DOCSFAB_READ_ONLY_MAX_NO_PROGRESS_RETRIES to an integer from 0 through 3 that is at most the read-only retry count.
+    rationale: Read-only retries for an attempt the host stopped as no-progress (execution.readLoopWithheldReads, execution.readLoopUnchangedReReads, or the hard tool-call ceiling compositionExecution.maxToolCallsPerStep), counted as no-progress retries already scheduled in the step and held under retry.maxRetries. A read loop repeats deterministically unless something changes, so the one retry differs from the attempt that looped - at the first re-read the read-evidence ledger withholds, the host withdraws the tools and asks for the answer from what the model already read - and the answer is still decoded against the same contract. Measured basis, Inference Hub matrix 2026-10-01 (development evidence) - focused review Ultra test-audience-understanding bad283ee re-read one result at 29 output tokens per turn for 90 turns, and the same attempt shape stopped by name once read-loop supervision landed; a second identical retry would spend another attempt timer on the same loop. The tool-call ceiling stop shares this budget because the attempt that reaches it is the same failure, a model that kept calling tools instead of answering - runs ad6fab22 (evaluate-document-quality) and 48ef1a5c (derive-source-obligations) reached 126 of 126 calls on attempt 1 and succeeded on a later attempt. A catalog default above a lowered DOCSFAB_READ_ONLY_MAX_RETRIES applies as that count; only an explicit override above it is refused.
+    docValue: 1 retry
+    docSummary: Retries of a step attempt the host stopped for re-reading unchanged content or at its tool-call ceiling; the retry withdraws the tools at its first withheld re-read and asks for the answer.
+
+  - name: retry.maxTransportRetries
+    value: 6
+    unit: count
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_READ_ONLY_MAX_TRANSPORT_RETRIES
+    min: 0
+    max: 6
+    refusal: retry-max-transport-retries-bound
+    remediation: Wait for the provider's rate limit or availability to recover, or reduce other traffic on the same key and deployment, then run the step again. DOCSFAB_READ_ONLY_MAX_TRANSPORT_RETRIES may only lower this count, from 0 through 6.
+    rationale: Read-only step attempts that may end in a transport fault (throttled, or provider-transient - a 5xx or a stream that closed before it finished) without spending retry.maxRetries. Those attempts never delivered an answer the contract could judge, so charging them to the contract-correction count left a step its correction attempts only on a quiet route; on build.nvidia.com runs 28b5d50f and e1fa56af (2026-10-01) 3 of the 4 step attempts of evaluate-document-quality ended throttled in both runs. Six is a conservative ceiling, not a measured need. With providerAttempt.maxThrottledAttemptsPerTurn about 1% of 60-turn attempts still end throttled at the measured 429 rate, and hosted Ultra run facc5e4a lost 2 attempts of one step to streams that closed mid-answer. retry.transportMaxElapsedMs bounds the same retries by wall clock, whichever is reached first. 0 restores a stop on the first transport-failed attempt; it never moves the cost back onto retry.maxRetries.
+    docValue: 6 retries
+    docSummary: Read-only step attempts that may end throttled or in a provider transport fault without spending `retry.maxRetries`.
+
+  - name: retry.transportMaxDelayMs
+    value: 60000
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: null
+    min: 0
+    max: 60000
+    refusal: retry-transport-max-delay-ms-bound
+    remediation: Lower retry.transportMaxDelayMs in config/limits/retry.yaml; a longer server-requested Retry-After is waited only up to it, and the next attempt may be throttled again.
+    rationale: Ceiling on one wait before a transport retry of a step, a honoured Retry-After included. The wait is the read-only exponential from retry.baseDelayMs by transport retry number, lengthened to the provider's Retry-After. Sixty seconds covers a per-minute provider rate window; build.nvidia.com sent no Retry-After on any of the 15 terminal 429s it returned in runs 28b5d50f and e1fa56af, so the exponential decides there.
+    docValue: 60,000 ms (1 minute)
+    docSummary: Ceiling on one wait before a step's transport retry, a honoured `Retry-After` included.
+
+  - name: retry.transportMaxElapsedMs
+    value: 3600000
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: null
+    min: 0
+    max: 3600000
+    refusal: retry-transport-max-elapsed-ms-bound
+    remediation: Wait for the provider's rate limit or availability to recover, or reduce other traffic on the same key and deployment, then run the step again; lower retry.transportMaxElapsedMs in config/limits/retry.yaml to stop sooner.
+    rationale: Wall clock one step may spend in transport-failed attempts and the waits after them before no further transport retry is scheduled. One hour, the host ceiling compositionExecution.timeoutMs for a single attempt. Installed compositions clamp an attempt to 300,000 or 1,800,000 ms, so this admits from 2 to 12 full-length transport-failed attempts, and retry.maxTransportRetries usually stops sooner; the attempt already running when the bound is crossed still finishes. The host job deadline still cancels the whole run.
+    docValue: 3,600,000 ms (1 hour)
+    docSummary: Wall clock one step may spend in transport-failed attempts and their waits.

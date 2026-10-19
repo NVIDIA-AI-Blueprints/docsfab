@@ -1,0 +1,29 @@
+# Union of scripts/ci-heavy/{delivery,profile,docs}.txt.
+# Kept for humans and release-artifact contract tests; vitest-ci.mjs asserts
+# this list matches the domain files exactly.
+#
+# Process-heavy / long-running suites that skew Vitest shards. Kept out of
+# ci:test shards and run in parallel ci:isolation:* domain jobs instead.
+test/check-sandbox-bounds.test.ts
+test/delivery-acceptance.test.ts
+test/delivery-cli.test.ts
+test/delivery-publisher.test.ts
+test/delivery-worktree.test.ts
+test/doc-improvement-cli.test.ts
+test/doc-improvement.test.ts
+test/documentation-maturity-cascade.test.ts
+test/documentation-maturity-contracts.test.ts
+test/documentation-maturity-evaluators.test.ts
+test/hosted-readiness-workflows.test.ts
+test/ia-lifecycle.test.ts
+test/init.test.ts
+test/local-workflow-search.test.ts
+test/managed-issue-convention.test.ts
+test/profile-apply.test.ts
+test/release-documentation-readiness.test.ts
+test/repository-inventory.test.ts
+test/roadmap-contracts.test.ts
+test/roadmap-execution-v2.test.ts
+test/runner.test.ts
+test/workflow-search-failure-cause.test.ts
+test/workflow-search.test.ts

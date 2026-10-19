@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "kind": "knowledge-attributed-answer",
+  "actor": "product-owner-test",
+  "authority": "product-decision-owner",
+  "token": "CF-INTENT",
+  "statement": "The widget is built for operators.",
+  "winningClaimId": "CL-INTENT-1"
+}

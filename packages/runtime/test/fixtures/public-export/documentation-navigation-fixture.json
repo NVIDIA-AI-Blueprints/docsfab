@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "kind": "docsfab-documentation-navigation-fixture",
+  "version": "1.1.0",
+  "recallAtK": 3,
+  "minimumRecall": 0.8,
+  "queries": [
+    {
+      "id": "nav-get-started-install",
+      "query": "Where is the in-package installation reference after the predecessor public IA retired?",
+      "expectedPaths": [
+        "docs/get-started/installation-reference.md",
+        "docs/get-started/docker-dogfood.md"
+      ]
+    },
+    {
+      "id": "nav-get-started-first-success",
+      "query": "What in-package dogfood path remains after public get-started pages moved to Fern?",
+      "expectedPaths": ["docs/get-started/docker-dogfood.md"]
+    },
+    {
+      "id": "nav-plan-information-architecture",
+      "query": "How do I analyze and plan documentation structure without changing the repository?",
+      "expectedPaths": ["docs/plan-doc-structure/README.md"]
+    },
+    {
+      "id": "nav-preview-autonomous-work",
+      "query": "How do I review an autonomous documentation proposal before it changes source?",
+      "expectedPaths": ["docs/preview-autonomous-work/README.md"]
+    },
+    {
+      "id": "nav-publish-a-patch",
+      "query": "How do I approve and deliver a governed documentation patch?",
+      "expectedPaths": ["docs/publish-a-patch/README.md"]
+    },
+    {
+      "id": "nav-prove-a-doc-change",
+      "query": "How do I assess evidence and validate a bounded documentation improvement?",
+      "expectedPaths": ["docs/prove-a-doc-change/README.md"]
+    },
+    {
+      "id": "nav-reference-contract",
+      "query": "Where is the stable in-package contract reference?",
+      "expectedPaths": ["docs/reference/contracts/managed-issue-convention.md"]
+    },
+    {
+      "id": "nav-maintain",
+      "query": "How do I pin or remap a catalog skill?",
+      "expectedPaths": ["docs/internal/maintain/README.md"]
+    },
+    {
+      "id": "nav-field-guide",
+      "query": "Where is the contributor field guide?",
+      "expectedPaths": ["docs/field-guide/index.md"]
+    },
+    {
+      "id": "nav-evidence",
+      "query": "Where is package evaluation evidence kept?",
+      "expectedPaths": ["docs/evidence/README.md"]
+    },
+    {
+      "id": "nav-security-threat-model",
+      "query": "Where is the in-package security threat model?",
+      "expectedPaths": ["docs/about/security-threat-model.md"]
+    }
+  ]
+}

@@ -1,0 +1,573 @@
+{
+  "literals": [
+    {
+      "path": "packages/runtime/src/native-compositions/adapters.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 256",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/cli.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_CLI_ARGUMENTS = 2",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/cli.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_CLI_ARGUMENT_BYTES = 4",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/cli.ts",
+      "kind": "timeout-assign",
+      "lexeme": "PREFLIGHT_OVERALL_TIMEOUT_MS = 4",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/contracts.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 128",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/local-host.ts",
+      "kind": "kib-product",
+      "lexeme": "1024 * 1024",
+      "count": 2
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/local-host.ts",
+      "kind": "kib-product",
+      "lexeme": "4 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/local-host.ts",
+      "kind": "kib-product",
+      "lexeme": "512 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/local-host.ts",
+      "kind": "max-assign",
+      "lexeme": "HASH_CHUNK_BYTES = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/local-host.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_CONFIGURED_EXECUTABLE_PATH_BYTES = 4",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/local-host.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_EXECUTABLE_BYTES = 5",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-adapter-decode.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 10",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-adapter-decode.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 128",
+      "count": 3
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-adapter-decode.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 256",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-adapter-decode.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 64",
+      "count": 2
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-adapter-decode.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 65",
+      "count": 3
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-blind-eval.ts",
+      "kind": "kib-product",
+      "lexeme": "1024 * 1024",
+      "count": 4
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-blind-eval.ts",
+      "kind": "kib-product",
+      "lexeme": "2 * 1024",
+      "count": 2
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-blind-eval.ts",
+      "kind": "kib-product",
+      "lexeme": "4 * 1024",
+      "count": 2
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-blind-eval.ts",
+      "kind": "max-assign",
+      "lexeme": "maxStderrBytes: 1",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-blind-eval.ts",
+      "kind": "max-assign",
+      "lexeme": "maxStdoutBytes: 1",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-blind-eval.ts",
+      "kind": "slice-cap",
+      "lexeme": ".slice(0, 24)",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-blind-eval.ts",
+      "kind": "timeout-assign",
+      "lexeme": "timeoutMs: 6",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-cli.ts",
+      "kind": "kib-product",
+      "lexeme": "16 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-cli.ts",
+      "kind": "kib-product",
+      "lexeme": "64 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-cli.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_INPUT_ARTIFACT_BYTES = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-cli.ts",
+      "kind": "max-assign",
+      "lexeme": "maxBuffer: 6",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-cli.ts",
+      "kind": "max-buffer",
+      "lexeme": "maxBuffer: 6",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-cli.ts",
+      "kind": "timeout-assign",
+      "lexeme": "timeout: 1",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-contracts.ts",
+      "kind": "kib-product",
+      "lexeme": "2 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-contracts.ts",
+      "kind": "kib-product",
+      "lexeme": "64 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-contracts.ts",
+      "kind": "max-assign",
+      "lexeme": "NATIVE_PILOT_MAX_PROVIDER_REQUESTS_PER_STEP = 4",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-contracts.ts",
+      "kind": "max-assign",
+      "lexeme": "maxInputTokens: 6",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-contracts.ts",
+      "kind": "max-assign",
+      "lexeme": "maxOutputSchemaBytes: 6",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-contracts.ts",
+      "kind": "max-assign",
+      "lexeme": "maxOutputTokens: 8",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-contracts.ts",
+      "kind": "max-assign",
+      "lexeme": "maxProviderTurns: 1",
+      "count": 3
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-contracts.ts",
+      "kind": "max-assign",
+      "lexeme": "maxResponseBytes: 6",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-contracts.ts",
+      "kind": "max-assign",
+      "lexeme": "maxStderrBytes: 6",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-contracts.ts",
+      "kind": "max-assign",
+      "lexeme": "maxStdinBytes: 2",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-contracts.ts",
+      "kind": "max-assign",
+      "lexeme": "maxStdoutBytes: 6",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-contracts.ts",
+      "kind": "timeout-assign",
+      "lexeme": "timeoutMs: 3",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-corpus.ts",
+      "kind": "kib-product",
+      "lexeme": "64 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-corpus.ts",
+      "kind": "kib-product",
+      "lexeme": "8 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-corpus.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_KIT_AGGREGATE_BYTES = 6",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-corpus.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_KIT_FILE_BYTES = 8",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-corpus.ts",
+      "kind": "max-assign",
+      "lexeme": "maxInputTokens: 6",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-corpus.ts",
+      "kind": "max-assign",
+      "lexeme": "maxOutputTokens: 8",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-corpus.ts",
+      "kind": "max-assign",
+      "lexeme": "maxProviderTurnsPerStep: 4",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-corpus.ts",
+      "kind": "max-assign",
+      "lexeme": "maxResponseBytes: 6",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-corpus.ts",
+      "kind": "max-assign",
+      "lexeme": "maxRetries: 0",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-corpus.ts",
+      "kind": "timeout-assign",
+      "lexeme": "contextWindow: 6",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-corpus.ts",
+      "kind": "timeout-assign",
+      "lexeme": "timeoutMs: 3",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-nemotron.ts",
+      "kind": "kib-product",
+      "lexeme": "16 * 1024",
+      "count": 2
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-nemotron.ts",
+      "kind": "kib-product",
+      "lexeme": "64 * 1024",
+      "count": 2
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-nemotron.ts",
+      "kind": "max-assign",
+      "lexeme": "maxStderrBytes: 6",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-nemotron.ts",
+      "kind": "max-assign",
+      "lexeme": "maxStdoutBytes: 6",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-nemotron.ts",
+      "kind": "slice-cap",
+      "lexeme": ".slice(0, 16)",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-nemotron.ts",
+      "kind": "timeout-assign",
+      "lexeme": "timeoutMs: 1",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-paths.ts",
+      "kind": "kib-product",
+      "lexeme": "1024 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-paths.ts",
+      "kind": "kib-product",
+      "lexeme": "4 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-paths.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_HOST_STDERR_BYTES = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-paths.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_HOST_STDOUT_BYTES = 4",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-process-contracts.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 256",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-process-contracts.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 65",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-process/claude-stream-codecs.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 128",
+      "count": 2
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-process/claude-stream-codecs.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 64",
+      "count": 2
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-process/claude-stream-codecs.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 65",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-process/claude-stream-codecs.ts",
+      "kind": "max-assign",
+      "lexeme": "CLAUDE_INTERNAL_MAX_RETRIES = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-process/stream-values.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 256",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-repository.ts",
+      "kind": "kib-product",
+      "lexeme": "1024 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-repository.ts",
+      "kind": "kib-product",
+      "lexeme": "16 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-repository.ts",
+      "kind": "kib-product",
+      "lexeme": "4 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-repository.ts",
+      "kind": "kib-product",
+      "lexeme": "64 * 1024",
+      "count": 2
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-repository.ts",
+      "kind": "kib-product",
+      "lexeme": "8 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-repository.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_REPOSITORY_BYTES = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-repository.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_REPOSITORY_FILES = 5",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-repository.ts",
+      "kind": "max-assign",
+      "lexeme": "maxStderrBytes: 6",
+      "count": 2
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-repository.ts",
+      "kind": "max-assign",
+      "lexeme": "maxStdoutBytes: 1",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-repository.ts",
+      "kind": "max-assign",
+      "lexeme": "maxStdoutBytes: 4",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-repository.ts",
+      "kind": "timeout-assign",
+      "lexeme": "timeoutMs: 1",
+      "count": 2
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-repository.ts",
+      "kind": "timeout-assign",
+      "lexeme": "timeoutMs: 6",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-runner.ts",
+      "kind": "kib-product",
+      "lexeme": "2 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-runner.ts",
+      "kind": "kib-product",
+      "lexeme": "256 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-runner.ts",
+      "kind": "kib-product",
+      "lexeme": "512 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-runner.ts",
+      "kind": "kib-product",
+      "lexeme": "64 * 1024",
+      "count": 3
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-runner.ts",
+      "kind": "max-assign",
+      "lexeme": "maxLength: 6",
+      "count": 2
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-runner.ts",
+      "kind": "max-assign",
+      "lexeme": "maxLength: 8",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-runner.ts",
+      "kind": "max-assign",
+      "lexeme": "maxStderrBytes: 6",
+      "count": 2
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-runner.ts",
+      "kind": "max-assign",
+      "lexeme": "maxStdoutBytes: 2",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-runner.ts",
+      "kind": "max-assign",
+      "lexeme": "maxStdoutBytes: 6",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-runner.ts",
+      "kind": "max-assign",
+      "lexeme": "minLength: 1",
+      "count": 3,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/native-compositions/pilot-runner.ts",
+      "kind": "timeout-assign",
+      "lexeme": "timeoutMs: 6",
+      "count": 2
+    }
+  ]
+}

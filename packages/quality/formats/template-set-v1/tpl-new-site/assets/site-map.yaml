@@ -1,0 +1,218 @@
+# Canonical Documentation Site Information Architecture
+# Used by tpl-new-site to bootstrap a complete doc site directory structure.
+#
+# Each section defines:
+#   - template: which template type to scaffold (must exist in TEMPLATE_MAP)
+#   - required: whether the page is required (true) or optional (false)
+#   - children: nested pages within this section
+#   - repeatable: whether the section can be duplicated (e.g., use-case sections)
+#   - description: brief explanation of the page's purpose
+#   - content_type: Diataxis quadrant — explanation | reference | how-to | tutorial.
+#     Informational only today (the scaffolder does not read it). Intended for
+#     future IA tooling to flag sibling pages sharing the same quadrant.
+
+sections:
+
+  about:
+    template: about-overview
+    required: true
+    content_type: explanation
+    description: "Landing page for the About section — introduces the product, core value, and navigation"
+    children:
+
+      architecture:
+        template: architecture
+        required: false
+        content_type: explanation
+        description: "How components interact — diagrams, data flows, deployment topologies"
+
+      ecosystem:
+        template: ecosystem
+        required: false
+        content_type: explanation
+        description: "Positioning within the ecosystem — integrations, related tools"
+
+      # The destination follows the product IA. The templates themselves live
+      # in the top-level conceptual catalog, independent of this output path.
+      core-concepts:
+        template: concepts-overview
+        landing: true
+        required: false
+        content_type: explanation
+        description: "Product-wide concepts landing page sourced from conceptual/overview"
+
+      release-notes:
+        template: release-notes
+        required: true
+        content_type: reference
+        description: "Version changelog — highlights, support matrix, fixed/known issues, previous releases"
+
+  get-started:
+    template: get-started-overview
+    required: true
+    content_type: how-to
+    description: "Landing page — choose your path, prerequisites overview, learning path"
+    children:
+
+      prerequisites:
+        template: prerequisites
+        required: true
+        content_type: reference
+        description: "Detailed system requirements, dependencies, and environment setup"
+
+      installation:
+        template: installation
+        required: true
+        content_type: how-to
+        description: "Comprehensive install guide — multiple methods (pip, source, container)"
+
+      configuration:
+        template: installation
+        required: false
+        content_type: how-to
+        description: "Configuration and setup — environment variables, config files"
+
+      quickstart:
+        template: quickstart
+        required: true
+        content_type: tutorial
+        description: "Fast-track first experience — minimal steps to a working result"
+
+      tutorial:
+        template: tutorial
+        required: false
+        content_type: tutorial
+        description: "Hello World or beginner tutorial — guided learning experience"
+
+  use-case:
+    repeatable: true
+    required: false
+    description: "Repeat this section for each major use case or feature area"
+    children:
+
+      # Note: about-feature and concept are both `explanation` in Diataxis.
+      # Today they scaffold as peers, which collapses the quadrant. Future IA
+      # tooling should flag this (e.g., require a parent overview) or split them.
+      about-feature:
+        template: feature
+        required: true
+        content_type: explanation
+        description: "About this feature — capabilities, how it works, limitations"
+
+      concept:
+        template: conceptual
+        required: false
+        content_type: explanation
+        description: "Conceptual topic sourced from conceptual/conceptual"
+
+      procedural:
+        template: procedural
+        required: true
+        content_type: how-to
+        description: "Procedural task(s) — single or multiple step-by-step guides"
+
+      tutorials:
+        template: tutorial
+        required: false
+        content_type: tutorial
+        description: "Basic and advanced tutorials for this use case"
+
+      # Workflows, Solutions, and Code Examples are content pages
+      # that don't have dedicated templates yet — scaffold as procedural
+      workflows:
+        template: procedural
+        required: false
+        content_type: how-to
+        description: "End-to-end workflow guides"
+
+      code-examples:
+        template: procedural
+        required: false
+        content_type: how-to
+        description: "Notebooks, blueprints, playbooks, recipes"
+
+  reference:
+    template: reference-overview
+    required: true
+    content_type: reference
+    description: "Landing page for the reference section — API, CLI, configuration lookups"
+    children:
+
+      api:
+        template: reference-overview
+        required: false
+        content_type: reference
+        description: "API reference documentation"
+
+      environment-variables:
+        template: environment-variables
+        required: false
+        content_type: reference
+        description: "Environment variables reference"
+
+      helm-parameters:
+        template: helm-parameters
+        required: false
+        content_type: reference
+        description: "Helm chart values reference"
+
+      observability:
+        template: observability-metrics
+        required: false
+        content_type: reference
+        description: "Logging, observability, and metrics reference"
+
+      performance:
+        template: reference-overview
+        required: false
+        content_type: reference
+        description: "Performance benchmarks and tuning"
+
+      migration-guides:
+        template: procedural
+        required: false
+        content_type: how-to
+        description: "Migration guides between versions"
+
+  troubleshooting:
+    template: troubleshooting
+    required: true
+    content_type: how-to
+    description: "Troubleshooting page — common issues, error messages, solutions"
+
+  resources:
+    template: resources-overview
+    required: true
+    content_type: reference
+    description: "Landing page for glossaries, support FAQs, and supplementary pages"
+    children:
+
+      glossary:
+        template: glossary
+        required: false
+        content_type: reference
+        description: "Term definitions and domain vocabulary"
+
+      support:
+        template: resources-overview
+        required: false
+        content_type: reference
+        description: "Support and FAQs"
+
+      training:
+        template: resources-overview
+        required: false
+        content_type: reference
+        description: "Training resources"
+
+      community:
+        template: resources-overview
+        required: false
+        content_type: reference
+        description: "Community links, blogs, related products"
+
+      legal:
+        template: resources-overview
+        required: false
+        content_type: reference
+        description: "OSS licenses, license agreements"

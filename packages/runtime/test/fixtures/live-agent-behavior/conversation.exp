@@ -1,0 +1,47 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+
+set conversation_timeout 240
+if {[llength $argv] > 3} {
+  set conversation_timeout [lindex $argv 3]
+  if {![string is integer -strict $conversation_timeout] || $conversation_timeout < 1 || $conversation_timeout > 900} {
+    puts stderr "Invalid bounded proof conversation timeout."
+    exit 2
+  }
+}
+set timeout 30
+log_user 0
+proc stop {} {
+  global spawn_id
+  catch {exec kill -TERM -- -[exp_pid]}
+  after 500
+  catch {exec kill -KILL -- -[exp_pid]}
+  exit 124
+}
+trap stop SIGTERM
+spawn -noecho [lindex $argv 0] live-agent --new --repo [lindex $argv 1] --read-only
+expect {
+  -re {Session +([a-f0-9-]+)} { puts "SESSION $expect_out(1,string)" }
+  timeout { stop }
+  eof { exit 125 }
+}
+expect {
+  "You: " {}
+  timeout { stop }
+  eof { exit 125 }
+}
+send -- "[lindex $argv 2]\r"
+set timeout $conversation_timeout
+expect {
+  "You: " {}
+  timeout { stop }
+  eof { exit 125 }
+}
+send -- "/exit\r"
+set timeout 15
+expect {
+  eof {}
+  timeout { stop }
+}
+set result [wait]
+exit [lindex $result 3]

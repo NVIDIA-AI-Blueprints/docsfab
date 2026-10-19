@@ -1,0 +1,4 @@
+interface:
+  display_name: "Review Documentation"
+  short_description: "Run a clean non-author editorial review"
+  default_prompt: "Within a DocsFab runtime workflow, perform an independent editorial review of this documentation."

@@ -1,0 +1,63 @@
+# DocsFab operational limits owned by the `authoring` name prefix.
+# Registered in config/limits.yaml; every limit here is named `authoring.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: authoring.plannedPageMaxBytes
+    value: 33554432
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_AUTHORING_PLANNED_PAGE_MAX_BYTES
+    min: 1
+    max: 33554432
+    refusal: authoring-planned-page-max-bytes-bound
+    remediation: Split the planned page into smaller pages, or remove a lowering override of authoring.plannedPageMaxBytes; its value in config/limits/authoring.yaml already equals its maximum, the maximum of repository.trackedWriteAdmissionMaxBytes, and cannot rise.
+    rationale: Bytes of one planned page the authoring host reads into memory when it copies sealed candidate 0 into the revision workspace and when it restores candidate 0 before a revision retry. There the observed value is the page's byteLength in candidate 0's sealed snapshot, and every page is checked before any is read or written, so a refusal reads no page bytes and restores no page. Measured 2026-10-02 on representative documentation repositories the largest tracked Markdown page was 151133 bytes (DocsFab), 67262 bytes (NeMo Curator) and 234336 bytes (a generated report page), so 32 MiB is about 143 times the largest. The maximum is the maximum of repository.trackedWriteAdmissionMaxBytes, the bound in repository/workspace/tracked-read.ts that recaptures every written planned page before a candidate seals. A page over the admission bound in force never seals, so a higher value would be dead. Both candidate seals refuse such a page by the admission bound's code before admission, so a lowering override of this limit binds only at the copy and the reset. Override may only lower it.
+
+  - name: authoring.workspaceSnapshotMaxEntries
+    value: 100000
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_AUTHORING_WORKSPACE_SNAPSHOT_MAX_ENTRIES
+    min: 1
+    max: 100000
+    refusal: authoring-workspace-snapshot-max-entries-bound
+    remediation: Run authoring against a repository with fewer tracked entries, or raise authoring.workspaceSnapshotMaxEntries in config/limits/authoring.yaml after qualifying the snapshot digest and record size.
+    rationale: Tracked entries in one complete authoring workspace snapshot. Each candidate seal, revision preparation, observation, reset and selected promotion lists every tracked entry and digests them as one record, and an incomplete snapshot would authenticate nothing. Measured 2026-10-02 the representative repositories carried 6119 (DocsFab), 2062 (NeMo Curator) and 4114 (a catalog repository) tracked entries, so 100000 is 16 times the largest. Override may only lower it.
+
+  - name: authoring.workspaceSnapshotMaxBytes
+    value: 2147483648
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_AUTHORING_WORKSPACE_SNAPSHOT_MAX_BYTES
+    min: 1
+    max: 2147483648
+    refusal: authoring-workspace-snapshot-max-bytes-bound
+    remediation: Run authoring against a smaller repository, or raise authoring.workspaceSnapshotMaxBytes in config/limits/authoring.yaml after qualifying the workspace export and snapshot together.
+    rationale: Sum of tracked regular-file bytes one complete authoring workspace snapshot admits. The snapshot records each entry's size and digest, not its bytes, so this bounds the authenticated repository, not memory. The observed value is the complete sum, not the running sum at the crossing. Measured 2026-10-02 the representative repositories held 85921640 (DocsFab), 36009272 (NeMo Curator) and 51190732 (a catalog repository) tracked bytes, so 2 GiB is about 25 times the largest. Override may only lower it.
+
+  - name: authoring.candidatePatchMaxBytes
+    value: 1073741824
+    unit: bytes
+    scope: sealed
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 1073741824
+    refusal: authoring-candidate-patch-max-bytes-bound
+    remediation: Plan fewer or smaller pages so the candidate patch is smaller. Raising authoring.candidatePatchMaxBytes in config/limits/authoring.yaml needs the authoring candidate record's patch size bound raised and qualified with it.
+    rationale: Bytes of one sealed authoring candidate patch artifact the host reads back into memory, verifies and retains for the selected candidate. Sealed because the authoring candidate record admits patchBytes up to the same value, and a reader below the record it verifies would refuse a candidate it had already sealed; the record still declares that value itself, a remaining catalog migration onto this entry. The git patch capture buffers at most repository.evidenceGitOutputMaxBytes (80 MiB), so every patch it can produce fits; one created planned page at authoring.plannedPageMaxBytes yields a patch of that size plus one byte per line.
+
+  - name: authoring.pageTemplateGuidanceMaxBytes
+    value: 32768
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_AUTHORING_PAGE_TEMPLATE_GUIDANCE_MAX_BYTES
+    min: 1
+    max: 262144
+    refusal: authoring-page-template-guidance-max-bytes-bound
+    remediation: The planner and writer still run without that template's guidance, and the prompt names the omission. Raise authoring.pageTemplateGuidanceMaxBytes in config/limits/authoring.yaml, or set DOCSFAB_AUTHORING_PAGE_TEMPLATE_GUIDANCE_MAX_BYTES, to include it.
+    rationale: Bytes of one governed template's structure guidance, measured as its JSON text, that the host adds to a documentation planner or writer prompt. Each selected template is stated once per step however many planned pages map to it. Measured 2026-10-08 over template-set-v1, the largest guidance was 6071 bytes (about-feature-myst) and the smallest 1612 bytes (key-features-gfm), so 32 KiB is about 5 times the largest and leaves room for a larger template revision, while a prompt carries at most one copy of each template. Guidance over the bound is omitted with this observation, never truncated.

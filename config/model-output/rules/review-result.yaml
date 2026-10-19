@@ -1,0 +1,42 @@
+# Model-output rules for an editorial review result (#1423) that no shared
+# code states. Canonical source; generated bindings are produced by
+# `npm run generate:model-output` from packages/runtime.
+#
+# The review-documentation step returns a review result, either as the whole
+# reply or nested as the summary of the update-documentation editorial
+# assessment envelope. Its admission (harness/reply-admission/review-result.ts)
+# records every refusal with a closed code and a location under that root.
+# Contract-kit refusals keep their shared codes (review-result-rejection-
+# retryability.ts), and schema and locator refusals keep their #1180 inner
+# codes. The predicate lives in workflow-execution/review-response.ts.
+schemaVersion: 1
+kind: docsfab-output-rules
+family: review-result
+# review-documentation is a read-only step: a retry re-asks from the same
+# repository.
+replay: read-only
+rules:
+  - code: review-result-verdict-issues
+    locations:
+      - $.verdict
+      - $.summary.verdict
+    kind: content
+    retry: model-correctable
+    reason: >-
+      The verdict disagreed with the issues the review listed; the model can
+      make the verdict agree with its own issues.
+    statement: >-
+      The review verdict must agree with its issues. A "pass" verdict has an
+      empty issues list, and a "needs-revision" verdict lists at least one
+      issue.
+    operator:
+      kind: correct
+      meaning: >-
+        An editorial review returned a verdict that disagreed with its own
+        issues, and its bounded retries did not correct it.
+      next: >-
+        Inspect the saved run's review attempts, then start a new run. If the
+        verdict keeps disagreeing with the issues, correct the review contract.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/review-result/verdict-issues.json
+    docs: review-result-verdict-issues

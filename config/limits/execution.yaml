@@ -1,0 +1,121 @@
+# DocsFab operational limits owned by the `execution` name prefix.
+# Registered in config/limits.yaml; every limit here is named `execution.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: execution.grepGroupCleanupMs
+    value: 5000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_EXECUTION_GREP_GROUP_CLEANUP_MS
+    min: 100
+    max: 5000
+    refusal: execution-grep-group-cleanup-ms-bound
+    remediation: Inspect and terminate the named grep process group if it remains alive, then retry the step. Raise the catalog value only after confirming why cleanup exceeded the deadline.
+    rationale: One wall-clock deadline for credential-safe grep completion and cleanup, starting when a valid result is accepted or an abort or failure enters cleanup. It covers cooperative worker close, any hard stop of the owned process group, and confirmation that the child and group are gone. Normal local cleanup completes in milliseconds; five seconds allows slow shared hosts without granting a second budget after a cooperative stall. A timed-out cleanup reports the owned group ID and retains its process state for operator recovery. Operators may only lower it.
+
+  - name: execution.grepGroupPollMs
+    value: 25
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_EXECUTION_GREP_GROUP_POLL_MS
+    min: 1
+    max: 25
+    refusal: execution-grep-group-poll-ms-bound
+    remediation: Lower DOCSFAB_EXECUTION_GREP_GROUP_POLL_MS for finer process-group cleanup observation.
+    rationale: Interval between observations of the owned credential-safe grep process group after SIGKILL. Twenty-five milliseconds keeps cleanup responsive without a busy loop; the separate cleanup deadline bounds the total wait. Operators may only lower it.
+
+  - name: execution.normalModeTokenBudgetTurns
+    value: 64
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 64
+    refusal: cumulative-token-limit
+    remediation: Reduce cumulative token use or revise normal-mode budget admission.
+    rationale: Existing normal-mode cumulative token authority multiplies the selected per-turn token limits by this count. Recovery allowance changes preserve that budget; separate capacity work may revise its admission.
+
+  - name: execution.normalModeMaxElapsedMs
+    value: 3600000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 3600000
+    refusal: elapsed-time-limit
+    remediation: Reduce attempt duration or revise normal-mode budget admission.
+    rationale: Existing normal-mode elapsed-time authority. Recovery allowance changes preserve this timer; it is independent of composition timeout configuration.
+
+  - name: execution.readLoopRepeatStreak
+    value: 8
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_EXECUTION_READ_LOOP_REPEAT_STREAK
+    min: 1
+    max: 400
+    refusal: execution-read-loop-repeat-streak-bound
+    remediation: Raise DOCSFAB_EXECUTION_READ_LOOP_REPEAT_STREAK (up to 400) if a step legitimately re-reads one unchanged result many times, or narrow the step's scope.
+    rationale: Re-reads of one unchanged result, within one step attempt and with no new progress call (write, edit, claim, conflict gap, artifact or quality candidate) between, that the host still re-sends in full with a notice before it sends only the notice. A re-read counts only when the same read-class call returns the same model-visible bytes in the same context epoch, so nothing new, changed, from another range, or lost to a compaction is ever withheld, and the earlier bytes are still in context. Counted per result because every measured loop re-read one result. On the 2026-10-01 Inference Hub matrix (development evidence) Ultra 7d8293c8 and bad283ee made one read per turn at exactly 29 output and +73 input tokens for 90+ turns, and Super 6b60e933 and 644e2300 made 120 reads in a 20-file, 25 KB fixture at a steady +78 to +110 input tokens per turn, the signature of one small file. A legitimate verification pass re-reads many results once each and is never withheld by this bound; execution.readLoopUnchangedReReads bounds the total across results. Steps that finished read at most 22 times (gpt-6-sol), 17 (Super) and 16 (Ultra) on the same fixture, so 8 re-reads of one result is far beyond a legitimate re-check, and it costs at most 8 wasted turns against 100 or more. The maximum restates the per-step tool-call ceiling, compositionExecution.maxToolCallsPerStep, at which the notice-only stage never arms.
+    docValue: 8 re-reads of one result
+    docSummary: Re-reads of one unchanged result the host still re-sends in full before sending only a notice.
+
+  - name: execution.readLoopWithheldReads
+    value: 8
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_EXECUTION_READ_LOOP_WITHHELD_READS
+    min: 1
+    max: 400
+    refusal: execution-read-loop-withheld-reads-bound
+    remediation: The step re-read unchanged content instead of finishing. Retry the step (the correction policy decides), narrow its scope, or raise DOCSFAB_EXECUTION_READ_LOOP_WITHHELD_READS (up to 400).
+    rationale: Further re-reads of one unchanged result the host answers with a notice only, after execution.readLoopRepeatStreak, or of any unchanged result after execution.readLoopUnchangedReReads, before it ends the attempt as no-progress. A new successful write, edit, claim, conflict-gap, artifact or quality-candidate call resets every count; an identical repeat of such a call does not. It gives the model as many notice-only turns to finish as it had full repeats, so a loop's worst case is 8 + 8 + 1 = 17 re-reads of one result instead of the 126-call cap or the 300 s attempt timer seen in the same matrix runs (7d8293c8, bad283ee, 6b60e933, 644e2300). The stop is recoverable through the step correction policy, which owns the no-progress retry decision. On that retry, every tool call the host denies after it withdraws the tools and asks for the answer spends the same allowance, so a model that ignores the ask stops with this code within 8 more calls rather than running denied calls up to compositionExecution.maxToolCallsPerStep (400 in a scripted probe). The maximum restates the per-step tool-call ceiling, compositionExecution.maxToolCallsPerStep.
+    docValue: 8 notice-only re-reads
+    docSummary: Notice-only re-reads, of one unchanged result or past the cross-result allowance, plus tool calls denied after a conclude-now ask, before the host ends the step attempt as no-progress.
+
+  - name: execution.readLoopUnchangedReReads
+    value: 16
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_EXECUTION_READ_LOOP_UNCHANGED_RE_READS
+    min: 1
+    max: 400
+    refusal: execution-read-loop-unchanged-re-reads-bound
+    remediation: The step cycled through results it had already read instead of finishing. Retry the step (the correction policy decides), narrow its scope, or raise DOCSFAB_EXECUTION_READ_LOOP_UNCHANGED_RE_READS (up to 400).
+    rationale: Unchanged re-reads across all results, within one step attempt and with no new progress call between, that the host still re-sends in full. Past it every further unchanged re-read is answered with a notice only, and execution.readLoopWithheldReads more notice-only answers end the attempt as no-progress through the same stop and conclude-now retry as the per-result bound. It closes the gap the per-result count leaves, where a model that cycles through several unchanged results never re-reads any one of them 17 times. A compaction does not reset the count, but a re-read after a compaction is new evidence and is not counted, so nothing missing from the context is withheld. Keeping the count through compactions also closes a second gap - a model that re-reads one file in every epoch between compactions, which resets the per-result count each time, now stops on this code. Measured with docsfab runs query over the indexed run records of the 2026-10-01 Inference Hub matrix rounds and worker lanes (development evidence), from 2026-10-01T16:04Z, when records began to carry the read-loop counters - 331 succeeded attempts in 71 runs made at most 12 unchanged re-reads, counting the live runs of the change that added this bound, while Super 62f25796 evaluate-document-quality cycled 7 results for 84 unchanged re-reads (at most 13 of one) and Ultra 53646a46 test-audience-understanding made 65 (at most 2 of one), each ending at the 126-call tool ceiling. 16 leaves 33 percent headroom over the largest finished attempt, and the stop at 16 + 8 + 1 = 25 unchanged re-reads lands near call 70 of 62f25796 instead of 126. A pure one-result loop still stops at 17 under the per-result bound. The maximum restates the per-step tool-call ceiling, compositionExecution.maxToolCallsPerStep.
+    docValue: 16 unchanged re-reads across results
+    docSummary: Unchanged re-reads across all results, with no progress call between, the host still re-sends in full before it sends only a notice and starts spending the notice-only allowance.
+
+  - name: execution.readerSourceNominations
+    value: 128
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 128
+    refusal: reader-source-nominations-over-bound
+    remediation: Name fewer reader sources. A continued run re-admits the original run's reader sources plus the files its InputAsk fills add, so start a new run with `docsfab run update-documentation` and fewer --reader-source options.
+    rationale: Reader sources one update run admits, explicit --reader-source nominations plus change-scope paths, counted before any source is read. Reader admission introduced the value in 4cbec2eda (2026-09-14) as a hand-declared constant; this entry catalogs it unchanged, so no supported run that admitted before is refused now. It bounds per-run admission work ahead of the per-source and retained byte bounds. The run record's readerEvidenceRequest decoder and the do --continue union of retained and filled sources enforce the same value, so a continuation never admits more than the original admission could and the writer never keeps a list a strict reader refuses. There is no override, because the decoder checks stored records against this value, and a record written under a raised host value would not decode on a host at the default.
+    docValue: 128 reader sources
+    docSummary: Reader sources one update run admits, explicit `--reader-source` nominations plus change-scope paths. A continued run counts the original run's sources plus the files its InputAsk fills add.
+
+  - name: execution.styleResourceMaxBytes
+    value: 32768
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 32768
+    refusal: style-resource-max-bytes-bound
+    remediation: Shorten the bound style profile's delivered files, or name fewer of them in packages/quality/profiles/product-default.json, then run npm run generate:quality-pack from packages/runtime.
+    rationale: Most bytes of judgment text the host admits from the bound style profile, counted over every file the product-default declaration delivers. The writer, reviewer, and evaluator steps each receive the whole text in their prompt, so this bound caps how much one style resource adds to each of those prompts. The host resolves the resource once at run admission, before any model call, and an oversized one refuses the run there with this code, the observed size, and the resource id. The host never delivers part of a rule. Measured 2026-10-05 - the bound profile:nvidia-technical-documentation delivers style-guide.md (2,810 bytes) and TERMINOLOGY.md (1,433 bytes), 4,243 bytes or about 1.1k input tokens per step. 32,768 bytes is about 8k input tokens, which leaves room for a fuller guide and is an eighth of the smallest context window a registered composition declares (65,536 tokens in packages/runtime/model-compositions/composition-registry.json). No override tier, because the resource is product-authored Pin C content and a larger guide is a qualification change, not an operator allowance.
+    docValue: 32768 bytes of style text
+    docSummary: Bytes of judgment text the host admits from the bound style profile and gives to the writer, reviewer, and evaluator steps.

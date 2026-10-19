@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "kind": "docsfab-output-rule-fixture",
+  "code": "quality-envelope-json",
+  "location": "$.evaluation",
+  "input": {
+    "workflow": "review-documentation"
+  },
+  "reply": "{\"evaluation\":{\"evaluation_id\":\"eval-1\",\"overall_decision\":\"insufficient-evidence\",\"target\":{\"paths\":[\"docs/index.md\"],}},\"qualityScore\":null}\n\n# Report\n\nThe example calls `send(\"latency\", 12)`.\n"
+}

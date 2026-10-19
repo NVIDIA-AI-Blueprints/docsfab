@@ -1,0 +1,4 @@
+interface:
+  display_name: "Assess Documentation Readiness"
+  short_description: "Assess source input or governed release-documentation evidence"
+  default_prompt: "Use the workflow-selected source or public-release readiness surface, preserve exact revision and evidence boundaries, and explain findings, unknown decisions, and next work without edits or publication authority."

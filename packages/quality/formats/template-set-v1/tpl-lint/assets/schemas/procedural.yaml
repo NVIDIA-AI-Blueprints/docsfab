@@ -1,0 +1,44 @@
+schema_version: "1.0"
+library_version: "1.0.0"
+name: procedural
+description: "Procedural how-to page with step-by-step instructions"
+source_template: "templates/procedural/single-procedural.md"
+
+structure:
+  headings:
+    h1:
+      required:
+        - pattern: ".+"
+          description: "Procedural task title (active verb phrase)"
+      max_count: 1
+    h2:
+      optional:
+        - pattern: "Prerequisites?"
+          description: "Prerequisites section"
+        - pattern: "Next Steps?"
+          description: "Next steps section"
+    h3:
+      optional:
+        - pattern: ".*"
+          description: "Sub-procedure headings"
+
+  elements:
+    - type: admonition
+      context: "within procedure steps"
+      required: false
+
+  section_order:
+    - "Prerequisites"
+    - "Next Steps"
+
+severity:
+  missing_required_section: error
+  missing_optional_section: info
+  wrong_section_order: warning
+  missing_element: info
+  duplicate_h1: error
+
+content:
+  steps:
+    format: "numbered list"
+    include_verification: recommended

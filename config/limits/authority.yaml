@@ -1,0 +1,63 @@
+# DocsFab operational limits owned by the `authority` name prefix.
+# Registered in config/limits.yaml; every limit here is named `authority.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: authority.serviceConfigurationBytes
+    value: 1048576
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: null
+    min: 1024
+    max: 1048576
+    refusal: authority-service-configuration-bytes-bound
+    remediation: Shrink the protected authority service configuration or raise authority.serviceConfigurationBytes in config/limits/authority.yaml.
+    rationale: Protected authority configuration allowance at the existing declared 1 MiB maximum. It also bounds the accepted job packet a root operator import reads back through the local PostgreSQL peer beside that configuration, and the operation record the import's retain step hands its register step to compare, records far smaller than the configuration they are read with. Custody and parser validation remain required.
+
+  - name: authority.credentialFileBytes
+    value: 1048576
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: null
+    min: 256
+    max: 1048576
+    refusal: authority-credential-file-bytes-bound
+    remediation: Inspect the protected credential or DSN file and its required format; an oversized substituted payload cannot be accepted as a credential.
+    rationale: Protected credential/DSN file read allowance at the existing declared 1 MiB maximum. Increasing read capacity neither supplies credentials nor bypasses credential shape, ownership or disclosure checks.
+
+  - name: authority.planFileBytes
+    value: 268435456
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: null
+    min: 4096
+    max: 268435456
+    refusal: authority-plan-file-bytes-bound
+    remediation: Inspect the authority plan file; raise authority.planFileBytes in config/limits/authority.yaml only for a measured plan.
+    rationale: Authority plan input allowance at the existing declared 256 MiB maximum. The plan remains data and cannot supply missing owner, credential or publication authority.
+
+  - name: authority.projectorTimeoutMs
+    value: 2147483647
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: null
+    min: 1000
+    max: 2147483647
+    refusal: authority-projector-timeout-ms-bound
+    remediation: Inspect the reference-model projector on the authority host. Restore a lowered allowance to the declared maximum if appropriate; the default is already the supported Node timer maximum. A longer operation requires resumable execution, not a larger timer.
+    rationale: Reference-model projector completion allowance at the supported Node timer maximum, 2147483647 ms. It does not change retry delays, cancellation or authority checks.
+
+  - name: authority.projectorOutputBytes
+    value: 536870888
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: null
+    min: 65536
+    max: 536870888
+    refusal: authority-projector-output-bytes-bound
+    remediation: Inspect the projector output. A lower configured allowance can be restored to the declared maximum; a larger snapshot requires a streaming or paged representation.
+    rationale: Reference-model JSON stdout is decoded into one JavaScript string. The declared maximum and default are the supported Node single-string capacity, 536870888 bytes; this is representable capacity, not a measured working-set promise.

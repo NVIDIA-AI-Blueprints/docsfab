@@ -1,0 +1,700 @@
+# Model-output rules for the request-intent proposal: the model's reading of
+# the operator's request as an operation, targets, sources, preserved content,
+# exclusions, constraints, an authority preference, and at most one question.
+# Canonical source; generated bindings are produced by
+# `npm run generate:model-output` from packages/runtime.
+#
+# The decoder and admission live in packages/runtime/src/request-intent/
+# (`decodeRequestIntentProposal`, `admitRequestIntent`). This family holds the
+# proposal-shape and grounding codes (Correct), the repository and authority
+# refusals (pinned authority), and the operator questions (Supply): the
+# model's own question and the host's questions about the operation and the
+# targets. The catalog owns the facts about each rule, not its predicate.
+schemaVersion: 1
+kind: docsfab-output-rules
+family: request-intent
+# Interpretation reads the request and the repository's inventory, existence
+# answers, roots, and write scope, and writes nothing, so a retry re-asks from
+# the same inputs.
+replay: read-only
+# Recorded codes keep this prefix; a persisted code is never renamed.
+recordedPrefix: request-intent-
+rules:
+  - code: request-intent-shape
+    locations:
+      - $
+      - $.operation
+      - $.targets
+      - $.targets[]
+      - $.targets[].path
+      - $.targets[].role
+      - $.targets[].chosenFrom
+      - $.targets[].quote
+      - $.sources
+      - $.sources[]
+      - $.sources[].path
+      - $.sources[].quote
+      - $.preserve
+      - $.preserve[]
+      - $.preserve[].quote
+      - $.exclusions
+      - $.exclusions[]
+      - $.exclusions[].path
+      - $.exclusions[].quote
+      - $.constraints
+      - $.constraints[]
+      - $.constraints[].kind
+      - $.constraints[].quote
+      - $.authorityPreference
+      - $.authorityPreference.preference
+      - $.authorityPreference.quote
+      - $.questions
+      - $.questions[]
+      - $.questions[].question
+      - $.questions[].options
+      - $.questions[].options[]
+      - $.questions[].recommendedDefault
+      - $.questions[].consequence
+    kind: shape
+    retry: model-correctable
+    reason: >-
+      The proposal is a closed object; the model can restate it with exactly
+      the stated keys, types, and values.
+    statement: >-
+      Return one object with exactly operation, targets, and
+      authorityPreference, and optionally sources, preserve, exclusions,
+      constraints, and questions, and no other key. operation is create,
+      update, restructure, or review. Each target has exactly path, role
+      (write, companion-nav, or companion-index), chosenFrom (named,
+      inventory, or proposed-new), and quote. Each source and each exclusion
+      has exactly path and quote; each preserve entry has exactly quote; each
+      constraint has exactly kind (evidence-only, stop-before-mutation,
+      operational-next-steps, or non-publication) and quote.
+      authorityPreference has exactly preference (implementation,
+      documentation, or unspecified) and quote, which is null exactly when
+      the preference is unspecified. Every text value other than a quote is
+      NFC-normalized text.
+    operator:
+      kind: correct
+      meaning: >-
+        The request interpretation returned a proposal outside the closed
+        request-intent shape, and its bounded retries did not correct it.
+      next: >-
+        Inspect the saved run's interpretation attempts, then start a new run;
+        if the model keeps returning the same shape, correct the request-intent
+        contract the interpretation prompt states.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/request-intent/shape.json
+    docs: request-intent-shape
+
+  - code: request-intent-host-field
+    locations:
+      - $
+    kind: shape
+    retry: model-correctable
+    reason: >-
+      The host stamps the request digest, kind, schema version, quote offsets,
+      and seal; the model can drop the fields it wrote for them.
+    statement: >-
+      Do not write kind, schemaVersion, digest, or the request digest field;
+      the host computes the request digest, the quote offsets, and the seal
+      itself.
+    operator:
+      kind: correct
+      meaning: >-
+        The request interpretation wrote a field only the host may stamp, and
+        its bounded retries did not drop it.
+      next: >-
+        Inspect the saved run's interpretation attempts, then start a new run;
+        if the model keeps writing host fields, correct the request-intent
+        contract the interpretation prompt states.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/request-intent/host-field.json
+    docs: request-intent-host-field
+
+  - code: request-intent-path-grammar
+    locations:
+      - $.targets[].path
+      - $.sources[].path
+      - $.exclusions[].path
+    kind: content
+    retry: model-correctable
+    reason: >-
+      The host cannot use a path that is not a normalized repository-relative
+      path; the model can restate the same path in that form.
+    statement: >-
+      Each path is a normalized repository-relative path: no leading slash, no
+      backslash, no control character, and no empty, dot, or dot-dot segment,
+      so no trailing slash either.
+    operator:
+      kind: correct
+      meaning: >-
+        The request interpretation named a path that is not a normalized
+        repository-relative path, and its bounded retries did not correct it.
+      next: >-
+        Inspect the saved run's interpretation attempts, then start a new run;
+        if the model keeps writing the same path, correct the request-intent
+        contract the interpretation prompt states.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/request-intent/path-grammar.json
+    docs: request-intent-path-grammar
+
+  - code: request-intent-duplicate-target
+    locations:
+      - $.targets[].path
+    kind: content
+    retry: model-correctable
+    reason: >-
+      Two targets naming one file, ignoring letter case, would write it twice;
+      the model can merge them into one target.
+    statement: >-
+      Name each target path once. Two paths that differ only in letter case
+      name the same file.
+    operator:
+      kind: correct
+      meaning: >-
+        The request interpretation named one target path twice, and its
+        bounded retries did not merge them.
+      next: >-
+        Inspect the saved run's interpretation attempts, then start a new run;
+        if the model keeps repeating a target, correct the request-intent
+        contract the interpretation prompt states.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/request-intent/duplicate-target.json
+    docs: request-intent-duplicate-target
+
+  - code: request-intent-size
+    locations:
+      - $
+      - $.targets
+      - $.targets[].quote
+      - $.sources[].quote
+      - $.preserve[].quote
+      - $.exclusions[].quote
+      - $.constraints[].quote
+      - $.authorityPreference.quote
+      - $.questions[].question
+      - $.questions[].options
+      - $.questions[].options[]
+      - $.questions[].consequence
+    kind: size
+    retry: model-correctable
+    reason: >-
+      A proposal over a request-intent bound is refused whole, never cut; the
+      model can return a smaller one.
+    statement: >-
+      Name at most {limit:requestIntent.maxTargets} targets and at most
+      {limit:requestIntent.maxQuotes} quotes across every field. Each quote
+      holds at most {limit:requestIntent.maxQuoteChars} characters. A question
+      and its consequence hold at most {limit:requestIntent.maxQuestionChars}
+      characters each, with at most {limit:requestIntent.maxQuestionOptions}
+      options of at most {limit:requestIntent.maxOptionChars} characters each.
+    operator:
+      kind: correct
+      meaning: >-
+        The request interpretation returned a proposal over a request-intent
+        bound, and its bounded retries did not shrink it.
+      next: >-
+        Inspect the saved run's interpretation attempts, then start a new run
+        with a shorter or split request. Raising a bound in
+        config/limits/requestIntent.yaml is a re-qualification of admission,
+        not a retry.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/request-intent/size.json
+    docs: request-intent-size
+
+  - code: request-intent-quote-ungrounded
+    locations:
+      - $.targets[].quote
+      - $.sources[].quote
+      - $.preserve[].quote
+      - $.exclusions[].quote
+      - $.constraints[].quote
+      - $.authorityPreference.quote
+    kind: content
+    retry: model-correctable
+    reason: >-
+      Every intent field must rest on the operator's own words; the model can
+      copy the passage it relied on instead.
+    statement: >-
+      Each quote is a passage copied from the operator's request, with at
+      least one letter or digit, that starts and ends on whole words. Copy the
+      words as written; letter case, whitespace, typographic quotes and
+      dashes, surrounding quotation marks, and trailing punctuation may
+      differ, nothing else.
+    operator:
+      kind: correct
+      meaning: >-
+        The request interpretation quoted text that does not appear in the
+        operator's request, and its bounded retries did not correct it.
+      next: >-
+        Inspect the saved run's interpretation attempts, then start a new run;
+        if the model keeps paraphrasing the request, correct the request-intent
+        contract the interpretation prompt states.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/request-intent/quote-ungrounded.json
+    docs: request-intent-quote-ungrounded
+
+  - code: request-intent-inventory-unmatched
+    locations:
+      - $.targets[].path
+    kind: content
+    retry: model-correctable
+    reason: >-
+      A target the model says it chose from the inventory must be an
+      inventory path; the model can choose the listed path matching a page the
+      operator described, copy it exactly, or ask if the match is unclear.
+    statement: >-
+      A target with chosenFrom inventory names a path exactly as the host's
+      inventory lists it, letter case included. Use this origin when the
+      operator identifies a page by its title or description rather than a
+      literal path, and quote only the words the operator used. Never invent an
+      inventory path; ask when the listed page is unclear.
+    operator:
+      kind: correct
+      meaning: >-
+        The request interpretation named an inventory target that is not in
+        the host's repository inventory, and its bounded retries did not
+        correct it.
+      next: >-
+        Inspect the saved run's interpretation attempts, then start a new run;
+        if the model keeps inventing inventory paths, correct the
+        request-intent contract the interpretation prompt states.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/request-intent/inventory-unmatched.json
+    docs: request-intent-inventory-unmatched
+
+  - code: request-intent-proposed-new-operation
+    locations:
+      - $.targets[].chosenFrom
+    kind: content
+    retry: model-correctable
+    reason: >-
+      Only a create operation may propose a new page; the model can choose an
+      existing target or ask.
+    statement: >-
+      Use chosenFrom proposed-new only when operation is create.
+    operator:
+      kind: correct
+      meaning: >-
+        The request interpretation proposed a new page for an operation other
+        than create, and its bounded retries did not correct it.
+      next: >-
+        Inspect the saved run's interpretation attempts, then start a new run;
+        if the model keeps proposing pages outside create, correct the
+        request-intent contract the interpretation prompt states.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/request-intent/proposed-new-operation.json
+    docs: request-intent-proposed-new-operation
+
+  - code: request-intent-named-ungrounded
+    locations:
+      - $.targets[].path
+    kind: content
+    retry: model-correctable
+    reason: >-
+      A target the model says the operator named must appear as a complete
+      path in the operator's words. For a page described by title or purpose,
+      the model can choose the exact matching path from the host inventory and
+      quote only the operator's words, or ask when the match is unclear.
+    statement: >-
+      A target with chosenFrom named has a quote that contains its exact whole
+      path as written in the request. When the request describes the page by
+      title or purpose instead of a literal path, use chosenFrom inventory with
+      the exact matching path from the host inventory and quote only the
+      operator's words, or ask when the match is unclear. Never invent a path.
+    operator:
+      kind: correct
+      meaning: >-
+        The request interpretation said the operator named a target path that
+        its quote of the request does not contain, and its bounded retries did
+        not correct it.
+      next: >-
+        Inspect the saved run's interpretation attempts, then start a new run;
+        name the page's path in the request if it is missing there, or correct
+        the request-intent contract the interpretation prompt states if the
+        model keeps inventing named paths.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/request-intent/named-ungrounded.json
+    docs: request-intent-named-ungrounded
+
+  - code: request-intent-excluded-target
+    locations:
+      - $.exclusions[].path
+    kind: content
+    retry: model-correctable
+    reason: >-
+      An exclusion only removes work; a target that is also excluded
+      contradicts it, and the model can drop one of the two.
+    statement: >-
+      An exclusion only removes paths from the work. Never name a target that
+      an exclusion also names or contains.
+    operator:
+      kind: correct
+      meaning: >-
+        The request interpretation named a target that its own exclusion also
+        names, and its bounded retries did not resolve it.
+      next: >-
+        Inspect the saved run's interpretation attempts, then start a new run;
+        if the model keeps contradicting its exclusions, correct the
+        request-intent contract the interpretation prompt states.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/request-intent/excluded-target.json
+    docs: request-intent-excluded-target
+
+  - code: request-intent-question-count
+    locations:
+      - $.questions
+    kind: content
+    retry: model-correctable
+    reason: >-
+      One stop asks the operator one decision; the model can keep the one
+      question that decides the rest.
+    statement: >-
+      Ask at most one question.
+    operator:
+      kind: correct
+      meaning: >-
+        The request interpretation asked more than one question, and its
+        bounded retries did not reduce them to one.
+      next: >-
+        Inspect the saved run's interpretation attempts, then start a new run;
+        if the model keeps asking several questions, correct the
+        request-intent contract the interpretation prompt states.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/request-intent/question-count.json
+    docs: request-intent-question-count
+
+  - code: request-intent-question-default
+    locations:
+      - $.questions[].options
+      - $.questions[].recommendedDefault
+    kind: content
+    retry: model-correctable
+    reason: >-
+      A recommended default the operator cannot pick is not a decision; the
+      model can name distinct options and one of them as the default.
+    statement: >-
+      A question offers at least one option, never the same option twice, and
+      its recommendedDefault is exactly one of its options.
+    operator:
+      kind: correct
+      meaning: >-
+        The request interpretation asked a question whose recommended default
+        is not one of its distinct options, and its bounded retries did not
+        correct it.
+      next: >-
+        Inspect the saved run's interpretation attempts, then start a new run;
+        if the model keeps writing the same question, correct the
+        request-intent contract the interpretation prompt states.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/request-intent/question-default.json
+    docs: request-intent-question-default
+
+  - code: request-intent-disclosure
+    locations:
+      - $
+    kind: disclosure
+    retry: terminal
+    reason: >-
+      One of DocsFab's own configured credentials is a security refusal and
+      is never re-asked; text that only looks like a credential is not.
+    statement: >-
+      Never put a credential, secret, or token anywhere in the proposal.
+    operator:
+      kind: correct
+      meaning: >-
+        The request interpretation, or the request text it quoted, held one of
+        DocsFab's own configured credentials, which the host refuses without
+        retrying or recording it.
+      next: >-
+        Remove the credential from the request and rotate it, then start a new
+        run.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/request-intent/disclosure.json
+    docs: request-intent-disclosure
+
+  - code: request-intent-internal-path
+    locations:
+      - $.targets[].path
+      - $.sources[].path
+    kind: authority
+    retry: terminal
+    reason: >-
+      Repository internals such as the .git directory are outside every grant,
+      so neither a retry nor an operator answer can make them readable or
+      writable.
+    statement: >-
+      Never name a target or source path with a .git segment, in any letter
+      case; an exclusion may name one.
+    operator:
+      kind: redirect
+      meaning: >-
+        The request interpretation named a target or source inside the
+        repository's .git directory, which the host never reads or writes.
+      next: >-
+        Remove that path from the request; repository internals are never read
+        or written. Then start a new run.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/request-intent/internal-path.json
+    docs: request-intent-internal-path
+
+  - code: request-intent-model-question
+    locations:
+      - $.questions[]
+    kind: content
+    retry: terminal
+    reason: >-
+      The model found a choice only the operator can make; re-asking the model
+      cannot supply it, and a question the model asks never stops the run.
+    statement: >-
+      When the request leaves a choice only the operator can make, ask one
+      question with its options, a recommended default, and the consequence of
+      taking that default, instead of guessing.
+    operator:
+      kind: supply
+      meaning: >-
+        The request interpretation found a choice only the operator can make.
+        DocsFab recorded its question as advisory, unanswered, and the run went
+        on.
+      next: >-
+        If the run's result does not match the choice you meant, restate the
+        request with the choice made and start a new run.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/request-intent/model-question.json
+    docs: request-intent-model-question
+
+  - code: request-intent-companion-not-navigation
+    locations:
+      - $.targets[].path
+    kind: content
+    retry: model-correctable
+    reason: >-
+      A companion target updates navigation or an index for the pages the
+      request writes; the model can name one of the host's existing
+      navigation or index files instead.
+    statement: >-
+      A target with role companion-nav or companion-index names an existing
+      navigation or index file exactly as the host lists it, letter case
+      included.
+    operator:
+      kind: correct
+      meaning: >-
+        The request interpretation named a navigation or index companion that
+        is not one of the repository's existing navigation or index files, and
+        its bounded retries did not correct it.
+      next: >-
+        Inspect the saved run's interpretation attempts, then start a new run;
+        if the model keeps inventing navigation files, correct the
+        request-intent contract the interpretation prompt states.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/request-intent/companion-not-navigation.json
+    docs: request-intent-companion-not-navigation
+
+  - code: request-intent-target-not-granted
+    locations:
+      - $.targets[].path
+    kind: authority
+    retry: terminal
+    reason: >-
+      The page exists, but the run's update grant does not cover modifying
+      it; neither a retry nor an operator answer widens the grant.
+    statement: >-
+      Name as a write target only a page the run may write; an existing page
+      outside the run's update grant is never written.
+    operator:
+      kind: redirect
+      meaning: >-
+        The request asks to change an existing page that the run's update
+        grant does not cover.
+      next: >-
+        Have the host that grants this run's writes cover the page, or name a
+        page the grant covers, then start a new run; nothing was written.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/request-intent/target-not-granted.json
+    docs: request-intent-target-not-granted
+
+  - code: request-intent-outside-docs-root
+    locations:
+      - $.targets[].path
+    kind: authority
+    retry: terminal
+    reason: >-
+      A new page belongs under one of the run's documentation roots; neither a
+      retry nor an operator answer moves the roots.
+    statement: >-
+      When operation is create, name each write target under one of the
+      run's documentation roots.
+    operator:
+      kind: redirect
+      meaning: >-
+        The request asks to create a page outside every documentation root the
+        run declared.
+      next: >-
+        Name a path under one of the documentation roots this refusal lists,
+        then start a new run; nothing was written.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/request-intent/outside-docs-root.json
+    docs: request-intent-outside-docs-root
+
+  - code: request-intent-outside-write-scope
+    locations:
+      - $.targets[].path
+    kind: authority
+    retry: terminal
+    reason: >-
+      Every page the run writes, companions included, must sit inside the
+      run's write scope; neither a retry nor an operator answer widens it.
+    statement: >-
+      Name only targets, companions included, that sit inside the run's write
+      scope.
+    operator:
+      kind: redirect
+      meaning: >-
+        The request asks to write a path outside the write scope this run was
+        granted.
+      next: >-
+        Commit any change to .docsfab.json, then start a new run once every
+        path the request names is inside the write scope; nothing was written.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/request-intent/outside-write-scope.json
+    docs: request-intent-outside-write-scope
+
+  - code: request-intent-operation-mismatch
+    locations:
+      - $.operation
+    kind: content
+    retry: terminal
+    reason: >-
+      The request reads as another operation than the run's workflow
+      performs; only the operator chooses the workflow, so the host never
+      reroutes and the run goes on with the workflow it was started with.
+    statement: >-
+      Report the operation the request itself asks for, even when it differs
+      from the run's workflow.
+    operator:
+      kind: supply
+      meaning: >-
+        The request reads as a different operation than the workflow this run
+        declared. DocsFab recorded the reading as advisory and ran the
+        declared workflow.
+      next: >-
+        To perform the other operation, start a new run of the workflow that
+        matches the request.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/request-intent/operation-mismatch.json
+    docs: request-intent-operation-mismatch
+
+  - code: request-intent-target-missing
+    locations:
+      - $.targets
+    kind: content
+    retry: terminal
+    reason: >-
+      Re-asking cannot make the request name a page; only the operator can. A
+      create needs the new page's path, so it asks; an update or a restructure
+      leaves the pages to the workflow.
+    statement: >-
+      When the request names no page to write, return no write target rather
+      than inventing one.
+    operator:
+      kind: supply
+      meaning: >-
+        The request asks to write documentation but names no page. An update
+        or a restructure records the reading as advisory, and the workflow
+        chooses the pages.
+      next: >-
+        Answer the question: rerun naming the page, or stop.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/request-intent/target-missing.json
+    docs: request-intent-target-missing
+
+  - code: request-intent-target-absent
+    locations:
+      - $.targets[].path
+    kind: content
+    retry: terminal
+    reason: >-
+      The operator named a page to change that does not exist; only the
+      operator can say whether to create it or name another.
+    statement: >-
+      Name the target the operator wrote, even when it may not exist; the host
+      checks the repository and asks the operator.
+    operator:
+      kind: supply
+      meaning: >-
+        The request names a page to change that does not exist in the
+        repository, so DocsFab asked what should happen.
+      next: >-
+        Answer the question: rerun as a create, name an existing page, or
+        stop.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/request-intent/target-absent.json
+    docs: request-intent-target-absent
+
+  - code: request-intent-target-present
+    locations:
+      - $.targets[].path
+    kind: content
+    retry: terminal
+    reason: >-
+      The request asks to create a page where an entry already exists; only
+      the operator can say whether to update it or name a new path.
+    statement: >-
+      When operation is create, name the path the request asks for; the host
+      checks whether it already exists and asks the operator.
+    operator:
+      kind: supply
+      meaning: >-
+        The request asks to create a page at a path that already exists, so
+        DocsFab asked what should happen.
+      next: >-
+        Answer the question: rerun as an update, name a new path, or stop.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/request-intent/target-present.json
+    docs: request-intent-target-present
+
+  - code: request-intent-target-case-ambiguous
+    locations:
+      - $.targets[].path
+    kind: content
+    retry: terminal
+    reason: >-
+      The target matches an existing entry only when letter case is ignored,
+      matches more than one, or exists as a link, submodule, or excluded
+      entry; only the operator can say which file is meant.
+    statement: >-
+      Name a target path in the exact letter case the request or the
+      inventory writes it.
+    operator:
+      kind: supply
+      meaning: >-
+        The request names a page whose path exists under another letter
+        case or as a link, submodule, or excluded entry, so DocsFab asked
+        which exact path is meant.
+      next: >-
+        Answer the question: rerun naming the exact path, or stop.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/request-intent/target-case-ambiguous.json
+    docs: request-intent-target-case-ambiguous
+
+  - code: request-intent-target-not-file
+    locations:
+      - $.targets[].path
+    kind: content
+    retry: terminal
+    reason: >-
+      The target is a directory, or sits under an existing file, so no page
+      can be written there; only the operator can name the file meant.
+    statement: >-
+      Name a file as each write target, never a directory.
+    operator:
+      kind: supply
+      meaning: >-
+        The request names a directory, or a path under an existing file, as a
+        page to change, so DocsFab asked which file is meant.
+      next: >-
+        Answer the question: rerun naming a file, or stop.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/request-intent/target-not-file.json
+    docs: request-intent-target-not-file

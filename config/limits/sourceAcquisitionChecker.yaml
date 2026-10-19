@@ -1,0 +1,27 @@
+# DocsFab operational limits owned by the `sourceAcquisitionChecker` name prefix.
+# Registered in config/limits.yaml; every limit here is named `sourceAcquisitionChecker.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: sourceAcquisitionChecker.safeIdMaxLength
+    value: 512
+    unit: characters
+    scope: per-run
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 512
+    refusal: source-acquisition-checker-safe-id-max-length-bound
+    remediation: Shorten the case or fact identifier, or raise sourceAcquisitionChecker.safeIdMaxLength in config/limits/sourceAcquisitionChecker.yaml.
+    rationale: Scope is per-run because it applies per independent checker.py invocation grading one SourceAcquisitionQualificationV1 envelope (#802), not a host- or project-wide bound; the closed scope enum has no test-harness tier. Ceiling for caseId and factId values accepted by checker.py's SAFE_ID pattern; a value outside it fails independent checking with the caller's own invalid-case/invalid-facts code. 512 matches the previously unregistered literal. Registered without a host override because checker.py does not read DOCSFAB_* overrides; add one only alongside real override support.
+
+  - name: sourceAcquisitionChecker.reasonCodeMaxLength
+    value: 128
+    unit: characters
+    scope: per-run
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 128
+    refusal: source-acquisition-checker-reason-code-max-length-bound
+    remediation: Shorten the reason code, or raise sourceAcquisitionChecker.reasonCodeMaxLength in config/limits/sourceAcquisitionChecker.yaml.
+    rationale: Scope is per-run because it applies per independent checker.py invocation grading one SourceAcquisitionQualificationV1 envelope (#802), not a host- or project-wide bound; the closed scope enum has no test-harness tier. Ceiling for reasonCode values accepted by checker.py's REASON pattern; a value outside it fails independent checking with the caller's own invalid-record/invalid-limitations code. 128 matches the previously unregistered literal. Registered without a host override because checker.py does not read DOCSFAB_* overrides; add one only alongside real override support.

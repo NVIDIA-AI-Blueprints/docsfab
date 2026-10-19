@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "graph": {
+    "B": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "H": "cccccccccccccccccccccccccccccccccccccccc",
+    "M": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "baseTree": "1111111111111111111111111111111111111111",
+    "headTree": "2222222222222222222222222222222222222222",
+    "mergeTree": "3333333333333333333333333333333333333333",
+    "proposalCommits": 2
+  },
+  "manifest": [
+    {
+      "status": "R100",
+      "oldPath": "docs/old.md",
+      "newPath": "docs/new.md",
+      "oldMode": "100644",
+      "newMode": "100644",
+      "oldId": "4444444444444444444444444444444444444444",
+      "newId": "4444444444444444444444444444444444444444",
+      "content": "regular"
+    },
+    {
+      "status": "D",
+      "oldPath": "docs/deleted.mdx",
+      "newPath": null,
+      "oldMode": "100644",
+      "newMode": "000000",
+      "oldId": "5555555555555555555555555555555555555555",
+      "newId": null,
+      "content": "regular"
+    }
+  ]
+}

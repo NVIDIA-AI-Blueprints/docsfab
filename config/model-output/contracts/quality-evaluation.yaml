@@ -1,0 +1,192 @@
+# The final quality evaluator's answer in review-documentation
+# (evaluate-document-quality), declared as judgment records the host admits
+# and assembles (planning/design/closed-schema-answer-records-decision.md,
+# section 1.4; this file is that excerpt, and the generator's G1-G6 checks
+# load it as written).
+#
+# Every member of the canonical evaluation and quality score has exactly one
+# owner: a record field the model judges, a host-minted value, a member a
+# `quality:*` rule derives (implemented once in
+# packages/quality/checks/quality_decision_policy.py), a reference to a sealed
+# earlier-step artifact, or an ordered composition of host and model parts.
+# The record shapes are generated from the canonical schemas minus every
+# host-owned member; run `npm run generate:model-output` from packages/runtime.
+#
+# No composition records `records` as its answer path yet; until the reseal
+# (design section 7, MR 7) the step answers on the text path.
+schemaVersion: 1
+kind: docsfab-response-contract
+id: quality-evaluation
+version: 2
+owner: quality
+bindings:
+  - workflow: review-documentation
+    step: evaluate-document-quality
+placement: outer
+outputMode: records
+canonical:
+  members:
+    evaluation: packages/quality/schemas/documentation-quality-evaluation.schema.json
+    qualityScore: packages/quality/schemas/quality-score.schema.json
+  profile: selection-receipt.profile
+decoders:
+  - answer-record
+  - quality-submission
+skeleton:
+  dimensions: profile.applicability.documentation_set.required_dimensions_by_layer
+  constraints: quality-policy.constraint-keys
+  layers: profile.applicability.documentation_set.required_dimensions_by_layer.keys
+records:
+  - type: target-judgment
+    from: evaluation#/properties/target
+    at:
+      - $.evaluation.target
+    key: singleton
+    narrow:
+      documentation_family_evidence.paths: subset-of:quality-evaluation-target
+  - type: dimension
+    from: evaluation#/$defs/dimensionResult
+    at:
+      - $.evaluation.layers.*.dimensions[]
+      - $.evaluation.constraints.*
+    key: skeleton:dimensions+constraints
+    narrow:
+      confidence: profile.confidence_anchors.below-one
+      assessment: profile.required-excludes-not-applicable
+    add:
+      hard_gate_failures:
+        enum: profile.hard_gates
+        array: true
+  - type: finding
+    from: evaluation#/$defs/finding
+    at:
+      - $.evaluation.findings[]
+    key: host-serial
+    open: true
+    closedBy: evaluation-note.findings_complete
+    narrow:
+      dimension_id: skeleton:dimensions+constraints
+    add:
+      originating_ids:
+        enum: references:technical-fact+technical-issue+review-issue
+        array: true
+  - type: layer-note
+    from: none
+    key: skeleton:layers
+    optional: true
+    default: empty
+    add:
+      limitations:
+        schema: evaluation#/$defs/layerResult/properties/limitations
+      layer_shortfall_decision:
+        enum: quality-policy.d3-residual-decisions
+  - type: evaluation-note
+    from: none
+    key: singleton
+    add:
+      limitations:
+        schema: evaluation#/properties/limitations
+      findings_complete:
+        const: true
+  - type: quality-score
+    from: qualityScore#
+    at:
+      - $.qualityScore
+    key: singleton
+    nullable: true
+hostMinted:
+  - field: $.evaluation.evaluation_id
+    source: run.step-attempt-id
+  - field: $.evaluation.evaluation_version
+    source: contract.evaluation-version
+  - field: $.evaluation.evaluated_at
+    source: host.clock-at-assembly
+  - field: $.evaluation.model_version
+    source: selection-receipt.profileModel
+  - field: $.evaluation.profile
+    source: selection-receipt.profile
+  - field: $.evaluation.evaluator
+    source: evaluate-step-evidence
+  - field: $.evaluation.target.scope_type
+    source: selection-receipt.scopeType
+  - field: $.evaluation.target.paths
+    source: quality-evaluation-target
+  - field: $.evaluation.target.repository_revision
+    source: selection-receipt.repositoryRevision
+  - field: $.evaluation.target.documentation_revision
+    source: selection-receipt.repositoryRevision
+  - field: $.evaluation.target.approved_evidence_revision
+    source: selection-receipt.repositoryRevision
+  - field: $.evaluation.target.delivery_surface_locator
+    source: quality-evaluation-target
+  - field: $.evaluation.layers.*.dimensions[].dimension_id
+    source: ledger.record-key
+  - field: $.evaluation.constraints.*.dimension_id
+    source: ledger.record-key
+  - field: $.evaluation.findings[].id
+    source: ledger.finding-order
+  - field: $.evaluation.findings[].owner
+    source: workflow.finding-owner
+  - field: $.evaluation.findings[].status
+    source: workflow.finding-status
+derive:
+  - field: $.evaluation.layers.*.dimensions[].applicability
+    rule: quality:applicability-from-profile
+  - field: $.evaluation.constraints.{required}.applicability
+    rule: quality:applicability-from-profile
+  - field: $.evaluation.layers.*.confidence
+    rule: quality:layer-confidence-minimum
+  - field: $.evaluation.confidence
+    rule: quality:overall-confidence-minimum
+  - field: $.evaluation.layers.*.hard_gate_failures
+    rule: quality:layer-gates-from-records
+  - field: $.evaluation.hard_gate_failures
+    rule: quality:overall-gates-union
+  - field: $.evaluation.layers.*.decision
+    rule: quality:layer-decision
+  - field: $.evaluation.overall_decision
+    rule: quality:overall-decision
+  - field: $.evaluation.conditions
+    rule: quality:conditions-from-policy
+  - field: $.qualityScore.total
+    rule: quality:score-total
+references:
+  - field: $.evaluation.outcomes
+    namespace: audience-attempt
+    source: step:test-audience-understanding.attempts
+    unresolved: evidence-unavailable
+  - part: technical-fact
+    namespace: technical-fact
+    source: step:verify-technical-accuracy.technicalVerification
+    ids: factInventory.dimensions[].facts[].id
+    unresolved: fact-link-unknown-fact
+  - part: technical-issue
+    namespace: technical-issue
+    source: step:verify-technical-accuracy.technicalVerification
+    ids: review.issues[].id
+    unresolved: evidence-unavailable
+  - part: review-issue
+    namespace: review-issue
+    source: step:review-documentation.reviewResult
+    ids: issues[].id
+    unresolved: evidence-unavailable
+compose:
+  - field: $.evaluation.findings[].evidence
+    parts:
+      - model: finding.evidence
+      - host: reference:technical-fact
+      - host: reference:technical-issue
+      - host: reference:review-issue
+  - field: $.evaluation.layers.*.limitations
+    parts:
+      - model: layer-note.limitations
+  - field: $.evaluation.limitations
+    parts:
+      - host: quality:host-limitations
+      - host: quality:coherence-labels
+      - model: evaluation-note.limitations
+limits:
+  openRecords: answerRecords.maxOpenRecordsPerSet
+  refusalsPerKey: answerRecords.maxRefusalsPerKey
+  recordBytes: sealed.answerSubmission.maxRecordBytes
+  messageBytes: sealed.answerSubmission.maxMessageBytes

@@ -1,0 +1,92 @@
+{
+  "description": "A list that shifts between fetches: a merge landing at the top pushes 5002 from page one onto page two, so the port returns it twice under order_by=merged_at descending.",
+  "window": {
+    "timeZone": "America/Los_Angeles",
+    "startDate": "2026-09-14",
+    "endDate": "2026-09-14"
+  },
+  "targetBranch": "main",
+  "pages": [
+    {
+      "page": 1,
+      "nextPage": 2,
+      "truncated": false,
+      "items": [
+        {
+          "iid": 5001,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/5001",
+          "title": "Land at the top of the first fetch",
+          "description": "Selected once.",
+          "state": "merged",
+          "mergedAt": "2026-09-14T18:00:00.000Z",
+          "targetBranch": "main",
+          "sourceBranch": "feature/top-of-list",
+          "mergeCommitSha": "50a1c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        },
+        {
+          "iid": 5002,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/5002",
+          "title": "Sit on the page boundary before the list shifts",
+          "description": "Returned again on page two after a newer merge lands.",
+          "state": "merged",
+          "mergedAt": "2026-09-14T15:00:00.000Z",
+          "targetBranch": "main",
+          "sourceBranch": "feature/page-boundary",
+          "mergeCommitSha": "50a2c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        }
+      ]
+    },
+    {
+      "page": 2,
+      "nextPage": 3,
+      "truncated": false,
+      "items": [
+        {
+          "iid": 5002,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/5002",
+          "title": "Sit on the page boundary before the list shifts",
+          "description": "The repeat: same merge request, same commit, second page.",
+          "state": "merged",
+          "mergedAt": "2026-09-14T15:00:00.000Z",
+          "targetBranch": "main",
+          "sourceBranch": "feature/page-boundary",
+          "mergeCommitSha": "50a2c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        },
+        {
+          "iid": 5003,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/5003",
+          "title": "Follow the repeated merge on the shifted page",
+          "description": "Selected once.",
+          "state": "merged",
+          "mergedAt": "2026-09-14T12:00:00.000Z",
+          "targetBranch": "main",
+          "sourceBranch": "feature/after-the-shift",
+          "mergeCommitSha": "50a3c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        }
+      ]
+    },
+    {
+      "page": 3,
+      "nextPage": null,
+      "truncated": false,
+      "items": [
+        {
+          "iid": 5004,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/5004",
+          "title": "Close the walk on the final page",
+          "description": "Selected once.",
+          "state": "merged",
+          "mergedAt": "2026-09-14T09:00:00.000Z",
+          "targetBranch": "main",
+          "sourceBranch": "feature/final-page",
+          "mergeCommitSha": "50a4c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        }
+      ]
+    }
+  ]
+}

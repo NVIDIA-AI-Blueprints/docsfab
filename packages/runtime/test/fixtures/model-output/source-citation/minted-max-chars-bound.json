@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "kind": "docsfab-output-rule-fixture",
+  "code": "source-citation-minted-max-chars-bound",
+  "location": "$.criteria",
+  "input": {
+    "binding": {
+      "runId": "run:source-citation-fixture",
+      "repositoryRevision": "0bd6fa60ceefdf49d8b92fb760d446cda3434761",
+      "searchEvidenceSha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "contextPacketSha256": null
+    },
+    "files": {
+      "docs/guide.md": "# Setup\n\nInstall the package with the supported installer.\n\nEvery endpoint has a public contract.\n"
+    },
+    "observed": {
+      "docs/large.md": [[1, 1]],
+      "docs/guide.md": [[1, 5]]
+    },
+    "overBoundFiles": ["docs/large.md"]
+  },
+  "reply": "{\"schemaVersion\": 1, \"kind\": \"docsfab-source-readiness-assessment\", \"runId\": \"run:source-citation-fixture\", \"repositoryRevision\": \"0bd6fa60ceefdf49d8b92fb760d446cda3434761\", \"searchEvidenceSha256\": \"1111111111111111111111111111111111111111111111111111111111111111\", \"contextPacketSha256\": null, \"summary\": \"The guide states the installation path and the endpoint contract.\", \"criteria\": [{\"criterionId\": \"source-completeness\", \"status\": \"met\", \"reason\": \"The guide states how to install.\", \"citations\": [{\"path\": \"docs/large.md\", \"startLine\": 1, \"endLine\": 1}]}, {\"criterionId\": \"source-usability\", \"status\": \"met\", \"reason\": \"The guide states the endpoint contract.\", \"citations\": [{\"path\": \"docs/guide.md\", \"startLine\": 5, \"endLine\": 5}]}]}"
+}

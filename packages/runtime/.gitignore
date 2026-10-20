@@ -1,0 +1,30 @@
+node_modules/
+# packages/host/scripts/ensure-typecheck-deps.mjs's transient install lock
+# for this directory; removed on exit, but ignore in case a crashed process
+# leaves it behind.
+.docsfab-typecheck-install.lock/
+dist/
+# scripts/build-package.mjs staging; a killed build can leave these behind.
+dist.staging-*/
+dist.previous-*/
+.docsfab/
+
+# Generated projection of the frozen comparison corpus's accepted-knowledge
+# fixture. Keep this one simulated .docsfab file in the governed bundle.
+.cache/
+ci-results/
+coverage-lanes/
+.env
+.env.docsfab-new-*
+.env.docsfab-rollback-*
+.env.docsfab-apply.lock
+.env.docsfab-transaction.json
+.env.docsfab-recovery.claim
+.DS_Store
+coverage/
+package-artifacts/
+package-candidate/
+# DurableArtifactStore test byproducts (objects/sha256/*.json). Leading slash
+# anchors to this directory so it does not also match src/artifacts/.
+/artifacts/
+*.log

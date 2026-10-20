@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "kind": "docsfab-output-rule-fixture",
+  "code": "quality-submission-cut",
+  "location": "$",
+  "input": {
+    "workflow": "review-documentation",
+    "submission": "{\"evaluation\":{\"evaluation_id\":\"eval-1\",\"overall_decis",
+    "lengthStopped": true
+  },
+  "reply": ""
+}

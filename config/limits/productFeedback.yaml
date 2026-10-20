@@ -1,0 +1,63 @@
+# DocsFab operational limits owned by the `productFeedback` name prefix.
+# Registered in config/limits.yaml; every limit here is named `productFeedback.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: productFeedback.gitBlobMaxBufferBytes
+    value: 33554432
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1048576
+    max: 33554432
+    refusal: product-feedback-git-blob-max-buffer-bytes-bound
+    remediation: Shrink the Git blob read or raise productFeedback.gitBlobMaxBufferBytes in config/limits/productFeedback.yaml.
+    rationale: Spawn buffer for one cat-file of a product-feedback Git blob. 32 MiB matches the previous fixed maxBuffer.
+
+  - name: productFeedback.gitPathListMaxBufferBytes
+    value: 1048576
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 65536
+    max: 1048576
+    refusal: product-feedback-git-path-list-max-buffer-bytes-bound
+    remediation: Shrink the model version listing or raise productFeedback.gitPathListMaxBufferBytes in config/limits/productFeedback.yaml.
+    rationale: Spawn buffer for the version-directory name list. 1 MiB matches the previous fixed maxBuffer.
+
+  - name: productFeedback.gitCommandTimeoutMs
+    value: 30000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1000
+    max: 30000
+    refusal: product-feedback-git-command-timeout-ms-bound
+    remediation: Retry the local Git read or raise productFeedback.gitCommandTimeoutMs in config/limits/productFeedback.yaml.
+    rationale: Ceiling for one local product-feedback Git read. 30 seconds matches the previous fixed timeout.
+
+  - name: productFeedback.gitBlobMaxBytes
+    value: 16777216
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1048576
+    max: 16777216
+    refusal: product-feedback-git-blob-max-bytes-bound
+    remediation: Remove the oversized blob from the model tree or raise productFeedback.gitBlobMaxBytes in config/limits/productFeedback.yaml.
+    rationale: Largest Git blob a product-feedback materializer will hash. 16 MiB matches the previous fixed refusal.
+
+  - name: productFeedback.comparisonPageLimit
+    value: 100
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 100
+    refusal: product-feedback-comparison-page-limit-bound
+    remediation: Narrow the comparison page or raise productFeedback.comparisonPageLimit in config/limits/productFeedback.yaml.
+    rationale: Page size for one stored comparison read during materialization. 100 matches the previous fixed page.

@@ -1,0 +1,13 @@
+[req]
+distinguished_name = subject
+x509_extensions = extensions
+prompt = no
+[subject]
+CN = localhost
+[extensions]
+subjectAltName = @alternatives
+basicConstraints = critical, CA:true
+keyUsage = critical, digitalSignature, keyEncipherment, keyCertSign
+[alternatives]
+DNS.1 = localhost
+IP.1 = 127.0.0.1

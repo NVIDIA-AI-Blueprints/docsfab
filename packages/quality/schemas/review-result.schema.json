@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/review-result.schema.json",
+  "title": "Review result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["verdict", "issues"],
+  "properties": {
+    "verdict": {"enum": ["pass", "needs-revision", "human-review"]},
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "severity", "category", "location", "finding", "evidence", "required_change"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[A-Z]+-[0-9]{3}$"},
+          "severity": {
+            "enum": ["critical", "major", "minor"],
+            "x-docsfab-enum-descriptions": {
+              "critical": "Unsafe to publish; causes incorrect operation, disclosure, security/compliance risk, or failure of the primary task.",
+              "major": "Materially incomplete or misleading but not immediately dangerous.",
+              "minor": "Localized issue with limited impact on task success."
+            }
+          },
+          "category": {
+            "enum": [
+              "technical_accuracy",
+              "source_grounding",
+              "completeness",
+              "task_success",
+              "example_validity",
+              "information_architecture",
+              "style_compliance",
+              "security_compliance"
+            ],
+            "x-docsfab-enum-descriptions": {
+              "technical_accuracy": "A claim, API name, value, behavior, or version conflicts with an approved source.",
+              "source_grounding": "A consequential claim lacks approved evidence.",
+              "completeness": "Required information or a required format region is missing.",
+              "task_success": "A user cannot complete the documented procedure as written.",
+              "example_validity": "Required code or commands are invalid, inconsistent, or not reproducible.",
+              "information_architecture": "Structure prevents readers from finding or understanding required information.",
+              "style_compliance": "The document violates an explicit style or terminology rule.",
+              "security_compliance": "Content violates an explicit security, confidentiality, legal, or publication rule."
+            }
+          },
+          "location": {"type": "string", "minLength": 1},
+          "finding": {"type": "string", "minLength": 1},
+          "evidence": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["source_id", "locator"],
+            "properties": {
+              "source_id": {"type": "string", "minLength": 1},
+              "locator": {"type": "string", "minLength": 1}
+            }
+          },
+          "required_change": {"type": "string", "minLength": 1}
+        }
+      }
+    }
+  }
+}

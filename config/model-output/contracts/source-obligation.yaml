@@ -1,0 +1,73 @@
+# Production S2 records declaration. Record shapes come from the canonical
+# response-contract key registry and the TypeScript validator.
+schemaVersion: 1
+kind: docsfab-response-contract
+id: source-obligation
+version: 3
+owner: runtime
+bindings:
+  - workflow: review-documentation
+    step: derive-source-obligations
+  - workflow: create-documentation
+    step: derive-source-obligations
+  - workflow: update-documentation
+    step: derive-source-obligations
+placement: outer
+outputMode: records
+canonical:
+  members:
+    proposal: keys:sourceObligationProposal
+  nested:
+    - at: $.proposal.dimensions[]
+      keys: sourceObligationDimension
+    - at: $.proposal.dimensions[].obligations[]
+      keys: sourceObligation
+decoders:
+  - answer-record
+  - source-obligation
+skeleton:
+  dimensions: source-obligation.dimensions
+records:
+  - type: dimension
+    from: proposal#keys:sourceObligationDimension
+    at:
+      - $.proposal.dimensions[]
+    key: skeleton:dimensions
+  - type: obligation
+    from: proposal#keys:sourceObligation
+    at:
+      - $.proposal.dimensions.{dimension}.obligations[]
+    key: host-serial
+    slotFrom: dimensionKey
+    open: true
+    closedBy: proposal-note.closed
+    add:
+      dimensionKey:
+        enum: skeleton:dimensions
+  - type: proposal-note
+    from: none
+    key: singleton
+    add:
+      limitations:
+        schema: proposal#keys:sourceObligationProposal/limitations
+      closed:
+        const: true
+hostMinted:
+  - field: $.proposal.dimensions[].dimension
+    source: ledger.record-key
+derive:
+  - field: $.proposal.completeness
+    rule: runtime:bounded-not-proven
+  - field: $.proposal.dimensions[].obligations[].id
+    rule: runtime:obligation-ids
+  - field: $.proposal.dimensions[].obligations[].dimension
+    rule: runtime:obligation-dimension
+compose:
+  - field: $.proposal.limitations
+    parts:
+      - host: runtime:unverified-dimension-reasons
+      - model: proposal-note.limitations
+limits:
+  openRecords: answerRecords.maxOpenRecordsPerSet
+  refusalsPerKey: answerRecords.maxRefusalsPerKey
+  recordBytes: sealed.answerSubmission.maxRecordBytes

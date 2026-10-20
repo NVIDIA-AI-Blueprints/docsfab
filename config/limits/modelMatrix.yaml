@@ -1,0 +1,101 @@
+# DocsFab operational limits owned by the `modelMatrix` name prefix.
+# Registered in config/limits.yaml; every limit here is named `modelMatrix.*`.
+# These bound the developer model-comparison harness in
+# packages/runtime/scripts/model-matrix/, never a product path.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: modelMatrix.maxConcurrentModels
+    value: 5
+    unit: cells
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_MODEL_MATRIX_MAX_CONCURRENT_MODELS
+    min: 1
+    max: 32
+    refusal: model-matrix-concurrency-bound
+    remediation: Lower DOCSFAB_MODEL_MATRIX_MAX_CONCURRENT_MODELS to fit provider and host capacity, or raise the catalog bound after measuring representative parallel runs.
+    rationale: Maximum model-plus-route lanes active at once. Five lanes admit the representative five-model NIM rerun while keeping a useful ceiling on provider pressure; operators can lower it for constrained accounts or raise it after measuring route capacity.
+
+  - name: modelMatrix.cellTimeoutMs
+    value: 10800000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_MODEL_MATRIX_CELL_TIMEOUT_MS
+    min: 1
+    max: 86400000
+    refusal: model-matrix-cell-timeout-ms-bound
+    remediation: Read the cell's log and run record to see which step was still running. Raise DOCSFAB_MODEL_MATRIX_CELL_TIMEOUT_MS for a deliberately long matrix, or fix the stalled step. A cell stopped here is a harness fault, not a model result, so rerun it rather than scoring it.
+    rationale: Wall clock for one `docsfab run` cell in the model-comparison harness. The CLI has no run-level wall of its own; its time limits are per step attempt (compositionExecution.timeoutMs, execution.normalModeMaxElapsedMs, both one hour). The harness therefore refuses to start unless this bound is larger than the larger of those per-attempt ceilings, so the runtime's own coded attempt stop always lands before the harness kill. On 2026-10-01 the Inference Hub matrix lanes measured 227 to 379 seconds for completed 8-step and 9-step runs, and up to about 39 minutes for runs that kept retrying a throttled step. Three hours keeps every measured run, including a full retry ladder on one slow step, while still ending a hung child within one working session. It replaces the old per-config `execution.timeoutMs` (1800000), which killed long lane D cells.
+
+  - name: modelMatrix.judgeSourceMaxFiles
+    value: 24
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 24
+    refusal: model-matrix-judge-source-max-files-bound
+    remediation: Name fewer judge sources in the corpus tasks.json, or version the corpus with a smaller source set. Raise modelMatrix.judgeSourceMaxFiles in config/limits/modelMatrix.yaml only with a measured judge that still grades within its window.
+    rationale: Most repository files the independent judge receives as source truth for one cell. The routing-task-guide-v2 corpus declares 11 source files plus the tracked-file inventory, and its whole repository is 21 tracked files. 24 covers the whole fixture, so a corpus can never be refused by declaring every file, while a corpus that tries to hand the judge an unbounded tree is refused by name rather than clipped.
+
+  - name: modelMatrix.judgeSourceMaxBytes
+    value: 65536
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 65536
+    refusal: model-matrix-judge-source-max-bytes-bound
+    remediation: Name fewer or smaller judge sources in the corpus tasks.json, or version the corpus. The harness never truncates a source, because a clipped contract would make the judge mark correct claims as unsupported.
+    rationale: Total bytes of the judge's source section for one cell, the declared source files plus the revision's tracked-file inventory. The routing-task-guide-v2 sources measure about 24 KiB including the inventory. 64 KiB is 2.7 times that, so a corpus revision that grows its contract stays admitted, and the bound still keeps the source section a small, known share of the judge request.
+
+  - name: modelMatrix.judgeOutputMaxBytes
+    value: 131072
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 131072
+    refusal: model-matrix-judge-output-max-bytes-bound
+    remediation: The cell's output is larger than the judge can grade whole. Read it directly; if it is a legitimate output, raise modelMatrix.judgeOutputMaxBytes in config/limits/modelMatrix.yaml and confirm that judge.contextWindowTokens still admits the request.
+    rationale: Bytes of the judged output bundle for one cell. For a write task that is every target's before and after document. For a read-only task it is the run-result projection (disposition, review findings, quality decision) plus the declared report-step summaries. The largest measured bundle on 2026-10-01 was a 28-finding focused review projection at 54 KiB. A complete task guide before and after is about 12 KiB. 128 KiB is 2.4 times the largest measurement. It replaces a silent 60,000-character slice. An over-size output now refuses by name and is never graded in part.
+
+  - name: modelMatrix.judgeRequestTimeoutMs
+    value: 300000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_MODEL_MATRIX_JUDGE_REQUEST_TIMEOUT_MS
+    min: 1
+    max: 900000
+    refusal: model-matrix-judge-request-timeout-ms-bound
+    remediation: Rerun judge.mjs; judging resumes per cell. If the judge route is persistently slow, raise DOCSFAB_MODEL_MATRIX_JUDGE_REQUEST_TIMEOUT_MS.
+    rationale: Wall clock for one judge chat-completions request. It keeps the five minutes the harness used as an unnamed default before it was catalogued. The judge answers with one bounded JSON object, so a request that takes longer is a stalled route, recorded as a coded judge error for that cell and retried on the next judge pass.
+
+  - name: modelMatrix.judgeMaxOutputTokens
+    value: 4096
+    unit: tokens
+    scope: per-run
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 16384
+    refusal: model-matrix-judge-max-output-tokens-bound
+    remediation: The judge reply was cut at this bound. Raise modelMatrix.judgeMaxOutputTokens in config/limits/modelMatrix.yaml; a cut reply is recorded as a judge error, never parsed as a partial score.
+    rationale: Output allowance for one judge reply. The reply holds an integer per rubric dimension, a rationale of at most a few hundred characters, and a list of unsupported claims with their source references. Ten claims at about 60 tokens each, plus the scores and the rationale, are about 1,000 tokens. 4096 is four times that. The old 1200-token config value had no room for the claims list.
+
+  - name: modelMatrix.judgeContextWindowTokens
+    value: 200000
+    unit: tokens
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_MODEL_MATRIX_JUDGE_CONTEXT_WINDOW_TOKENS
+    min: 1
+    max: 2000000
+    refusal: model-matrix-judge-context-window-tokens-bound
+    remediation: Set DOCSFAB_MODEL_MATRIX_JUDGE_CONTEXT_WINDOW_TOKENS to the input window of the judge you configured, or shrink the judged output. A request that does not fit is refused before the call and recorded as a judge error for that cell.
+    rationale: Input window of the configured judge, against which every judge request is checked before it is sent. The harness counts prompt bytes plus modelMatrix.judgeMaxOutputTokens, and every token is at least one byte, so the check never admits a request the window cannot hold. 200000 is the shipped judge's window (Claude Opus 4.7 through Inference Hub). The largest request measured on 2026-10-01 was about 44 KB, so the default leaves more than four times headroom. An operator who configures a different judge sets its window through the override; the catalog keeps it visible in docsfab doctor --limits rather than buried in a matrix config.

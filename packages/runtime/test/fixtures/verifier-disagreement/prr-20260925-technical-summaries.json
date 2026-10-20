@@ -1,0 +1,3383 @@
+{
+  "source": "PRR 2026-09-25 run records, technical-verification step summaries trimmed to ids, dispositions, statements, locators and issue links",
+  "runs": {
+    "d158e98a": {
+      "workflow": "create-documentation",
+      "steps": {
+        "provisional-technical-verification": {
+          "review": {
+            "verdict": "needs-revision",
+            "issues": [
+              {
+                "id": "TECH-001",
+                "category": "technical_accuracy",
+                "location": "docs/usage.md:39"
+              },
+              {
+                "id": "TECH-002",
+                "category": "completeness",
+                "location": "docs/usage.md:100"
+              }
+            ]
+          },
+          "coverage": [],
+          "factInventory": {
+            "completeness": "bounded-not-proven",
+            "limitations": [],
+            "dimensions": [
+              {
+                "dimension": "input-representations",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-1",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:36-47"],
+                    "statement": "The package exports getLastCsrfToken with no input and setLastCsrfToken with a string token input to read and write the stored CSRF token state.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-2",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/index.ts:1-6"],
+                    "statement": "The package public barrel exports CSRF_HEADER_NAME, fetchWithCsrf, extractCsrfFromResponseHeaders, setLastCsrfToken, and getLastCsrfToken from ./csrf/csrf.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-3",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:55-60"],
+                    "statement": "addCsrfToRequestHeaders accepts an optional HeadersInit and returns a new header container that adds or overwrites x-csrf-token with the current stored token value.",
+                    "documentationDisposition": "conflicting",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-4",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72"],
+                    "statement": "extractCsrfFromResponseHeaders accepts an optional Headers object and reads x-csrf-token from it when available.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-002"]
+                  },
+                  {
+                    "id": "FACT-5",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:83-89"],
+                    "statement": "fetchWithCsrf accepts an optional RequestInit options object; when present, its fields are shallow-merged into default GET options before headers are reassigned.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-002"]
+                  },
+                  {
+                    "id": "FACT-6",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:81-91"],
+                    "statement": "fetchWithCsrf accepts resource as RequestInfo or URL and returns the Response from fetch after post-response token extraction.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-002"]
+                  }
+                ]
+              },
+              {
+                "dimension": "defaults-and-overrides",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-10",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": ["src/csrf/csrf.ts:55-60", "src/csrf/csrf.ts:7-15"],
+                    "statement": "The CSRF header name is a fixed exported constant x-csrf-token and is not configurable through function parameters.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-11",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": [
+                      "src/csrf/csrf.ts:11-15",
+                      "src/csrf/csrf.ts:17-22",
+                      "src/csrf/csrf.ts:85-87"
+                    ],
+                    "statement": "fetchWithCsrf starts from GET defaults derived from BASE_REQUEST, so the default method is GET with redirect follow, mode cors, and credentials include.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-7",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": ["src/csrf/csrf.ts:55-60", "src/csrf/csrf.ts:87-89"],
+                    "statement": "After option merging, fetchWithCsrf always replaces mergedOptions.headers with the result of addCsrfToRequestHeaders, ensuring x-csrf-token is present from stored state even if headers were supplied by the caller.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-8",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": ["src/csrf/csrf.ts:86-87"],
+                    "statement": "Caller-supplied RequestInit fields override the default GET options during object spread before headers are reassigned.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-9",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": [
+                      "src/csrf/csrf.test.ts:48-57",
+                      "src/csrf/csrf.test.ts:99-109"
+                    ],
+                    "statement": "Inspected test source models a call path where a caller-provided mode value no-cors is preserved by the same shallow merge pattern used by fetchWithCsrfMock.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-002"]
+                  }
+                ]
+              },
+              {
+                "dimension": "mutable-state",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-12",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:36-37", "src/csrf/csrf.ts:9"],
+                    "statement": "Module state starts with lastCsrfToken initialized to the empty string, and getLastCsrfToken returns the current stored value.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-13",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72"],
+                    "statement": "extractCsrfFromResponseHeaders leaves stored token state unchanged when the header object is absent, the x-csrf-token header is missing, or the header value is an empty string.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-002"]
+                  },
+                  {
+                    "id": "FACT-14",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72"],
+                    "statement": "extractCsrfFromResponseHeaders updates stored token state only when responseHeaders.get('x-csrf-token') yields a nonempty string.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-15",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:81-91"],
+                    "statement": "fetchWithCsrf sends the currently stored token in the request headers before fetch, then may update the stored token from the response headers before returning the Response.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-16",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:45-47"],
+                    "statement": "setLastCsrfToken unconditionally assigns the provided string to the module-level lastCsrfToken state.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  }
+                ]
+              },
+              {
+                "dimension": "destination-and-trust",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-17",
+                    "dimension": "destination-and-trust",
+                    "sourceLocators": [
+                      "src/csrf/csrf.ts:11-15",
+                      "src/csrf/csrf.ts:55-60",
+                      "src/csrf/csrf.ts:67-72",
+                      "src/csrf/csrf.ts:81-91"
+                    ],
+                    "statement": "For browser cross-origin use, this source path conditionally depends on the destination allowing credentialed sharing, permitting the x-csrf-token request header, and exposing the x-csrf-token response header to script; repository source does not establish any server configuration for those conditions.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-18",
+                    "dimension": "destination-and-trust",
+                    "sourceLocators": ["src/csrf/csrf.ts:55-60", "src/csrf/csrf.ts:87-90"],
+                    "statement": "fetchWithCsrf adds the stored CSRF token to the outgoing request under the x-csrf-token header and then attempts to read x-csrf-token from the received response headers.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-19",
+                    "dimension": "destination-and-trust",
+                    "sourceLocators": ["src/csrf/csrf.ts:11-15", "src/csrf/csrf.ts:81-91"],
+                    "statement": "fetchWithCsrf issues its request to the caller-provided resource via fetch using credentials include by default, so request credentials are sent according to fetch's credential handling for that destination unless the caller overrides credentials.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  }
+                ]
+              },
+              {
+                "dimension": "error-status-retry",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-20",
+                    "dimension": "error-status-retry",
+                    "sourceLocators": ["src/csrf/csrf.ts:89-91"],
+                    "statement": "If fetch rejects, fetchWithCsrf has no local catch or fallback in the source span, so the rejection would propagate to the caller.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-21",
+                    "dimension": "error-status-retry",
+                    "sourceLocators": [
+                      "src/csrf/csrf.test.ts:14-45",
+                      "src/csrf/csrf.test.ts:48-57",
+                      "src/csrf/csrf.test.ts:59-74"
+                    ],
+                    "statement": "Inspected test source models a CSRF flow where a POST without a valid token receives a 403 response carrying a replacement x-csrf-token header, and a subsequent POST using the updated stored token succeeds.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-22",
+                    "dimension": "error-status-retry",
+                    "sourceLocators": ["src/csrf/csrf.ts:89-91"],
+                    "statement": "When fetch resolves, fetchWithCsrf returns the same Response object after attempting CSRF header extraction rather than mapping status codes or creating a replacement response.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-23",
+                    "dimension": "error-status-retry",
+                    "sourceLocators": ["src/csrf/csrf.ts:89-91"],
+                    "statement": "fetchWithCsrf contains no branch that retries a request after a failed or non-2xx response; it performs one fetch call per invocation.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  }
+                ]
+              },
+              {
+                "dimension": "environment-prerequisite",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-24",
+                    "dimension": "environment-prerequisite",
+                    "sourceLocators": ["package.json:2-10"],
+                    "statement": "Consumers install the package under the published name @dl/nemo-ui-utils, and package metadata declares dist-only package files with main, module, and types entry points rooted under ./dist.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-25",
+                    "dimension": "environment-prerequisite",
+                    "sourceLocators": ["CHANGELOG.md:1-3", "package.json:2-3"],
+                    "statement": "The approved source binds the documented utility to package version 1.0.0, where the changelog entry records fetchWithCsrf as added in 1.0.0 and package.json declares version 1.0.0.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-26",
+                    "dimension": "environment-prerequisite",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72", "src/csrf/csrf.ts:81-91"],
+                    "statement": "The fetchWithCsrf flow requires a runtime environment that provides fetch, Response, and Headers-compatible APIs because the implementation directly calls fetch and reads response.headers.get(...).",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-27",
+                    "dimension": "environment-prerequisite",
+                    "sourceLocators": ["README.md:30-37"],
+                    "statement": "The repository consumer guide states that consumers must add the @dl GitLab npm registry mapping before installation and then set up GitLab authentication to pull the package.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "verify-technical-accuracy": {
+          "review": {
+            "verdict": "needs-revision",
+            "issues": [
+              {
+                "id": "TECH-001",
+                "category": "completeness",
+                "location": "docs/usage.md:24"
+              },
+              {
+                "id": "TECH-002",
+                "category": "technical_accuracy",
+                "location": "docs/usage.md:43"
+              }
+            ]
+          },
+          "coverage": [],
+          "factInventory": {
+            "completeness": "bounded-not-proven",
+            "limitations": [],
+            "dimensions": [
+              {
+                "dimension": "input-representations",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-1",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:36-47"],
+                    "statement": "The package exports getLastCsrfToken with no input and setLastCsrfToken with a string token input to read and write the stored CSRF token state.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-2",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/index.ts:1-6"],
+                    "statement": "The package public barrel exports CSRF_HEADER_NAME, fetchWithCsrf, extractCsrfFromResponseHeaders, setLastCsrfToken, and getLastCsrfToken from ./csrf/csrf.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-3",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:55-60"],
+                    "statement": "addCsrfToRequestHeaders accepts an optional HeadersInit and returns a new header container that adds or overwrites x-csrf-token with the current stored token value.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-4",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72"],
+                    "statement": "extractCsrfFromResponseHeaders accepts an optional Headers object and reads x-csrf-token from it when available.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-5",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:83-89"],
+                    "statement": "fetchWithCsrf accepts an optional RequestInit options object; when present, its fields are shallow-merged into default GET options before headers are reassigned.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-6",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:81-91"],
+                    "statement": "fetchWithCsrf accepts resource as RequestInfo or URL and returns the Response from fetch after post-response token extraction.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  }
+                ]
+              },
+              {
+                "dimension": "defaults-and-overrides",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-10",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": ["src/csrf/csrf.ts:55-60", "src/csrf/csrf.ts:7-15"],
+                    "statement": "The CSRF header name is a fixed exported constant x-csrf-token and is not configurable through function parameters.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-11",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": [
+                      "src/csrf/csrf.ts:11-15",
+                      "src/csrf/csrf.ts:17-22",
+                      "src/csrf/csrf.ts:85-87"
+                    ],
+                    "statement": "fetchWithCsrf starts from GET defaults derived from BASE_REQUEST, so the default method is GET with redirect follow, mode cors, and credentials include.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-7",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": ["src/csrf/csrf.ts:55-60", "src/csrf/csrf.ts:87-89"],
+                    "statement": "After option merging, fetchWithCsrf always replaces mergedOptions.headers with the result of addCsrfToRequestHeaders, ensuring x-csrf-token is present from stored state even if headers were supplied by the caller.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-8",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": ["src/csrf/csrf.ts:86-87"],
+                    "statement": "Caller-supplied RequestInit fields override the default GET options during object spread before headers are reassigned.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-9",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": [
+                      "src/csrf/csrf.test.ts:48-57",
+                      "src/csrf/csrf.test.ts:99-109"
+                    ],
+                    "statement": "Inspected test source models a call path where a caller-provided mode value no-cors is preserved by the same shallow merge pattern used by fetchWithCsrfMock.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  }
+                ]
+              },
+              {
+                "dimension": "mutable-state",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-12",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:36-37", "src/csrf/csrf.ts:9"],
+                    "statement": "Module state starts with lastCsrfToken initialized to the empty string, and getLastCsrfToken returns the current stored value.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-13",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72"],
+                    "statement": "extractCsrfFromResponseHeaders leaves stored token state unchanged when the header object is absent, the x-csrf-token header is missing, or the header value is an empty string.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-14",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72"],
+                    "statement": "extractCsrfFromResponseHeaders updates stored token state only when responseHeaders.get('x-csrf-token') yields a nonempty string.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-15",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:81-91"],
+                    "statement": "fetchWithCsrf sends the currently stored token in the request headers before fetch, then may update the stored token from the response headers before returning the Response.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-16",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:45-47"],
+                    "statement": "setLastCsrfToken unconditionally assigns the provided string to the module-level lastCsrfToken state.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  }
+                ]
+              },
+              {
+                "dimension": "destination-and-trust",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-17",
+                    "dimension": "destination-and-trust",
+                    "sourceLocators": [
+                      "src/csrf/csrf.ts:11-15",
+                      "src/csrf/csrf.ts:55-60",
+                      "src/csrf/csrf.ts:67-72",
+                      "src/csrf/csrf.ts:81-91"
+                    ],
+                    "statement": "For browser cross-origin use, this source path conditionally depends on the destination allowing credentialed sharing, permitting the x-csrf-token request header, and exposing the x-csrf-token response header to script; repository source does not establish any server configuration for those conditions.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-18",
+                    "dimension": "destination-and-trust",
+                    "sourceLocators": ["src/csrf/csrf.ts:55-60", "src/csrf/csrf.ts:87-90"],
+                    "statement": "fetchWithCsrf adds the stored CSRF token to the outgoing request under the x-csrf-token header and then attempts to read x-csrf-token from the received response headers.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-19",
+                    "dimension": "destination-and-trust",
+                    "sourceLocators": ["src/csrf/csrf.ts:11-15", "src/csrf/csrf.ts:81-91"],
+                    "statement": "fetchWithCsrf issues its request to the caller-provided resource via fetch using credentials include by default, so request credentials are sent according to fetch's credential handling for that destination unless the caller overrides credentials.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  }
+                ]
+              },
+              {
+                "dimension": "error-status-retry",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-20",
+                    "dimension": "error-status-retry",
+                    "sourceLocators": ["src/csrf/csrf.ts:89-91"],
+                    "statement": "If fetch rejects, fetchWithCsrf has no local catch or fallback in the source span, so the rejection would propagate to the caller.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-21",
+                    "dimension": "error-status-retry",
+                    "sourceLocators": [
+                      "src/csrf/csrf.test.ts:14-45",
+                      "src/csrf/csrf.test.ts:48-57",
+                      "src/csrf/csrf.test.ts:59-74"
+                    ],
+                    "statement": "Inspected test source models a CSRF flow where a POST without a valid token receives a 403 response carrying a replacement x-csrf-token header, and a subsequent POST using the updated stored token succeeds.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-002"]
+                  },
+                  {
+                    "id": "FACT-22",
+                    "dimension": "error-status-retry",
+                    "sourceLocators": ["src/csrf/csrf.ts:89-91"],
+                    "statement": "When fetch resolves, fetchWithCsrf returns the same Response object after attempting CSRF header extraction rather than mapping status codes or creating a replacement response.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-23",
+                    "dimension": "error-status-retry",
+                    "sourceLocators": ["src/csrf/csrf.ts:89-91"],
+                    "statement": "fetchWithCsrf contains no branch that retries a request after a failed or non-2xx response; it performs one fetch call per invocation.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  }
+                ]
+              },
+              {
+                "dimension": "environment-prerequisite",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-24",
+                    "dimension": "environment-prerequisite",
+                    "sourceLocators": ["package.json:2-10"],
+                    "statement": "Consumers install the package under the published name @dl/nemo-ui-utils, and package metadata declares dist-only package files with main, module, and types entry points rooted under ./dist.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-25",
+                    "dimension": "environment-prerequisite",
+                    "sourceLocators": ["CHANGELOG.md:1-3", "package.json:2-3"],
+                    "statement": "The approved source binds the documented utility to package version 1.0.0, where the changelog entry records fetchWithCsrf as added in 1.0.0 and package.json declares version 1.0.0.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-26",
+                    "dimension": "environment-prerequisite",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72", "src/csrf/csrf.ts:81-91"],
+                    "statement": "The fetchWithCsrf flow requires a runtime environment that provides fetch, Response, and Headers-compatible APIs because the implementation directly calls fetch and reads response.headers.get(...).",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-27",
+                    "dimension": "environment-prerequisite",
+                    "sourceLocators": ["README.md:30-37"],
+                    "statement": "The repository consumer guide states that consumers must add the @dl GitLab npm registry mapping before installation and then set up GitLab authentication to pull the package.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "provisional-revised-technical-verification": {
+          "review": {
+            "verdict": "needs-revision",
+            "issues": [
+              {
+                "id": "TECH-001",
+                "category": "technical_accuracy",
+                "location": "docs/usage.md:43-46"
+              }
+            ]
+          },
+          "coverage": [],
+          "factInventory": {
+            "completeness": "bounded-not-proven",
+            "limitations": [],
+            "dimensions": [
+              {
+                "dimension": "input-representations",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-1",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:36-47"],
+                    "statement": "The package exports getLastCsrfToken with no input and setLastCsrfToken with a string token input to read and write the stored CSRF token state.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-2",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/index.ts:1-6"],
+                    "statement": "The package public barrel exports CSRF_HEADER_NAME, fetchWithCsrf, extractCsrfFromResponseHeaders, setLastCsrfToken, and getLastCsrfToken from ./csrf/csrf.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-3",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:55-60"],
+                    "statement": "addCsrfToRequestHeaders accepts an optional HeadersInit and returns a new header container that adds or overwrites x-csrf-token with the current stored token value.",
+                    "documentationDisposition": "conflicting",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-4",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72"],
+                    "statement": "extractCsrfFromResponseHeaders accepts an optional Headers object and reads x-csrf-token from it when available.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-5",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:83-89"],
+                    "statement": "fetchWithCsrf accepts an optional RequestInit options object; when present, its fields are shallow-merged into default GET options before headers are reassigned.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-6",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:81-91"],
+                    "statement": "fetchWithCsrf accepts resource as RequestInfo or URL and returns the Response from fetch after post-response token extraction.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  }
+                ]
+              },
+              {
+                "dimension": "defaults-and-overrides",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-10",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": ["src/csrf/csrf.ts:55-60", "src/csrf/csrf.ts:7-15"],
+                    "statement": "The CSRF header name is a fixed exported constant x-csrf-token and is not configurable through function parameters.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-11",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": [
+                      "src/csrf/csrf.ts:11-15",
+                      "src/csrf/csrf.ts:17-22",
+                      "src/csrf/csrf.ts:85-87"
+                    ],
+                    "statement": "fetchWithCsrf starts from GET defaults derived from BASE_REQUEST, so the default method is GET with redirect follow, mode cors, and credentials include.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-7",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": ["src/csrf/csrf.ts:55-60", "src/csrf/csrf.ts:87-89"],
+                    "statement": "After option merging, fetchWithCsrf always replaces mergedOptions.headers with the result of addCsrfToRequestHeaders, ensuring x-csrf-token is present from stored state even if headers were supplied by the caller.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-8",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": ["src/csrf/csrf.ts:86-87"],
+                    "statement": "Caller-supplied RequestInit fields override the default GET options during object spread before headers are reassigned.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-9",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": [
+                      "src/csrf/csrf.test.ts:48-57",
+                      "src/csrf/csrf.test.ts:99-109"
+                    ],
+                    "statement": "Inspected test source models a call path where a caller-provided mode value no-cors is preserved by the same shallow merge pattern used by fetchWithCsrfMock.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  }
+                ]
+              },
+              {
+                "dimension": "mutable-state",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-12",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:36-37", "src/csrf/csrf.ts:9"],
+                    "statement": "Module state starts with lastCsrfToken initialized to the empty string, and getLastCsrfToken returns the current stored value.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-13",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72"],
+                    "statement": "extractCsrfFromResponseHeaders leaves stored token state unchanged when the header object is absent, the x-csrf-token header is missing, or the header value is an empty string.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-14",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72"],
+                    "statement": "extractCsrfFromResponseHeaders updates stored token state only when responseHeaders.get('x-csrf-token') yields a nonempty string.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-15",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:81-91"],
+                    "statement": "fetchWithCsrf sends the currently stored token in the request headers before fetch, then may update the stored token from the response headers before returning the Response.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-16",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:45-47"],
+                    "statement": "setLastCsrfToken unconditionally assigns the provided string to the module-level lastCsrfToken state.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  }
+                ]
+              },
+              {
+                "dimension": "destination-and-trust",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-17",
+                    "dimension": "destination-and-trust",
+                    "sourceLocators": [
+                      "src/csrf/csrf.ts:11-15",
+                      "src/csrf/csrf.ts:55-60",
+                      "src/csrf/csrf.ts:67-72",
+                      "src/csrf/csrf.ts:81-91"
+                    ],
+                    "statement": "For browser cross-origin use, this source path conditionally depends on the destination allowing credentialed sharing, permitting the x-csrf-token request header, and exposing the x-csrf-token response header to script; repository source does not establish any server configuration for those conditions.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-18",
+                    "dimension": "destination-and-trust",
+                    "sourceLocators": ["src/csrf/csrf.ts:55-60", "src/csrf/csrf.ts:87-90"],
+                    "statement": "fetchWithCsrf adds the stored CSRF token to the outgoing request under the x-csrf-token header and then attempts to read x-csrf-token from the received response headers.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-19",
+                    "dimension": "destination-and-trust",
+                    "sourceLocators": ["src/csrf/csrf.ts:11-15", "src/csrf/csrf.ts:81-91"],
+                    "statement": "fetchWithCsrf issues its request to the caller-provided resource via fetch using credentials include by default, so request credentials are sent according to fetch's credential handling for that destination unless the caller overrides credentials.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  }
+                ]
+              },
+              {
+                "dimension": "error-status-retry",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-20",
+                    "dimension": "error-status-retry",
+                    "sourceLocators": ["src/csrf/csrf.ts:89-91"],
+                    "statement": "If fetch rejects, fetchWithCsrf has no local catch or fallback in the source span, so the rejection would propagate to the caller.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-21",
+                    "dimension": "error-status-retry",
+                    "sourceLocators": [
+                      "src/csrf/csrf.test.ts:14-45",
+                      "src/csrf/csrf.test.ts:48-57",
+                      "src/csrf/csrf.test.ts:59-74"
+                    ],
+                    "statement": "Inspected test source models a CSRF flow where a POST without a valid token receives a 403 response carrying a replacement x-csrf-token header, and a subsequent POST using the updated stored token succeeds.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-22",
+                    "dimension": "error-status-retry",
+                    "sourceLocators": ["src/csrf/csrf.ts:89-91"],
+                    "statement": "When fetch resolves, fetchWithCsrf returns the same Response object after attempting CSRF header extraction rather than mapping status codes or creating a replacement response.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-23",
+                    "dimension": "error-status-retry",
+                    "sourceLocators": ["src/csrf/csrf.ts:89-91"],
+                    "statement": "fetchWithCsrf contains no branch that retries a request after a failed or non-2xx response; it performs one fetch call per invocation.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  }
+                ]
+              },
+              {
+                "dimension": "environment-prerequisite",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-24",
+                    "dimension": "environment-prerequisite",
+                    "sourceLocators": ["package.json:2-10"],
+                    "statement": "Consumers install the package under the published name @dl/nemo-ui-utils, and package metadata declares dist-only package files with main, module, and types entry points rooted under ./dist.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-25",
+                    "dimension": "environment-prerequisite",
+                    "sourceLocators": ["CHANGELOG.md:1-3", "package.json:2-3"],
+                    "statement": "The approved source binds the documented utility to package version 1.0.0, where the changelog entry records fetchWithCsrf as added in 1.0.0 and package.json declares version 1.0.0.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-26",
+                    "dimension": "environment-prerequisite",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72", "src/csrf/csrf.ts:81-91"],
+                    "statement": "The fetchWithCsrf flow requires a runtime environment that provides fetch, Response, and Headers-compatible APIs because the implementation directly calls fetch and reads response.headers.get(...).",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-27",
+                    "dimension": "environment-prerequisite",
+                    "sourceLocators": ["README.md:30-37"],
+                    "statement": "The repository consumer guide states that consumers must add the @dl GitLab npm registry mapping before installation and then set up GitLab authentication to pull the package.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "verify-revised-technical-accuracy": {
+          "review": {
+            "verdict": "pass",
+            "issues": []
+          },
+          "coverage": [],
+          "factInventory": {
+            "completeness": "bounded-not-proven",
+            "limitations": [],
+            "dimensions": [
+              {
+                "dimension": "input-representations",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-1",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:36-47"],
+                    "statement": "The package exports getLastCsrfToken with no input and setLastCsrfToken with a string token input to read and write the stored CSRF token state.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-2",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/index.ts:1-6"],
+                    "statement": "The package public barrel exports CSRF_HEADER_NAME, fetchWithCsrf, extractCsrfFromResponseHeaders, setLastCsrfToken, and getLastCsrfToken from ./csrf/csrf.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-3",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:55-60"],
+                    "statement": "addCsrfToRequestHeaders accepts an optional HeadersInit and returns a new header container that adds or overwrites x-csrf-token with the current stored token value.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-4",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72"],
+                    "statement": "extractCsrfFromResponseHeaders accepts an optional Headers object and reads x-csrf-token from it when available.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-5",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:83-89"],
+                    "statement": "fetchWithCsrf accepts an optional RequestInit options object; when present, its fields are shallow-merged into default GET options before headers are reassigned.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-6",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:81-91"],
+                    "statement": "fetchWithCsrf accepts resource as RequestInfo or URL and returns the Response from fetch after post-response token extraction.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  }
+                ]
+              },
+              {
+                "dimension": "defaults-and-overrides",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-10",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": ["src/csrf/csrf.ts:55-60", "src/csrf/csrf.ts:7-15"],
+                    "statement": "The CSRF header name is a fixed exported constant x-csrf-token and is not configurable through function parameters.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-11",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": [
+                      "src/csrf/csrf.ts:11-15",
+                      "src/csrf/csrf.ts:17-22",
+                      "src/csrf/csrf.ts:85-87"
+                    ],
+                    "statement": "fetchWithCsrf starts from GET defaults derived from BASE_REQUEST, so the default method is GET with redirect follow, mode cors, and credentials include.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-7",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": ["src/csrf/csrf.ts:55-60", "src/csrf/csrf.ts:87-89"],
+                    "statement": "After option merging, fetchWithCsrf always replaces mergedOptions.headers with the result of addCsrfToRequestHeaders, ensuring x-csrf-token is present from stored state even if headers were supplied by the caller.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-8",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": ["src/csrf/csrf.ts:86-87"],
+                    "statement": "Caller-supplied RequestInit fields override the default GET options during object spread before headers are reassigned.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-9",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": [
+                      "src/csrf/csrf.test.ts:48-57",
+                      "src/csrf/csrf.test.ts:99-109"
+                    ],
+                    "statement": "Inspected test source models a call path where a caller-provided mode value no-cors is preserved by the same shallow merge pattern used by fetchWithCsrfMock.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  }
+                ]
+              },
+              {
+                "dimension": "mutable-state",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-12",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:36-37", "src/csrf/csrf.ts:9"],
+                    "statement": "Module state starts with lastCsrfToken initialized to the empty string, and getLastCsrfToken returns the current stored value.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-13",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72"],
+                    "statement": "extractCsrfFromResponseHeaders leaves stored token state unchanged when the header object is absent, the x-csrf-token header is missing, or the header value is an empty string.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-14",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72"],
+                    "statement": "extractCsrfFromResponseHeaders updates stored token state only when responseHeaders.get('x-csrf-token') yields a nonempty string.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-15",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:81-91"],
+                    "statement": "fetchWithCsrf sends the currently stored token in the request headers before fetch, then may update the stored token from the response headers before returning the Response.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-16",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:45-47"],
+                    "statement": "setLastCsrfToken unconditionally assigns the provided string to the module-level lastCsrfToken state.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  }
+                ]
+              },
+              {
+                "dimension": "destination-and-trust",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-17",
+                    "dimension": "destination-and-trust",
+                    "sourceLocators": [
+                      "src/csrf/csrf.ts:11-15",
+                      "src/csrf/csrf.ts:55-60",
+                      "src/csrf/csrf.ts:67-72",
+                      "src/csrf/csrf.ts:81-91"
+                    ],
+                    "statement": "For browser cross-origin use, this source path conditionally depends on the destination allowing credentialed sharing, permitting the x-csrf-token request header, and exposing the x-csrf-token response header to script; repository source does not establish any server configuration for those conditions.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-18",
+                    "dimension": "destination-and-trust",
+                    "sourceLocators": ["src/csrf/csrf.ts:55-60", "src/csrf/csrf.ts:87-90"],
+                    "statement": "fetchWithCsrf adds the stored CSRF token to the outgoing request under the x-csrf-token header and then attempts to read x-csrf-token from the received response headers.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-19",
+                    "dimension": "destination-and-trust",
+                    "sourceLocators": ["src/csrf/csrf.ts:11-15", "src/csrf/csrf.ts:81-91"],
+                    "statement": "fetchWithCsrf issues its request to the caller-provided resource via fetch using credentials include by default, so request credentials are sent according to fetch's credential handling for that destination unless the caller overrides credentials.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  }
+                ]
+              },
+              {
+                "dimension": "error-status-retry",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-20",
+                    "dimension": "error-status-retry",
+                    "sourceLocators": ["src/csrf/csrf.ts:89-91"],
+                    "statement": "If fetch rejects, fetchWithCsrf has no local catch or fallback in the source span, so the rejection would propagate to the caller.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-21",
+                    "dimension": "error-status-retry",
+                    "sourceLocators": [
+                      "src/csrf/csrf.test.ts:14-45",
+                      "src/csrf/csrf.test.ts:48-57",
+                      "src/csrf/csrf.test.ts:59-74"
+                    ],
+                    "statement": "Inspected test source models a CSRF flow where a POST without a valid token receives a 403 response carrying a replacement x-csrf-token header, and a subsequent POST using the updated stored token succeeds.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-22",
+                    "dimension": "error-status-retry",
+                    "sourceLocators": ["src/csrf/csrf.ts:89-91"],
+                    "statement": "When fetch resolves, fetchWithCsrf returns the same Response object after attempting CSRF header extraction rather than mapping status codes or creating a replacement response.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-23",
+                    "dimension": "error-status-retry",
+                    "sourceLocators": ["src/csrf/csrf.ts:89-91"],
+                    "statement": "fetchWithCsrf contains no branch that retries a request after a failed or non-2xx response; it performs one fetch call per invocation.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  }
+                ]
+              },
+              {
+                "dimension": "environment-prerequisite",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-24",
+                    "dimension": "environment-prerequisite",
+                    "sourceLocators": ["package.json:2-10"],
+                    "statement": "Consumers install the package under the published name @dl/nemo-ui-utils, and package metadata declares dist-only package files with main, module, and types entry points rooted under ./dist.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-25",
+                    "dimension": "environment-prerequisite",
+                    "sourceLocators": ["CHANGELOG.md:1-3", "package.json:2-3"],
+                    "statement": "The approved source binds the documented utility to package version 1.0.0, where the changelog entry records fetchWithCsrf as added in 1.0.0 and package.json declares version 1.0.0.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-26",
+                    "dimension": "environment-prerequisite",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72", "src/csrf/csrf.ts:81-91"],
+                    "statement": "The fetchWithCsrf flow requires a runtime environment that provides fetch, Response, and Headers-compatible APIs because the implementation directly calls fetch and reads response.headers.get(...).",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-27",
+                    "dimension": "environment-prerequisite",
+                    "sourceLocators": ["README.md:30-37"],
+                    "statement": "The repository consumer guide states that consumers must add the @dl GitLab npm registry mapping before installation and then set up GitLab authentication to pull the package.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    },
+    "683ab88d": {
+      "workflow": "create-documentation",
+      "steps": {
+        "provisional-technical-verification": {
+          "review": {
+            "verdict": "needs-revision",
+            "issues": [
+              {
+                "id": "TECH-001",
+                "category": "technical_accuracy",
+                "location": "docs/usage.md:70-72"
+              },
+              {
+                "id": "TECH-002",
+                "category": "completeness",
+                "location": "docs/usage.md:100-103"
+              }
+            ]
+          },
+          "coverage": [],
+          "factInventory": {
+            "completeness": "bounded-not-proven",
+            "limitations": [],
+            "dimensions": [
+              {
+                "dimension": "input-representations",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-1",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72", "src/csrf/csrf.ts:89-90"],
+                    "statement": "After fetch resolves, fetchWithCsrf passes response.headers to extractCsrfFromResponseHeaders, which reads the x-csrf-token response header via Headers.get.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-2",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:81-91", "src/index.ts:1-6"],
+                    "statement": "The package barrel exports fetchWithCsrf for consumers, and fetchWithCsrf accepts a resource argument typed as RequestInfo | URL plus an optional RequestInit options object.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-3",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:55-60", "src/csrf/csrf.ts:86-87"],
+                    "statement": "When request headers are supplied, fetchWithCsrf passes mergedOptions.headers to addCsrfToRequestHeaders, which creates a new object by spreading the provided headers and then assigning the x-csrf-token property.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  }
+                ]
+              },
+              {
+                "dimension": "defaults-and-overrides",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-4",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": ["src/csrf/csrf.test.ts:99-109", "src/csrf/csrf.ts:85-87"],
+                    "statement": "Caller-supplied RequestInit properties override the default options during object spread before headers are reassigned, and the test source exercises a custom mode value of no-cors in its local mock path.",
+                    "documentationDisposition": "conflicting",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-5",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": [
+                      "src/csrf/csrf.ts:11-15",
+                      "src/csrf/csrf.ts:17-22",
+                      "src/csrf/csrf.ts:85-86"
+                    ],
+                    "statement": "If options are omitted, fetchWithCsrf starts from initGetRequest, so the request defaults to method GET with redirect follow, mode cors, and credentials include.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-6",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": ["src/csrf/csrf.ts:55-60", "src/csrf/csrf.ts:86-87"],
+                    "statement": "Regardless of any caller-provided headers object, fetchWithCsrf replaces mergedOptions.headers with the result of addCsrfToRequestHeaders, which writes x-csrf-token using the current stored token after spreading the supplied headers.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  }
+                ]
+              },
+              {
+                "dimension": "mutable-state",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-7",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72"],
+                    "statement": "If the response x-csrf-token header is missing or empty, extractCsrfFromResponseHeaders leaves the previously stored token unchanged.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-8",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:36-47", "src/csrf/csrf.ts:9-10"],
+                    "statement": "The module stores CSRF state in a module-level lastCsrfToken string initialized to an empty string, readable through getLastCsrfToken and writable through setLastCsrfToken.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-9",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72", "src/csrf/csrf.ts:89-90"],
+                    "statement": "fetchWithCsrf updates stored CSRF state only when the response x-csrf-token header value exists, is a string, and is nonempty, because extractCsrfFromResponseHeaders calls setLastCsrfToken only under that condition.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  }
+                ]
+              },
+              {
+                "dimension": "destination-and-trust",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-10",
+                    "dimension": "destination-and-trust",
+                    "sourceLocators": ["src/csrf/csrf.ts:55-60", "src/csrf/csrf.ts:86-90"],
+                    "statement": "Before calling fetch, fetchWithCsrf adds an x-csrf-token request header whose value comes from module-held state, and after the response it reads x-csrf-token from response headers to update that state.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-11",
+                    "dimension": "destination-and-trust",
+                    "sourceLocators": ["src/csrf/csrf.ts:11-15", "src/csrf/csrf.ts:85-90"],
+                    "statement": "By default, fetchWithCsrf sends requests with credentials include and mode cors, then calls the global fetch with the caller-supplied resource and merged options.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-12",
+                    "dimension": "destination-and-trust",
+                    "sourceLocators": [
+                      "src/csrf/csrf.ts:11-15",
+                      "src/csrf/csrf.ts:55-60",
+                      "src/csrf/csrf.ts:67-72",
+                      "src/csrf/csrf.ts:89-90"
+                    ],
+                    "statement": "For browser cross-origin use, because fetchWithCsrf defaults to credentials include and mode cors, successful requests conditionally depend on the response permitting the requesting origin and credentialed sharing.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-13",
+                    "dimension": "destination-and-trust",
+                    "sourceLocators": [
+                      "src/csrf/csrf.ts:11-15",
+                      "src/csrf/csrf.ts:55-60",
+                      "src/csrf/csrf.ts:67-72",
+                      "src/csrf/csrf.ts:89-90"
+                    ],
+                    "statement": "For browser cross-origin use, because fetchWithCsrf sends the non-safelisted x-csrf-token request header, successful requests conditionally depend on preflight permitting that request header and method.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-14",
+                    "dimension": "destination-and-trust",
+                    "sourceLocators": [
+                      "src/csrf/csrf.ts:11-15",
+                      "src/csrf/csrf.ts:55-60",
+                      "src/csrf/csrf.ts:67-72",
+                      "src/csrf/csrf.ts:89-90"
+                    ],
+                    "statement": "For browser cross-origin use, because fetchWithCsrf reads x-csrf-token from response.headers in script, successful CSRF extraction conditionally depends on the response exposing the x-csrf-token header to script.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-002"]
+                  }
+                ]
+              },
+              {
+                "dimension": "error-status-retry",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-15",
+                    "dimension": "error-status-retry",
+                    "sourceLocators": ["src/csrf/csrf.ts:89-91"],
+                    "statement": "When fetch resolves, fetchWithCsrf returns the Response object it received after attempting CSRF extraction from response.headers.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-16",
+                    "dimension": "error-status-retry",
+                    "sourceLocators": ["src/csrf/csrf.ts:89-91"],
+                    "statement": "fetchWithCsrf defines no retry, backoff, or recovery path; if fetch rejects, the function has no catch block and the rejection path is left to the underlying fetch call.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-17",
+                    "dimension": "error-status-retry",
+                    "sourceLocators": ["src/csrf/csrf.ts:89-91"],
+                    "statement": "fetchWithCsrf does not inspect or branch on HTTP status before returning, so source establishes no built-in status-specific handling for non-2xx responses.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  }
+                ]
+              },
+              {
+                "dimension": "environment-prerequisite",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-18",
+                    "dimension": "environment-prerequisite",
+                    "sourceLocators": ["package.json:2-10", "src/index.ts:1-6"],
+                    "statement": "Consumers import the package as @dl/nemo-ui-utils, whose package metadata declares dist entry points for main, module, and types and whose barrel export exposes fetchWithCsrf and related CSRF helpers.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-19",
+                    "dimension": "environment-prerequisite",
+                    "sourceLocators": ["README.md:30-48", "README.md:50-75"],
+                    "statement": "Installing the package from the documented distribution flow conditionally requires configuring the @dl GitLab npm registry and authenticating with a GitLab token for local installation or CI/CD.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-20",
+                    "dimension": "environment-prerequisite",
+                    "sourceLocators": ["CHANGELOG.md:1-3", "package.json:2-3"],
+                    "statement": "The approved plan sources identify version 1.0.0 as the package version associated with the addition of fetchWithCsrf.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-21",
+                    "dimension": "environment-prerequisite",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72", "src/csrf/csrf.ts:81-91"],
+                    "statement": "Using fetchWithCsrf requires an environment that provides fetch, Response.headers, and Headers.get semantics compatible with the source calls.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "verify-technical-accuracy": {
+          "review": {
+            "verdict": "needs-revision",
+            "issues": [
+              {
+                "id": "TECH-001",
+                "category": "technical_accuracy",
+                "location": "docs/usage.md:72"
+              },
+              {
+                "id": "TECH-002",
+                "category": "technical_accuracy",
+                "location": "docs/usage.md:45"
+              }
+            ]
+          },
+          "coverage": [],
+          "factInventory": {
+            "completeness": "bounded-not-proven",
+            "limitations": [],
+            "dimensions": [
+              {
+                "dimension": "input-representations",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-1",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72", "src/csrf/csrf.ts:89-90"],
+                    "statement": "After fetch resolves, fetchWithCsrf passes response.headers to extractCsrfFromResponseHeaders, which reads the x-csrf-token response header via Headers.get.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-2",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:81-91", "src/index.ts:1-6"],
+                    "statement": "The package barrel exports fetchWithCsrf for consumers, and fetchWithCsrf accepts a resource argument typed as RequestInfo | URL plus an optional RequestInit options object.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-3",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:55-60", "src/csrf/csrf.ts:86-87"],
+                    "statement": "When request headers are supplied, fetchWithCsrf passes mergedOptions.headers to addCsrfToRequestHeaders, which creates a new object by spreading the provided headers and then assigning the x-csrf-token property.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  }
+                ]
+              },
+              {
+                "dimension": "defaults-and-overrides",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-4",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": ["src/csrf/csrf.test.ts:99-109", "src/csrf/csrf.ts:85-87"],
+                    "statement": "Caller-supplied RequestInit properties override the default options during object spread before headers are reassigned, and the test source exercises a custom mode value of no-cors in its local mock path.",
+                    "documentationDisposition": "conflicting",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-5",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": [
+                      "src/csrf/csrf.ts:11-15",
+                      "src/csrf/csrf.ts:17-22",
+                      "src/csrf/csrf.ts:85-86"
+                    ],
+                    "statement": "If options are omitted, fetchWithCsrf starts from initGetRequest, so the request defaults to method GET with redirect follow, mode cors, and credentials include.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-6",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": ["src/csrf/csrf.ts:55-60", "src/csrf/csrf.ts:86-87"],
+                    "statement": "Regardless of any caller-provided headers object, fetchWithCsrf replaces mergedOptions.headers with the result of addCsrfToRequestHeaders, which writes x-csrf-token using the current stored token after spreading the supplied headers.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  }
+                ]
+              },
+              {
+                "dimension": "mutable-state",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-7",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72"],
+                    "statement": "If the response x-csrf-token header is missing or empty, extractCsrfFromResponseHeaders leaves the previously stored token unchanged.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-8",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:36-47", "src/csrf/csrf.ts:9-10"],
+                    "statement": "The module stores CSRF state in a module-level lastCsrfToken string initialized to an empty string, readable through getLastCsrfToken and writable through setLastCsrfToken.",
+                    "documentationDisposition": "conflicting",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-002"]
+                  },
+                  {
+                    "id": "FACT-9",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72", "src/csrf/csrf.ts:89-90"],
+                    "statement": "fetchWithCsrf updates stored CSRF state only when the response x-csrf-token header value exists, is a string, and is nonempty, because extractCsrfFromResponseHeaders calls setLastCsrfToken only under that condition.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  }
+                ]
+              },
+              {
+                "dimension": "destination-and-trust",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-10",
+                    "dimension": "destination-and-trust",
+                    "sourceLocators": ["src/csrf/csrf.ts:55-60", "src/csrf/csrf.ts:86-90"],
+                    "statement": "Before calling fetch, fetchWithCsrf adds an x-csrf-token request header whose value comes from module-held state, and after the response it reads x-csrf-token from response headers to update that state.",
+                    "documentationDisposition": "conflicting",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-002"]
+                  },
+                  {
+                    "id": "FACT-11",
+                    "dimension": "destination-and-trust",
+                    "sourceLocators": ["src/csrf/csrf.ts:11-15", "src/csrf/csrf.ts:85-90"],
+                    "statement": "By default, fetchWithCsrf sends requests with credentials include and mode cors, then calls the global fetch with the caller-supplied resource and merged options.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-12",
+                    "dimension": "destination-and-trust",
+                    "sourceLocators": [
+                      "src/csrf/csrf.ts:11-15",
+                      "src/csrf/csrf.ts:55-60",
+                      "src/csrf/csrf.ts:67-72",
+                      "src/csrf/csrf.ts:89-90"
+                    ],
+                    "statement": "For browser cross-origin use, the operation conditionally depends on external response policy permitting credentialed sharing, permitting the x-csrf-token request header on preflight, and exposing the x-csrf-token response header to script.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  }
+                ]
+              },
+              {
+                "dimension": "error-status-retry",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-13",
+                    "dimension": "error-status-retry",
+                    "sourceLocators": ["src/csrf/csrf.ts:89-91"],
+                    "statement": "When fetch resolves, fetchWithCsrf returns the Response object it received after attempting CSRF extraction from response.headers.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-14",
+                    "dimension": "error-status-retry",
+                    "sourceLocators": ["src/csrf/csrf.ts:89-91"],
+                    "statement": "fetchWithCsrf defines no retry, backoff, or recovery path; if fetch rejects, the function has no catch block and the rejection path is left to the underlying fetch call.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-15",
+                    "dimension": "error-status-retry",
+                    "sourceLocators": ["src/csrf/csrf.ts:89-91"],
+                    "statement": "fetchWithCsrf does not inspect or branch on HTTP status before returning, so source establishes no built-in status-specific handling for non-2xx responses.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  }
+                ]
+              },
+              {
+                "dimension": "environment-prerequisite",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-16",
+                    "dimension": "environment-prerequisite",
+                    "sourceLocators": ["package.json:2-10", "src/index.ts:1-6"],
+                    "statement": "Consumers import the package as @dl/nemo-ui-utils, whose package metadata declares dist entry points for main, module, and types and whose barrel export exposes fetchWithCsrf and related CSRF helpers.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-17",
+                    "dimension": "environment-prerequisite",
+                    "sourceLocators": ["README.md:30-48", "README.md:50-75"],
+                    "statement": "Installing the package from the documented distribution flow conditionally requires configuring the @dl GitLab npm registry and authenticating with a GitLab token for local installation or CI/CD.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-18",
+                    "dimension": "environment-prerequisite",
+                    "sourceLocators": ["CHANGELOG.md:1-3", "package.json:2-3"],
+                    "statement": "The approved plan sources identify version 1.0.0 as the package version associated with the addition of fetchWithCsrf.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-19",
+                    "dimension": "environment-prerequisite",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72", "src/csrf/csrf.ts:81-91"],
+                    "statement": "Using fetchWithCsrf requires an environment that provides fetch, Response.headers, and Headers.get semantics compatible with the source calls.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "provisional-revised-technical-verification": {
+          "review": {
+            "verdict": "needs-revision",
+            "issues": [
+              {
+                "id": "TECH-001",
+                "category": "completeness",
+                "location": "docs/usage.md:102"
+              }
+            ]
+          },
+          "coverage": [],
+          "factInventory": {
+            "completeness": "bounded-not-proven",
+            "limitations": [],
+            "dimensions": [
+              {
+                "dimension": "input-representations",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-1",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72", "src/csrf/csrf.ts:89-90"],
+                    "statement": "After fetch resolves, fetchWithCsrf passes response.headers to extractCsrfFromResponseHeaders, which reads the x-csrf-token response header via Headers.get.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-2",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:81-91", "src/index.ts:1-6"],
+                    "statement": "The package barrel exports fetchWithCsrf for consumers, and fetchWithCsrf accepts a resource argument typed as RequestInfo | URL plus an optional RequestInit options object.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-3",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:55-60", "src/csrf/csrf.ts:86-87"],
+                    "statement": "When request headers are supplied, fetchWithCsrf passes mergedOptions.headers to addCsrfToRequestHeaders, which creates a new object by spreading the provided headers and then assigning the x-csrf-token property.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  }
+                ]
+              },
+              {
+                "dimension": "defaults-and-overrides",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-4",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": ["src/csrf/csrf.test.ts:99-109", "src/csrf/csrf.ts:85-87"],
+                    "statement": "Caller-supplied RequestInit properties override the default options during object spread before headers are reassigned, and the test source exercises a custom mode value of no-cors in its local mock path.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-5",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": [
+                      "src/csrf/csrf.ts:11-15",
+                      "src/csrf/csrf.ts:17-22",
+                      "src/csrf/csrf.ts:85-86"
+                    ],
+                    "statement": "If options are omitted, fetchWithCsrf starts from initGetRequest, so the request defaults to method GET with redirect follow, mode cors, and credentials include.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-6",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": ["src/csrf/csrf.ts:55-60", "src/csrf/csrf.ts:86-87"],
+                    "statement": "Regardless of any caller-provided headers object, fetchWithCsrf replaces mergedOptions.headers with the result of addCsrfToRequestHeaders, which writes x-csrf-token using the current stored token after spreading the supplied headers.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  }
+                ]
+              },
+              {
+                "dimension": "mutable-state",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-7",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72"],
+                    "statement": "If the response x-csrf-token header is missing or empty, extractCsrfFromResponseHeaders leaves the previously stored token unchanged.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-8",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:36-47", "src/csrf/csrf.ts:9-10"],
+                    "statement": "The module stores CSRF state in a module-level lastCsrfToken string initialized to an empty string, readable through getLastCsrfToken and writable through setLastCsrfToken.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-9",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72", "src/csrf/csrf.ts:89-90"],
+                    "statement": "fetchWithCsrf updates stored CSRF state only when the response x-csrf-token header value exists, is a string, and is nonempty, because extractCsrfFromResponseHeaders calls setLastCsrfToken only under that condition.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  }
+                ]
+              },
+              {
+                "dimension": "destination-and-trust",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-10",
+                    "dimension": "destination-and-trust",
+                    "sourceLocators": ["src/csrf/csrf.ts:55-60", "src/csrf/csrf.ts:86-90"],
+                    "statement": "Before calling fetch, fetchWithCsrf adds an x-csrf-token request header whose value comes from module-held state, and after the response it reads x-csrf-token from response headers to update that state.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-11",
+                    "dimension": "destination-and-trust",
+                    "sourceLocators": ["src/csrf/csrf.ts:11-15", "src/csrf/csrf.ts:85-90"],
+                    "statement": "By default, fetchWithCsrf sends requests with credentials include and mode cors, then calls the global fetch with the caller-supplied resource and merged options.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-12",
+                    "dimension": "destination-and-trust",
+                    "sourceLocators": [
+                      "src/csrf/csrf.ts:11-15",
+                      "src/csrf/csrf.ts:55-60",
+                      "src/csrf/csrf.ts:67-72",
+                      "src/csrf/csrf.ts:89-90"
+                    ],
+                    "statement": "For browser cross-origin use, the source-triggered prerequisites remain conditional and distinct: credentialed sharing must be permitted for the requesting origin, the request method and x-csrf-token header must be allowed for preflight, and the x-csrf-token response header must be exposed to script.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  }
+                ]
+              },
+              {
+                "dimension": "error-status-retry",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-13",
+                    "dimension": "error-status-retry",
+                    "sourceLocators": ["src/csrf/csrf.ts:89-91"],
+                    "statement": "When fetch resolves, fetchWithCsrf returns the Response object it received after attempting CSRF extraction from response.headers.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-14",
+                    "dimension": "error-status-retry",
+                    "sourceLocators": ["src/csrf/csrf.ts:89-91"],
+                    "statement": "fetchWithCsrf defines no retry, backoff, or recovery path; if fetch rejects, the function has no catch block and the rejection path is left to the underlying fetch call.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-15",
+                    "dimension": "error-status-retry",
+                    "sourceLocators": ["src/csrf/csrf.ts:89-91"],
+                    "statement": "fetchWithCsrf does not inspect or branch on HTTP status before returning, so source establishes no built-in status-specific handling for non-2xx responses.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  }
+                ]
+              },
+              {
+                "dimension": "environment-prerequisite",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-16",
+                    "dimension": "environment-prerequisite",
+                    "sourceLocators": ["package.json:2-10", "src/index.ts:1-6"],
+                    "statement": "Consumers import the package as @dl/nemo-ui-utils, whose package metadata declares dist entry points for main, module, and types and whose barrel export exposes fetchWithCsrf and related CSRF helpers.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-17",
+                    "dimension": "environment-prerequisite",
+                    "sourceLocators": ["README.md:30-48", "README.md:50-75"],
+                    "statement": "Installing the package from the documented distribution flow conditionally requires configuring the @dl GitLab npm registry and authenticating with a GitLab token for local installation or CI/CD.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-18",
+                    "dimension": "environment-prerequisite",
+                    "sourceLocators": ["CHANGELOG.md:1-3", "package.json:2-3"],
+                    "statement": "The approved plan sources identify version 1.0.0 as the package version associated with the addition of fetchWithCsrf.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-19",
+                    "dimension": "environment-prerequisite",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72", "src/csrf/csrf.ts:81-91"],
+                    "statement": "Using fetchWithCsrf requires an environment that provides fetch, Response.headers, and Headers.get semantics compatible with the source calls.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "verify-revised-technical-accuracy": {
+          "review": {
+            "verdict": "needs-revision",
+            "issues": [
+              {
+                "id": "TECH-001",
+                "category": "completeness",
+                "location": "docs/usage.md:102"
+              }
+            ]
+          },
+          "coverage": [],
+          "factInventory": {
+            "completeness": "bounded-not-proven",
+            "limitations": [],
+            "dimensions": [
+              {
+                "dimension": "input-representations",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-1",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72", "src/csrf/csrf.ts:89-90"],
+                    "statement": "After fetch resolves, fetchWithCsrf passes response.headers to extractCsrfFromResponseHeaders, which reads the x-csrf-token response header via Headers.get.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-2",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:81-91", "src/index.ts:1-6"],
+                    "statement": "The package barrel exports fetchWithCsrf for consumers, and fetchWithCsrf accepts a resource argument typed as RequestInfo | URL plus an optional RequestInit options object.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-3",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:55-60", "src/csrf/csrf.ts:86-87"],
+                    "statement": "When request headers are supplied, fetchWithCsrf passes mergedOptions.headers to addCsrfToRequestHeaders, which creates a new object by spreading the provided headers and then assigning the x-csrf-token property.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  }
+                ]
+              },
+              {
+                "dimension": "defaults-and-overrides",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-4",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": ["src/csrf/csrf.test.ts:99-109", "src/csrf/csrf.ts:85-87"],
+                    "statement": "Caller-supplied RequestInit properties override the default options during object spread before headers are reassigned, and the test source exercises a custom mode value of no-cors in its local mock path.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-5",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": [
+                      "src/csrf/csrf.ts:11-15",
+                      "src/csrf/csrf.ts:17-22",
+                      "src/csrf/csrf.ts:85-86"
+                    ],
+                    "statement": "If options are omitted, fetchWithCsrf starts from initGetRequest, so the request defaults to method GET with redirect follow, mode cors, and credentials include.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-6",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": ["src/csrf/csrf.ts:55-60", "src/csrf/csrf.ts:86-87"],
+                    "statement": "Regardless of any caller-provided headers object, fetchWithCsrf replaces mergedOptions.headers with the result of addCsrfToRequestHeaders, which writes x-csrf-token using the current stored token after spreading the supplied headers.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  }
+                ]
+              },
+              {
+                "dimension": "mutable-state",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-7",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72"],
+                    "statement": "If the response x-csrf-token header is missing or empty, extractCsrfFromResponseHeaders leaves the previously stored token unchanged.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-8",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:36-47", "src/csrf/csrf.ts:9-10"],
+                    "statement": "The module stores CSRF state in a module-level lastCsrfToken string initialized to an empty string, readable through getLastCsrfToken and writable through setLastCsrfToken.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-9",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72", "src/csrf/csrf.ts:89-90"],
+                    "statement": "fetchWithCsrf updates stored CSRF state only when the response x-csrf-token header value exists, is a string, and is nonempty, because extractCsrfFromResponseHeaders calls setLastCsrfToken only under that condition.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  }
+                ]
+              },
+              {
+                "dimension": "destination-and-trust",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-10",
+                    "dimension": "destination-and-trust",
+                    "sourceLocators": ["src/csrf/csrf.ts:55-60", "src/csrf/csrf.ts:86-90"],
+                    "statement": "Before calling fetch, fetchWithCsrf adds an x-csrf-token request header whose value comes from module-held state, and after the response it reads x-csrf-token from response headers to update that state.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-11",
+                    "dimension": "destination-and-trust",
+                    "sourceLocators": ["src/csrf/csrf.ts:11-15", "src/csrf/csrf.ts:85-90"],
+                    "statement": "By default, fetchWithCsrf sends requests with credentials include and mode cors, then calls the global fetch with the caller-supplied resource and merged options.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-12",
+                    "dimension": "destination-and-trust",
+                    "sourceLocators": [
+                      "src/csrf/csrf.ts:11-15",
+                      "src/csrf/csrf.ts:55-60",
+                      "src/csrf/csrf.ts:67-72",
+                      "src/csrf/csrf.ts:89-90"
+                    ],
+                    "statement": "For browser cross-origin use, credentialed sharing must be permitted for the requesting origin because fetchWithCsrf uses mode \"cors\" with credentials \"include\" when it calls fetch.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-13",
+                    "dimension": "destination-and-trust",
+                    "sourceLocators": [
+                      "src/csrf/csrf.ts:11-15",
+                      "src/csrf/csrf.ts:55-60",
+                      "src/csrf/csrf.ts:67-72",
+                      "src/csrf/csrf.ts:89-90"
+                    ],
+                    "statement": "For browser cross-origin use, the request method and x-csrf-token request header must be allowed for preflight because fetchWithCsrf sends a non-default x-csrf-token header with the merged request options.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-14",
+                    "dimension": "destination-and-trust",
+                    "sourceLocators": [
+                      "src/csrf/csrf.ts:11-15",
+                      "src/csrf/csrf.ts:55-60",
+                      "src/csrf/csrf.ts:67-72",
+                      "src/csrf/csrf.ts:89-90"
+                    ],
+                    "statement": "For browser cross-origin use, the x-csrf-token response header must be exposed to script because fetchWithCsrf reads it from response.headers via Headers.get before updating stored state.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  }
+                ]
+              },
+              {
+                "dimension": "error-status-retry",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-15",
+                    "dimension": "error-status-retry",
+                    "sourceLocators": ["src/csrf/csrf.ts:89-91"],
+                    "statement": "When fetch resolves, fetchWithCsrf returns the Response object it received after attempting CSRF extraction from response.headers.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-16",
+                    "dimension": "error-status-retry",
+                    "sourceLocators": ["src/csrf/csrf.ts:89-91"],
+                    "statement": "fetchWithCsrf defines no retry, backoff, or recovery path; if fetch rejects, the function has no catch block and the rejection path is left to the underlying fetch call.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-17",
+                    "dimension": "error-status-retry",
+                    "sourceLocators": ["src/csrf/csrf.ts:89-91"],
+                    "statement": "fetchWithCsrf does not inspect or branch on HTTP status before returning, so source establishes no built-in status-specific handling for non-2xx responses.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  }
+                ]
+              },
+              {
+                "dimension": "environment-prerequisite",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-18",
+                    "dimension": "environment-prerequisite",
+                    "sourceLocators": ["package.json:2-10", "src/index.ts:1-6"],
+                    "statement": "Consumers import the package as @dl/nemo-ui-utils, whose package metadata declares dist entry points for main, module, and types and whose barrel export exposes fetchWithCsrf and related CSRF helpers.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-19",
+                    "dimension": "environment-prerequisite",
+                    "sourceLocators": ["README.md:30-48", "README.md:50-75"],
+                    "statement": "Installing the package from the documented distribution flow conditionally requires configuring the @dl GitLab npm registry and authenticating with a GitLab token for local installation or CI/CD.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-20",
+                    "dimension": "environment-prerequisite",
+                    "sourceLocators": ["CHANGELOG.md:1-3", "package.json:2-3"],
+                    "statement": "The approved plan sources identify version 1.0.0 as the package version associated with the addition of fetchWithCsrf.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-21",
+                    "dimension": "environment-prerequisite",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72", "src/csrf/csrf.ts:81-91"],
+                    "statement": "Using fetchWithCsrf requires an environment that provides fetch, Response.headers, and Headers.get semantics compatible with the source calls.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    },
+    "1aba893c": {
+      "workflow": "review-documentation",
+      "steps": {
+        "provisional-technical-verification": {
+          "review": {
+            "verdict": "needs-revision",
+            "issues": [
+              {
+                "id": "TECH-001",
+                "category": "completeness",
+                "location": "README.md:28"
+              },
+              {
+                "id": "TECH-002",
+                "category": "completeness",
+                "location": "README.md:28"
+              }
+            ]
+          },
+          "coverage": [],
+          "factInventory": {
+            "completeness": "bounded-not-proven",
+            "limitations": [],
+            "dimensions": [
+              {
+                "dimension": "input-representations",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-1",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72", "src/index.ts:1-7"],
+                    "statement": "The public barrel exports extractCsrfFromResponseHeaders(responseHeaders), which reads only a Headers object via responseHeaders?.get('x-csrf-token').",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-2",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:81-92", "src/index.ts:1-7"],
+                    "statement": "The public barrel exports fetchWithCsrf(resource, options), where resource is passed through as RequestInfo | URL and the function returns the fetched Response.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-3",
+                    "dimension": "input-representations",
+                    "sourceLocators": [
+                      "src/csrf/csrf.ts:36-38",
+                      "src/csrf/csrf.ts:45-47",
+                      "src/index.ts:1-7"
+                    ],
+                    "statement": "The public barrel exports setLastCsrfToken(token) and getLastCsrfToken(), with token accepted as a string and the stored token returned as a string.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  }
+                ]
+              },
+              {
+                "dimension": "defaults-and-overrides",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-4",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": ["src/csrf/csrf.ts:55-60", "src/csrf/csrf.ts:86-87"],
+                    "statement": "After merging defaults and caller options, fetchWithCsrf replaces mergedOptions.headers with addCsrfToRequestHeaders(mergedOptions.headers), which adds or overwrites the 'x-csrf-token' header with the current stored token.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-002"]
+                  },
+                  {
+                    "id": "FACT-5",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": ["src/csrf/csrf.test.ts:99-109", "src/csrf/csrf.ts:85-87"],
+                    "statement": "Caller-supplied RequestInit properties override earlier defaults because fetchWithCsrf creates mergedOptions with object spread {...defaultOptions, ...options}; the inspected test source also models a custom mode override.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-002"]
+                  },
+                  {
+                    "id": "FACT-6",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": [
+                      "src/csrf/csrf.ts:11-15",
+                      "src/csrf/csrf.ts:17-29",
+                      "src/csrf/csrf.ts:85-87"
+                    ],
+                    "statement": "fetchWithCsrf starts from GET defaults with redirect:'follow', mode:'cors', credentials:'include', and method:'GET'.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-002"]
+                  }
+                ]
+              },
+              {
+                "dimension": "mutable-state",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-7",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:36-47", "src/csrf/csrf.ts:9"],
+                    "statement": "The module stores CSRF state in a module-level variable lastCsrfToken initialized to the empty string, read by getLastCsrfToken() and replaced by setLastCsrfToken(token).",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-8",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72"],
+                    "statement": "extractCsrfFromResponseHeaders updates the stored token only when responseHeaders?.get('x-csrf-token') returns a nonempty string.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-9",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:89-91"],
+                    "statement": "fetchWithCsrf always inspects response.headers after fetch resolves and may update the stored token through extractCsrfFromResponseHeaders before returning the same response object.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  }
+                ]
+              },
+              {
+                "dimension": "destination-and-trust",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-10",
+                    "dimension": "destination-and-trust",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72", "src/csrf/csrf.ts:89-90"],
+                    "statement": "If the response exposes an 'x-csrf-token' header through Response.headers.get, fetchWithCsrf reads that response header and uses it to update local token state.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-11",
+                    "dimension": "destination-and-trust",
+                    "sourceLocators": ["src/csrf/csrf.ts:55-60", "src/csrf/csrf.ts:86-90"],
+                    "statement": "fetchWithCsrf adds the current stored token under the 'x-csrf-token' request header before calling fetch, so that token value is sent to the request destination.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-12",
+                    "dimension": "destination-and-trust",
+                    "sourceLocators": ["src/csrf/csrf.ts:11-15", "src/csrf/csrf.ts:81-90"],
+                    "statement": "fetchWithCsrf sends the request to the caller-provided resource using fetch with credentials:'include' unless the caller overrides that option.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  }
+                ]
+              },
+              {
+                "dimension": "error-status-retry",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-13",
+                    "dimension": "error-status-retry",
+                    "sourceLocators": ["src/csrf/csrf.ts:89-91"],
+                    "statement": "If fetch rejects, fetchWithCsrf has no local catch block to transform the failure before return.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-14",
+                    "dimension": "error-status-retry",
+                    "sourceLocators": ["src/csrf/csrf.ts:89-91"],
+                    "statement": "When fetch resolves, fetchWithCsrf returns the resulting Response object after attempting CSRF extraction and does not branch on HTTP status.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-15",
+                    "dimension": "error-status-retry",
+                    "sourceLocators": ["src/csrf/csrf.ts:89-91"],
+                    "statement": "fetchWithCsrf contains no retry loop, fallback request, or status-specific recovery; it performs exactly one fetch call per invocation.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  }
+                ]
+              },
+              {
+                "dimension": "environment-prerequisite",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-16",
+                    "dimension": "environment-prerequisite",
+                    "sourceLocators": ["package.json:5-10", "src/index.ts:1-7"],
+                    "statement": "Consumers install a package whose declared entry points are built dist artifacts (main './dist/index.umd.cjs', module './dist/index.js', types './dist/index.d.ts') and whose published files list contains only 'dist'.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-17",
+                    "dimension": "environment-prerequisite",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-68", "src/csrf/csrf.ts:89-90"],
+                    "statement": "Using the CSRF helpers requires runtime availability of fetch Response and Headers interfaces because the implementation calls fetch(...) and responseHeaders?.get(...).",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "verify-technical-accuracy": {
+          "review": {
+            "verdict": "needs-revision",
+            "issues": [
+              {
+                "id": "TECH-001",
+                "category": "completeness",
+                "location": "README.md:28"
+              },
+              {
+                "id": "TECH-002",
+                "category": "completeness",
+                "location": "README.md:28"
+              }
+            ]
+          },
+          "coverage": [],
+          "factInventory": {
+            "completeness": "bounded-not-proven",
+            "limitations": [],
+            "dimensions": [
+              {
+                "dimension": "input-representations",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-1",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72", "src/index.ts:1-7"],
+                    "statement": "The public barrel exports extractCsrfFromResponseHeaders(responseHeaders), which reads only a Headers object via responseHeaders?.get('x-csrf-token').",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-2",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:81-92", "src/index.ts:1-7"],
+                    "statement": "The public barrel exports fetchWithCsrf(resource, options), where resource is passed through as RequestInfo | URL and the function returns the fetched Response.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-3",
+                    "dimension": "input-representations",
+                    "sourceLocators": [
+                      "src/csrf/csrf.ts:36-38",
+                      "src/csrf/csrf.ts:45-47",
+                      "src/index.ts:1-7"
+                    ],
+                    "statement": "The public barrel exports setLastCsrfToken(token) and getLastCsrfToken(), with token accepted as a string and the stored token returned as a string.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  }
+                ]
+              },
+              {
+                "dimension": "defaults-and-overrides",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-4",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": ["src/csrf/csrf.ts:55-60", "src/csrf/csrf.ts:86-87"],
+                    "statement": "After merging defaults and caller options, fetchWithCsrf replaces mergedOptions.headers with addCsrfToRequestHeaders(mergedOptions.headers), which adds or overwrites the 'x-csrf-token' header with the current stored token.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-002"]
+                  },
+                  {
+                    "id": "FACT-5",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": ["src/csrf/csrf.test.ts:99-109", "src/csrf/csrf.ts:85-87"],
+                    "statement": "Caller-supplied RequestInit properties override earlier defaults because fetchWithCsrf creates mergedOptions with object spread {...defaultOptions, ...options}; the inspected test source also models a custom mode override.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-002"]
+                  },
+                  {
+                    "id": "FACT-6",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": [
+                      "src/csrf/csrf.ts:11-15",
+                      "src/csrf/csrf.ts:17-29",
+                      "src/csrf/csrf.ts:85-87"
+                    ],
+                    "statement": "fetchWithCsrf starts from GET defaults with redirect:'follow', mode:'cors', credentials:'include', and method:'GET'.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-002"]
+                  }
+                ]
+              },
+              {
+                "dimension": "mutable-state",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-7",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:36-47", "src/csrf/csrf.ts:9"],
+                    "statement": "The module stores CSRF state in a module-level variable lastCsrfToken initialized to the empty string, read by getLastCsrfToken() and replaced by setLastCsrfToken(token).",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-8",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72"],
+                    "statement": "extractCsrfFromResponseHeaders updates the stored token only when responseHeaders?.get('x-csrf-token') returns a nonempty string.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-9",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:89-91"],
+                    "statement": "fetchWithCsrf always inspects response.headers after fetch resolves and may update the stored token through extractCsrfFromResponseHeaders before returning the same response object.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  }
+                ]
+              },
+              {
+                "dimension": "destination-and-trust",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-10",
+                    "dimension": "destination-and-trust",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72", "src/csrf/csrf.ts:89-90"],
+                    "statement": "If the response exposes an 'x-csrf-token' header through Response.headers.get, fetchWithCsrf reads that response header and uses it to update local token state.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-11",
+                    "dimension": "destination-and-trust",
+                    "sourceLocators": ["src/csrf/csrf.ts:55-60", "src/csrf/csrf.ts:86-90"],
+                    "statement": "fetchWithCsrf adds the current stored token under the 'x-csrf-token' request header before calling fetch, so that token value is sent to the request destination.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-12",
+                    "dimension": "destination-and-trust",
+                    "sourceLocators": ["src/csrf/csrf.ts:11-15", "src/csrf/csrf.ts:81-90"],
+                    "statement": "fetchWithCsrf sends the request to the caller-provided resource using fetch with credentials:'include' unless the caller overrides that option.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  }
+                ]
+              },
+              {
+                "dimension": "error-status-retry",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-13",
+                    "dimension": "error-status-retry",
+                    "sourceLocators": ["src/csrf/csrf.ts:89-91"],
+                    "statement": "If fetch rejects, fetchWithCsrf has no local catch block to transform the failure before return.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-14",
+                    "dimension": "error-status-retry",
+                    "sourceLocators": ["src/csrf/csrf.ts:89-91"],
+                    "statement": "When fetch resolves, fetchWithCsrf returns the resulting Response object after attempting CSRF extraction and does not branch on HTTP status.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-15",
+                    "dimension": "error-status-retry",
+                    "sourceLocators": ["src/csrf/csrf.ts:89-91"],
+                    "statement": "fetchWithCsrf contains no retry loop, fallback request, or status-specific recovery; it performs exactly one fetch call per invocation.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  }
+                ]
+              },
+              {
+                "dimension": "environment-prerequisite",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-16",
+                    "dimension": "environment-prerequisite",
+                    "sourceLocators": ["package.json:5-10", "src/index.ts:1-7"],
+                    "statement": "Consumers install a package whose declared entry points are built dist artifacts (main './dist/index.umd.cjs', module './dist/index.js', types './dist/index.d.ts') and whose published files list contains only 'dist'.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-17",
+                    "dimension": "environment-prerequisite",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-68", "src/csrf/csrf.ts:89-90"],
+                    "statement": "Using the CSRF helpers requires runtime availability of fetch Response and Headers interfaces because the implementation calls fetch(...) and responseHeaders?.get(...).",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    },
+    "ac0e85b5": {
+      "workflow": "review-documentation",
+      "steps": {
+        "provisional-technical-verification": {
+          "review": {
+            "verdict": "needs-revision",
+            "issues": [
+              {
+                "id": "TECH-001",
+                "category": "completeness",
+                "location": "README.md:28"
+              },
+              {
+                "id": "TECH-002",
+                "category": "completeness",
+                "location": "README.md:28"
+              }
+            ]
+          },
+          "coverage": [],
+          "factInventory": {
+            "completeness": "bounded-not-proven",
+            "limitations": [],
+            "dimensions": [
+              {
+                "dimension": "input-representations",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-1",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/index.ts:1-7"],
+                    "statement": "The package's public barrel exports exactly five CSRF-related symbols: CSRF_HEADER_NAME, fetchWithCsrf, extractCsrfFromResponseHeaders, setLastCsrfToken, and getLastCsrfToken.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-2",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:55-60"],
+                    "statement": "addCsrfToRequestHeaders accepts an optional HeadersInit input and returns a new header object shape produced with object spread plus an x-csrf-token property.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-3",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72"],
+                    "statement": "extractCsrfFromResponseHeaders accepts an optional Headers object and reads the x-csrf-token response header from it.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-4",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:81-91"],
+                    "statement": "fetchWithCsrf accepts resource as RequestInfo or URL and an optional RequestInit options object, then passes both to fetch after merging options and setting headers.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-5",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:36-38", "src/csrf/csrf.ts:45-47"],
+                    "statement": "setLastCsrfToken accepts a string token value and getLastCsrfToken returns the stored token string.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  }
+                ]
+              },
+              {
+                "dimension": "defaults-and-overrides",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-6",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": ["src/csrf/csrf.ts:87-89"],
+                    "statement": "After merging options, fetchWithCsrf always replaces mergedOptions.headers with the result of addCsrfToRequestHeaders on the current headers value before calling fetch.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-7",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": ["src/csrf/csrf.ts:11-15", "src/csrf/csrf.ts:17-29"],
+                    "statement": "Both initGetRequest and initPostRequest start from BASE_REQUEST, so their declared defaults include redirect:\"follow\", mode:\"cors\", and credentials:\"include\", with method set to GET or POST respectively.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-8",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": ["src/csrf/csrf.ts:55-60", "src/csrf/csrf.ts:87"],
+                    "statement": "When addCsrfToRequestHeaders runs, any existing x-csrf-token header value in the supplied headers is overwritten by the current stored token value.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-9",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": ["src/csrf/csrf.ts:85-87"],
+                    "statement": "fetchWithCsrf starts from initGetRequest defaults and then shallow-merges caller-supplied options over them, so caller options override the default RequestInit fields before headers are reassigned.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  }
+                ]
+              },
+              {
+                "dimension": "mutable-state",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-10",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:36-47", "src/csrf/csrf.ts:9"],
+                    "statement": "The module keeps CSRF state in a module-scoped lastCsrfToken string initialized to an empty string; getLastCsrfToken reads it and setLastCsrfToken assigns a new string value.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-11",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72"],
+                    "statement": "extractCsrfFromResponseHeaders updates stored state only when responseHeaders.get(\"x-csrf-token\") returns a nonempty string.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-12",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72", "src/csrf/csrf.ts:89-91"],
+                    "statement": "fetchWithCsrf may mutate the stored token after a fetch by passing response.headers to extractCsrfFromResponseHeaders, and otherwise leaves token state unchanged when no nonempty header is present.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  }
+                ]
+              },
+              {
+                "dimension": "destination-and-trust",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-13",
+                    "dimension": "destination-and-trust",
+                    "sourceLocators": [
+                      "src/csrf/csrf.ts:11-15",
+                      "src/csrf/csrf.ts:55-60",
+                      "src/csrf/csrf.ts:89-90"
+                    ],
+                    "statement": "For browser cross-origin use, this operation conditionally depends on external response and preflight behavior that permits credentialed sharing, allows the request header, and exposes the response header if script must read it.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-002"]
+                  },
+                  {
+                    "id": "FACT-14",
+                    "dimension": "destination-and-trust",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72", "src/csrf/csrf.ts:89-90"],
+                    "statement": "fetchWithCsrf reads the x-csrf-token header from the received Response headers and may store that response-supplied value for later requests.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-15",
+                    "dimension": "destination-and-trust",
+                    "sourceLocators": ["src/csrf/csrf.ts:11-15", "src/csrf/csrf.ts:81-90"],
+                    "statement": "fetchWithCsrf sends requests through the global fetch API with credentials:\"include\" and a request header named x-csrf-token containing the currently stored token value.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  }
+                ]
+              },
+              {
+                "dimension": "error-status-retry",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-16",
+                    "dimension": "error-status-retry",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72", "src/csrf/csrf.ts:89-91"],
+                    "statement": "A resolved response of any HTTP status still flows through extractCsrfFromResponseHeaders before being returned, so token storage is not limited in source to success statuses.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-17",
+                    "dimension": "error-status-retry",
+                    "sourceLocators": ["src/csrf/csrf.ts:89-91"],
+                    "statement": "When fetch resolves, fetchWithCsrf returns the same Response object it received after attempting CSRF header extraction.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-18",
+                    "dimension": "error-status-retry",
+                    "sourceLocators": ["src/csrf/csrf.ts:89-91"],
+                    "statement": "fetchWithCsrf defines no local catch, status check, or retry loop around fetch, so any fetch rejection propagates from the awaited fetch call and no retry is attempted in this wrapper.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  }
+                ]
+              },
+              {
+                "dimension": "environment-prerequisite",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-19",
+                    "dimension": "environment-prerequisite",
+                    "sourceLocators": ["README.md:30-48"],
+                    "statement": "Consumers must configure the @dl npm scope to use the GitLab package registry and supply an auth token in npm configuration to install the package from the documented registry.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-20",
+                    "dimension": "environment-prerequisite",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72", "src/csrf/csrf.ts:81-90"],
+                    "statement": "Runtime use of fetchWithCsrf requires a JavaScript environment that provides global fetch, Response headers access, and the Headers interface expected by the code path.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-21",
+                    "dimension": "environment-prerequisite",
+                    "sourceLocators": ["package.json:2-10"],
+                    "statement": "The package is published as @dl/nemo-ui-utils version 1.0.0 with declared main, module, and types entry points under dist/, and only dist is listed in files for packaging.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "verify-technical-accuracy": {
+          "review": {
+            "verdict": "needs-revision",
+            "issues": [
+              {
+                "id": "TECH-001",
+                "category": "completeness",
+                "location": "README.md:28"
+              },
+              {
+                "id": "TECH-002",
+                "category": "completeness",
+                "location": "README.md:28"
+              }
+            ]
+          },
+          "coverage": [],
+          "factInventory": {
+            "completeness": "bounded-not-proven",
+            "limitations": [],
+            "dimensions": [
+              {
+                "dimension": "input-representations",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-1",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/index.ts:1-7"],
+                    "statement": "The package's public barrel exports exactly five CSRF-related symbols: CSRF_HEADER_NAME, fetchWithCsrf, extractCsrfFromResponseHeaders, setLastCsrfToken, and getLastCsrfToken.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-2",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:55-60"],
+                    "statement": "addCsrfToRequestHeaders accepts an optional HeadersInit input and returns a new header object shape produced with object spread plus an x-csrf-token property.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-3",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72"],
+                    "statement": "extractCsrfFromResponseHeaders accepts an optional Headers object and reads the x-csrf-token response header from it.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-4",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:81-91"],
+                    "statement": "fetchWithCsrf accepts resource as RequestInfo or URL and an optional RequestInit options object, then passes both to fetch after merging options and setting headers.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-5",
+                    "dimension": "input-representations",
+                    "sourceLocators": ["src/csrf/csrf.ts:36-38", "src/csrf/csrf.ts:45-47"],
+                    "statement": "setLastCsrfToken accepts a string token value and getLastCsrfToken returns the stored token string.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  }
+                ]
+              },
+              {
+                "dimension": "defaults-and-overrides",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-6",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": ["src/csrf/csrf.ts:87-89"],
+                    "statement": "After merging options, fetchWithCsrf always replaces mergedOptions.headers with the result of addCsrfToRequestHeaders on the current headers value before calling fetch.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-7",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": ["src/csrf/csrf.ts:11-15", "src/csrf/csrf.ts:17-29"],
+                    "statement": "Both initGetRequest and initPostRequest start from BASE_REQUEST, so their declared defaults include redirect:\"follow\", mode:\"cors\", and credentials:\"include\", with method set to GET or POST respectively.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-8",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": ["src/csrf/csrf.ts:55-60", "src/csrf/csrf.ts:87"],
+                    "statement": "When addCsrfToRequestHeaders runs, any existing x-csrf-token header value in the supplied headers is overwritten by the current stored token value.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-9",
+                    "dimension": "defaults-and-overrides",
+                    "sourceLocators": ["src/csrf/csrf.ts:85-87"],
+                    "statement": "fetchWithCsrf starts from initGetRequest defaults and then shallow-merges caller-supplied options over them, so caller options override the default RequestInit fields before headers are reassigned.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  }
+                ]
+              },
+              {
+                "dimension": "mutable-state",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-10",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:36-47", "src/csrf/csrf.ts:9"],
+                    "statement": "The module keeps CSRF state in a module-scoped lastCsrfToken string initialized to an empty string; getLastCsrfToken reads it and setLastCsrfToken assigns a new string value.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-11",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72"],
+                    "statement": "extractCsrfFromResponseHeaders updates stored state only when responseHeaders.get(\"x-csrf-token\") returns a nonempty string.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-12",
+                    "dimension": "mutable-state",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72", "src/csrf/csrf.ts:89-91"],
+                    "statement": "fetchWithCsrf may mutate the stored token after a fetch by passing response.headers to extractCsrfFromResponseHeaders, and otherwise leaves token state unchanged when no nonempty header is present.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  }
+                ]
+              },
+              {
+                "dimension": "destination-and-trust",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-13",
+                    "dimension": "destination-and-trust",
+                    "sourceLocators": [
+                      "src/csrf/csrf.ts:11-15",
+                      "src/csrf/csrf.ts:55-60",
+                      "src/csrf/csrf.ts:89-90"
+                    ],
+                    "statement": "For browser cross-origin use, this operation conditionally depends on external response and preflight behavior that permits credentialed sharing, allows the request header, and exposes the response header if script must read it.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-002"]
+                  },
+                  {
+                    "id": "FACT-14",
+                    "dimension": "destination-and-trust",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72", "src/csrf/csrf.ts:89-90"],
+                    "statement": "fetchWithCsrf reads the x-csrf-token header from the received Response headers and may store that response-supplied value for later requests.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-15",
+                    "dimension": "destination-and-trust",
+                    "sourceLocators": ["src/csrf/csrf.ts:11-15", "src/csrf/csrf.ts:81-90"],
+                    "statement": "fetchWithCsrf sends requests through the global fetch API with credentials:\"include\" and a request header named x-csrf-token containing the currently stored token value.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  }
+                ]
+              },
+              {
+                "dimension": "error-status-retry",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-16",
+                    "dimension": "error-status-retry",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72", "src/csrf/csrf.ts:89-91"],
+                    "statement": "A resolved response of any HTTP status still flows through extractCsrfFromResponseHeaders before being returned, so token storage is not limited in source to success statuses.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-17",
+                    "dimension": "error-status-retry",
+                    "sourceLocators": ["src/csrf/csrf.ts:89-91"],
+                    "statement": "When fetch resolves, fetchWithCsrf returns the same Response object it received after attempting CSRF header extraction.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-18",
+                    "dimension": "error-status-retry",
+                    "sourceLocators": ["src/csrf/csrf.ts:89-91"],
+                    "statement": "fetchWithCsrf defines no local catch, status check, or retry loop around fetch, so any fetch rejection propagates from the awaited fetch call and no retry is attempted in this wrapper.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  }
+                ]
+              },
+              {
+                "dimension": "environment-prerequisite",
+                "status": "applicable",
+                "reason": "",
+                "sourceLocators": [],
+                "facts": [
+                  {
+                    "id": "FACT-19",
+                    "dimension": "environment-prerequisite",
+                    "sourceLocators": ["README.md:30-48"],
+                    "statement": "Consumers must configure the @dl npm scope to use the GitLab package registry and supply an auth token in npm configuration to install the package from the documented registry.",
+                    "documentationDisposition": "documented",
+                    "uncertainty": "",
+                    "issueIds": []
+                  },
+                  {
+                    "id": "FACT-20",
+                    "dimension": "environment-prerequisite",
+                    "sourceLocators": ["src/csrf/csrf.ts:67-72", "src/csrf/csrf.ts:81-90"],
+                    "statement": "Runtime use of fetchWithCsrf requires a JavaScript environment that provides global fetch, Response headers access, and the Headers interface expected by the code path.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  },
+                  {
+                    "id": "FACT-21",
+                    "dimension": "environment-prerequisite",
+                    "sourceLocators": ["package.json:2-10"],
+                    "statement": "The package is published as @dl/nemo-ui-utils version 1.0.0 with declared main, module, and types entry points under dist/, and only dist is listed in files for packaging.",
+                    "documentationDisposition": "omitted",
+                    "uncertainty": "",
+                    "issueIds": ["TECH-001"]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

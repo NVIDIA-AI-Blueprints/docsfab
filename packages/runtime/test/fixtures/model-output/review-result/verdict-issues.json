@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "kind": "docsfab-output-rule-fixture",
+  "code": "review-result-verdict-issues",
+  "location": "$.verdict",
+  "input": {
+    "workflow": "review-documentation"
+  },
+  "reply": "{\"verdict\":\"needs-revision\",\"issues\":[]}"
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Synthesize Source Threads"
+  short_description: "Reconcile source models with traceable conflicts"
+  default_prompt: "Use $synthesize-source-threads to reconcile these source threads into a candidate shared model, inconsistency report, and merge receipt."

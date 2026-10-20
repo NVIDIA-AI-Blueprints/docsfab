@@ -1,0 +1,11 @@
+{
+  "diff": "@diff",
+  "new_path": "@new_path",
+  "old_path": "@old_path",
+  "a_mode": "@a_mode",
+  "b_mode": "@b_mode",
+  "new_file": "@new_file",
+  "renamed_file": "@renamed_file",
+  "deleted_file": "@deleted_file",
+  "generated_file": "@generated_file"
+}

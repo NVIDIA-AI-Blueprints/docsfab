@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "kind": "docsfab-output-rule-fixture",
+  "code": "plan-source-locator-revision-mismatch",
+  "location": "$.planBinding.sourceBindings[].sources[]",
+  "input": {
+    "workflow": "create-documentation",
+    "repositoryRevision": "0bd6fa60ceefdf49d8b92fb760d446cda3434761"
+  },
+  "reply": "{\"summary\":\"Plan one CLI reference page from the guide and the CLI source.\",\"planBinding\":{\"mode\":\"create\",\"pages\":[{\"path\":\"docs/cli-reference.md\",\"disposition\":\"create\"}],\"sourceBindings\":[{\"pagePath\":\"docs/cli-reference.md\",\"sources\":[\"docs/guide.md:1-28@0bd6fa60ceefdf49d8b92fb760d446cda3434761\",\"src/sprout.mjs@1111111111111111111111111111111111111111\"]}]}}"
+}

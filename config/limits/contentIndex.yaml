@@ -1,0 +1,59 @@
+# DocsFab operational limits owned by the `contentIndex` name prefix.
+# Registered in config/limits.yaml; every limit here is named `contentIndex.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: contentIndex.maxAssets
+    value: 4096
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_CONTENT_INDEX_MAX_ASSETS
+    min: 1
+    max: 1048576
+    refusal: content-index-max-assets-bound
+    remediation: Raise contentIndex.maxAssets with DOCSFAB_CONTENT_INDEX_MAX_ASSETS to index every linked asset. Until then the index leaves out each asset past the bound and names it.
+    rationale: Technical capacity. Distinct linked assets (images and other files that are not pages) that one workspace content index hashes. Each asset is read once and only its digest is kept, so the cost is indexing time, not memory. An asset past the bound is left out of the index and named as a limitation; nothing stops. The previous fixed 256 stopped every write-capable run on a documentation site with more linked screenshots than that; 4,096 covers the 1k-10k-file repositories in the 2026-10-05 limits audit (row d). Override may raise it.
+    docValue: 4,096 assets
+    docSummary: Distinct linked assets one content index hashes; more are left out and named.
+
+  - name: contentIndex.maxAssetBytes
+    value: 67108864
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_CONTENT_INDEX_MAX_ASSET_BYTES
+    min: 1
+    max: 1073741824
+    refusal: content-index-max-asset-bytes-bound
+    remediation: Raise contentIndex.maxAssetBytes with DOCSFAB_CONTENT_INDEX_MAX_ASSET_BYTES to index a larger asset. Until then the index leaves the asset out and names it.
+    rationale: Technical capacity. Bytes of one linked asset the content index reads to hash. The asset is held in memory once while it is hashed, so this bounds one read. A larger asset is left out of the index and named as a limitation; nothing stops. The previous fixed 8 MiB stopped every write-capable run on a page that linked a recorded demo or a large diagram; 64 MiB covers those. Override may raise it.
+    docValue: 67,108,864 bytes (64 MiB)
+    docSummary: Bytes of one linked asset the content index hashes; a larger asset is left out and named.
+
+  - name: contentIndex.maxTotalAssetBytes
+    value: 1073741824
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_CONTENT_INDEX_MAX_TOTAL_ASSET_BYTES
+    min: 1
+    max: 68719476736
+    refusal: content-index-max-total-asset-bytes-bound
+    remediation: Raise contentIndex.maxTotalAssetBytes with DOCSFAB_CONTENT_INDEX_MAX_TOTAL_ASSET_BYTES to index every linked asset. Until then the index leaves out each asset that would pass the total and names it.
+    rationale: Technical capacity. Combined bytes of the linked assets one content index reads to hash. Assets are read one at a time and only digests are kept, so the cost is indexing time. An asset that would pass the total is left out of the index and named as a limitation; nothing stops. The previous fixed 16 MiB stopped every write-capable run on a site with more than 16 MiB of screenshots; 1 GiB is the limits audit's value for 1k-10k-file repositories (row d). Override may raise it.
+    docValue: 1,073,741,824 bytes (1 GiB)
+    docSummary: Combined bytes of the linked assets one content index hashes; assets past it are left out and named.
+
+  - name: contentIndex.maxSourceBytes
+    value: 4194304
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_CONTENT_INDEX_MAX_SOURCE_BYTES
+    min: 1
+    max: 67108864
+    refusal: content-index-max-source-bytes-bound
+    remediation: Split the page, or raise contentIndex.maxSourceBytes with DOCSFAB_CONTENT_INDEX_MAX_SOURCE_BYTES, then rerun the same command.
+    rationale: Technical capacity. Bytes of one Markdown, MDX, reStructuredText, or navigation source a workspace content index reads and parses. Parsing holds the whole page in memory, and every other page may link to it, so a page over the bound still stops the index with this code, naming the page and its size. Generated reference pages in large repositories can pass 4 MiB; override may raise it to 64 MiB.
+    docValue: 4,194,304 bytes (4 MiB)
+    docSummary: Bytes of one page or navigation source a workspace content index parses; a larger page stops the index, naming it.

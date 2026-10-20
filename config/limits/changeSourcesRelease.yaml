@@ -1,0 +1,29 @@
+# DocsFab operational limits owned by the `changeSourcesRelease` name prefix.
+# Registered in config/limits.yaml; every limit here is named `changeSourcesRelease.*`.
+# Read by packages/runtime/src/inputs/change-source/release.ts, the resolver behind
+# `--change release:<base>..<head>`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: changeSourcesRelease.unitsMax
+    value: 512
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_CHANGE_SOURCES_RELEASE_UNITS_MAX
+    min: 1
+    max: 4096
+    refusal: change-source-release-units-bound
+    remediation: Name a release range with fewer first-parent commits, such as two adjacent release tags, or raise DOCSFAB_CHANGE_SOURCES_RELEASE_UNITS_MAX up to 4096, then run again.
+    rationale: First-parent commits (units) one --change release range may enumerate. Every unit is listed in the units index, bound or not, so this bounds the index rather than the evidence a run binds, which changeSourcesRelease.unitsPerRunMax pages. This repository's v0.0.1-rc.1..v0.0.1-rc.2 holds 126 units (all merge commits) and v0.0.1-rc.1..main 254 units, measured on 2026-10-07; 512 holds twice the longer one. An index entry is about 500 bytes for a later-page unit and about 800 for a bound merge unit with its introduced commit, so 512 entries stay inside sources.extractionMaxDerivativeBytes, which the index is extracted under before any model call. The whole index must also fit one step's source-read budget (see changeSourcesRelease.unitsPerRunMax). At the 262,144-byte ceiling a range of about 450 units still binds a full page, and v0.0.1-rc.0..v0.0.1-rc.1 (389 units) does; on a smaller model window a long range binds a shorter page, or refuses with change-source-release-index-over-read-budget when not even one unit fits beside the listing. The count is read with rev-list --first-parent --count before any unit is listed, so a refusal reports the real number.
+
+  - name: changeSourcesRelease.unitsPerRunMax
+    value: 126
+    unit: count
+    scope: per-run
+    warnAt: 1
+    override: DOCSFAB_CHANGE_SOURCES_RELEASE_UNITS_PER_RUN_MAX
+    min: 1
+    max: 127
+    refusal: change-source-release-observations-exceeded
+    remediation: Lower DOCSFAB_CHANGE_SOURCES_RELEASE_UNITS_PER_RUN_MAX or pass fewer --source files, then run again; the units index names the continuation selector for the units after this page.
+    rationale: Units one run resolves and binds as evidence, the first page of the release range, oldest first. Each bound unit adds two observations (its change-source record and its diff) and the release adds one units index, and a source binding holds at most 256 observations, so 127 units is the most one run can bind and the ceiling here. The units index is the release's one required read and a write step reads it whole, so before any model call the host also shortens the page until the index fits the source-read budget of the model the run binds (sources.readResponseCeilingBytes, or sources.readInputWindowShare of a smaller window), records that budget in the index, and names the shortened page in the status output; unit records and diffs are bound but optional, because requiring them split the budget into fragments (on v0.0.1-rc.1..v0.0.1-rc.2 they needed 1,002,483 bytes against 262,144, and the index was read at 3,370 of 103,400 bytes). Measured on 2026-10-07, this repository's v0.0.1-rc.1..v0.0.1-rc.2 release (126 merge units, about 15 changed files each) has a units index of about 103,600 bytes, so 126 binds it in one run at the default ceiling with room for three --source files; on a 128,000-token window (76,185 bytes) the same release pages. A longer range is paged, not refused - the index and the operator status list every unit after the page with the continuation selector release:<last bound unit>..<head> - and the host refuses before any model call, with the observed count, when the index, the page and the --source files would exceed the binding's cap.

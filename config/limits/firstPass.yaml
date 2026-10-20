@@ -1,0 +1,212 @@
+# DocsFab operational limits owned by the `firstPass` name prefix.
+# Registered in config/limits.yaml; every limit here is named `firstPass.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+# The knowledge first pass reads these defaults from its generated mirror,
+# packages/knowledge/src/first-pass-limits.generated.mjs; the runtime host
+# resolves them with host overrides and passes the effective values in.
+limits:
+  - name: firstPass.evidenceExpansionModelTurns
+    value: 6
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_FIRST_PASS_EVIDENCE_EXPANSION_MODEL_TURNS
+    min: 1
+    max: 16
+    refusal: first-pass-evidence-expansion-model-turns-bound
+    remediation: Raise DOCSFAB_FIRST_PASS_EVIDENCE_EXPANSION_MODEL_TURNS, up to 16, when first pass stops at maxRounds with obligations unresolved, and raise DOCSFAB_FIRST_PASS_MAX_SOURCE_FILES with it so each round keeps its share of sources, or name the sources the request needs by path or with --source.
+    rationale: Evidence-expansion assessments after the first assessment round. Each one reads more sources for the obligations still unresolved, ranked by their terms and led by any file an open obligation names, and runs only while the previous round left fewer obligations open, or an open obligation names a file not yet read, or the request names a source first pass could not read; a round that leaves as many open, or finds nothing new, ends the loop (#2113). The first-pass model-turn budget is the three mandatory model phases (decomposition, completeness, assessment), plus this allowance, plus retry.maxRetries correction rounds (#1284). Each round reads an even share of firstPass.maxSourceFiles, so that limit grows with this one. In the real-world benchmark rerun at main f6f4c902b, the 57 first passes (16 tasks) used 1 to 4 rounds, median 1, and 9 of them used all four rounds of the former allowance of 3. Those were recorded as needing a fifth round, and at main 1a293eabb (rerun rr-20261007a) SR-1, DY-1, and MB-3 used all seven rounds of this default and were recorded as needing an eighth. Each value was one past the limit by construction, and those passes kept obligations open that no repository source closed. Six stays, since a pass that leaves fewer obligations open each round, or follows a named file, can use them, and a round that leaves as many open no longer spends the rest. Each round took under 17 seconds there on a composition with a 30-minute timer; firstPass.assessmentInputWindowShare names the compositions whose 5-minute timer is tighter. The first pass records maxRounds only when this allowance ended a loop that would otherwise have run another round, which is when its last round left fewer obligations open, an open obligation still names a file not yet read, or the request names a source first pass could not read, a run that stops unless every gap closes. A loop that had converged ended before the allowance, so none is recorded one past the limit for it.
+    docValue: 6 rounds
+    docSummary: Evidence-expansion assessments after the first one. Each reads more sources for the obligations still unresolved, and runs only while the previous round left fewer of them open or an open one names a file not yet read.
+
+  - name: firstPass.modelInputTokensPerTurn
+    value: 1050000
+    unit: tokens
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_FIRST_PASS_MODEL_INPUT_TOKENS_PER_TURN
+    min: 1
+    max: 4194304
+    refusal: first-pass-model-input-tokens-per-turn-bound
+    remediation: Raise DOCSFAB_FIRST_PASS_MODEL_INPUT_TOKENS_PER_TURN, up to 4194304, when first pass stops at its cumulative input budget or a first-pass stop names this setting as the assessment prompt bound; the model profile's maxInputTokens still caps each turn's share.
+    rationale: Cumulative first-pass input budget per budgeted model turn, clamped per turn to the model profile's maxInputTokens. One turn's share also caps one assessment prompt, its evidence frames included, at the bridge's estimate of three bytes per token. The default is the largest input window an installed composition seals, sealed.compositionLimits.maxInputTokens (1,050,000 tokens), so on every installed composition the model's window, through firstPass.assessmentInputWindowShare, sizes the prompt, and a first pass that spends every turn on a full assessment still fits. A model without an attested window gets one turn's share as its window. The worst case on the benchmark composition, two obligation phases and ten full assessments (seven rounds and three correction rounds) of about 784,900 estimated tokens each, is about 7.8 million input tokens a pass, inside the 12.6 million cumulative budget of 12 turns. A host lowers it to cap first-pass input cost, and the prompt shrinks with it. The former 262,144 tokens was exactly the former 786,432-byte prompt, so raising firstPass.maxPresentedBytes alone could not raise the prompt.
+    docValue: 1,050,000 tokens
+    docSummary: Cumulative first-pass input budget per budgeted model turn, and a cap on one assessment prompt. The model profile's input limit caps each turn's share.
+
+  - name: firstPass.modelOutputTokensPerTurn
+    value: 4096
+    unit: tokens
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_FIRST_PASS_MODEL_OUTPUT_TOKENS_PER_TURN
+    min: 1
+    max: 131072
+    refusal: first-pass-model-output-tokens-per-turn-bound
+    remediation: Raise DOCSFAB_FIRST_PASS_MODEL_OUTPUT_TOKENS_PER_TURN, up to 131072, when first-pass answers are cut at the response bound or the request policy's minimum output tokens is above it; the model profile's maxOutputTokens still caps each answer.
+    rationale: The first-pass response bound for one model answer, and the cumulative first-pass output budget per budgeted model turn, clamped per turn to the model profile's maxOutputTokens. The knowledge first pass asks for at most this many output tokens per answer. It is the former fixed 16384-token cumulative cap divided by the former four-turn budget; a host can raise it for requests with many obligations.
+    docValue: 4,096 tokens
+    docSummary: The first-pass response bound for one model answer, and the cumulative output budget per budgeted model turn.
+
+  - name: firstPass.maxScannedFiles
+    value: 100000
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_FIRST_PASS_MAX_SCANNED_FILES
+    min: 1
+    max: 10000000
+    refusal: first-pass-max-scanned-files-bound
+    remediation: Raise DOCSFAB_FIRST_PASS_MAX_SCANNED_FILES above the tracked file count, up to 10000000, or name the sources the request needs by path or with --source.
+    rationale: Tracked files of the selected revision that first pass lists, ranks, and matches against paths the request names. It was a 256-file breadth-first walk from the repository root until issue 1915, which never reached implementation sources in repositories of about 1,200 files. Representative repositories hold 1,000 to 10,000 tracked files; the default keeps ten times the larger. Listing a path reads no bytes.
+    docValue: 100,000 files
+    docSummary: Tracked files first pass lists, ranks, and matches against the paths a request names. Listing a file reads none of its bytes.
+
+  - name: firstPass.maxSourceFiles
+    value: 448
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_FIRST_PASS_MAX_SOURCE_FILES
+    min: 1
+    max: 100000
+    refusal: first-pass-max-source-files-bound
+    remediation: Raise DOCSFAB_FIRST_PASS_MAX_SOURCE_FILES, up to 100000, or name the sources the request needs by path or with --source; first pass reads named sources before it ranks the rest.
+    rationale: Repository files whose evidence spans one first pass offers the model, across all its rounds. Each round may use an even share of what is left, so expansion rounds keep a share; named sources, targets, and --source selections are read before the share applies. 32 files filled with documentation pages before any code was read (#1915, Dynamo, Megatron Bridge, AutoModel). The default is 64 files for each of the seven rounds firstPass.evidenceExpansionModelTurns allows, the share each round had before. In the benchmark rerun at main f6f4c902b, first passes that settled in one round cited evidence from as deep as the 64th file they read, so a smaller first-round share would have missed it. Evidence bytes, not this count, bound the prompt. A round's share ends the round before this limit is charged, so the limit is recorded only when it refuses a file a round would have read (#2113).
+    docValue: 448 files
+    docSummary: Repository files whose evidence first pass offers the model, across all rounds. Sources the request names are read first.
+
+  - name: firstPass.maxFileBytes
+    value: 4194304
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_FIRST_PASS_MAX_FILE_BYTES
+    min: 1
+    max: 1073741824
+    refusal: first-pass-max-file-bytes-bound
+    remediation: Raise DOCSFAB_FIRST_PASS_MAX_FILE_BYTES above the file's size, up to 1073741824, or select a smaller source.
+    rationale: Largest single unnamed repository file first pass reads. A file under it is read whole and offered in windows around the request's terms, so a long source no longer costs its whole size in evidence; a file the request names is read past it, within firstPass.maxTotalReadBytes. Files over the former 64 KiB bound were skipped silently until issue 1915; generated code and implementation diffs in representative repositories reach a few MiB.
+    docValue: 4,194,304 bytes (4 MiB)
+    docSummary: Largest single file first pass reads unless the request names it. A larger unnamed file is not read, and the record names the bound.
+
+  - name: firstPass.maxTotalReadBytes
+    value: 67108864
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_FIRST_PASS_MAX_TOTAL_READ_BYTES
+    min: 1
+    max: 4294967296
+    refusal: first-pass-max-total-read-bytes-bound
+    remediation: Raise DOCSFAB_FIRST_PASS_MAX_TOTAL_READ_BYTES, up to 4294967296, or name fewer and smaller sources.
+    rationale: Repository bytes one first pass reads across all rounds. It holds firstPass.maxSourceFiles sources at a typical source size with room for several files near firstPass.maxFileBytes. A round stops reading ranked files at the first file the remaining budget cannot hold, and the record names the bound. The former 1 MiB budget held 16 files at the old per-file bound.
+    docValue: 67,108,864 bytes (64 MiB)
+    docSummary: Repository bytes one first pass reads across all rounds.
+
+  - name: firstPass.maxSpans
+    value: 2048
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_FIRST_PASS_MAX_SPANS
+    min: 1
+    max: 1000000
+    refusal: first-pass-max-spans-bound
+    remediation: Raise DOCSFAB_FIRST_PASS_MAX_SPANS, up to 1000000, or name fewer sources.
+    rationale: Evidence spans one first pass offers. A span is a window of at most 120 lines, and its frame counts against the assessment prompt bound, so prompt bytes usually bind first; this count keeps a prompt of many tiny spans bounded. 96 spans ran out before 32 files were offered. In the benchmark rerun at main f6f4c902b one round offered up to 202 spans and one pass at most 610, and every prompt averaged at least 1,289 presented bytes a span, its request and obligations included. Seven rounds of 202 spans are 1,414 spans, and 2,048 spans at that average overfill the 2,353,284-byte prompt of a 1,050,000-token window, so prompt bytes still bind before this count.
+    docValue: 2,048 spans
+    docSummary: Evidence spans one first pass offers the model.
+
+  - name: firstPass.maxPresentedBytes
+    value: 4194304
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_FIRST_PASS_MAX_PRESENTED_BYTES
+    min: 1
+    max: 67108864
+    refusal: first-pass-max-presented-bytes-bound
+    remediation: Raise DOCSFAB_FIRST_PASS_MAX_PRESENTED_BYTES, up to 67108864, when a first-pass stop names it as the assessment prompt bound; when the stop names firstPass.assessmentInputWindowShare or firstPass.modelInputTokensPerTurn, raise that setting instead. Or name fewer sources.
+    rationale: Ceiling on the bytes of one first-pass assessment prompt, the request and its obligations plus every evidence span with its frame, so the frames that wrap each span are counted, not only its text. The host sizes the prompt from the bound model's input window (firstPass.assessmentInputWindowShare) and one turn's input share (firstPass.modelInputTokensPerTurn), at the bridge's estimate of three bytes per token, and applies this ceiling over both. 4 MiB is above the whole input window of every installed composition at that estimate, 3,150,000 bytes for 1,050,000 tokens, so the window sets the prompt and this ceiling binds only when a host lowers it. Once the prompt is full, first pass stops reading ranked files, still reads the sources the request names, and records the files it left unread. The former fixed 786,432 bytes stopped 18 of the 57 first passes of the benchmark rerun at main f6f4c902b, each with the prompt full and 786,559 to 794,513 bytes wanted.
+    docValue: 4,194,304 bytes (4 MiB)
+    docSummary: Ceiling on the bytes of one first-pass assessment prompt, every evidence frame included. The model's input window sets the prompt below it.
+
+  - name: firstPass.assessmentInputWindowShare
+    value: 0.75
+    unit: ratio
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_FIRST_PASS_ASSESSMENT_INPUT_WINDOW_SHARE
+    min: 0.01
+    max: 1
+    refusal: first-pass-assessment-input-window-share-bound
+    remediation: Raise DOCSFAB_FIRST_PASS_ASSESSMENT_INPUT_WINDOW_SHARE, up to 1, so one assessment prompt may fill more of the model's input window, run with a model whose input window is larger, or name fewer sources.
+    rationale: Share of the bound model's admitted input window, after its context reserve, that one first-pass assessment prompt may fill, at the bridge's estimate of three bytes per token, the way sources.readInputWindowShare sizes a step's source reads. firstPass.modelInputTokensPerTurn and firstPass.maxPresentedBytes cap the result. A model without an attested window, such as an endpoint that matches no installed composition, gets one turn's input share as its window. The prompt is the whole assessment request, so it takes most of the window. Each figure here assumes the 4,096-token context reserve of the shipped profiles; the 1,024-token reserve docsfab setup writes for a custom endpoint adds 6,912 bytes. On the 1,050,000-token window of the benchmark composition, 0.75 holds 2,353,284 bytes, 2.96 times the largest demand of the 18 first passes the former fixed 786,432-byte prompt stopped in the rerun at main f6f4c902b (794,513 bytes), and room for seven rounds at its 90th-percentile growth of 305,690 bytes a round after a first round of up to 403,832. That rerun measured 3.10 to 3.85 bytes per provider token, so a full prompt leaves about a quarter of the window for the answer and denser text. Windows under about 353,600 tokens get a smaller prompt than the former fixed bound, 580,608 bytes at 262,144 tokens, 278,784 at 128,000, and 138,240 at 65,536, against 786,432, 384,000, and 196,608 before. A share of 1 gives 371,712 bytes at 128,000 tokens, not the former 384,000, because the reserve now counts. The five installed compositions with a window of 262,144 tokens or more and a 5-minute attempt timer (nvidia-nemotron-3-super-120b-a12b-pi, nvidia-inference-nemotron-3-super-v3-pi, nvidia-inference-nemotron-3-ultra-pi, nvidia-inference-deepseek-v4-pro-pi, and nvidia-inference-qwen3-5-397b-a17b-pi) now get prompts of up to about 2.35 MB over up to seven rounds within that timer, so a first pass that selects one with --composition may stop at its deadline.
+    docValue: 0.75 (three quarters of the input window)
+    docSummary: Share of the model's input window, after its context reserve, that one first-pass assessment prompt may fill at three bytes per token.
+
+  - name: firstPass.readDeadlineMs
+    value: 120000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_FIRST_PASS_READ_DEADLINE_MS
+    min: 1
+    max: 3600000
+    refusal: first-pass-read-deadline-ms-bound
+    remediation: Raise DOCSFAB_FIRST_PASS_READ_DEADLINE_MS, up to 3600000, on a host whose repository reads are slow.
+    rationale: Wall clock first pass may spend listing and reading repository files, and checking them for DocsFab's own configured credentials, separate from model time. 30 seconds was sized for 256 listed files and 1 MiB of reads; issue 1915 lists every tracked file and reads up to firstPass.maxTotalReadBytes.
+    docValue: 120,000 ms (2 minutes)
+    docSummary: Wall clock first pass may spend listing, reading, and screening repository files, apart from model time.
+
+  - name: firstPass.modelDeadlineMs
+    value: 1800000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_FIRST_PASS_MODEL_DEADLINE_MS
+    min: 1
+    max: 14400000
+    refusal: first-pass-model-deadline-ms-bound
+    remediation: Raise DOCSFAB_FIRST_PASS_MODEL_DEADLINE_MS, up to 14400000; an installed composition with a shorter attempt timer still applies its own.
+    rationale: Wall clock for all first-pass model calls, applied with the installed composition's attempt timer, whichever is shorter. It was a fixed 10 minutes; with several evidence-expansion rounds of larger assessments, 30 minutes matches the longest sealed composition attempt timer.
+    docValue: 1,800,000 ms (30 minutes)
+    docSummary: Wall clock for all first-pass model calls. A composition with a shorter attempt timer still applies it.
+
+  - name: firstPass.maxContradictionSides
+    value: 8
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 2
+    max: 8
+    refusal: first-pass-max-contradiction-sides-bound
+    remediation: The first-pass assessment named more disagreeing sides for one contradicted obligation than one question can carry and is re-asked for fewer; name the sources the request needs by path or with --source so fewer sources compete.
+    rationale: Disagreeing sources one contradicted first-pass obligation may name, each one span and its verbatim value. Two is structural (a contradiction needs two sides) and is not this bound. Every side becomes an option of the operator question, so the bound keeps one question answerable. The pilot conflicts name two or three sides (service port, cell 658 - docs/deployment.md, deploy.yaml and src/server.ts); eight leaves more than twice that headroom. Sealed with no override because the question shape, not a host, owns it.
+
+  - name: firstPass.maxContradictionValueChars
+    value: 200
+    unit: characters
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 200
+    refusal: first-pass-max-contradiction-value-chars-bound
+    remediation: The first-pass assessment quoted a disagreeing value longer than the bound and is re-asked for the shortest verbatim text that carries the disputed value.
+    rationale: UTF-16 code units of one disagreeing value, copied verbatim from its span into the operator question. A value is the disputed fact itself - a port, a status code, a command, a flag default - not the surrounding sentence. The pilot conflicts were 4 characters (9090, 8088) and 12 characters (202 Accepted); a full install command line runs to about 120. Two hundred keeps each option of the question one readable line, with headroom over the longest seen. Sealed with no override because the question shape, not a host, owns it.
+
+  - name: firstPass.maxObligationConditionChars
+    value: 500
+    unit: characters
+    scope: sealed
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 500
+    refusal: first-pass-max-obligation-condition-chars-bound
+    remediation: State that constraint of the request in a shorter sentence, then run again; first pass records each constraint whole and never shortens it. Raising firstPass.maxObligationConditionChars in config/limits/firstPass.yaml changes the sealed first-pass support record and needs a DocsFab change, not an override.
+    rationale: UTF-16 code units of one first-pass obligation condition. It bounds the conditions the model writes in its decomposition and completeness answers, and each constraint an admitted request intent seeds, which first pass records whole as the slice of the request as written. The support record keeps every condition and the runtime support decoder holds this bound, so a record reads the same on every host and no override tier applies. An intent quote may run to requestIntent.maxQuoteChars, measured on the normalized request; no condition bound admits every such quote, since the text as written can be several times longer than its normalized form, so a longer constraint stops before any model call with this code, the observed length, and the bound, and is never cut. 500 is the bound conditions carried before they moved to this catalog. The pilot requests run 172 to 326 characters in total, so any one of their clauses fits with headroom, and one condition stays a single readable requirement in the completeness and assessment prompts.
+    docValue: 500 characters
+    docSummary: Characters of one first-pass obligation condition, counted in the request as written. A request-intent constraint longer than this stops first pass before any model call; first pass never shortens it.

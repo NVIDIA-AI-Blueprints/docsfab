@@ -1,0 +1,59 @@
+# Template Set Skill Chains
+# Pre-defined multi-step workflows that combine skills.
+#
+# Each chain defines:
+#   - name: Display name
+#   - description: What the chain does
+#   - steps: Ordered list of skills to execute
+#     - skill: Skill name (must exist in skills directory)
+#     - purpose: What this step accomplishes
+
+chains:
+  tpl-pipeline:
+    name: Template Pipeline
+    description: Pick the right template, scaffold a new page, then validate it
+    steps:
+      - skill: tpl-pick
+        purpose: Recommend the right template and format for the user's goal
+      - skill: tpl-new-page
+        purpose: Create the page from the recommended template
+      - skill: tpl-lint
+        purpose: Validate the scaffolded page against its schema
+
+  tpl-apply-template-workflow:
+    name: Skill-Assisted Template Application
+    description: Intake, pick, apply, validate, and report on one templated page
+    steps:
+      - skill: tpl-pick
+        purpose: Capture goal, reader persona, critical user journey, target path, evidence, and template recommendation
+      - skill: tpl-apply-template
+        purpose: Patch the existing target page against the selected template without silently overwriting authored content
+      - skill: tpl-lint
+        purpose: Validate structure and feed the result into the review handoff
+
+  tpl-quick-validate:
+    name: Quick Validate
+    description: Lint a page; if no schema matches, recommend the right template instead
+    steps:
+      - skill: tpl-lint
+        purpose: Check structure against template schema
+      - skill: tpl-pick
+        purpose: Suggest the correct template if the page doesn't match any schema
+
+  tpl-full-site:
+    name: Full Site Bootstrap
+    description: Bootstrap a complete doc site and validate every generated page
+    steps:
+      - skill: tpl-new-site
+        purpose: Generate the full directory tree from the canonical IA
+      - skill: tpl-lint
+        purpose: Validate every generated page against its schema
+
+  tpl-migrate-site-and-validate:
+    name: Migrate and Validate
+    description: Migrate an existing docs tree toward the canonical IA and validate the result
+    steps:
+      - skill: tpl-migrate-site
+        purpose: Generate a plan-first migration with proposed renames, splits, moves, and indexes
+      - skill: tpl-lint
+        purpose: Validate the post-migration pages against their schemas

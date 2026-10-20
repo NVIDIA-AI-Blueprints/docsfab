@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0",
+  "kind": "docsfab-product-default-resources",
+  "layer": "product",
+  "style_profile": {
+    "bar_id": "profile:nvidia-technical-documentation",
+    "delivered_files": ["style-guide.md", "TERMINOLOGY.md"]
+  },
+  "evaluation_profile": {
+    "bar_id": "profile:docsfab-documentation-quality",
+    "reader_impact_baseline": "reader-impact-baseline.md"
+  }
+}

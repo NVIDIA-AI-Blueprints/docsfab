@@ -1,0 +1,39 @@
+# DocsFab operational limits owned by the `reviewScope` name prefix.
+# Registered in config/limits.yaml; every limit here is named `reviewScope.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: reviewScope.maxTargets
+    value: 256
+    unit: count
+    scope: per-host
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 256
+    refusal: review-scope-max-targets-bound
+    remediation: Name the first batch of pages (or one page with --context-path), then continue with a second command targeting the rest. A whole-documentation-set review that needs more target entries than this splits the same way.
+    rationale: Most entries one review target may hold - the pages a focused review names, or the host-derived evaluation target of a whole-documentation-set review (one entry per page, or per directory whose documents are all in scope). Structural input validation for named pages, so a malformed or hostile producer cannot hand the parser an unbounded array, and a cap on the step 8 prompt, which states the evaluation target. The evaluator does not echo the target - the host writes evaluation.target.paths - so it costs prompt input, not output allowance. Measured 2026-10-01 - this repository's whole-set target is 81 entries serialized in 3,165 characters (about 0.8k tokens); its longest tracked documentation path is 174 characters, so a target at this bound is at most about 44.5k characters (about 11k input tokens), within the 131,072-token context the measured step 8 runs used. How many named pages a run actually covers is still decided from measured page sizes; anything the budget cannot cover is deferred and reported rather than dropped. No override tier, because raising it would raise the parser's exposure and the evaluator prompt rather than an operator allowance.
+
+  - name: reviewScope.pathMaxChars
+    value: 512
+    unit: characters
+    scope: per-host
+    warnAt: 0.8
+    override: null
+    min: 64
+    max: 512
+    refusal: review-scope-path-max-chars-bound
+    remediation: Name a shorter repository-relative documentation path, or raise reviewScope.pathMaxChars in config/limits/reviewScope.yaml.
+    rationale: Longest repository-relative documentation path a focused review target or a hosted native task may name. Structural input validation against a malformed or hostile producer; shape rules on the same path - no leading slash or tilde, no backslash, no empty or dot segment, no whitespace or comma, no credential shape - stay separate from this length allowance. The default of 512 characters is several times the longest documentation path this repository tracks, which is 80 characters.
+
+  - name: reviewScope.continuationTextMaxChars
+    value: 2048
+    unit: characters
+    scope: sealed
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 2048
+    refusal: review-scope-continuation-text-max-chars-bound
+    remediation: Shorten the rendered continuation, or qualify its producer and this reader together before raising the text capacity.
+    rationale: Admitted length of the continuation text a deferred review scope carries, counted in UTF-16 units. It exists so a rendered continuation keeps a complete command and its omitted-page accounting; it is this contract's own capacity and not an asserted chat-transport character limit.

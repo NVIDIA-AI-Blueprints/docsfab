@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "kind": "knowledge-accepted-snapshot",
+  "projectId": "example-project",
+  "modelVersionId": "example-model",
+  "streamVersion": 1,
+  "status": "approved",
+  "claims": [
+    {
+      "id": "claim:example",
+      "kind": "intent",
+      "scope": "Sample command",
+      "statement": "The sample command prints one local report.",
+      "modelState": "canonical",
+      "evidenceIds": ["source:example"]
+    }
+  ],
+  "sources": [
+    {
+      "id": "source:example",
+      "locator": "src/report.ts"
+    }
+  ],
+  "conflicts": [],
+  "snapshotSha256": "62153bc1d6420135c64eec134d618f167b1cf45f32d67e0d6c9cdc99869753ff"
+}

@@ -1,0 +1,258 @@
+{
+  "_provenance": "Content-free extraction of live run 48ef1a5c-95ea-4133-93ac-5fa052c8e08c (create-documentation, Inference Hub nvidia/nvidia/nemotron-3-super-v3, development evidence, 2026-10-01): step identity, status, plan binding, attempt outcomes and tool counts only. Recorded failure: workflow-outcome-projection-invalid-record at $.authoringExecution.",
+  "id": "48ef1a5c-95ea-4133-93ac-5fa052c8e08c",
+  "workflow": "create-documentation",
+  "repository": {
+    "revision": "249ea7119df68b68c75dcc7e64637b8b9b6f7180"
+  },
+  "status": "failed",
+  "failure": {
+    "class": "contract-shape",
+    "layer": "workflow",
+    "code": "workflow-outcome-projection-invalid-record"
+  },
+  "workflowOutcomeRejection": {
+    "code": "workflow-outcome-projection-invalid-record",
+    "location": "$.authoringExecution"
+  },
+  "steps": [
+    {
+      "id": "plan-documentation",
+      "kind": "evaluate",
+      "skill": "plan-documentation",
+      "mode": "read-only",
+      "status": "succeeded",
+      "planBinding": {
+        "kind": "docsfab-documentation-plan",
+        "schemaVersion": 1,
+        "mode": "create",
+        "pages": [
+          {
+            "path": "docs/routing/guide.md",
+            "disposition": "create"
+          }
+        ],
+        "sourceBindings": [
+          {
+            "pagePath": "docs/routing/guide.md",
+            "sources": [
+              ".docsfab/reference-model/knowledge-accepted-snapshot.json",
+              "AGENTS.md",
+              "fixture-seed/home/.agents/skills/malformed-audit/SKILL.md",
+              "fixture-seed/repairs/malformed-audit.SKILL.md",
+              "PRODUCT_ROUTING_CONTRACT.md",
+              "src/router_fixture/cli.py",
+              "src/router_fixture/registry.py",
+              "tests/test_routing_contract.py"
+            ]
+          }
+        ],
+        "digest": "a4dea305ff621a3f386ab3d7ae7fee2f3e0e6392e54296c7cc4361f825403c47"
+      },
+      "inference": {
+        "attempts": [
+          {
+            "attempt": 1,
+            "outcome": "succeeded"
+          }
+        ]
+      },
+      "tools": {
+        "totalCalls": 33,
+        "failedCalls": 4,
+        "byTool": [
+          {
+            "name": "find",
+            "calls": 1,
+            "failures": 0
+          },
+          {
+            "name": "grep",
+            "calls": 1,
+            "failures": 0
+          },
+          {
+            "name": "ls",
+            "calls": 4,
+            "failures": 0
+          },
+          {
+            "name": "read",
+            "calls": 27,
+            "failures": 4
+          }
+        ],
+        "failureCategories": [
+          {
+            "category": "expected-missing-probe",
+            "count": 3
+          },
+          {
+            "category": "tool-defect",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "derive-source-obligations",
+      "kind": "evaluate",
+      "skill": "verify-technical-accuracy",
+      "mode": "read-only",
+      "status": "succeeded",
+      "planBinding": {
+        "kind": "docsfab-documentation-plan",
+        "schemaVersion": 1,
+        "mode": "create",
+        "pages": [
+          {
+            "path": "docs/routing/guide.md",
+            "disposition": "create"
+          }
+        ],
+        "sourceBindings": [
+          {
+            "pagePath": "docs/routing/guide.md",
+            "sources": [
+              ".docsfab/reference-model/knowledge-accepted-snapshot.json",
+              "AGENTS.md",
+              "fixture-seed/home/.agents/skills/malformed-audit/SKILL.md",
+              "fixture-seed/repairs/malformed-audit.SKILL.md",
+              "PRODUCT_ROUTING_CONTRACT.md",
+              "src/router_fixture/cli.py",
+              "src/router_fixture/registry.py",
+              "tests/test_routing_contract.py"
+            ]
+          }
+        ],
+        "digest": "a4dea305ff621a3f386ab3d7ae7fee2f3e0e6392e54296c7cc4361f825403c47"
+      },
+      "inference": {
+        "attempts": [
+          {
+            "attempt": 1,
+            "outcome": "malformed-response"
+          },
+          {
+            "attempt": 2,
+            "outcome": "succeeded"
+          }
+        ]
+      },
+      "tools": {
+        "totalCalls": 126,
+        "failedCalls": 0,
+        "byTool": [
+          {
+            "name": "read",
+            "calls": 126,
+            "failures": 0
+          }
+        ],
+        "failureCategories": []
+      }
+    },
+    {
+      "id": "write-documentation",
+      "kind": "inference",
+      "skill": "write-documentation",
+      "mode": "write",
+      "status": "needs-input",
+      "planBinding": {
+        "kind": "docsfab-documentation-plan",
+        "schemaVersion": 1,
+        "mode": "create",
+        "pages": [
+          {
+            "path": "docs/routing/guide.md",
+            "disposition": "create"
+          }
+        ],
+        "sourceBindings": [
+          {
+            "pagePath": "docs/routing/guide.md",
+            "sources": [
+              ".docsfab/reference-model/knowledge-accepted-snapshot.json",
+              "AGENTS.md",
+              "fixture-seed/home/.agents/skills/malformed-audit/SKILL.md",
+              "fixture-seed/repairs/malformed-audit.SKILL.md",
+              "PRODUCT_ROUTING_CONTRACT.md",
+              "src/router_fixture/cli.py",
+              "src/router_fixture/registry.py",
+              "tests/test_routing_contract.py"
+            ]
+          }
+        ],
+        "digest": "a4dea305ff621a3f386ab3d7ae7fee2f3e0e6392e54296c7cc4361f825403c47"
+      },
+      "inference": {
+        "attempts": [
+          {
+            "attempt": 1,
+            "outcome": "succeeded"
+          }
+        ]
+      },
+      "tools": {
+        "totalCalls": 17,
+        "failedCalls": 1,
+        "byTool": [
+          {
+            "name": "edit",
+            "calls": 1,
+            "failures": 1
+          },
+          {
+            "name": "ls",
+            "calls": 3,
+            "failures": 0
+          },
+          {
+            "name": "read",
+            "calls": 11,
+            "failures": 0
+          },
+          {
+            "name": "write",
+            "calls": 2,
+            "failures": 0
+          }
+        ],
+        "failureCategories": [
+          {
+            "category": "denied-path",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "lint-documentation",
+      "kind": "host-operation",
+      "skill": "lint-documentation",
+      "mode": "read-only",
+      "status": "pending"
+    },
+    {
+      "id": "provisional-technical-verification",
+      "kind": "evaluate",
+      "skill": "verify-technical-accuracy",
+      "mode": "read-only",
+      "status": "pending"
+    },
+    {
+      "id": "review-documentation",
+      "kind": "evaluate",
+      "skill": "review-documentation",
+      "mode": "read-only",
+      "status": "pending"
+    },
+    {
+      "id": "verify-technical-accuracy",
+      "kind": "evaluate",
+      "skill": "verify-technical-accuracy",
+      "mode": "read-only",
+      "status": "pending"
+    }
+  ]
+}

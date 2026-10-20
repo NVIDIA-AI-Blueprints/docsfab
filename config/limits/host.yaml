@@ -1,0 +1,675 @@
+# DocsFab operational limits owned by the `host` name prefix.
+# Registered in config/limits.yaml; every limit here is named `host.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: host.slack.liveAgentTurnTextMaxBytes
+    value: 160000
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_HOST_SLACK_LIVE_AGENT_TURN_TEXT_MAX_BYTES
+    min: 1
+    max: 160000
+    refusal: host-slack-live-agent-turn-text-max-bytes-bound
+    remediation: Reduce pasted text and point DocsFab at repository files, or restore the configured question allowance up to its qualified maximum before submitting again.
+    rationale: Qualified full-message capacity, not an asserted inbound Slack limit. 40,000 text characters at four UTF-8 bytes each require 160,000 bytes. The live-agent event, aggregate frozen-input and wire capacities derive their extra space from this capacity and actual JSON framing; the existing non-live workflow envelopes remain unchanged.
+    docValue: 160,000 bytes
+    docSummary: UTF-8 question bytes admitted before a job is created. You can lower this allowance.
+
+  - name: host.slack.transportTextChars
+    value: 40000
+    unit: characters
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_HOST_SLACK_TRANSPORT_TEXT_CHARS
+    min: 1
+    max: 40000
+    refusal: host-slack-transport-text-chars-bound
+    remediation: Split the Slack result into messages within the configured transport bound, or restore DOCSFAB_HOST_SLACK_TRANSPORT_TEXT_CHARS up to the documented Slack maximum, then retry the same request.
+    rationale: Slack chat.postMessage truncates text above 40,000 characters (https://docs.slack.dev/reference/methods/chat.postMessage/). The host refuses oversized writes before transport. Slack recommends 4,000 for readability; that recommendation is not its protocol ceiling. JavaScript UTF-16 length conservatively counts supplementary characters twice.
+    docValue: 40,000 characters
+    docSummary: Maximum text sent in one Slack message.
+
+  - name: host.slack.liveAgentAnswerChunkBudget
+    value: 40000
+    unit: characters
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_HOST_SLACK_LIVE_AGENT_ANSWER_CHUNK_BUDGET
+    min: 64
+    max: 40000
+    refusal: host-slack-live-agent-answer-chunk-budget-bound
+    remediation: Use a message allowance no greater than host.slack.transportTextChars; reduce it for shorter messages without reducing the complete answer.
+    rationale: Per-message allowance including the actual sequence marker, defaulting to the documented Slack transport maximum. The shared planner derives payload space from that marker and delivers every safe retained answer chunk. This setting does not truncate the total answer.
+    docValue: 40,000 characters
+    docSummary: Message allowance including its sequence marker. A smaller value produces more messages.
+
+  - name: host.slack.liveAgentAnswerMaxChunks
+    value: 0
+    unit: count
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_HOST_SLACK_LIVE_AGENT_ANSWER_MAX_CHUNKS
+    min: 0
+    max: 0
+    refusal: host-slack-live-agent-answer-max-chunks-bound
+    remediation: Remove the obsolete positive chunk-count override or set DOCSFAB_HOST_SLACK_LIVE_AGENT_ANSWER_MAX_CHUNKS=0 for complete answer delivery. Use the per-message chunk budget for shorter messages.
+    rationale: Compatibility setting fixed at zero, meaning complete delivery with no separate total-message policy cap. Positive historical truncation overrides refuse with migration guidance so retained conversation history never contains an unseen answer tail. Finite delivery derives from the bounded retained record.
+    docValueCode: code
+    docSummary: Compatibility setting for complete delivery. Positive legacy values are rejected with migration guidance.
+
+  - name: host.slack.liveAgentRunRecordMaxBytes
+    value: 4194304
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_HOST_SLACK_LIVE_AGENT_RUN_RECORD_MAX_BYTES
+    min: 1
+    max: 4194304
+    refusal: host-slack-live-agent-run-record-max-bytes-bound
+    remediation: Inspect the retained terminal record and its configured provider/output budgets; a record over this existing CAS read envelope cannot be projected as a complete Slack answer.
+    rationale: Names the existing 4 MiB live-agent terminal CAS read guard without raising it. The complete terminal record, including metadata, must fit. Answer decoding derives its finite byte and nonempty-chunk envelope from this guard; this is not a new total-message policy cap.
+
+  - name: host.slack.askTargetCandidateMax
+    value: 5
+    unit: count
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_HOST_SLACK_ASK_TARGET_CANDIDATE_MAX
+    min: 1
+    max: 20
+    refusal: host-slack-ask-target-candidate-max-bound
+    remediation: Lower DOCSFAB_HOST_SLACK_ASK_TARGET_CANDIDATE_MAX, or raise it within max, then ask again; a narrower target name also produces fewer near matches.
+    rationale: Nearest tracked pages named in the one refusal reply when a Slack question targets a page that is not tracked at the revision the run would freeze. Five keeps the reply readable in a Slack thread and bounds the cost of a wrong name; the list is a courtesy beside the exact path and revision, never the answer itself, so a lower value loses no required information. It is not a review-scope bound, because a question carries exactly one target by grammar.
+
+  - name: host.slack.askTargetLookupTimeoutMs
+    value: 5000
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_HOST_SLACK_ASK_TARGET_LOOKUP_TIMEOUT_MS
+    min: 100
+    max: 120000
+    refusal: host-slack-ask-target-lookup-timeout-ms-bound
+    remediation: Raise DOCSFAB_HOST_SLACK_ASK_TARGET_LOOKUP_TIMEOUT_MS within max if the project mirror is routinely slower than this, or reduce contention on the mirror; a question whose lookup times out is still accepted and verified when it runs.
+    rationale: Wall-clock ceiling for the one bounded read of the project mirror that answers whether a question's target is a tracked page, before anything is queued. The requester is waiting in a Slack thread, so this is far below the general git invocation ceiling the same reader already applies. Exceeding it is a failure to read and never evidence that the page is absent, so the question is still admitted and the exact check runs again when the job starts. Its maximum matches that general git ceiling so it can never be raised past it.
+
+  - name: host.gitlab.noteBodyMaxChars
+    value: 100000
+    unit: characters
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_HOST_GITLAB_NOTE_BODY_MAX_CHARS
+    min: 1
+    max: 100000
+    refusal: host-gitlab-note-body-max-chars-bound
+    remediation: Shorten the review or status note, or raise DOCSFAB_HOST_GITLAB_NOTE_BODY_MAX_CHARS up to the catalog max, then retry the same request.
+    rationale: Longest GitLab MR note body the host posts for a review summary or forge status note. Producers clip with an omitted-character notice. Transport refuses a longer body rather than letting GitLab fail as a generic post error. Override may only lower it.
+
+  - name: host.gitlab.safeLabelMaxChars
+    value: 120
+    unit: characters
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_HOST_GITLAB_SAFE_LABEL_MAX_CHARS
+    min: 1
+    max: 120
+    refusal: host-gitlab-safe-label-max-chars-bound
+    remediation: Shorten the workflow safe label, or raise DOCSFAB_HOST_GITLAB_SAFE_LABEL_MAX_CHARS up to the catalog max, then retry the same request.
+    rationale: Longest safe-label workflow name a GitLab MR note records. A longer label is refused with this code rather than silently clamped. Override may only lower it.
+
+  - name: host.gitlab.mrNotePatchFiles
+    value: 10
+    unit: count
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_HOST_GITLAB_MR_NOTE_PATCH_FILES
+    min: 1
+    max: 10
+    refusal: host-gitlab-mr-note-patch-files-bound
+    remediation: Name fewer changed files in the status note, or raise DOCSFAB_HOST_GITLAB_MR_NOTE_PATCH_FILES up to the catalog max, then retry the same request.
+    rationale: Most patch file rows a forge status-block note lists. Further portable paths are counted in a PATCH omitted notice rather than dropped. Override may only lower it.
+
+  - name: host.dispatcher.writableTreeEntries
+    value: 9007199254740991
+    unit: count
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_DISPATCHER_WRITABLE_TREE_ENTRIES
+    min: 1
+    max: 9007199254740991
+    refusal: host-dispatcher-writableTreeEntries-bound
+    remediation: Set DOCSFAB_DISPATCHER_WRITABLE_TREE_ENTRIES in the supported host limits configuration within the declared representation range.
+    rationale: Ordinary resource allowance. Entries inspected in an authorized writable tree; increasing this work allowance does not change path or write authority. The default uses the configured maximum; host overrides may lower it. The maximum is the exact-integer representation boundary, not measured machine capacity.
+
+  - name: host.dispatcher.privateGitIndexBytes
+    value: 9007199254740991
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_DISPATCHER_PRIVATE_GIT_INDEX_BYTES
+    min: 1
+    max: 9007199254740991
+    refusal: host-dispatcher-privateGitIndexBytes-bound
+    remediation: Set DOCSFAB_DISPATCHER_PRIVATE_GIT_INDEX_BYTES in the supported host limits configuration within the declared representation range.
+    rationale: Ordinary resource allowance. Bytes permitted for the private Git index copy; filesystem identity and private namespace checks remain independent. The default uses the configured maximum; host overrides may lower it. The maximum is the exact-integer representation boundary, not measured machine capacity.
+
+  - name: host.dispatcher.privateGitLinkBytes
+    value: 536870888
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_DISPATCHER_PRIVATE_GIT_LINK_BYTES
+    min: 1
+    max: 536870888
+    refusal: host-dispatcher-privateGitLinkBytes-bound
+    remediation: Set DOCSFAB_DISPATCHER_PRIVATE_GIT_LINK_BYTES in the supported host limits configuration within the declared representation range.
+    rationale: Ordinary resource allowance. Bytes permitted for parsing the private Git link; exact syntax and containment checks remain independent. The default uses the configured maximum; host overrides may lower it. The maximum is the 64-bit Node UTF-8 string carrier maximum for worst-case ASCII, buffer.constants.MAX_STRING_LENGTH, not measured machine capacity.
+
+  - name: host.dispatcher.stderrExcerptBytes
+    value: 536870888
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_DISPATCHER_STDERR_EXCERPT_BYTES
+    min: 1
+    max: 536870888
+    refusal: host-dispatcher-stderrExcerptBytes-bound
+    remediation: Set DOCSFAB_DISPATCHER_STDERR_EXCERPT_BYTES in the supported host limits configuration within the declared representation range.
+    rationale: Diagnostic-output allowance. Bytes retained in the diagnostic tail; credential screening still applies at every size. The default uses the configured maximum; host overrides may lower it. The maximum is the 64-bit Node UTF-8 string carrier maximum for worst-case ASCII, buffer.constants.MAX_STRING_LENGTH, not measured machine capacity.
+
+  - name: host.dispatcher.stderrBytes
+    value: 9007199254740991
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_DISPATCHER_STDERR_BYTES
+    min: 1
+    max: 9007199254740991
+    refusal: host-dispatcher-stderrBytes-bound
+    remediation: Set DOCSFAB_DISPATCHER_STDERR_BYTES in the supported host limits configuration within the declared representation range.
+    rationale: Diagnostic-output allowance. Total standard-error bytes permitted from the child; changing this allowance cannot release a process before close. The default uses the configured maximum; host overrides may lower it. The maximum is the exact-integer representation boundary, not measured machine capacity.
+
+  - name: host.dispatcher.stderrDrainMs
+    value: 2000
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_DISPATCHER_STDERR_DRAIN_MS
+    min: 1
+    max: 2147483647
+    refusal: host-dispatcher-stderrDrainMs-bound
+    remediation: Set DOCSFAB_DISPATCHER_STDERR_DRAIN_MS in the supported host limits configuration within the declared representation range.
+    rationale: Cleanup timing. Wait for diagnostic collection only; confirmed close remains mandatory afterward. The default preserves the existing value; host overrides may raise or lower it. The maximum is the Node timer representation boundary; larger delays are coerced to one millisecond.
+
+  - name: host.dispatcher.terminateGraceMs
+    value: 1000
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_DISPATCHER_TERMINATE_GRACE_MS
+    min: 1
+    max: 2147483647
+    refusal: host-dispatcher-terminateGraceMs-bound
+    remediation: Set DOCSFAB_DISPATCHER_TERMINATE_GRACE_MS in the supported host limits configuration within the declared representation range.
+    rationale: Cleanup timing. Grace between process-group TERM and KILL; confirmed close remains mandatory afterward. The default preserves the existing value; host overrides may raise or lower it. The maximum is the Node timer representation boundary; larger delays are coerced to one millisecond.
+
+  - name: host.dispatcher.workerCountRepresentation
+    value: 9007199254740991
+    unit: count
+    scope: sealed
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 9007199254740991
+    refusal: host-dispatcher-workerCountRepresentation-bound
+    remediation: Supply a valid explicit worker count or scheduling policy within the declared representation domain.
+    rationale: Configuration representation boundary for explicit operator-selected worker counts. Capacity remains required service configuration; this value is never selected as a worker allocation default.
+
+  - name: host.dispatcher.interactiveReservation
+    value: 2
+    unit: count
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_DISPATCHER_INTERACTIVE_RESERVATION
+    min: 0
+    max: 9007199254740991
+    refusal: host-dispatcher-interactiveReservation-bound
+    remediation: Supply a valid explicit worker count or scheduling policy within the declared representation domain.
+    rationale: Initial scheduling policy. Reserve interactive-only workers within each static project allocation while retaining at least one shared worker; the scheduler clamps this to allocation-1 regardless of this value, so raising it cannot starve the shared lane. Raised from 1 to 2 (Task CAPACITY, 2026-09-30) so a live-agent turn (J1) and a merge semantic comparison (J4) each get their own reserved worker instead of alternating on one, paired with the pilot's reviewed worker-capacity default of 5 (2 reserved + 3 shared) so review-documentation jobs (J3) also run concurrently. This is configurable dispatch policy, not a job or model allowance.
+
+  - name: host.dispatcher.classQuantum
+    value: 1
+    unit: count
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_DISPATCHER_CLASS_QUANTUM
+    min: 1
+    max: 9007199254740991
+    refusal: host-dispatcher-classQuantum-bound
+    remediation: Supply a valid explicit worker count or scheduling policy within the declared representation domain.
+    rationale: Initial scheduling policy. Consecutive shared dispatch opportunities per class when both classes are eligible. The default alternates classes; no running attempt is preempted.
+
+  - name: host.dispatcher.pollIntervalMs
+    value: 500
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_DISPATCHER_POLL_INTERVAL_MS
+    min: 1
+    max: 2147483647
+    refusal: host-dispatcher-pollIntervalMs-bound
+    remediation: Supply a valid explicit worker count or scheduling policy within the declared representation domain.
+    rationale: Queue polling and retry cadence, preserving the existing default. Completions can wake selection sooner. The maximum is the Node timer representation boundary, not a service-latency promise.
+
+  - name: host.dispatcher.statusBytes
+    value: 536870888
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_DISPATCHER_STATUS_BYTES
+    min: 1
+    max: 536870888
+    refusal: host-dispatcher-statusBytes-bound
+    remediation: Configure DOCSFAB_DISPATCHER_STATUS_BYTES within the declared representation domain; inspect degraded status rather than treating it as free capacity.
+    rationale: Status JSON byte allowance, defaulting to the 64-bit Node string representation maximum for worst-case ASCII. This covers aggregate project records without an invented project-count or status-size ceiling; physical memory is not qualified by the representation range.
+
+  - name: host.dispatcher.statusFreshnessMs
+    value: 30000
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_DISPATCHER_STATUS_FRESHNESS_MS
+    min: 1
+    max: 9007199254740991
+    refusal: host-dispatcher-statusFreshnessMs-bound
+    remediation: Configure DOCSFAB_DISPATCHER_STATUS_FRESHNESS_MS within the declared representation domain; inspect degraded status rather than treating it as free capacity.
+    rationale: Preserves the existing status freshness window. Older queue polls or child heartbeats report unknown capacity and degraded health. The range is the exact-integer timestamp-difference representation, not a scheduling SLA.
+
+  - name: host.dispatcher.statusClockSkewMs
+    value: 5000
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_DISPATCHER_STATUS_CLOCK_SKEW_MS
+    min: 0
+    max: 9007199254740991
+    refusal: host-dispatcher-statusClockSkewMs-bound
+    remediation: Configure DOCSFAB_DISPATCHER_STATUS_CLOCK_SKEW_MS within the declared representation domain; inspect degraded status rather than treating it as free capacity.
+    rationale: Preserves the existing future-clock tolerance for status observations. This is an explicit operator timing policy; larger tolerances do not authorize job claims or relax their fences.
+
+  - name: host.dispatcher.shutdownGraceMs
+    value: 10000
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_DISPATCHER_SHUTDOWN_GRACE_MS
+    min: 1
+    max: 2147483647
+    refusal: host-dispatcher-shutdownGraceMs-bound
+    remediation: Configure DOCSFAB_DISPATCHER_SHUTDOWN_GRACE_MS within the declared representation domain; inspect degraded status rather than treating it as free capacity.
+    rationale: Preserves the existing supervisor TERM-to-KILL grace. The supervisor awaits confirmed child exit after escalation; the timer never reports a live child as reaped. The maximum is the Node timer representation boundary.
+
+  - name: host.dispatcher.semanticSourceBytes
+    value: 1048576
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_DISPATCHER_SEMANTIC_SOURCE_BYTES
+    min: 1
+    max: 1048576
+    refusal: dispatcher-semantic-source-read-bound
+    remediation: Configure the source-read allowance within the existing readTracked port domain; preserve downstream semantic evidence admission and never truncate a source.
+    rationale: The actual readTracked port accepts maximumBytes from 1 through MAX_GIT_OUTPUT (1 MiB), returns complete bytes and their digest, and refuses overflow. This caller now defaults to that supported port maximum. The semantic snapshot consumer still independently validates its evidence budget and fatal UTF-8 decoding; this read allowance does not enlarge those contracts.
+
+  - name: host.dispatcher.attemptEvidenceMaxBytes
+    value: 8388608
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_DISPATCHER_ATTEMPT_EVIDENCE_MAX_BYTES
+    min: 1
+    max: 16777216
+    refusal: host-dispatcher-attemptEvidenceMaxBytes-bound
+    remediation: Set DOCSFAB_DISPATCHER_ATTEMPT_EVIDENCE_MAX_BYTES within the declared range and no higher than host.dispatcher.attemptEvidenceRetainedBytes. A larger record is logged over-bound with its size and is not copied.
+    rationale: Largest saved run record the dispatcher copies as evidence when a review attempt ends without a result (a deadline, a service stop, a moved head, a crashed worker) or settles a worker-reported failed terminal, whose full record is already retained separately in project CAS without this bound. The default is four times the largest step-boundary record measured on a pilot review, about 2.0 MB. The maximum is the dispatcher's single retained-object carrier, 16 MiB, the maximum of semantic.comparisonChunkBytes. A record over the bound is not copied, its size is logged and observed, and the row reads over.
+
+  - name: host.dispatcher.attemptEvidenceRetentionDays
+    value: 14
+    unit: days
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_DISPATCHER_ATTEMPT_EVIDENCE_RETENTION_DAYS
+    min: 1
+    max: 90
+    refusal: host-dispatcher-attemptEvidenceRetentionDays-bound
+    remediation: Set DOCSFAB_DISPATCHER_ATTEMPT_EVIDENCE_RETENTION_DAYS within the declared range. Copy any evidence file still needed out of the attempt-evidence directory before lowering it.
+    rationale: Age in whole days after which the next capture in the same project deletes a retained attempt-evidence file. Pilot failures were diagnosed within one deploy cycle and re-read within a day; two weeks spans a weekend and a handover. The maximum, 90 days, is one quarter, beyond which a record describes a release long replaced. Not observed, because a max-merged age would sit near the value and warn permanently.
+
+  - name: host.dispatcher.attemptEvidenceRetainedBytes
+    value: 268435456
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_DISPATCHER_ATTEMPT_EVIDENCE_RETAINED_BYTES
+    min: 1
+    max: 1073741824
+    refusal: host-dispatcher-attemptEvidenceRetainedBytes-bound
+    remediation: Set DOCSFAB_DISPATCHER_ATTEMPT_EVIDENCE_RETAINED_BYTES within the declared range and no lower than host.dispatcher.attemptEvidenceMaxBytes. The oldest evidence files are deleted first to stay within it.
+    rationale: Total bytes of attempt evidence kept per project. After each capture the oldest files are deleted until the directory fits, and the file just written is always kept. 256 MiB holds about 128 records at the largest measured size, against about 12 failed reviews a day at the busiest pilot release, and stays far under the disk headroom floors (warn 3 GiB, over 1.25 GiB) for the one or two projects a pilot host runs. The exposure is per project, so a host with N projects can hold N times this budget, so a host near host.ingress.projectsMax should lower it. The maximum, 1 GiB, stays under the over floor. The observation is the directory total after that deletion.
+
+  - name: host.dispatcher.attemptEvidenceReasonCharacters
+    value: 4096
+    unit: characters
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_DISPATCHER_ATTEMPT_EVIDENCE_REASON_CHARACTERS
+    min: 128
+    max: 65536
+    refusal: host-dispatcher-attemptEvidenceReasonCharacters-bound
+    remediation: Set DOCSFAB_DISPATCHER_ATTEMPT_EVIDENCE_REASON_CHARACTERS within the declared range. A longer reason is cut to the bound and ends with a truncation marker; the full text is not kept anywhere else.
+    rationale: Longest error message the attempt-evidence log line carries in its reason field; for an attempt that ends by throw before any failure line, or that settles a worker-reported failed terminal, it is the bounded copy of that message beside the unbounded one on the adjacent failure line. Dispatcher-authored messages run to about 120 characters; 4096 keeps any realistic message whole, including one that quotes a path list, while holding one service-log line to a few KiB on a host with little free disk. The minimum leaves room for the truncation marker and the credential-withheld digest. The maximum, 64 KiB, bounds a single line. The observation is the untruncated length, so over means a reason was cut.
+
+  - name: host.ingress.projectsMax
+    value: 32
+    unit: count
+    scope: sealed
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 32
+    refusal: ingress-registry-project-count-bound
+    remediation: Preserve the installed registry contract; changing its admitted project count requires coordinated registry and operator consumers.
+    rationale: Canonical name for the existing ingress-project-registry v1 admission contract of 1 through 32 project policies. Registry parsing and the status projection consume this same definition. This is not a worker-capacity default or a claim of host resource headroom.
+
+  - name: host.ingress.httpBodyBytes
+    value: 2097152
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_INGRESS_HTTP_BODY_BYTES
+    min: 1024
+    max: 2097152
+    refusal: host-ingress-httpBodyBytes-invalid
+    remediation: Configure DOCSFAB_INGRESS_HTTP_BODY_BYTES within the declared caller domain; preserve independent authority, shape and transport checks.
+    rationale: Existing startIngressHttpServer maximumBodyBytes API admits 1 KiB through 2 MiB. Default remains its supported maximum; complete-body collection and authenticated forge intake still refuse oversize payloads.
+
+  - name: host.ingress.httpRequestMs
+    value: 15000
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_INGRESS_HTTP_REQUEST_MS
+    min: 1
+    max: 4294967295
+    refusal: host-ingress-httpRequestMs-invalid
+    remediation: Configure DOCSFAB_INGRESS_HTTP_REQUEST_MS within the declared caller domain; preserve independent authority, shape and transport checks.
+    rationale: Preserves the HTTP request observation deadline. Node22 ConnectionsList::Expired converts this millisecond field with Uint32 before scaling to nanoseconds, so the supported maximum is UINT32_MAX.
+
+  - name: host.ingress.httpHeadersMs
+    value: 10000
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_INGRESS_HTTP_HEADERS_MS
+    min: 1
+    max: 4294967295
+    refusal: host-ingress-httpHeadersMs-invalid
+    remediation: Configure DOCSFAB_INGRESS_HTTP_HEADERS_MS within the declared caller domain; preserve independent authority, shape and transport checks.
+    rationale: Preserves the HTTP header observation deadline. Node22 ConnectionsList::Expired converts this millisecond field with Uint32 before scaling to nanoseconds; header timing remains no greater than request timing.
+
+  - name: host.ingress.httpKeepAliveMs
+    value: 5000
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_INGRESS_HTTP_KEEP_ALIVE_MS
+    min: 1
+    max: 2147482647
+    refusal: host-ingress-httpKeepAliveMs-invalid
+    remediation: Configure DOCSFAB_INGRESS_HTTP_KEEP_ALIVE_MS within the declared caller domain; preserve independent authority, shape and transport checks.
+    rationale: Preserves the five-second idle connection policy. Supported Node22.19 and25 add a 1000 ms keep-alive timeout buffer before socket.setTimeout; INT32_MAX minus that buffer avoids the Node timer clamp.
+
+  - name: host.ingress.httpHeadersCount
+    value: 1073741823
+    unit: count
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_INGRESS_HTTP_HEADERS_COUNT
+    min: 1
+    max: 1073741823
+    refusal: host-ingress-httpHeadersCount-invalid
+    remediation: Configure DOCSFAB_INGRESS_HTTP_HEADERS_COUNT within the declared caller domain; preserve independent authority, shape and transport checks.
+    rationale: Full supported positive header-pair carrier. Node _http_server assigns parser.maxHeaderPairs using maxHeadersCount << 1; values above INT32_MAX shifted right by one can wrap negative and disable the count check. Node header-byte admission and signature checks remain independent.
+
+  - name: host.ingress.httpStartupCloseMs
+    value: 1000
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_INGRESS_HTTP_STARTUP_CLOSE_MS
+    min: 1
+    max: 30000
+    refusal: host-ingress-httpStartupCloseMs-invalid
+    remediation: Configure DOCSFAB_INGRESS_HTTP_STARTUP_CLOSE_MS within the declared caller domain; preserve independent authority, shape and transport checks.
+    rationale: Preserves the startup-failure close grace. The existing closeServer API admits positive timeouts through 30000 ms; this row records that caller contract without changing its maximum.
+
+  - name: host.ingress.httpCloseMs
+    value: 5000
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_INGRESS_HTTP_CLOSE_MS
+    min: 1
+    max: 30000
+    refusal: host-ingress-httpCloseMs-invalid
+    remediation: Configure DOCSFAB_INGRESS_HTTP_CLOSE_MS within the declared caller domain; preserve independent authority, shape and transport checks.
+    rationale: Preserves the normal HTTP shutdown grace. The existing closeServer API admits positive timeouts through 30000 ms; this row is also the canonical shared maximum for its two callers.
+
+  - name: host.ingress.slackCredentialTtlMs
+    value: 15552000000
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_INGRESS_SLACK_CREDENTIAL_TTL_MS
+    min: 1
+    max: 15552000000
+    refusal: host-ingress-slackCredentialTtlMs-invalid
+    remediation: Configure DOCSFAB_INGRESS_SLACK_CREDENTIAL_TTL_MS within the declared caller domain; preserve independent authority, shape and transport checks.
+    rationale: The existing opaque Slack credential handle expires after 180 days. This is an authority lifetime, not a model or output allowance. A supported override may shorten that lifetime; this change does not grant a longer credential lifetime.
+
+  - name: host.ingress.healthPollMs
+    value: 1000
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_INGRESS_HEALTH_POLL_MS
+    min: 1
+    max: 2147483647
+    refusal: host-ingress-healthPollMs-invalid
+    remediation: Configure DOCSFAB_INGRESS_HEALTH_POLL_MS within the declared caller domain; preserve independent authority, shape and transport checks.
+    rationale: Preserves the ingress health observation cadence. The maximum is the Node interval timer representation boundary; this is not a job execution allowance.
+
+  - name: host.ingress.healthFreshnessSeconds
+    value: 30
+    unit: seconds
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_HEALTH_FRESHNESS_SECONDS
+    min: 1
+    max: 300
+    refusal: host-ingress-healthFreshnessSeconds-invalid
+    remediation: Configure DOCSFAB_HEALTH_FRESHNESS_SECONDS within the declared caller domain; preserve independent authority, shape and transport checks.
+    rationale: Canonical domain of the existing required installed health-freshness setting, 1 through 300 seconds. The installer selects30 seconds for the current deployment; milliseconds are derived with the exact seconds-to-milliseconds conversion.
+
+  - name: host.dispatcher.postgresConnections
+    value: 2
+    unit: count
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_DISPATCHER_POSTGRES_CONNECTIONS
+    min: 1
+    max: 9007199254740991
+    refusal: host-dispatcher-postgresConnections-invalid
+    remediation: Configure DOCSFAB_DISPATCHER_POSTGRES_CONNECTIONS within the declared caller domain; preserve independent authority, shape and transport checks.
+    rationale: Preserves the existing explicit two-connection per-project resource allocation. The pg pool accepts a positive numeric maximum; safe integers define supported configuration, not actual machine headroom or a model allowance. N-worker acceptance retains the default two-connection allocation.
+
+  - name: host.dispatcher.policyBytes
+    value: 524288
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_DISPATCHER_POLICY_BYTES
+    min: 1
+    max: 536870888
+    refusal: host-dispatcher-policy-bytes-bound
+    remediation: Inspect the complete protected dispatcher policy; raise DOCSFAB_DISPATCHER_POLICY_BYTES within max, or change host.dispatcher.policyBytes in config/limits/host.yaml, then reload the policy. Policy custody and grant checks are unaffected by this allowance.
+    rationale: The dispatcher policy loader and the fresh protected policy reread share one complete UTF-8 JSON admission. The default is the previously shipped installed-policy ceiling and narrows no existing policy; the maximum is the supported 64-bit Node single-string representation for worst-case ASCII. This is a representation boundary, not measured memory throughput or authority.
+
+  - name: host.grants.mergeScopePathsMax
+    value: 256
+    unit: count
+    scope: sealed
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 256
+    refusal: grant-merge-scope-paths-bound
+    remediation: Leave the merge request for a human to merge; a PRM-update merge request that changes more paths than this is not one DocsFab queues itself. Changing the bound needs a reviewed catalog change.
+    rationale: Most entries a queue-own-prm-merge scope may carry in either of its lists, the merge request's changed paths and the projection entries. One PRM-update merge request changes one native version (three files), the history and index files, files in the source thread of its input and the projection documents it regenerates. The largest source thread in the reference model today holds 145 files in all and the whole reference model 399, and an approved model names at most eight documentation targets. So 256 still holds an update that rewrote the whole of the largest thread together with a version, the history, the index and every target (158 entries), about 1.6 times over; an update that rewrites most of the reference model is left for a human. Above it the evaluator refuses the scope by this bound's refusal name rather than reading part of it, and the merge request stays open for a human.
+
+  - name: host.grants.mergeScopePathMaxChars
+    value: 512
+    unit: characters
+    scope: sealed
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 512
+    refusal: grant-merge-scope-path-length-bound
+    remediation: Leave the merge request for a human to merge; a path longer than this is not one a DocsFab delivery can carry. Changing the bound needs a reviewed catalog change.
+    rationale: Longest repository-relative path a queue-own-prm-merge scope may name. The longest tracked path in the repository today is 177 characters and the longest in the reference model 166 (content-addressed artifact paths). 512 is the path bound a delivery request already enforces, so no path a DocsFab delivery can carry is refused here.
+
+  - name: host.retention.slackTextDays
+    value: 30
+    unit: days
+    scope: per-host
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 30
+    refusal: host-retention-slack-text-days-bound
+    remediation: Keep host.retention.slackTextDays within 1 to 30 days in config/limits/host.yaml, refresh the core tooling so the installed limits mirror carries it, and rerun the redaction. Raising the maximum needs a Privacy-approved change to the recorded retention commitment first.
+    rationale: Most days the pilot may hold raw Slack message text after the job that used it completes (the POR-D09 amendment of 2026-10-02 on issue 72, and the DocsFab 0.0.1 record of processing activities). The scheduled redaction replaces that text with content-free digests in the locations it covers once a completed job is this old, less two redaction intervals, so covered text is gone by this age while the timer runs; job and audit records stay. Copies it does not cover yet are tracked in issue 1820. 30 days is the commitment, so the maximum equals the value and there is no host override. A lower value redacts sooner and shortens the window in which a thread follow-up still sees its earlier exchanges.
+    docValue: 30 days
+    docSummary: Days after a job completes before its raw Slack text is redacted to digests.
+
+  - name: host.retention.slackTextRedactionIntervalMinutes
+    value: 60
+    unit: minutes
+    scope: per-host
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 1440
+    refusal: host-retention-slack-text-redaction-interval-minutes-bound
+    remediation: Keep host.retention.slackTextRedactionIntervalMinutes within 1 to 1440 in config/limits/host.yaml and set OnUnitActiveSec in docsfab-retention-redaction.timer to the same number of minutes, then reinstall the timer.
+    rationale: How often the scheduled Slack text redaction runs, and therefore how early it redacts. Each run redacts text whose job completed more than host.retention.slackTextDays minus two intervals ago. The timer starts a run at most one interval and one second after the previous start, so the second interval absorbs that slack and the run time, so covered text is gone by host.retention.slackTextDays while the timer keeps its cadence, and is never removed more than two intervals early. Hourly keeps the early margin to two hours at the cost of one short database statement an hour. The maximum is one day; a longer interval would redact text more than two days before the committed age. The timer's OnUnitActiveSec must equal this value, which a deploy test holds.
+    docValue: 60 minutes
+    docSummary: How often the Slack text redaction runs; it redacts up to two intervals before the retention age.
+
+  - name: host.selfDocumentationCandidateGitTimeoutMs
+    value: 15000
+    unit: ms
+    scope: sealed
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 15000
+    refusal: host-self-documentation-candidate-git-timeout-ms-bound
+    remediation: Inspect the candidate workspace Git operation and retry after repairing the local repository; changing the deadline requires qualification of the candidate materializer.
+    rationale: Historical per-command Git deadline for reading and constructing an immutable self-documentation candidate. The materializer kills a command that exceeds it rather than using partial output. This owner is separate from the host-invoker hardened Git helper.
+
+  - name: host.selfDocumentationCandidateGitOutputMaxBytes
+    value: 8388608
+    unit: bytes
+    scope: sealed
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 8388608
+    refusal: host-self-documentation-candidate-git-output-max-bytes-bound
+    remediation: Narrow the candidate's changed-path scope or repair the repository before retrying; changing this Git output bound requires qualification of the candidate materializer.
+    rationale: Historical maximum accumulated output of one self-documentation candidate Git command. A command exceeding this value is killed; its partial output is never accepted as a complete tree, patch, or path inventory.
+
+  - name: host.selfDocumentationCandidatePatchMaxBytes
+    value: 8388608
+    unit: bytes
+    scope: sealed
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 8388608
+    refusal: host-self-documentation-candidate-patch-max-bytes-bound
+    remediation: Split the candidate into smaller independently reviewed changes; a patch above this historical materialization bound cannot be applied as one candidate.
+    rationale: Historical byte limit on the candidate patch itself before materialization. It is distinct from the Git subprocess output limit even though both historical values are eight MiB.
+
+  - name: host.selfDocumentationCandidateChangedPathsMax
+    value: 512
+    unit: count
+    scope: sealed
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 512
+    refusal: host-self-documentation-candidate-changed-paths-max-bound
+    remediation: Split an oversized authoring candidate into smaller changes and review each candidate independently.
+    rationale: Historical number of unique repository-relative paths one self-documentation candidate may change. It is a candidate write-scope bound, not the count of focused review targets. The source manifest and final candidate receipt must agree on every path and refuse an oversized set rather than silently dropping paths.
+
+  - name: host.selfDocumentationReviewerGitTimeoutMs
+    value: 10000
+    unit: ms
+    scope: sealed
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 10000
+    refusal: host-self-documentation-reviewer-git-timeout-ms-bound
+    remediation: Inspect the immutable review target and retry after repairing the local repository; changing the deadline requires qualification of the installed reviewer.
+    rationale: Historical per-command deadline for the installed independent reviewer to verify that target paths exist in the immutable review commit. This caller uses its own Git operation and does not borrow the host-invoker helper's deadline merely because the current numbers agree.
+
+  - name: host.selfDocumentationReviewerTargetListingMaxBytes
+    value: 1048576
+    unit: bytes
+    scope: sealed
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 1048576
+    refusal: host-self-documentation-reviewer-target-listing-max-bytes-bound
+    remediation: Review fewer paths in one candidate or repair a malformed repository tree before retrying; changing the listing size requires qualification of the independent reviewer.
+    rationale: Historical buffer limit for one immutable Git tree listing used by the independent reviewer. It inspects a single requested target and refuses excess bytes rather than interpreting a clipped listing as proof that the target is present.
+
+  - name: host.selfDocumentationReviewerRunRecordReadMaxBytes
+    value: 4194304
+    unit: bytes
+    scope: sealed
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 4194304
+    refusal: host-self-documentation-reviewer-run-record-read-max-bytes-bound
+    remediation: Narrow the candidate review run or inspect an oversized retained record before retrying; never consume a partial reviewer run record.
+    rationale: Historical maximum CAS read size for the installed reviewer's retained runtime record. This is a distinct object from the reviewer receipt and from Slack live-agent records.
+
+  - name: host.selfDocumentationReviewerReceiptReadMaxBytes
+    value: 1048576
+    unit: bytes
+    scope: sealed
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 1048576
+    refusal: host-self-documentation-reviewer-receipt-read-max-bytes-bound
+    remediation: Inspect an oversized reviewer receipt and retry only after its complete retained evidence fits the declared reader; never consume a partial receipt.
+    rationale: Historical maximum CAS read size for the installed reviewer's dispatcher receipt, separate from the runtime record and Git tree listing.

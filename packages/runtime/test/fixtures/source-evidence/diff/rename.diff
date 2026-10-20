@@ -1,0 +1,13 @@
+diff --git a/docs/reference.md b/docs/settings.md
+similarity index 79%
+rename from docs/reference.md
+rename to docs/settings.md
+index 78b38da..ed7f0ac 100644
+--- a/docs/reference.md
++++ b/docs/settings.md
+@@ -1,4 +1,4 @@
+-Reference page.
++Settings page.
+ It names three settings.
+ One: color.
+ Two: size.

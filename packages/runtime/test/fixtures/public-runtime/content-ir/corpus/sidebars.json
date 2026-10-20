@@ -1,0 +1,18 @@
+{
+  "docs": [
+    { "type": "doc", "id": "index", "label": "Example start label" },
+    {
+      "type": "category",
+      "label": "Examples",
+      "link": { "type": "doc", "id": "myst" },
+      "items": [
+        { "type": "doc", "id": "guide", "label": "Example guide label" },
+        {
+          "type": "link",
+          "label": "Web resource",
+          "href": "https://example.test/non-document-target"
+        }
+      ]
+    }
+  ]
+}

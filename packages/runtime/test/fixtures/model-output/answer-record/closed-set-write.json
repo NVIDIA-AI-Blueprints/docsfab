@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "kind": "docsfab-output-rule-fixture",
+  "code": "answer-record-closed",
+  "location": "$",
+  "input": {
+    "contract": "source-obligation",
+    "prior": ["{\"type\":\"proposal-note\",\"record\":{\"limitations\":[],\"closed\":true}}"]
+  },
+  "reply": "{\"type\":\"obligation\",\"record\":{\"dimensionKey\":\"factual-accuracy\",\"id\":\"model-id\",\"dimension\":\"factual-accuracy\",\"sourceLocators\":[],\"statement\":\"A statement.\",\"evidenceClass\":\"source-observation\",\"uncertainty\":\"Known.\"}}"
+}

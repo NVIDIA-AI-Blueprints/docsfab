@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://docsfab.invalid/schemas/doc-quality-signals.schema.json",
+  "title": "Deterministic documentation quality signals",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "collected_at", "repository_revision", "documentation_content_hash", "worktree_dirty", "documentation_root", "files", "totals", "limitations"],
+  "properties": {
+    "schema_version": {"const": "doc-quality-signals-v0.1"},
+    "collected_at": {"type": "string", "format": "date-time"},
+    "repository_revision": {"type": "string", "minLength": 1},
+    "documentation_content_hash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "worktree_dirty": {"type": "boolean"},
+    "documentation_root": {"type": "string", "minLength": 1},
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "word_count",
+          "sentence_count",
+          "flesch_kincaid_grade",
+          "heading_count",
+          "link_count",
+          "broken_relative_links",
+          "unverifiable_links",
+          "code_fence_count",
+          "todo_marker_count",
+          "title_source",
+          "duplicate_h1_after_frontmatter"
+        ],
+        "properties": {
+          "path": {"type": "string", "minLength": 1},
+          "word_count": {"type": "integer", "minimum": 0},
+          "sentence_count": {"type": "integer", "minimum": 0},
+          "flesch_kincaid_grade": {"type": ["number", "null"]},
+          "heading_count": {"type": "integer", "minimum": 0},
+          "link_count": {"type": "integer", "minimum": 0},
+          "broken_relative_links": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+          "unverifiable_links": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+          "code_fence_count": {"type": "integer", "minimum": 0},
+          "todo_marker_count": {"type": "integer", "minimum": 0},
+          "title_source": {"enum": ["frontmatter", "markdown-h1", "missing"]},
+          "duplicate_h1_after_frontmatter": {"type": "boolean"}
+        }
+      }
+    },
+    "totals": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "document_count",
+        "word_count",
+        "mean_flesch_kincaid_grade",
+        "relative_link_count",
+        "broken_relative_link_count",
+        "unverifiable_link_count",
+        "todo_marker_count",
+        "missing_title_count",
+        "duplicate_h1_count"
+      ],
+      "properties": {
+        "document_count": {"type": "integer", "minimum": 0},
+        "word_count": {"type": "integer", "minimum": 0},
+        "mean_flesch_kincaid_grade": {"type": ["number", "null"]},
+        "relative_link_count": {"type": "integer", "minimum": 0},
+        "broken_relative_link_count": {"type": "integer", "minimum": 0},
+        "unverifiable_link_count": {"type": "integer", "minimum": 0},
+        "todo_marker_count": {"type": "integer", "minimum": 0},
+        "missing_title_count": {"type": "integer", "minimum": 0},
+        "duplicate_h1_count": {"type": "integer", "minimum": 0}
+      }
+    },
+    "limitations": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+  }
+}

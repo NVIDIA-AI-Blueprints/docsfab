@@ -1,0 +1,4 @@
+interface:
+  display_name: "Verify Technical Accuracy"
+  short_description: "Inventory source facts and verify claims, examples, APIs, and versions"
+  default_prompt: "Within a DocsFab runtime workflow, use the host-selected verify-technical-accuracy mode: inventory-only ledger, provisional comparison, or canonical correction."

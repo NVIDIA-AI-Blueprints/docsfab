@@ -1,0 +1,255 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/reader-context.schema.json",
+  "title": "ReaderContextV1",
+  "$comment": "Valid instances use NFC strings and LF line endings, preserve array order, and serialize to at most 65536 UTF-8 bytes with canonicalArtifactJson. The host enforces these semantic constraints before hashing or persistence.",
+  "x-docsfab-canonical-json": {
+    "serializer": "canonicalArtifactJson",
+    "maxUtf8Bytes": 65536,
+    "preserveArrayOrder": true
+  },
+  "$ref": "#/$defs/readerContextV1",
+  "$defs": {
+    "legacyTargetAudience": {
+      "type": "string",
+      "minLength": 1
+    },
+    "legacyChangeScope": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string"}
+    },
+    "legacySourcePriority": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string"}
+    },
+    "legacyRequiredContent": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string"}
+    },
+    "legacyExcludedContent": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "legacyKnownLimitations": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "legacyUnresolvedQuestions": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "readerText1024": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024,
+      "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000\\r]*$",
+      "x-docsfab-unicode-normalization": "NFC",
+      "x-docsfab-line-endings": "LF"
+    },
+    "readerText2048": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2048,
+      "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000\\r]*$",
+      "x-docsfab-unicode-normalization": "NFC",
+      "x-docsfab-line-endings": "LF"
+    },
+    "readerText4096": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096,
+      "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000\\r]*$",
+      "x-docsfab-unicode-normalization": "NFC",
+      "x-docsfab-line-endings": "LF"
+    },
+    "readerTargetAudience": {
+      "allOf": [
+        {"$ref": "#/$defs/legacyTargetAudience"},
+        {"$ref": "#/$defs/readerText1024"}
+      ]
+    },
+    "readerChangeScope": {
+      "allOf": [
+        {"$ref": "#/$defs/legacyChangeScope"},
+        {
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/readerText1024"}
+        }
+      ]
+    },
+    "readerSourcePriority": {
+      "allOf": [
+        {"$ref": "#/$defs/legacySourcePriority"},
+        {
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/readerText4096"}
+        }
+      ]
+    },
+    "readerRequiredContent": {
+      "allOf": [
+        {"$ref": "#/$defs/legacyRequiredContent"},
+        {
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/readerText4096"}
+        }
+      ]
+    },
+    "readerExcludedContent": {
+      "allOf": [
+        {"$ref": "#/$defs/legacyExcludedContent"},
+        {
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/readerText4096"}
+        }
+      ]
+    },
+    "readerKnownLimitations": {
+      "allOf": [
+        {"$ref": "#/$defs/legacyKnownLimitations"},
+        {
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/readerText4096"}
+        }
+      ]
+    },
+    "readerUnresolvedQuestions": {
+      "allOf": [
+        {"$ref": "#/$defs/legacyUnresolvedQuestions"},
+        {
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/readerText4096"}
+        }
+      ]
+    },
+    "evidenceReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["uri", "sha256"],
+      "properties": {
+        "uri": {"$ref": "#/$defs/readerText4096"},
+        "sha256": {
+          "type": "string",
+          "minLength": 64,
+          "maxLength": 64,
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
+    "impactBasis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "rationale", "evidence_refs"],
+      "properties": {
+        "kind": {
+          "enum": [
+            "public-behavior-change",
+            "documentation-defect",
+            "none",
+            "unknown"
+          ]
+        },
+        "rationale": {"$ref": "#/$defs/readerText2048"},
+        "evidence_refs": {
+          "type": "array",
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/evidenceReference"}
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": ["kind"],
+            "properties": {
+              "kind": {
+                "enum": [
+                  "public-behavior-change",
+                  "documentation-defect",
+                  "none"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "evidence_refs": {"minItems": 1}
+            }
+          }
+        }
+      ]
+    },
+    "readerContextInputV1": {
+      "title": "ReaderContextInputV1",
+      "x-docsfab-canonical-json": {
+        "serializer": "canonicalArtifactJson",
+        "maxUtf8Bytes": 65536,
+        "preserveArrayOrder": true
+      },
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "target_audience",
+        "reader_job",
+        "change_scope",
+        "source_priority",
+        "required_content",
+        "excluded_content",
+        "unresolved_questions"
+      ],
+      "properties": {
+        "schema_version": {"type": "integer", "const": 1},
+        "target_audience": {"$ref": "#/$defs/readerTargetAudience"},
+        "reader_job": {"$ref": "#/$defs/readerText1024"},
+        "change_scope": {"$ref": "#/$defs/readerChangeScope"},
+        "source_priority": {"$ref": "#/$defs/readerSourcePriority"},
+        "required_content": {"$ref": "#/$defs/readerRequiredContent"},
+        "excluded_content": {"$ref": "#/$defs/readerExcludedContent"},
+        "unresolved_questions": {"$ref": "#/$defs/readerUnresolvedQuestions"},
+        "known_limitations": {"$ref": "#/$defs/readerKnownLimitations"}
+      }
+    },
+    "readerContextV1": {
+      "x-docsfab-canonical-json": {
+        "serializer": "canonicalArtifactJson",
+        "maxUtf8Bytes": 65536,
+        "preserveArrayOrder": true
+      },
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "target_audience",
+        "reader_job",
+        "change_scope",
+        "source_priority",
+        "required_content",
+        "excluded_content",
+        "unresolved_questions",
+        "impact_basis"
+      ],
+      "properties": {
+        "schema_version": {"type": "integer", "const": 1},
+        "target_audience": {"$ref": "#/$defs/readerTargetAudience"},
+        "reader_job": {"$ref": "#/$defs/readerText1024"},
+        "change_scope": {"$ref": "#/$defs/readerChangeScope"},
+        "source_priority": {"$ref": "#/$defs/readerSourcePriority"},
+        "required_content": {"$ref": "#/$defs/readerRequiredContent"},
+        "excluded_content": {"$ref": "#/$defs/readerExcludedContent"},
+        "unresolved_questions": {"$ref": "#/$defs/readerUnresolvedQuestions"},
+        "known_limitations": {"$ref": "#/$defs/readerKnownLimitations"},
+        "impact_basis": {"$ref": "#/$defs/impactBasis"}
+      }
+    }
+  }
+}

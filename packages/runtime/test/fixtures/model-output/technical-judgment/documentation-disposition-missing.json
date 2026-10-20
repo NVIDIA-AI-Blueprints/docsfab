@@ -1,0 +1,236 @@
+{
+  "schemaVersion": 1,
+  "kind": "docsfab-output-rule-fixture",
+  "code": "judgment-documentation-disposition-invalid",
+  "location": "$.obligationJudgments[].documentationDisposition",
+  "input": {
+    "targetPaths": ["docs/quickstart.md"],
+    "ledger": {
+      "kind": "docsfab-source-obligation-ledger",
+      "schemaVersion": 2,
+      "identity": {
+        "repositoryRevision": "74ecf7d2835a3afbef5e0acf895c2e2dda3935ef",
+        "scopeSha256": "6c23010bdd0183a7b749ddc0c39298c7fa4c70ea6718bf067c016717f696c2ec",
+        "sourceEvidenceSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "workspaceSnapshotSha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "sources": [
+          {
+            "path": "src/sprout.mjs",
+            "sha256": "a8c08a5d1a8511e646aa29a9e92750379a875553d31a2566c4ad31e2388c7d4e"
+          }
+        ],
+        "originalSourceAuthority": {
+          "kind": "docsfab-original-source-authority",
+          "schemaVersion": 1,
+          "scope": "review-tracked-workspace",
+          "repositoryRevision": "74ecf7d2835a3afbef5e0acf895c2e2dda3935ef",
+          "scopeSha256": "6c23010bdd0183a7b749ddc0c39298c7fa4c70ea6718bf067c016717f696c2ec",
+          "workspaceSnapshotSha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "memberCount": 1,
+          "membersSha256": "0cc15cf654273cb83605da903a2bd96e6883e98e3f822aa88be7eb333d6eff02",
+          "digest": "922c3a33aa411a3a2f5c3fc5cc288c464bed86742e5950c940492e156d14c92c"
+        }
+      },
+      "completeness": "bounded-not-proven",
+      "dimensions": [
+        {
+          "dimension": "input-representations",
+          "status": "applicable",
+          "reason": "The frozen CLI accepts a subcommand plus specific flag/value pairs and output formats.",
+          "sourceLocators": [],
+          "obligations": [
+            {
+              "id": "OBL-INPUT-REPRESENTATIONS-1",
+              "dimension": "input-representations",
+              "sourceLocators": ["src/sprout.mjs:14-20"],
+              "statement": "After greet, arguments are parsed only as alternating flag/value pairs where each flag must be --name or --format and each accepted flag consumes the immediately following value.",
+              "evidenceClass": "source-observation",
+              "uncertainty": "Derived from source inspection only; parsing behavior for concrete invocations was not executed."
+            },
+            {
+              "id": "OBL-INPUT-REPRESENTATIONS-2",
+              "dimension": "input-representations",
+              "sourceLocators": ["src/sprout.mjs:3-5", "src/sprout.mjs:8-10"],
+              "statement": "The CLI accepts a top-level --help invocation and otherwise requires the first positional argument to be the literal subcommand greet.",
+              "evidenceClass": "source-observation",
+              "uncertainty": "Derived from source inspection only; command behavior was not executed in the declared environment."
+            },
+            {
+              "id": "OBL-INPUT-REPRESENTATIONS-3",
+              "dimension": "input-representations",
+              "sourceLocators": ["src/sprout.mjs:22-27"],
+              "statement": "The accepted output format values are exactly text and json.",
+              "evidenceClass": "source-observation",
+              "uncertainty": "Derived from source inspection only; supported values were not confirmed by execution."
+            }
+          ]
+        },
+        {
+          "dimension": "defaults-and-overrides",
+          "status": "applicable",
+          "reason": "The frozen CLI defines default option values and lets later parsed pairs override them.",
+          "sourceLocators": [],
+          "obligations": [
+            {
+              "id": "OBL-DEFAULTS-AND-OVERRIDES-1",
+              "dimension": "defaults-and-overrides",
+              "sourceLocators": ["src/sprout.mjs:14-20"],
+              "statement": "A parsed --format pair overrides the default format with the supplied next argument.",
+              "evidenceClass": "source-observation",
+              "uncertainty": "Derived from source inspection only; override behavior was not executed."
+            },
+            {
+              "id": "OBL-DEFAULTS-AND-OVERRIDES-2",
+              "dimension": "defaults-and-overrides",
+              "sourceLocators": ["src/sprout.mjs:14-20"],
+              "statement": "A parsed --name pair overrides the default name with the supplied next argument.",
+              "evidenceClass": "source-observation",
+              "uncertainty": "Derived from source inspection only; override behavior was not executed."
+            },
+            {
+              "id": "OBL-DEFAULTS-AND-OVERRIDES-3",
+              "dimension": "defaults-and-overrides",
+              "sourceLocators": ["src/sprout.mjs:12-13"],
+              "statement": "When no overriding flags are parsed, the default name is friend and the default format is text.",
+              "evidenceClass": "source-observation",
+              "uncertainty": "Derived from source inspection only; default output was not executed."
+            }
+          ]
+        },
+        {
+          "dimension": "mutable-state",
+          "status": "applicable",
+          "reason": "The frozen CLI mutates local state while parsing arguments before producing output.",
+          "sourceLocators": [],
+          "obligations": [
+            {
+              "id": "OBL-MUTABLE-STATE-1",
+              "dimension": "mutable-state",
+              "sourceLocators": ["src/sprout.mjs:12-13", "src/sprout.mjs:19-20"],
+              "statement": "The CLI initializes local variables name and format to friend and text, then mutates them during argument parsing when matching flag/value pairs are encountered.",
+              "evidenceClass": "source-observation",
+              "uncertainty": "Derived from source inspection only; state transitions were not observed at runtime."
+            }
+          ]
+        },
+        {
+          "dimension": "destination-and-trust",
+          "status": "applicable",
+          "reason": "The frozen CLI writes user-visible results to process streams and handles user-supplied values without external I/O.",
+          "sourceLocators": [],
+          "obligations": [
+            {
+              "id": "OBL-DESTINATION-AND-TRUST-1",
+              "dimension": "destination-and-trust",
+              "sourceLocators": ["src/sprout.mjs:26-27", "src/sprout.mjs:4-5"],
+              "statement": "Successful help text and greeting output are written to standard output via console.log.",
+              "evidenceClass": "source-observation",
+              "uncertainty": "Derived from source inspection only; stdout behavior was not executed."
+            },
+            {
+              "id": "OBL-DESTINATION-AND-TRUST-2",
+              "dimension": "destination-and-trust",
+              "sourceLocators": ["src/sprout.mjs:26-27", "src/sprout.mjs:5"],
+              "statement": "The implementation states that no network access or configuration files are required, and the inspected source contains no network or configuration-file operations before producing output.",
+              "evidenceClass": "source-observation",
+              "uncertainty": "This is bounded to the inspected file src/sprout.mjs and was not confirmed by execution or broader repository inspection."
+            },
+            {
+              "id": "OBL-DESTINATION-AND-TRUST-3",
+              "dimension": "destination-and-trust",
+              "sourceLocators": ["src/sprout.mjs:16", "src/sprout.mjs:23", "src/sprout.mjs:9"],
+              "statement": "Usage and validation failures are written to standard error via console.error.",
+              "evidenceClass": "source-observation",
+              "uncertainty": "Derived from source inspection only; stderr behavior was not executed."
+            }
+          ]
+        },
+        {
+          "dimension": "error-status-retry",
+          "status": "applicable",
+          "reason": "The frozen CLI defines explicit failure conditions and process exit statuses.",
+          "sourceLocators": [],
+          "obligations": [
+            {
+              "id": "OBL-ERROR-STATUS-RETRY-1",
+              "dimension": "error-status-retry",
+              "sourceLocators": ["src/sprout.mjs:3-6"],
+              "statement": "A top-level --help invocation exits with status code 0 after printing usage and defaults.",
+              "evidenceClass": "source-observation",
+              "uncertainty": "Derived from source inspection only; exit status was not executed."
+            },
+            {
+              "id": "OBL-ERROR-STATUS-RETRY-2",
+              "dimension": "error-status-retry",
+              "sourceLocators": ["src/sprout.mjs:22-24"],
+              "statement": "If --format supplies a value other than text or json, the CLI prints an unsupported format error and exits with status code 2.",
+              "evidenceClass": "source-observation",
+              "uncertainty": "Derived from source inspection only; invalid-format behavior was not executed."
+            },
+            {
+              "id": "OBL-ERROR-STATUS-RETRY-3",
+              "dimension": "error-status-retry",
+              "sourceLocators": ["src/sprout.mjs:14-18"],
+              "statement": "If any post-greet argument is not --name or --format, or if such a flag has no following value, the CLI prints an error and exits with status code 2.",
+              "evidenceClass": "source-observation",
+              "uncertainty": "Derived from source inspection only; validation failure behavior was not executed."
+            },
+            {
+              "id": "OBL-ERROR-STATUS-RETRY-4",
+              "dimension": "error-status-retry",
+              "sourceLocators": ["src/sprout.mjs:8-10"],
+              "statement": "If the first positional argument is not greet, the CLI prints an error and exits with status code 2.",
+              "evidenceClass": "source-observation",
+              "uncertainty": "Derived from source inspection only; failure behavior was not executed."
+            },
+            {
+              "id": "OBL-ERROR-STATUS-RETRY-5",
+              "dimension": "error-status-retry",
+              "sourceLocators": ["src/sprout.mjs:3-27"],
+              "statement": "The inspected implementation defines no retry behavior for any success or failure path.",
+              "evidenceClass": "source-observation",
+              "uncertainty": "Derived from source inspection only; absence of retry was inferred from the bounded inspected source file and not from execution."
+            }
+          ]
+        },
+        {
+          "dimension": "environment-prerequisite",
+          "status": "applicable",
+          "reason": "The frozen CLI declares runtime and prerequisite conditions for use.",
+          "sourceLocators": [],
+          "obligations": [
+            {
+              "id": "OBL-ENVIRONMENT-PREREQUISITE-1",
+              "dimension": "environment-prerequisite",
+              "sourceLocators": ["src/sprout.mjs:2"],
+              "statement": "The CLI reads arguments from process.argv, so invocation requires a runtime that provides Node-style process arguments.",
+              "evidenceClass": "source-inference",
+              "uncertainty": "This prerequisite is inferred from the source operation and was not validated by execution."
+            },
+            {
+              "id": "OBL-ENVIRONMENT-PREREQUISITE-2",
+              "dimension": "environment-prerequisite",
+              "sourceLocators": ["src/sprout.mjs:5"],
+              "statement": "The implementation declares that no network access or configuration files are required for the documented help path.",
+              "evidenceClass": "source-observation",
+              "uncertainty": "Derived from source inspection only; absence of those prerequisites was not confirmed by execution beyond the bounded inspected source."
+            },
+            {
+              "id": "OBL-ENVIRONMENT-PREREQUISITE-3",
+              "dimension": "environment-prerequisite",
+              "sourceLocators": ["src/sprout.mjs:1"],
+              "statement": "The program is intended to run under a Node-compatible environment that honors the env node shebang.",
+              "evidenceClass": "source-inference",
+              "uncertainty": "This prerequisite is inferred from the shebang declaration in source; runtime availability of node was not verified in the environment."
+            }
+          ]
+        }
+      ],
+      "limitations": [
+        "Completeness is bounded-not-proven from inspection of admitted source src/sprout.mjs only; no execution, packaging artifact, or broader repository source was inspected in this inventory step."
+      ],
+      "digest": "dc53049abcee35d1de35450fdf952fcffc254b33abe3c7f21101cb88330a503b"
+    }
+  },
+  "reply": "{\"verdict\":\"needs-revision\",\"coverage\":[{\"path\":\"docs/quickstart.md\",\"status\":\"verified\",\"evidence\":[\"docs/quickstart.md:1-21\",\"src/sprout.mjs:1-27\"],\"reason\":\"Compared the frozen quickstart page against the frozen CLI source.\"}],\"issueJudgments\":[{\"id\":\"TECH-001\",\"severity\":\"major\",\"category\":\"technical_accuracy\",\"location\":\"docs/quickstart.md:11\",\"obligationIds\":[\"OBL-DEFAULTS-AND-OVERRIDES-3\"]},{\"id\":\"TECH-002\",\"severity\":\"major\",\"category\":\"technical_accuracy\",\"location\":\"docs/quickstart.md:19\",\"obligationIds\":[\"OBL-DESTINATION-AND-TRUST-1\"]},{\"id\":\"TECH-003\",\"severity\":\"major\",\"category\":\"completeness\",\"location\":\"docs/quickstart.md:3\",\"obligationIds\":[\"OBL-DESTINATION-AND-TRUST-2\",\"OBL-ENVIRONMENT-PREREQUISITE-2\"]},{\"id\":\"TECH-004\",\"severity\":\"minor\",\"category\":\"source_grounding\",\"location\":\"docs/quickstart.md:3\",\"obligationIds\":[\"OBL-ENVIRONMENT-PREREQUISITE-3\"]},{\"id\":\"TECH-005\",\"severity\":\"major\",\"category\":\"completeness\",\"location\":\"docs/quickstart.md:21\",\"obligationIds\":[\"OBL-INPUT-REPRESENTATIONS-2\",\"OBL-INPUT-REPRESENTATIONS-3\",\"OBL-DEFAULTS-AND-OVERRIDES-1\",\"OBL-DEFAULTS-AND-OVERRIDES-2\",\"OBL-MUTABLE-STATE-1\",\"OBL-DESTINATION-AND-TRUST-3\",\"OBL-ERROR-STATUS-RETRY-1\",\"OBL-ERROR-STATUS-RETRY-2\",\"OBL-ERROR-STATUS-RETRY-3\",\"OBL-ERROR-STATUS-RETRY-4\",\"OBL-ERROR-STATUS-RETRY-5\"]}],\"obligationJudgments\":[{\"obligationId\":\"OBL-INPUT-REPRESENTATIONS-1\",\"disposition\":\"retained\"},{\"obligationId\":\"OBL-INPUT-REPRESENTATIONS-2\",\"disposition\":\"retained\"},{\"obligationId\":\"OBL-INPUT-REPRESENTATIONS-3\",\"disposition\":\"retained\"},{\"obligationId\":\"OBL-DEFAULTS-AND-OVERRIDES-1\",\"disposition\":\"retained\"},{\"obligationId\":\"OBL-DEFAULTS-AND-OVERRIDES-2\",\"disposition\":\"retained\"},{\"obligationId\":\"OBL-DEFAULTS-AND-OVERRIDES-3\",\"disposition\":\"retained\"},{\"obligationId\":\"OBL-MUTABLE-STATE-1\",\"disposition\":\"retained\"},{\"obligationId\":\"OBL-DESTINATION-AND-TRUST-1\",\"disposition\":\"retained\"},{\"obligationId\":\"OBL-DESTINATION-AND-TRUST-2\",\"disposition\":\"retained\"},{\"obligationId\":\"OBL-DESTINATION-AND-TRUST-3\",\"disposition\":\"retained\"},{\"obligationId\":\"OBL-ERROR-STATUS-RETRY-1\",\"disposition\":\"retained\"},{\"obligationId\":\"OBL-ERROR-STATUS-RETRY-2\",\"disposition\":\"retained\"},{\"obligationId\":\"OBL-ERROR-STATUS-RETRY-3\",\"disposition\":\"retained\"},{\"obligationId\":\"OBL-ERROR-STATUS-RETRY-4\",\"disposition\":\"retained\"},{\"obligationId\":\"OBL-ERROR-STATUS-RETRY-5\",\"disposition\":\"retained\"},{\"obligationId\":\"OBL-ENVIRONMENT-PREREQUISITE-1\",\"disposition\":\"retained\"},{\"obligationId\":\"OBL-ENVIRONMENT-PREREQUISITE-2\",\"disposition\":\"retained\"},{\"obligationId\":\"OBL-ENVIRONMENT-PREREQUISITE-3\",\"disposition\":\"retained\"}]}"
+}

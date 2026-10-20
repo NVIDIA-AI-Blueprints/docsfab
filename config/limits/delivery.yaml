@@ -1,0 +1,172 @@
+# DocsFab operational limits owned by the `delivery` name prefix.
+# Registered in config/limits.yaml; every limit here is named `delivery.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: delivery.readOnlyCommandTimeoutMs
+    value: 20000
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_DELIVERY_READ_ONLY_COMMAND_TIMEOUT_MS
+    min: 1
+    max: 20000
+    refusal: delivery-read-only-command-timeout-ms-bound
+    remediation: Check the selected local git or forge CLI and host load, then retry the read. Lower DOCSFAB_DELIVERY_READ_ONLY_COMMAND_TIMEOUT_MS only to fail faster.
+    rationale: Longest time the existing read-only git/glab runner, now also used for gh auth token, permits one child process to run. Migrates its former 20,000 ms timeout without changing the default. A caller may already provide a separate output bound; this timeout is independent. Operators may lower it to fail faster.
+
+  - name: delivery.readOnlyCommandMaxBufferBytes
+    value: 2097152
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_DELIVERY_READ_ONLY_COMMAND_MAX_BUFFER_BYTES
+    min: 1
+    max: 2097152
+    refusal: delivery-read-only-command-max-buffer-bytes-bound
+    remediation: Check whether the selected local git or forge CLI produced unexpected output. Reduce its output or use an existing caller-specific maxOutputBytes override when that caller owns a justified larger read.
+    rationale: Largest stdout/stderr buffer for one existing read-only git/glab runner command, now also used for gh auth token, when its caller supplies no maxOutputBytes. Migrates the former 2 MiB maxBuffer unchanged. A caller-provided maxOutputBytes continues to replace this default; operators may lower the default to fail faster.
+
+  - name: delivery.receiptHelperTimeoutMs
+    value: 30000
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_DELIVERY_RECEIPT_HELPER_TIMEOUT_MS
+    min: 1
+    max: 30000
+    refusal: delivery-receipt-helper-timeout-ms-bound
+    remediation: Check host CPU and filesystem load, then rerun the exact publication recovery command. Lower DOCSFAB_DELIVERY_RECEIPT_HELPER_TIMEOUT_MS only to fail faster.
+    rationale: Longest time one SCM delivery receipt-store helper (plan, journal, merge-request lease acquisition, or lease cleanup) may run before the store kills its process group and refuses with helper-failed. Moves the former 30 s literal into the catalog without changing it (issue 1050). Coverage runs on the loaded shared CI runner finished whole delivery-receipt-store cases, each several helper exchanges, in 5 to 1,425 ms (jobs 452388748 and 452497486), so 30 s is at least 20 times that worst case. It stays above delivery.receiptPublicationSettleMs so a reader refuses with receipt-invalid before the store kills it. Operators may only lower it.
+
+  - name: delivery.receiptPublicationSettleMs
+    value: 5000
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_DELIVERY_RECEIPT_PUBLICATION_SETTLE_MS
+    min: 1
+    max: 5000
+    refusal: delivery-receipt-publication-settle-ms-bound
+    remediation: Check host filesystem load, then rerun the exact publication recovery command. A publication alias that outlives this budget is refused as receipt-invalid; remove it only after no DocsFab publisher is running.
+    rationale: Longest time a receipt-store reader waits for a concurrent writer's publication alias (the second hard link between the writer's link, fsync, and unlink) before refusing the receipt or plan as receipt-invalid. Replaces the former hard-coded 100 polls of 5 ms, about 0.5 s, which a loaded shared disk can exceed during that fsync (issue 1050). On September 22, 2026, locked secrets.env writes including two fsyncs held for at most 215 ms on a loaded macOS shared host; 5 s is about 23 times that and stays below delivery.receiptHelperTimeoutMs. Operators may only lower it.
+
+  - name: delivery.mergeRequestLeaseAttempts
+    value: 1200
+    unit: count
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_DELIVERY_MERGE_REQUEST_LEASE_ATTEMPTS
+    min: 1
+    max: 1200
+    refusal: delivery-merge-request-lease-attempts-bound
+    remediation: Check whether the publisher process named in the refusal is a DocsFab publisher still delivering the same run; let it finish or stop it, then rerun the exact publication recovery command. If that process is not a DocsFab publisher, stop DocsFab publishers for the receipt root and remove the named lock directory. Lower DOCSFAB_DELIVERY_MERGE_REQUEST_LEASE_ATTEMPTS only to fail faster.
+    rationale: Lease helpers one publisher starts while another live publisher holds the merge-request lease for the same delivery before it refuses with receipt-conflict. Moves the former 1,200-attempt literal into the catalog without changing it (issue 1166). Each attempt also waits delivery.mergeRequestLeaseRetryPauseMs, so the publisher waits at least 30 s plus one helper start per attempt. The lease covers one merge-request create-or-adopt exchange, and a lock whose recorded publisher has exited is reclaimed on the next attempt, so only a live holder spends this budget. Operators may only lower it.
+
+  - name: delivery.mergeRequestLeaseRetryPauseMs
+    value: 25
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_DELIVERY_MERGE_REQUEST_LEASE_RETRY_PAUSE_MS
+    min: 1
+    max: 25
+    refusal: delivery-merge-request-lease-retry-pause-ms-bound
+    remediation: Lower DOCSFAB_DELIVERY_MERGE_REQUEST_LEASE_RETRY_PAUSE_MS within its catalog range, or raise delivery.mergeRequestLeaseRetryPauseMs in config/limits/delivery.yaml together with a review of delivery.mergeRequestLeaseAttempts.
+    rationale: Pause between two merge-request lease attempts while another publisher holds the lease. Moves the former 25 ms literal into the catalog without changing it (issue 1166). With delivery.mergeRequestLeaseAttempts it sets the minimum wait for a held lease; each attempt also starts one helper process, which costs more than the pause. Operators may only lower it, which shortens the total wait.
+
+  - name: delivery.mergeRequestLeaseRecordMaxBytes
+    value: 256
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_DELIVERY_MERGE_REQUEST_LEASE_RECORD_MAX_BYTES
+    min: 193
+    max: 256
+    refusal: delivery-merge-request-lease-record-max-bytes-bound
+    remediation: Treat an oversized lease owner record or helper line as tampering; stop DocsFab publishers for the receipt root, inspect the lock, then rerun the exact publication recovery command. DOCSFAB_DELIVERY_MERGE_REQUEST_LEASE_RECORD_MAX_BYTES may only lower the bound to no less than 193 bytes.
+    rationale: Largest merge-request lease owner record a helper reads, and largest READY or HELD line the store accepts from a lease helper, before it refuses. Replaces the former 256-byte owner and READY literals and the cleanup helper's 384-byte owner literal (issue 1166). DocsFab writes an owner record of at most 193 bytes (two 64-character digests and a safe-integer process ID), which is the minimum, a READY line of at most 54 bytes, and a HELD line of at most 22 bytes. 256 bytes admits every record DocsFab writes and bounds what a tampered one can make a helper read. Operators may only lower it, not below 193.
+
+  # run delivery index
+  - name: delivery.runDeliveryIndexEntryMaxBytes
+    value: 16384
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_DELIVERY_RUN_DELIVERY_INDEX_ENTRY_MAX_BYTES
+    min: 1
+    max: 16384
+    refusal: delivery-run-delivery-index-entry-max-bytes-bound
+    remediation: Treat an oversized run delivery index entry as tampering or a path that exceeds the platform limit; inspect the entry the refusal names, then rerun `docsfab runs show` or the exact publication recovery command. DOCSFAB_DELIVERY_RUN_DELIVERY_INDEX_ENTRY_MAX_BYTES may only lower the bound.
+    rationale: Largest run delivery index entry the publisher writes and `docsfab runs show` reads before it refuses. An entry holds fixed digests, a merge-request URL that the publication-result decoder already caps at 2,048 characters, two branch names capped at 200 characters each, the project path, and the receipt root path, which the platform caps at 4,096 bytes on Linux and 1,024 on macOS. The largest such entry is under 8 KiB, so 16 KiB admits every entry DocsFab writes and bounds what a tampered file can make a reader load. Operators may only lower it; a lowered bound that refuses a write surfaces as run-delivery-index-write-failed with the recovery command.
+
+  - name: delivery.runDeliveryIndexEntriesPerKey
+    value: 1000
+    unit: count
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_DELIVERY_RUN_DELIVERY_INDEX_ENTRIES_PER_KEY
+    min: 1
+    max: 1000
+    refusal: delivery-run-delivery-index-entries-per-key-bound
+    remediation: A run or merge request that has reached this many recorded deliveries is outside the supported revision journey; open a new draft merge request from a new run. Lower DOCSFAB_DELIVERY_RUN_DELIVERY_INDEX_ENTRIES_PER_KEY only to fail faster.
+    rationale: Most entries one run-delivery index key (one run id, one merge request, or one merge-request path) may hold. Each write reads every entry in its key to skip replays; each run or MR lookup reads its key history and verifies each candidate receipt sequentially to order actual opened transitions, and a path lookup can inspect the numeric history of each distinct project id named by its path key. This bound times delivery.runDeliveryIndexEntryMaxBytes caps bytes read from each index key at about 16 MiB, but receipt reads add bounded time and memory per candidate and path lookup can read multiple keys; it is not a total lookup-byte bound. A run normally has one delivery and a merge request gains one per revision, so 1,000 is far above a revision journey. Entry files use six-digit sequence names, so the maximum must stay at or below 999,999. Operators may only lower it; a write that would exceed it refuses as run-delivery-index-write-failed with the recovery command and drops no entry.
+  # leased branch advance
+  - name: delivery.gitPushTimeoutMs
+    value: 120000
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_DELIVERY_GIT_PUSH_TIMEOUT_MS
+    min: 1
+    max: 120000
+    refusal: delivery-git-push-timeout-ms-bound
+    remediation: Check the network path to the GitLab remote, then rerun the exact publication recovery command. A push that outlives this budget is killed and the delivery stops with push-failed; the receipt keeps the committed state, so the retry pushes the same commit. Lower DOCSFAB_DELIVERY_GIT_PUSH_TIMEOUT_MS only to fail faster.
+    rationale: Longest time one leased git push to the publication remote may run before the publisher kills it. It covers the first publication's branch-creating push, an advance's push leased on the observed MR head, and the leased delete of an exact branch revision, which transfers no objects and so fits inside the same budget. Moves the former 120 s literals in git-publisher.ts into the catalog without changing them. A publication push carries one commit over the run's patch, which is bounded by the patch size the preflight accepts. Operators may only lower it.
+
+  - name: delivery.gitCommitTimeoutMs
+    value: 30000
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_DELIVERY_GIT_COMMIT_TIMEOUT_MS
+    min: 1
+    max: 30000
+    refusal: delivery-git-commit-timeout-ms-bound
+    remediation: Check host CPU and filesystem load, then rerun the exact publication recovery command. A commit-tree that outlives this budget is killed and the delivery stops with commit-failed before any ref moves. Lower DOCSFAB_DELIVERY_GIT_COMMIT_TIMEOUT_MS only to fail faster.
+    rationale: Longest time the publisher's local git commit-tree may run while it writes the one publication commit over an already written tree. Moves the former 30 s literal in git-publisher.ts into the catalog without changing it. commit-tree writes one small commit object and reads no working tree, so it matches the 30 s default every other local publisher git command uses. Operators may only lower it.
+
+  - name: delivery.gitLsRemoteTimeoutMs
+    value: 60000
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_DELIVERY_GIT_LS_REMOTE_TIMEOUT_MS
+    min: 1
+    max: 60000
+    refusal: delivery-git-ls-remote-timeout-ms-bound
+    remediation: Check the network path to the GitLab remote, then rerun the exact publication recovery command. An observation that outlives this budget is killed and the delivery stops before it pushes. Lower DOCSFAB_DELIVERY_GIT_LS_REMOTE_TIMEOUT_MS only to fail faster.
+    rationale: Longest time one git ls-remote of the exact publication branch may run before the publisher kills it. The publisher reads the remote branch before and after every push and on every retry, and an advance relies on it to see that the branch still names the observed head. Moves the former 60 s literal in git-publisher.ts into the catalog without changing it. One exact-ref ls-remote transfers a single advertised ref. Operators may only lower it.
+
+  - name: delivery.gitConfigurationListingMaxBytes
+    value: 2097152
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_DELIVERY_GIT_CONFIGURATION_LISTING_MAX_BYTES
+    min: 1
+    max: 16777216
+    refusal: delivery-git-configuration-listing-max-bytes-bound
+    remediation: Remove from your Git configuration what makes `git config --includes --show-origin --null --list` print more than this many bytes (`git config --includes --show-origin --null --list | wc -c` shows its size), or raise DOCSFAB_DELIVERY_GIT_CONFIGURATION_LISTING_MAX_BYTES within its maximum, then run the same command again. The delivery stops with git-checkout-unverified, and a publication keeps its preserved write.
+    rationale: Largest output of git config --includes --show-origin --null --list that delivery preflight and the host publisher each read before they apply the Git configuration policy to it (#2363). One bound serves both, so a listing that preflight admits is a listing the publisher admits. It replaces preflight's 2 MiB command buffer and the publisher's 1,000,000-byte command output cap, which let a listing between the two pass the check before the model run and fail at publication as remote-drift. Each entry prints its origin, so a listing grows by about 40 to 120 bytes per setting. A developer workstation printed 134,089 bytes for 1,140 settings, and 10,000 aliases in one checkout file printed 371,287 bytes, so 2 MiB is about 15 times the workstation and keeps the former preflight allowance. Both readers hold the output in memory once per check. Operators may lower it, or raise it to 16 MiB for a configuration that includes very many settings.
+
+  - name: delivery.validationCandidateCheckoutTimeoutMs
+    value: 120000
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_DELIVERY_VALIDATION_CANDIDATE_CHECKOUT_TIMEOUT_MS
+    min: 1
+    max: 600000
+    refusal: delivery-validation-candidate-checkout-timeout-ms-bound
+    remediation: Check host CPU and filesystem load, or keep the checkout and the DocsFab state directory on a faster disk, then retry the publication. For a very large repository, raise DOCSFAB_DELIVERY_VALIDATION_CANDIDATE_CHECKOUT_TIMEOUT_MS within its maximum.
+    rationale: Longest time publication preflight's private copy of the run base plus the verified patch may take to read its tree into the private index, to check the patch against it with git apply --check, or to check that index out, each, before preflight kills the command and refuses (#2359). Before this limit the delivery command runner's 30 s default killed a slow checkout and preflight silently bound the operator checkout instead, which delivery then refused as invalid-delivery-input. Delivery reads at most a 4 MiB ls-tree listing, about 45,000 files. A 30,000-file checkout took 6 to 8 s on a loaded workstation and a 250,000-file checkout took 53 s, so 120 s is about twice the largest measured case. Operators may raise it to 600 s for slow filesystems or lower it to fail faster.

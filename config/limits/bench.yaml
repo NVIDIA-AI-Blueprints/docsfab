@@ -1,0 +1,315 @@
+# DocsFab operational limits owned by the `bench` name prefix.
+# Registered in config/limits.yaml. Regenerate mirrors with `npm run
+# generate:limits` from packages/runtime after changing this value.
+limits:
+  - name: bench.nightly.readbackDriftClauseMaxChars
+    value: 600
+    unit: characters
+    scope: per-run
+    warnAt: 1
+    override: null
+    min: 600
+    max: 600
+    refusal: bench-nightly-readback-drift-clause-bound
+    remediation: Read the run record's executionReadback and each settled cell's evidence for every differing field; the public clause then gives each arm's count of fields instead of their names.
+    rationale: Longest public execution-readback-drift clause the nightly appends to run.statusReason after spend. Up to this length the clause names every differing field per arm; a longer one names each arm's count of differing fields and points to the run record, which keeps every field for every cell. A single drifted cell names a few fields of about 30 characters each, so 600 holds a typical difference whole and keeps a reason on the progress page readable. It shapes public text only, never a cell, a status or the comparison series.
+
+  - name: bench.nightly.judgeQuoteMaxChars
+    value: 300
+    unit: characters-exclusive
+    scope: per-run
+    warnAt: 1
+    override: null
+    min: 300
+    max: 300
+    refusal: bench-nightly-judge-quote-bound
+    remediation: Quote a shorter exact span from the supplied evidence. Changing this fixed J1 judge policy requires a new prompt and scoring-contract review, not a host override.
+    rationale: The owner-authored J1 judge prompt requires each exact evidence quote to be under 300 characters. This exclusive bound is reused by the rendered prompt and reply parser so they cannot drift. It controls citation evidence shape, not provider spending, request count, or model output tokens; a change creates a new judge prompt and comparison series.
+
+  - name: bench.nightly.judgeMaxOutputTokens
+    value: 32768
+    unit: tokens
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_BENCH_NIGHTLY_JUDGE_MAX_OUTPUT_TOKENS
+    min: 16384
+    max: 32768
+    refusal: bench-nightly-judge-max-output-tokens-bound
+    remediation: Retain the unassessed judgment and its per-call diagnostics when the judge truncates; a lower override needs a reviewed reason and starts a new comparison series.
+    rationale: The checked-in aws/anthropic/bedrock-claude-sonnet-5 profile's maxOutputTokens. The selected panel's largest authored rubric has 22 criteria, each returned as structured JSON with an exact evidence quote under 300 characters and a reason. Pipeline 73185690 (2026-10-12) ran J1 at 16384 output tokens; one of its nine judge calls ended without a stop finish, most likely truncated. So the default is now the profile maximum, which leaves no smaller hidden response cap. The judge request also sends thinking disabled, as the judge profile declares (reasoning false) and the product does for this model and route, because the Hub's default thinking counts against this cap. In the seven nights that kept call diagnostics a first reply used a median of 1073 completion tokens per graded criterion against 250 in a repair reply that wrote the same grades again, and 10 of 110 first replies used more than half of the cap. The effective value is a public judge setting and a series limit, so changing it starts a new comparison series. A truncated reply is retried within bench.nightly.judgeRetries and never repaired. The separate shared USD reservations still bound all requests.
+
+  - name: bench.nightly.judgeRepairTurns
+    value: 4
+    unit: count
+    scope: per-run
+    warnAt: 1
+    override: null
+    min: 4
+    max: 4
+    refusal: bench-nightly-judge-repair-turns-bound
+    remediation: Keep the cell unassessed with its per-call judge diagnostics, which list every validator problem of the last refused reply; review those problems before allowing more repair turns, which starts a new comparison series.
+    rationale: Repair turns one judgment may take after a reply the validator refused (not JSON, a wrong packet binding, an invalid grade, an invalid evidence quote or a missing grade). Each turn quotes every validator problem back to the judge with its exact rule and criterion, with the packet, rubric and evidence unchanged, and its reply is validated by the same rules. Pipelines 73277557 to 73673854 (2026-10-12 and 2026-10-13) sent 115 cells to the judge, and 26 first replies were refused. The earlier single repair turn named only the first problem and fixed 21 of them. The other 5 failed again on a different criterion that the validator only reached after the first was fixed (four on one task, one on another), so the observed need is 2 turns and the bound is 2x that. A repair reply is short (median 3.4 thousand completion tokens against 7.8 thousand for a first reply), so the turns fit the 30 minute judge deadline. With bench.nightly.judgeRetries a judgment makes at most 1 + 3 + 4 = 8 calls. Through the real ledger a request of 1.3 MB, larger than any panel packet, fits all 8 calls that return replies (7.6 USD) or the 4 calls that fail without usage (9.2 USD) inside the 15.57 USD per-cell judge allowance and the cell's token budget, and a request above about 1.5 MB reaches that token budget first, where the refusal is recorded. A series limit.
+
+  - name: bench.nightly.judgeRetries
+    value: 3
+    unit: count
+    scope: per-run
+    warnAt: 1
+    override: null
+    min: 3
+    max: 3
+    refusal: bench-nightly-judge-retries-bound
+    remediation: Keep the cell unassessed with the cause of its last failed call in its note (an HTTP status or an error class) and in its per-call diagnostics; raise the count only for a measured reason, which starts a new comparison series.
+    rationale: Times one judgment re-sends an unchanged request after a failure that a fresh attempt can fix. These are a network error, a body that is not JSON, a response that did not finish (any finish reason other than stop, in practice length), a response with no content, and a reply that is still not JSON once its repair turns are spent. A transient provider status (HTTP 429, 502, 503 or 504) is retried first by the judge's own boundary under the declared runtimeContribution policy, as for the agent, so the judge retries one itself only through a boundary that carries no retries. Each retry waits bench.nightly.judgeRetryBackoffInitialMs, doubling up to bench.nightly.judgeRetryBackoffMaxMs. In pipelines 73277557 to 73673854 one of the 6 judgments of grove-gr1-ondelete-update-strategy ended without a stop finish (truncated at 32768 completion tokens), and 3 of the 50 judged cells of pipeline 73185690 ended unassessed as response-incomplete under the former 16384 token cap, so one retry clears most truncations and three leave well under one percent if truncations recur independently. The 183 judge requests of eight nights saw no transient provider status, so the transport retries are insurance for short blips. Without a Retry-After the waits are 2, 4 and 8 seconds, where the agent's eight retries cover about four minutes. A retry is a new request through the same budgeted judge boundary, so it reserves its own maximum, counts against the cell's judge allowance and shares its 30 minute deadline, and none starts when the backoff alone would pass that deadline. A failure no retry can fix (a request over the context bound, a refused reservation, a wrong model, an unknown cost) is never retried. With the repair turns a judgment makes at most 1 + 3 + 4 = 8 calls, which bench.nightly.judgeRepairTurns shows fit the allowance. A series limit.
+
+  - name: bench.nightly.judgeRetryBackoffInitialMs
+    value: 2000
+    unit: ms
+    scope: per-run
+    warnAt: 1
+    override: null
+    min: 2000
+    max: 2000
+    refusal: bench-nightly-judge-retry-backoff-initial-ms-bound
+    remediation: Raise this value in the catalog if the provider needs longer to recover between judge retries; the delay only paces retries and never starts a new comparison series.
+    rationale: Wait before the first judge retry. Each later retry doubles it up to bench.nightly.judgeRetryBackoffMaxMs, and a numeric Retry-After from the provider replaces the doubling, still capped by the maximum. It is the same 2 second start the agent's transient retries use for the same provider. Provisional and unmeasured, because the 183 judge requests of eight nights saw no transient provider status. Timing only, so it is not part of the series.
+
+  - name: bench.nightly.judgeRetryBackoffMaxMs
+    value: 60000
+    unit: ms
+    scope: per-run
+    warnAt: 1
+    override: null
+    min: 60000
+    max: 60000
+    refusal: bench-nightly-judge-retry-backoff-max-ms-bound
+    remediation: Raise this value in the catalog if the provider's Retry-After or recovery time is longer; the delay only paces retries and never starts a new comparison series.
+    rationale: Longest single wait between judge retries, and the cap on a provider Retry-After. Provider token rate limits are per-minute windows, so one minute covers a full window, as for the agent's transient retries. With the default of three retries the doubling from 2 seconds waits 2, 4 and 8 seconds, so the cap only binds a long Retry-After. A rate-limit window longer than those waits is covered only by a provider Retry-After, or by the boundary's own retries, which the judge's limits now carry. A wait that would use the judgment's remaining deadline is not started. Provisional and unmeasured. Timing only, so it is not part of the series.
+
+  - name: bench.nightly.judgeMinBytesPerToken
+    value: 2
+    unit: bytes-per-token
+    scope: per-run
+    warnAt: 1
+    override: null
+    min: 1
+    max: 2
+    refusal: bench-nightly-judge-min-bytes-per-token-bound
+    remediation: Keep the estimate at or below the fewest bytes per token that the judge's measured requests show. Setting 1 restores the old rule that counts every request byte as a token. A value above the measured minimum risks a provider refusal that is only seen after the send, and starts a new comparison series.
+    rationale: Fewest UTF-8 bytes one judge request token is assumed to span. It is used only to estimate a request's tokens against bench.nightly.judgeContextWindowTokens before the send. In pipelines 73277557 to 73673854 the provider's reported input tokens put 136 measured judge requests at 2.06 to 2.83 bytes per token (median 2.42), so 2 stays an upper bound on the tokens of every measured request. Counting every byte as a token (1) sat within 3 percent of the largest judged request (946558 bytes against a 967232 byte allowance). Every delivered gravitino-gv1 judgment of eight nights (7 of the 29 unassessed cells) failed before any provider request was reserved, and that task's blind packet carries its selected pages and code several times over, so it is the packet this estimate most plausibly refused. The cell's note now names the cause of such a failure. A request the estimate wrongly admits is refused by the provider and recorded with its status. A series limit.
+
+  - name: bench.nightly.diagnosticStderrTailBytes
+    value: 4096
+    unit: bytes
+    scope: per-run
+    warnAt: 1
+    override: null
+    min: 4096
+    max: 4096
+    refusal: bench-nightly-diagnostic-stderr-tail-bytes-bound
+    remediation: Read the retained tail in the private run record; raise it only after reviewing what the participant writes to stderr.
+    rationale: When a released participant leaves no parseable result, the private run record keeps the last 4096 bytes of its container log, after credential-shape redaction, beside the exit code and OOM flag. Pipeline 73185690 lost the cause of a 0.75-second cell because only a digest of that log was kept. Four KiB holds a Node stack trace and the CLI's final error lines. It is diagnostic only, is never published, and never changes a cell.
+
+  - name: bench.nightly.failedCellRecordMaxBytes
+    value: 1048576
+    unit: bytes
+    scope: per-run
+    warnAt: 1
+    override: null
+    min: 65536
+    max: 16777216
+    refusal: bench-nightly-failed-cell-record-max-bytes-bound
+    remediation: Read the retained copy in the failed cell's evidence in the arm checkpoint. An index over this bound keeps its newest rows from a row boundary, and the entry names the observed and the retained bytes. If representative failed cells legitimately exceed it, raise bench.nightly.failedCellRecordMaxBytes in config/limits/bench.yaml, up to its maximum. It only sizes retention and never changes a cell or the comparison series.
+    rationale: Largest copy of a failed DocsFab cell's run index that the arm keeps in its private evidence. The eight measured nights of 2026-10-12 and 2026-10-13 (pipelines 73185690 to 73673854) retained no run index at all, so the cause of their 21 provider-http-server DocsFab cells had to be rebuilt from the ledger. The run index holds one content-free row per run, step and attempt, with the provider's HTTP status, the failure class and the latency. The two eight-case matrices of 2026-09-23 together indexed to about 200 KiB, so a complete case is on the order of 10 KiB. A failed cell repeats a step up to seven times (one attempt and retry.maxTransportRetries retries), so its index is on the order of 100 KiB, and the value of 1 MiB is about ten times that, so only an extreme cell is cut. A cut keeps the newest rows, which hold the latest complete snapshot, from a row boundary, and says so in the evidence entry with this limit's refusal code, the observed bytes and the retained bytes. At most 20 cells fail in one arm, so the arm keeps at most 20 MiB. Provisional and unmeasured for failed nightly cells. The copy is never published, never judged and never changes a cell, so it is not part of the series.
+
+  - name: bench.nightly.readerMaxArtifactBytes
+    value: 134217728
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_BENCH_NIGHTLY_READER_MAX_ARTIFACT_BYTES
+    min: 4096
+    max: 536870887
+    refusal: bench-nightly-reader-max-artifact-bytes-bound
+    remediation: Raise the nightly evaluator reader bound only after reviewing the verified writer's effective artifacts.maxObjectBytes setting and starting a new comparison series. Keep the entire sealed record and mark a reader-only size refusal as unassessed; never clip bytes.
+    rationale: The default 134217728 bytes equals the current verified DocsFab artifact writer's catalog default, so the evaluator adds no smaller hidden record cap. The maximum follows that writer catalog's supported 536870887-byte domain. This is a per-object reader bound for one sealed decision or rationale; a writer host override above the effective nightly value is a harness evidence fault, not a product quality failure. The effective value enters the public nightly conditions and changing it creates a new comparison series. The selected real-panel rationale records fit far below the default; the first manual qualification measures the current hosted journey.
+
+  - name: bench.nightly.judgeContextWindowTokens
+    value: 1000000
+    unit: conservative-token-upper-bound
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1000000
+    max: 1000000
+    refusal: bench-nightly-judge-context-window-tokens-bound
+    remediation: Retain the unassessed cell and full selected evidence. Review a new explicit source-file selector or model profile and start a new comparison series; never clip the prompt or omit a criterion.
+    rationale: The checked-in aws/anthropic/bedrock-claude-sonnet-5 profile declares a 1000000-token context window and maxInputTokens. Before a judge send, the nightly estimates the request's tokens as its UTF-8 JSON bytes divided by bench.nightly.judgeMinBytesPerToken, rounded up, and adds the full declared output cap; values above this fixed profile capacity refuse with all selected evidence retained, and the refusal names this limit's code, the observed estimate and this value in the cell's note. This is model capacity, not a smaller sampling budget or a permission to truncate source files; a model profile change requires new qualification and series identity.
+
+  - name: bench.nightly.agentContextWindowTokens
+    value: 1050000
+    unit: tokens
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1050000
+    max: 1050000
+    refusal: bench-nightly-agent-context-window-bound
+    remediation: Retain the request and compare a newly documented model profile before changing this fixed capacity or comparison series; never clip task context.
+    rationale: The official GPT-6.1 Sol model page declares a 1050000-token context window. This checked-in model capacity is shared by DocsFab and both controls; the hosted alias has not been tested at that ceiling. Provider refusal is a coded cell outcome, never a silent truncation.
+
+  - name: bench.nightly.agentMaxInputTokens
+    value: 1050000
+    unit: tokens
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1050000
+    max: 1050000
+    refusal: bench-nightly-agent-max-input-bound
+    remediation: Retain the full task and review a separately documented input ceiling before introducing any smaller limit or clipping source material.
+    rationale: The official GPT-6.1 Sol model page publishes a 1050000-token context window but no independent max-input figure. The profile sets maxInputTokens equal to that context, deliberately adding no smaller benchmark input cap. The nightly attests the profile with the owner-approved model page, so DocsFab and both controls admit each request against this window and the context reserve before sending it; an unattested profile would leave admission to the provider.
+
+  - name: bench.nightly.agentMaxOutputTokens
+    value: 128000
+    unit: tokens
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 128000
+    max: 128000
+    refusal: bench-nightly-agent-max-output-bound
+    remediation: Retain the stopped or incomplete cell and review the official model capacity before changing the profile; never mark a truncated answer complete.
+    rationale: The official GPT-6.1 Sol model page declares 128000 max output tokens. The hosted alias has been verified for small tool calls, not a 128000-token reply. DocsFab and both controls use this one effective output ceiling and the same complete-trial USD reservation ledger.
+
+  - name: bench.nightly.agentContextReserveTokens
+    value: 4096
+    unit: tokens
+    scope: per-run
+    warnAt: 1
+    override: null
+    min: 4096
+    max: 4096
+    refusal: bench-nightly-agent-context-reserve-bound
+    remediation: Review context admission for all three arms and begin a new comparison series before changing the fixed reserve; do not silently reduce it.
+    rationale: The owner accepted 4096 reserved context tokens for this GPT-6.1 Sol benchmark profile. Because the nightly attests the profile, DocsFab and both controls hold it back from the input window when they admit a request, as one shared framing and headroom policy for every arm. It is not a separate task sampling budget or a claim about a hosted hard limit.
+
+  - name: bench.nightly.upstreamResponseMaxBytes
+    value: 67108864
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 67108864
+    max: 67108864
+    refusal: bench-nightly-upstream-response-max-bytes-bound
+    remediation: Retain the cell and its gateway diagnostic. Measure the provider's bytes per streamed output token on retained responses, raise this bound together with bench.nightly.gatewayMemoryBytes, and start a new comparison series; never truncate a response.
+    rationale: Largest single provider response the nightly gateway reads, for an agent stream or a judge reply, sized from bench.nightly.agentMaxOutputTokens. The gateway buffers a whole response before it returns anything, and a streamed chat completion carries roughly one chunk of 200 to 300 bytes per visible output token, so 128000 tokens need about 34 MB. 64 MiB is about twice that; hidden reasoning tokens send no chunks. The previous 8 MiB literal held about 31000 streamed tokens, below the declared output. A response above it ends the cell's provider boundary with a coded refusal naming the observed and allowed bytes. Unmeasured on the Hub; it is a series limit.
+
+  - name: bench.nightly.upstreamMaxContentCodings
+    value: 5
+    unit: codings
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 5
+    max: 5
+    refusal: bench-nightly-upstream-max-content-codings-bound
+    remediation: Retain the cell and its gateway diagnostic and ask the provider why one response stacks this many content codings; never decode a longer chain.
+    rationale: Most content codings the nightly gateway's Hub transport undoes for one response, the same five Node's fetch (undici 7.24) allows. Each coding is one more decoder over the whole body, so a longer chain only multiplies decode work. A real Hub reply carries at most one. A longer chain ends the call with a coded refusal naming the count; nothing is decoded. It is a series limit only because the transport decides whether a reply is read.
+
+  - name: bench.nightly.gatewayMemoryBytes
+    value: 2147483648
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_BENCH_NIGHTLY_GATEWAY_MEMORY_BYTES
+    min: 2147483648
+    max: 8589934592
+    refusal: bench-nightly-gateway-memory-bytes-bound
+    remediation: Raise DOCSFAB_BENCH_NIGHTLY_GATEWAY_MEMORY_BYTES for this host, up to the catalog max, when the gateway sidecar is killed for memory; it can never go below the default, which a response at bench.nightly.upstreamResponseMaxBytes needs.
+    rationale: Memory limit of the nightly gateway sidecar container. Reading one response, the sidecar holds several copies of it while it screens, meters, parses and returns it. At bench.nightly.upstreamResponseMaxBytes, a 64 MiB streamed response measured about 520 MiB above the process baseline in the fixture sidecar, and one of two-byte UTF-8 text 684 to 746 MiB, before TLS and HTTP buffers (2026-10-14). 2 GiB leaves more than twice the largest measured need, and a nightly host has about 23 GB. Requests are one at a time per cell. The shared benchmarks.sandbox.serviceMemoryBytes default of 256 MiB held the former 8 MiB bound at about half its memory. It is a series limit because a sidecar killed for memory ends the arm.
+
+  - name: bench.nightly.cellTimeoutMs
+    value: 1800000
+    unit: milliseconds
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1800000
+    max: 1800000
+    refusal: bench-nightly-cell-timeout-bound
+    remediation: Preserve the stopped cell and remaining work. Qualify a changed complete-cell deadline across all three arms and start a new comparison series before raising it.
+    rationale: The nightly retained its 1800000 ms declared complete-cell deadline as a common benchmark fairness policy while moving from the previous GPT-6 Sol composition path to the owner-selected GPT-6.1 Sol profile path. It covers participant, helpers, retries, and judging with no smaller layer cap; it is not a provider model-capacity claim or a historical parity claim. Manual qualification must measure whether the supported 20-cell arm fits within the CI job.
+
+  - name: bench.nightly.estimatedMicroUsdPerMillionTokens
+    value: 1730000
+    unit: microUSD-per-million-total-tokens
+    scope: per-run
+    warnAt: 1
+    override: DOCSFAB_BENCH_NIGHTLY_ESTIMATED_MICRO_USD_PER_MILLION_TOKENS
+    min: 1730000
+    max: 9007199254740991
+    refusal: bench-nightly-estimated-rate-microusd-domain
+    remediation: Use an integer microUSD-per-million-total-tokens override at or above the owner-accepted Oct 6–8 blended estimator. A billed rate or lower estimator needs a separately reviewed policy update; this field is not spending authority.
+    rationale: The owner accepted the Oct 6–8 benchmark spend watcher's blended ESTIMATED 1.73 USD per million total tokens for the new GPT-6.1 Sol series, with basis labelled estimate rather than billed. The integer microUSD representation preserves that estimator exactly. The minimum is raise-only; the maximum is JavaScript safe-integer representation, not a provider price, purchase approval, or budget. The distinct 8 USD complete-trial reservation and the scheduled-run cap remain authoritative, and overflow refuses before a send.
+
+  - name: bench.nightly.perTrialMaxUsd
+    value: 8
+    unit: USD
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_BENCH_NIGHTLY_PER_TRIAL_MAX_USD
+    min: 1
+    max: 9000
+    refusal: bench-nightly-per-trial-max-usd-bound
+    remediation: Retain the trial's accounting and unfinished work, inspect participant, helper, and retry requests, then raise DOCSFAB_BENCH_NIGHTLY_PER_TRIAL_MAX_USD only with owner approval if representative work needs more headroom. A scheduled run's per-arm share of the run cap still applies separately.
+    rationale: The owner set an 8 USD default on 2026-10-08 for one complete task-arm trial's participant requests, helpers, and retries. Judging is not in it. Each admitted cell gets its own judge allowance, the judge's context window times its attempts at the estimated rate (about 15.57 USD per cell at the defaults), which the ledger caps separately. Historical selected DocsFab cells reached 5.147 USD, so the default allows that measured journey with roughly 55 percent headroom. The 9000 USD override-domain maximum prevents configuring one trial above the dedicated credential's entire monthly provider cap; it does not convert that cap into trial funding or authorize raising the default. The separate scheduled-run cap applies only to a scheduled run, split into declared shares across its independent arms.
+
+  - name: bench.nightly.scheduledRunSpendCapUsd
+    value: 130
+    unit: USD
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_BENCH_NIGHTLY_SCHEDULED_RUN_SPEND_CAP_USD
+    min: 1
+    max: 9000
+    refusal: bench-nightly-scheduled-run-spend-cap-usd-bound
+    remediation: Keep the arm's ledger, settled cells and unstarted slots, then review measured provider spend. Raise DOCSFAB_BENCH_NIGHTLY_SCHEDULED_RUN_SPEND_CAP_USD for this host, up to the monthly provider key cap, only after the owner approves more spend per scheduled run. A manual web run has no run-level cap.
+    rationale: The owner set 100 USD for the whole 20-task, three-arm nightly run on 2026-10-08, applied it to scheduled runs only on 2026-10-12, and raised it to 130 USD the same day ("Fine, raise the budget to $130", recorded in owner-cost-approval.json). A manual web run has no run-level cap. The three arms run as independent jobs with job-local ledgers and no shared ledger, so each arm of a scheduled run enforces its own declared share; the three shares sum to this cap, which keeps the run at or below it whatever the other arms spend. An arm that reaches its share stops admitting cells and labels the rest; it never stops another arm. An arm refuses to start when its overridden shares sum above this cap. Pipeline 73185690 measured about 2.9 USD per executed docsfab-do cell and about 1.6 USD per skills-agent cell, which projects about 58 and 32 USD for full arms. The 8 USD per-trial cap applies to every run, and the dedicated credential's 9000 USD monthly provider cap is the backstop; the 9000 USD override-domain maximum keeps one run below that monthly cap and does not authorize spending it.
+
+  - name: bench.nightly.docsfabDoSpendShareUsd
+    value: 70
+    unit: USD
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_BENCH_NIGHTLY_DOCSFAB_DO_SPEND_SHARE_USD
+    min: 1
+    max: 9000
+    refusal: bench-nightly-docsfab-do-spend-share-usd-bound
+    remediation: Keep the docsfab-do arm's settled cells and its labelled unstarted slots, then rebalance the three arm shares of the scheduled-run cap from measured per-arm cost. The three shares must not sum above bench.nightly.scheduledRunSpendCapUsd; raise the cap itself only with owner approval.
+    rationale: The docsfab-do arm's share of the 130 USD scheduled-run cap. Arms run as independent jobs with job-local ledgers. A scheduled arm starts a cell while any headroom remains under its own share, and every request reserves its maximum before it is sent and is refused if it would cross the share, so the three shares, which sum to the cap, keep the run at or below it. 70 USD is about 20 percent above the projected full-arm cost of about 58 USD; pipeline 73185690 (2026-10-12) measured about 2.9 USD per executed docsfab-do cell. A manual web run has no share and no run-level cap.
+
+  - name: bench.nightly.skillsAgentSpendShareUsd
+    value: 38
+    unit: USD
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_BENCH_NIGHTLY_SKILLS_AGENT_SPEND_SHARE_USD
+    min: 1
+    max: 9000
+    refusal: bench-nightly-skills-agent-spend-share-usd-bound
+    remediation: Keep the skills-agent arm's settled cells and its labelled unstarted slots, then rebalance the three arm shares of the scheduled-run cap from measured per-arm cost. The three shares must not sum above bench.nightly.scheduledRunSpendCapUsd; raise the cap itself only with owner approval.
+    rationale: The skills-agent arm's share of the 130 USD scheduled-run cap. Arms run as independent jobs with job-local ledgers. A scheduled arm starts a cell while any headroom remains under its own share, and every request reserves its maximum before it is sent and is refused if it would cross the share, so the three shares, which sum to the cap, keep the run at or below it. 38 USD is about 20 percent above the projected full-arm cost of about 32 USD; pipeline 73185690 measured about 1.6 USD per skills-agent cell over its first three cells. A manual web run has no share and no run-level cap.
+
+  - name: bench.nightly.basicAgentSpendShareUsd
+    value: 22
+    unit: USD
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_BENCH_NIGHTLY_BASIC_AGENT_SPEND_SHARE_USD
+    min: 1
+    max: 9000
+    refusal: bench-nightly-basic-agent-spend-share-usd-bound
+    remediation: Keep the basic-agent arm's settled cells and its labelled unstarted slots, then rebalance the three arm shares of the scheduled-run cap from measured per-arm cost. The three shares must not sum above bench.nightly.scheduledRunSpendCapUsd; raise the cap itself only with owner approval.
+    rationale: The basic-agent arm's share of the 130 USD scheduled-run cap. Arms run as independent jobs with job-local ledgers. A scheduled arm starts a cell while any headroom remains under its own share, and every request reserves its maximum before it is sent and is refused if it would cross the share, so the three shares, which sum to the cap, keep the run at or below it. 22 USD is the rest of the cap; the basic-agent arm was not yet measured and is presumed the cheapest, and its share will be refined from measured nights. A manual web run has no share and no run-level cap.

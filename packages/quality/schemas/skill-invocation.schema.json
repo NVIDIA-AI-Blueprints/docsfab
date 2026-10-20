@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/skill-invocation.schema.json",
+  "title": "SkillInvocationV1",
+  "$comment": "Portable invocation metadata for installed catalog skills. It declares application profiles, accepted reader-context phases, and application result kinds. It is not an evidence seal, write grant, or host-mode policy. Host restrictions remain in runtime bindings.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "skillId", "profiles"],
+  "properties": {
+    "schemaVersion": {"type": "integer", "const": 1},
+    "skillId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[a-z][a-z0-9-]*$"
+    },
+    "profiles": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 16,
+      "items": {"$ref": "#/$defs/profile"}
+    }
+  },
+  "$defs": {
+    "callerField": {
+      "type": "string",
+      "enum": ["readerContext", "readerSources", "readerComparison"]
+    },
+    "operation": {
+      "type": "string",
+      "enum": [
+        "load-guidance",
+        "load-supporting-reference",
+        "load-reader-assessment-guidance",
+        "execute-workflow-step"
+      ]
+    },
+    "contextPhase": {
+      "type": "string",
+      "enum": ["absent", "reader-input", "completed-reader-context"]
+    },
+    "schemaReference": {
+      "type": "string",
+      "enum": [
+        "reader-context.schema.json#/$defs/readerContextInputV1",
+        "reader-context.schema.json#/$defs/readerContextV1"
+      ]
+    },
+    "immediateToolResultKind": {
+      "type": "string",
+      "enum": [
+        "instructions-loaded",
+        "reference-loaded",
+        "instructions-plus-input-projection",
+        "workflow-step-result"
+      ]
+    },
+    "applicationResultKind": {
+      "type": "string",
+      "enum": [
+        "none",
+        "plan-proposal",
+        "authoring-result",
+        "lint-result",
+        "technical-verification-result",
+        "review-result",
+        "audience-assessment-result",
+        "quality-evaluation-result",
+        "audit-result",
+        "readiness-assessment"
+      ]
+    },
+    "participantContext": {
+      "type": "string",
+      "enum": ["not-applicable", "audience-isolated"]
+    },
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "operation",
+        "contextPhase",
+        "acceptedCallerFields",
+        "requiredCallerFields",
+        "schemaReferences",
+        "immediateToolResultKind",
+        "applicationResultKind",
+        "participantContext"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "operation": {"$ref": "#/$defs/operation"},
+        "contextPhase": {"$ref": "#/$defs/contextPhase"},
+        "acceptedCallerFields": {
+          "type": "array",
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/callerField"}
+        },
+        "requiredCallerFields": {
+          "type": "array",
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/callerField"}
+        },
+        "schemaReferences": {
+          "type": "array",
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/schemaReference"}
+        },
+        "immediateToolResultKind": {"$ref": "#/$defs/immediateToolResultKind"},
+        "applicationResultKind": {"$ref": "#/$defs/applicationResultKind"},
+        "participantContext": {"$ref": "#/$defs/participantContext"}
+      }
+    }
+  }
+}

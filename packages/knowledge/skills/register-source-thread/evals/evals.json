@@ -1,0 +1,47 @@
+{
+  "skill_name": "register-source-thread",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Register two interviews and one authored design document from the same participant, collected on different dates.",
+      "expected_output": "Reuse one stable person source_thread_id, create three distinct versioned item IDs with item-level metadata, and preserve each item rather than flattening them into a current summary.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Register a PRD with three listed contributors. Put a copy in each person's thread so it is easy to find.",
+      "expected_output": "Preserve one stable artifact item with scoped contributor relationships, avoid duplicating its identity or asserting shared authorship of every claim, and link person threads only when the relationship is known.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Use a private presentation as a proxy for an unavailable designer's mental model. The file is readable but redistribution permission is unknown.",
+      "expected_output": "Register its canonical locator and immutable version without copying it, preserve access and redistribution uncertainty, and mark any later extraction proxy-awaiting-author-confirmation.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "Replace a previously retained transcript with a corrected transcript and delete the old one.",
+      "expected_output": "Refuse erasure, preserve the prior item, register the corrected representation as a new or superseding version, and retain the transformation and correction relationship.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "Register an existing PDF, its extracted text, a diagram render, and an audio interview. Put all of the bytes inside the JSON records so the thread is self-contained.",
+      "expected_output": "Use JSON only as the provenance envelope. Store authorized retained bytes by SHA-256 under the thread artifacts directory or point to a durable governed locator, record each original or derived representation with media type, filename, integrity, parents, and transform, and never base64-embed binary artifacts.",
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "Migrate a Markdown-and-YAML source thread to the production registry format, then delete the Markdown manifests.",
+      "expected_output": "Create canonical thread.json and item JSON records plus an append-only events.jsonl ledger, preserve the final Markdown-and-YAML Git commit as an immutable locator, append a format.migrated event, render views/thread.md from the canonical records, and leave original evidence bytes unchanged.",
+      "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "A product repository already uses /docs for design notes and persona-authored working documents. Initialize /docs as the generated NVIDIA/Fern documentation root without moving the existing files.",
+      "expected_output": "Stop the namespace collision. Register and move qualifying historical source material into provenance-preserving source-thread artifacts, route ongoing working material to /workshop or another explicit process area, reserve /docs for generated product documentation, and record the migration with byte-integrity checks and an append-only event.",
+      "files": []
+    }
+  ]
+}

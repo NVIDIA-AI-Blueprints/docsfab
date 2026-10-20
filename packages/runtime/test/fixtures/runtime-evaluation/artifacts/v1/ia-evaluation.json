@@ -1,0 +1,57 @@
+{
+  "digest": "2c072f04bf50b1e0cfa70b24a6bb594a1aeeaebba21e2f738a051fbb8e7043a2",
+  "kind": "ia-evaluation",
+  "payload": {
+    "blockingDiagnosticDigests": [],
+    "candidateArtifact": {
+      "digest": "de0bcd34c201b8d5471b3398f1447bcb9fe7bc3d49380dfe9310c4ab4b78ecd8",
+      "kind": "ia-candidates",
+      "repositoryContentDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "repositoryRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "schemaVersion": 1
+    },
+    "candidateId": "candidate:reader-job",
+    "deterministicStatus": "passed",
+    "diagnosticsDigest": "2222222222222222222222222222222222222222222222222222222222222222",
+    "eligible": true,
+    "evidence": [{ "nodeId": "document:home", "path": "docs/index.md" }],
+    "navigationEvaluation": {
+      "digest": "015238257c9e76c076affb336a3d9f4cb1a6a8731682aba34049f844714f725c",
+      "kind": "navigation-evaluation",
+      "repositoryContentDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "repositoryRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "schemaVersion": 1
+    },
+    "navigationComparisonDigest": "6666666666666666666666666666666666666666666666666666666666666666",
+    "navigationSuite": {
+      "digest": "5555555555555555555555555555555555555555555555555555555555555555",
+      "id": "suite:mvp",
+      "version": "1"
+    },
+    "policyBindings": [
+      {
+        "digest": "1111111111111111111111111111111111111111111111111111111111111111",
+        "id": "policy:ia-evaluation",
+        "version": "1"
+      }
+    ],
+    "scores": {
+      "balance": 84,
+      "cohesion": 90,
+      "duplication": 100,
+      "evidenceCoverage": 100,
+      "predictability": 92,
+      "separation": 88,
+      "stability": 100,
+      "structuralFindability": 94,
+      "total": 93
+    },
+    "scoringDigest": "3333333333333333333333333333333333333333333333333333333333333333",
+    "topologyDigest": "4444444444444444444444444444444444444444444444444444444444444444"
+  },
+  "repository": {
+    "contentDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "schemaVersion": 1
+}

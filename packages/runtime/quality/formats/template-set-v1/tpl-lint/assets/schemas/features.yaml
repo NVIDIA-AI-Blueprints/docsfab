@@ -1,0 +1,49 @@
+schema_version: "1.0"
+library_version: "1.0.0"
+name: features
+description: "Key features page with a comprehensive capability list"
+source_template: "templates/about/key-features.md"
+
+structure:
+  headings:
+    h1:
+      required:
+        - pattern: "(Key )?Features.*|.+ Features"
+          description: "Features page title"
+      max_count: 1
+    h2:
+      required: []
+      optional:
+        - pattern: "Developer Tools?|Developer Experience"
+          description: "Developer tools category"
+    h3:
+      optional:
+        - pattern: ".*"
+          description: "Feature subcategories"
+
+  elements:
+    - type: list-table
+      context: "within feature categories"
+      required: false
+    - type: tab-set
+      context: "within feature comparisons"
+      required: false
+    - type: admonition
+      context: "feature details"
+      required: false
+
+  section_order: []
+
+severity:
+  missing_required_section: error
+  missing_optional_section: info
+  wrong_section_order: info
+  missing_element: info
+  duplicate_h1: error
+
+content:
+  intro:
+    max_sentences: 3
+    include_key_capabilities: true
+  categories:
+    min_count: 0

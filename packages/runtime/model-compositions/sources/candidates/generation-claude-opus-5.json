@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "docsfab-model-profile-candidate-excerpt/v1",
+  "profileId": "generation-claude-opus-5",
+  "status": "candidate",
+  "profileKind": "generative",
+  "purposes": [
+    "evaluation",
+    "main-documentation",
+    "review"
+  ],
+  "identity": {
+    "provider": "nvidia-inference-api",
+    "modelId": "aws/anthropic/bedrock-claude-opus-5",
+    "endpoint": null,
+    "region": null
+  },
+  "interface": {
+    "transport": "openai-compatible",
+    "apiFormat": "chat_completions",
+    "route": "/v1/chat/completions",
+    "inputTypes": [
+      "text"
+    ],
+    "outputType": "text"
+  },
+  "proposedConfiguration": {
+    "contextWindow": 1000000,
+    "maxInputTokens": 1000000,
+    "maxOutputTokens": 32768,
+    "reasoning": false,
+    "supportsDeveloperRole": false,
+    "supportsReasoningEffort": false
+  },
+  "approvalStatus": "not-approved",
+  "projection": {
+    "runtimeConfiguration": "not-authorized",
+    "modelRequest": "blocked"
+  }
+}

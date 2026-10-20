@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "docsfab-model-profile-candidate-excerpt/v1",
+  "profileId": "generation-gpt-6-sol",
+  "status": "candidate",
+  "profileKind": "generative",
+  "purposes": [
+    "evaluation",
+    "main-documentation",
+    "review"
+  ],
+  "identity": {
+    "provider": "nvidia-inference-api",
+    "modelId": "azure/openai/gpt-6-sol",
+    "endpoint": null,
+    "region": null
+  },
+  "interface": {
+    "transport": "openai-compatible",
+    "apiFormat": "chat_completions",
+    "route": "/v1/chat/completions",
+    "inputTypes": [
+      "text"
+    ],
+    "outputType": "text"
+  },
+  "proposedConfiguration": {
+    "contextWindow": 1050000,
+    "maxInputTokens": 1050000,
+    "maxOutputTokens": 128000,
+    "reasoning": false,
+    "supportsDeveloperRole": false,
+    "supportsReasoningEffort": false
+  },
+  "approvalStatus": "not-approved",
+  "projection": {
+    "runtimeConfiguration": "not-authorized",
+    "modelRequest": "blocked"
+  }
+}

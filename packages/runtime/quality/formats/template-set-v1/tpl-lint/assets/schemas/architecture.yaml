@@ -1,0 +1,67 @@
+schema_version: "1.0"
+library_version: "1.0.0"
+name: architecture
+description: "Product architecture overview with components, diagrams, and data flow"
+source_template: "templates/about/architecture-overview.md"
+
+structure:
+  headings:
+    h1:
+      required:
+        - pattern: "Architecture Overview.*|.+ Architecture"
+          description: "Architecture overview title"
+      max_count: 1
+    h2:
+      required:
+        - pattern: "Components?"
+          description: "Component breakdown"
+        - pattern: "Data Flow"
+          description: "Data flow section"
+      optional:
+        - pattern: "Deployment Topolog(y|ies)"
+          description: "Deployment topologies"
+        - pattern: "Service Interactions?"
+          description: "Service interaction patterns"
+        - pattern: "External Integration.*|Integration Points?"
+          description: "External integration points"
+    h3:
+      optional:
+        - pattern: ".*"
+          description: "Layer and component subsections"
+
+  elements:
+    - type: mermaid
+      context: "within architecture diagram sections"
+      required: true
+    - type: list-table
+      context: "within component or deployment sections"
+      required: false
+    - type: tab-set
+      context: "within deployment topologies"
+      required: false
+    - type: admonition
+      context: "within architecture sections"
+      required: false
+      attributes:
+        class: tip
+
+  section_order:
+    - "Components"
+    - "Data Flow"
+    - "Deployment"
+    - "Service Interactions"
+    - "External Integration"
+
+severity:
+  missing_required_section: error
+  missing_optional_section: info
+  wrong_section_order: warning
+  missing_element: warning
+  duplicate_h1: error
+
+content:
+  intro:
+    max_sentences: 3
+  diagrams:
+    min_count: 1
+    include_mermaid: required

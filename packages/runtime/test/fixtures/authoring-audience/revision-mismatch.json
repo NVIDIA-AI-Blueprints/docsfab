@@ -1,0 +1,8 @@
+{
+  "evidence_status": "direct-outcome-evidence",
+  "reason": "candidate-revision-mismatch",
+  "target": {
+    "repository_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "documentation_revision": "candidate-documentation-v2"
+  }
+}

@@ -1,0 +1,18 @@
+# DocsFab operational limits owned by the `githubReview` name prefix.
+# Registered in config/limits.yaml; regenerate mirrors from packages/runtime.
+# This is DocsFab's internal GitHub review-body presentation policy, not a
+# published maximum of the GitHub REST API.
+limits:
+  - name: githubReview.bodyMaxBytes
+    value: 65000
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_GITHUB_REVIEW_BODY_MAX_BYTES
+    min: 256
+    max: 131072
+    refusal: github-review-body-bytes-bound
+    remediation: Inspect the saved review inventory and narrow the requested review, or raise DOCSFAB_GITHUB_REVIEW_BODY_MAX_BYTES within the validated host range after checking the target's policy; retry only a fresh unpublished delivery.
+    rationale: Internal UTF-8 byte budget for one GitHub pending-review body, separate from the complete native inline-comments batch. A valid admitted default review measured 66498 rich-body bytes versus 277 legacy bytes, so the default selects a fixed compact partial body while preserving the complete inline batch and saved inventory. First-party gh-aw uses a 65000-character tool policy; 65000 bytes is a conservative DocsFab presentation choice, not a GitHub REST maximum or an acceptance guarantee. The 256-byte minimum permits an actionable pre-publication stop when even the fixed compact body does not fit. The 131072-byte host-override maximum is a provisional internal range above the measured example, not measured provider capacity. An oversized explicit overview refuses before POST; committed potentially invoked reviews retain exact sealed bytes regardless of later policy changes.
+    docValue: 65,000 bytes
+    docSummary: Internal byte budget for one GitHub pending-review body; native inline comments have separate transport bounds.

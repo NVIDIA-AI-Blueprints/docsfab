@@ -1,0 +1,178 @@
+{
+  "literals": [
+    {
+      "path": "packages/runtime/src/autonomy/contracts.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 10",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/autonomy/contracts/evidence-codecs.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 255",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/autonomy/contracts/evidence-codecs.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 512",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/autonomy/dry-run-cli.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 512",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/autonomy/dry-run-host.ts",
+      "kind": "kib-product",
+      "lexeme": "1024 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/autonomy/dry-run-host.ts",
+      "kind": "kib-product",
+      "lexeme": "64 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/autonomy/dry-run-host.ts",
+      "kind": "max-assign",
+      "lexeme": "maxBuffer: 1",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/autonomy/dry-run-host.ts",
+      "kind": "max-assign",
+      "lexeme": "maxBuffer: 6",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/autonomy/dry-run-host.ts",
+      "kind": "max-buffer",
+      "lexeme": "maxBuffer: 1",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/autonomy/dry-run-host.ts",
+      "kind": "max-buffer",
+      "lexeme": "maxBuffer: 6",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/autonomy/dry-run-host.ts",
+      "kind": "slice-cap",
+      "lexeme": ".slice(0, 32)",
+      "count": 2
+    },
+    {
+      "path": "packages/runtime/src/autonomy/dry-run.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 64",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/autonomy/dry-run.ts",
+      "kind": "slice-cap",
+      "lexeme": ".slice(0, 16)",
+      "count": 2
+    },
+    {
+      "path": "packages/runtime/src/autonomy/dry-run.ts",
+      "kind": "slice-cap",
+      "lexeme": ".slice(0, 32)",
+      "count": 3
+    },
+    {
+      "path": "packages/runtime/src/autonomy/managed-cycle.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_SELECTION_CANDIDATES = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/autonomy/managed-cycle.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_VALIDATION_COST = 6",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/autonomy/managed-cycle.ts",
+      "kind": "slice-cap",
+      "lexeme": ".slice(0, 32)",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/autonomy/managed-publish-args.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 512",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/autonomy/managed-publish-host.ts",
+      "kind": "kib-product",
+      "lexeme": "4 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/autonomy/managed-publish-host.ts",
+      "kind": "slice-cap",
+      "lexeme": ".slice(0, 200)",
+      "count": 2
+    },
+    {
+      "path": "packages/runtime/src/autonomy/multi-unit-campaign-cli.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 512",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/autonomy/multi-unit-doc-improvement.ts",
+      "kind": "max-assign",
+      "lexeme": "MULTI_UNIT_MAX_ATTEMPTS_PER_UNIT = 3",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/autonomy/multi-unit-doc-improvement.ts",
+      "kind": "max-assign",
+      "lexeme": "MULTI_UNIT_MAX_CAMPAIGN_ATTEMPTS = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/autonomy/multi-unit-doc-improvement.ts",
+      "kind": "max-assign",
+      "lexeme": "MULTI_UNIT_MAX_UNITS = 5",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/autonomy/once-cli.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 512",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/autonomy/once-cli.ts",
+      "kind": "slice-cap",
+      "lexeme": ".slice(0, 200)",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/autonomy/roadmap-planning.ts",
+      "kind": "slice-cap",
+      "lexeme": ".slice(0, 32)",
+      "count": 7
+    },
+    {
+      "path": "packages/runtime/src/autonomy/roadmap.ts",
+      "kind": "max-assign",
+      "lexeme": "AUTO_ROADMAP_MAX_OPERATION_CAP = 2",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    }
+  ]
+}

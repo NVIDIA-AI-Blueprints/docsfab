@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "docsfab-model-profile-candidate-excerpt/v1",
+  "profileId": "generation-nemotron-3-5-lightning-30b-a3b",
+  "status": "candidate",
+  "profileKind": "generative",
+  "purposes": [
+    "main-documentation",
+    "write",
+    "bulk-transformation"
+  ],
+  "identity": {
+    "provider": "nvidia-api-catalog",
+    "modelId": "nvidia/nemotron-3.5-lightning-30b-a3b",
+    "endpoint": null,
+    "region": null
+  },
+  "interface": {
+    "transport": "openai-compatible",
+    "apiFormat": "chat_completions",
+    "route": "/v1/chat/completions",
+    "inputTypes": [
+      "text"
+    ],
+    "outputType": "text"
+  },
+  "proposedConfiguration": {
+    "contextWindow": 1000000,
+    "maxInputTokens": 262144,
+    "maxOutputTokens": 8192,
+    "documentedMaxOutputTokens": 32768,
+    "reasoning": false,
+    "supportsDeveloperRole": false,
+    "supportsReasoningEffort": false,
+    "requestControls": [
+      "chat_template_kwargs.enable_thinking",
+      "max_tokens",
+      "reasoning_budget",
+      "seed",
+      "stop",
+      "stream",
+      "temperature",
+      "top_p"
+    ],
+    "candidateRequestPolicy": {
+      "mode": "reasoning-off",
+      "enableThinking": false,
+      "reasoningBudget": 0,
+      "temperature": 1,
+      "topP": 0.95
+    }
+  },
+  "approvalStatus": "not-approved",
+  "projection": {
+    "runtimeConfiguration": "not-authorized",
+    "modelRequest": "blocked"
+  }
+}

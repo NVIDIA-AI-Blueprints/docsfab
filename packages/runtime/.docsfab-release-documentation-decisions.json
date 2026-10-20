@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "decisions": [
+    { "topic": "release-compatibility", "status": "unknown" },
+    { "topic": "release-explicit-human-decisions", "status": "unknown" },
+    { "topic": "release-lifecycle", "status": "unknown" },
+    { "topic": "release-limitations", "status": "unknown" },
+    { "topic": "release-ownership", "status": "unknown" },
+    { "topic": "release-review-policy", "status": "unknown" },
+    { "topic": "release-security", "status": "unknown" },
+    { "topic": "release-support", "status": "unknown" },
+    { "topic": "release-trust-boundaries", "status": "unknown" }
+  ]
+}

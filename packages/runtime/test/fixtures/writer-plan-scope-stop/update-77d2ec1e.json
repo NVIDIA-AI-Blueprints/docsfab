@@ -1,0 +1,293 @@
+{
+  "_provenance": "Content-free extraction of live run 77d2ec1e-567d-4a00-b5c5-b1b8de071333 (update-documentation, Inference Hub nvidia/nvidia/nemotron-3-super-v3, development evidence, 2026-10-01): step identity, status, plan binding, attempt outcomes and tool counts only. Recorded failure: workflow-outcome-projection-invalid-record at $.steps[].planDiagnostic.",
+  "id": "77d2ec1e-567d-4a00-b5c5-b1b8de071333",
+  "workflow": "update-documentation",
+  "repository": {
+    "revision": "4ae3f3bf1e00c4a9edb7af6c2c4a05aedc3bb7a4"
+  },
+  "status": "failed",
+  "failure": {
+    "class": "contract-shape",
+    "layer": "workflow",
+    "code": "workflow-outcome-projection-invalid-record"
+  },
+  "workflowOutcomeRejection": {
+    "code": "workflow-outcome-projection-invalid-record",
+    "location": "$.steps[].planDiagnostic"
+  },
+  "steps": [
+    {
+      "id": "plan-documentation",
+      "kind": "evaluate",
+      "skill": "plan-documentation",
+      "mode": "read-only",
+      "status": "succeeded",
+      "planBinding": {
+        "kind": "docsfab-documentation-plan",
+        "schemaVersion": 1,
+        "mode": "update",
+        "pages": [
+          {
+            "path": "docs/routing/guide.md",
+            "disposition": "update"
+          }
+        ],
+        "sourceBindings": [
+          {
+            "pagePath": "docs/routing/guide.md",
+            "sources": [
+              ".skill-router/skills/route-check/SKILL.md",
+              "AGENTS.md",
+              "docs/index.md",
+              "docs/routing/reference.md",
+              "fixture-seed/home/.agents/skills/route-check/SKILL.md",
+              "fixture-seed/repairs/malformed-audit.SKILL.md",
+              "fixture-seed/router-home/collections/fixture-pack/skills/route-check/SKILL.md",
+              "PRODUCT_ROUTING_CONTRACT.md",
+              "src/router_fixture/builtin_skills/route-check/SKILL.md"
+            ]
+          }
+        ],
+        "digest": "961a4ebbf99677b9f493200a3e4fdc7bfe24ba246d447f5f6f44c07ace639d34"
+      },
+      "inference": {
+        "attempts": [
+          {
+            "attempt": 1,
+            "outcome": "malformed-response"
+          },
+          {
+            "attempt": 2,
+            "outcome": "succeeded"
+          }
+        ]
+      },
+      "tools": {
+        "totalCalls": 33,
+        "failedCalls": 4,
+        "byTool": [
+          {
+            "name": "canon_submit_artifact",
+            "calls": 1,
+            "failures": 1
+          },
+          {
+            "name": "find",
+            "calls": 1,
+            "failures": 0
+          },
+          {
+            "name": "grep",
+            "calls": 5,
+            "failures": 0
+          },
+          {
+            "name": "ls",
+            "calls": 6,
+            "failures": 0
+          },
+          {
+            "name": "read",
+            "calls": 20,
+            "failures": 3
+          }
+        ],
+        "failureCategories": [
+          {
+            "category": "denied-path",
+            "count": 3
+          },
+          {
+            "category": "unsupported-pattern",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "derive-source-obligations",
+      "kind": "evaluate",
+      "skill": "verify-technical-accuracy",
+      "mode": "read-only",
+      "status": "succeeded",
+      "planBinding": {
+        "kind": "docsfab-documentation-plan",
+        "schemaVersion": 1,
+        "mode": "update",
+        "pages": [
+          {
+            "path": "docs/routing/guide.md",
+            "disposition": "update"
+          }
+        ],
+        "sourceBindings": [
+          {
+            "pagePath": "docs/routing/guide.md",
+            "sources": [
+              ".skill-router/skills/route-check/SKILL.md",
+              "AGENTS.md",
+              "docs/index.md",
+              "docs/routing/reference.md",
+              "fixture-seed/home/.agents/skills/route-check/SKILL.md",
+              "fixture-seed/repairs/malformed-audit.SKILL.md",
+              "fixture-seed/router-home/collections/fixture-pack/skills/route-check/SKILL.md",
+              "PRODUCT_ROUTING_CONTRACT.md",
+              "src/router_fixture/builtin_skills/route-check/SKILL.md"
+            ]
+          }
+        ],
+        "digest": "961a4ebbf99677b9f493200a3e4fdc7bfe24ba246d447f5f6f44c07ace639d34"
+      },
+      "inference": {
+        "attempts": [
+          {
+            "attempt": 1,
+            "outcome": "succeeded"
+          }
+        ]
+      },
+      "tools": {
+        "totalCalls": 21,
+        "failedCalls": 4,
+        "byTool": [
+          {
+            "name": "canon_propose_claim",
+            "calls": 6,
+            "failures": 0
+          },
+          {
+            "name": "canon_submit_artifact",
+            "calls": 4,
+            "failures": 4
+          },
+          {
+            "name": "read",
+            "calls": 11,
+            "failures": 0
+          }
+        ],
+        "failureCategories": [
+          {
+            "category": "unsupported-pattern",
+            "count": 4
+          }
+        ]
+      }
+    },
+    {
+      "id": "write-documentation",
+      "kind": "inference",
+      "skill": "write-documentation",
+      "mode": "write",
+      "status": "needs-input",
+      "planBinding": {
+        "kind": "docsfab-documentation-plan",
+        "schemaVersion": 1,
+        "mode": "update",
+        "pages": [
+          {
+            "path": "docs/routing/guide.md",
+            "disposition": "update"
+          }
+        ],
+        "sourceBindings": [
+          {
+            "pagePath": "docs/routing/guide.md",
+            "sources": [
+              ".skill-router/skills/route-check/SKILL.md",
+              "AGENTS.md",
+              "docs/index.md",
+              "docs/routing/reference.md",
+              "fixture-seed/home/.agents/skills/route-check/SKILL.md",
+              "fixture-seed/repairs/malformed-audit.SKILL.md",
+              "fixture-seed/router-home/collections/fixture-pack/skills/route-check/SKILL.md",
+              "PRODUCT_ROUTING_CONTRACT.md",
+              "src/router_fixture/builtin_skills/route-check/SKILL.md"
+            ]
+          }
+        ],
+        "digest": "961a4ebbf99677b9f493200a3e4fdc7bfe24ba246d447f5f6f44c07ace639d34"
+      },
+      "inference": {
+        "attempts": [
+          {
+            "attempt": 1,
+            "outcome": "succeeded"
+          }
+        ]
+      },
+      "tools": {
+        "totalCalls": 12,
+        "failedCalls": 1,
+        "byTool": [
+          {
+            "name": "edit",
+            "calls": 1,
+            "failures": 1
+          },
+          {
+            "name": "find",
+            "calls": 1,
+            "failures": 0
+          },
+          {
+            "name": "ls",
+            "calls": 1,
+            "failures": 0
+          },
+          {
+            "name": "read",
+            "calls": 8,
+            "failures": 0
+          },
+          {
+            "name": "write",
+            "calls": 1,
+            "failures": 0
+          }
+        ],
+        "failureCategories": [
+          {
+            "category": "denied-path",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "lint-documentation",
+      "kind": "host-operation",
+      "skill": "lint-documentation",
+      "mode": "read-only",
+      "status": "pending"
+    },
+    {
+      "id": "verify-technical-accuracy",
+      "kind": "evaluate",
+      "skill": "verify-technical-accuracy",
+      "mode": "read-only",
+      "status": "pending"
+    },
+    {
+      "id": "review-documentation",
+      "kind": "evaluate",
+      "skill": "review-documentation",
+      "mode": "read-only",
+      "status": "pending"
+    },
+    {
+      "id": "test-audience-understanding",
+      "kind": "evaluate",
+      "skill": "test-audience-understanding",
+      "mode": "read-only",
+      "status": "pending"
+    },
+    {
+      "id": "evaluate-document-quality",
+      "kind": "evaluate",
+      "skill": "evaluate-document-quality",
+      "mode": "read-only",
+      "status": "pending"
+    }
+  ]
+}

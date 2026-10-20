@@ -1,0 +1,39 @@
+# DocsFab operational limits owned by the `siteBootstrap` name prefix.
+# Registered in config/limits.yaml; every limit here is named `siteBootstrap.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: siteBootstrap.bundleMaxBytes
+    value: 33554432
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 33554432
+    refusal: bundle-too-large
+    remediation: Reduce the approved plan's output scope, topic set or evaluation input so the signed application bundle is smaller, or raise siteBootstrap.bundleMaxBytes in config/limits/siteBootstrap.yaml and regenerate the mirrors.
+    rationale: Admitted size of one signed site-bootstrap application bundle, the single document that carries the approved plan, its reviewer signature, the navigation evaluation it was judged on together with the content index that evaluation read, the selected topics and the two policy bindings. All three readers of that document apply this one bound, each on the declared size before a byte is read - the operator import on the signed file it is given, the parked command-line reader on the file it opens, and the hosted arm on the byte count custody recorded for bytes the import registered, because custody authenticates that count and the digest but never bounds them. An oversize bundle is refused whole, by its own code rather than as a malformed document, and never truncated, because a partial bundle would not verify against the signature the reviewer produced over the complete document.
+
+  - name: siteBootstrap.reviewerPolicyMaxBytes
+    value: 1048576
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 1048576
+    refusal: policy-too-large
+    remediation: Remove reviewers who no longer approve plans from the reviewer policy so the registered document is smaller, or raise siteBootstrap.reviewerPolicyMaxBytes in config/limits/siteBootstrap.yaml and regenerate the mirrors.
+    rationale: Admitted size of the reviewer policy document the hosted site-bootstrap arm reads from project custody to verify the reviewer signature over an approved plan. Custody authenticates that document's digest and exact byte count but never bounds them, so the arm refuses a registered policy over this bound on its declared size, before reading it. The value equals the bound the operator's reviewer-policy file reader applies, so every policy an operator can approve a plan with is also admitted when the host executes that plan; that reader serves every IA reviewer-policy consumer and keeps its own bound.
+
+  - name: siteBootstrap.runRecordMaxBytes
+    value: 8388608
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 8388608
+    refusal: artifact-too-large
+    remediation: Narrow the approved output scope so the retained operation record carries fewer scaffolded pages, or raise siteBootstrap.runRecordMaxBytes in config/limits/siteBootstrap.yaml and regenerate the mirrors.
+    rationale: Admitted size of the one operation record the host retains for a site-bootstrap run before the private workspace is removed. The record carries, per approved output, its path, format, template and schema identity, content digest and evidence-gap and todo codes, plus the page validations, the write-transaction summary and the repository-check report; it never carries page bodies, templates or the signed application document, and the impact and change evidence belong to the outer run record. Its size therefore grows with the number of approved outputs rather than with the documentation set that dominates the bundle, and at the roughly 2.5 KiB per output a scaffold records, a quarter of the bundle bound still admits several thousand approved outputs. A record over the bound is refused rather than admitted on the strength of its own measured size, which is what keeps a run from widening its own retention allowance.

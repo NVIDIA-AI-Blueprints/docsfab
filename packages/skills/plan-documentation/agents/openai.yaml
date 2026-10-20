@@ -1,0 +1,4 @@
+interface:
+  display_name: "Plan Documentation"
+  short_description: "Build an approval-ready documentation plan"
+  default_prompt: "Within a DocsFab runtime workflow, create an approval-ready plan for this documentation work."

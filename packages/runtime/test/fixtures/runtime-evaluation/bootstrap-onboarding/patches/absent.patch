@@ -1,0 +1,22 @@
+diff --git a/AGENTS.md b/AGENTS.md
+new file mode 100644
+--- /dev/null
++++ b/AGENTS.md
+@@ -0,0 +1,3 @@
++# Contributor guidance
++
++Run `npm run check` before finishing a change.
+diff --git a/README.md b/README.md
+new file mode 100644
+--- /dev/null
++++ b/README.md
+@@ -0,0 +1,9 @@
++# docsfab-bootstrap-absent
++
++A small fixture with no contributor guidance.
++
++## Validate
++
++```bash
++npm run check
++```

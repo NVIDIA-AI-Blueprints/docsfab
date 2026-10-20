@@ -1,0 +1,183 @@
+# DocsFab operational limits owned by the `endpointProbe` name prefix.
+# Registered in config/limits.yaml; every limit here is named `endpointProbe.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: endpointProbe.requestTimeoutMs
+    value: 120000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1000
+    max: 600000
+    refusal: endpoint-probe-request-timeout-ms-bound
+    remediation: Rerun the probe when the provider responds faster, or raise endpointProbe.requestTimeoutMs in config/limits/endpointProbe.yaml.
+    rationale: Longest wait for one live probe request from docsfab profile probe --live or docsfab doctor --live (#1691), the timeout the model-matrix probe has used since it was written. Each probe asks for one short sentence, one tool call, or one short JSON object. A request that exceeds it is reported as an availability timeout with provider-capacity ownership, never as a pass.
+
+  - name: endpointProbe.reasoningSampleMaxTokens
+    value: 128
+    unit: tokens
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 4096
+    refusal: endpoint-probe-reasoning-sample-max-tokens-bound
+    remediation: Raise endpointProbe.reasoningSampleMaxTokens in config/limits/endpointProbe.yaml when a model needs more output tokens to show where its text arrives.
+    rationale: Output budget for each reasoning-split sample (#1691). A sample only has to show whether text arrives in content or in reasoning_content, which the first tokens settle; the model-matrix probe has used 128 since the September 2026 hosted-model probes.
+
+  - name: endpointProbe.maxOutputTokens
+    value: 4096
+    unit: tokens
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 384000
+    refusal: endpoint-probe-max-output-tokens-bound
+    remediation: Probe with docsfab doctor --live, which uses the configured effective output limit, or raise endpointProbe.maxOutputTokens in config/limits/endpointProbe.yaml.
+    rationale: Output limit docsfab profile probe --live sends with its tool-call and JSON requests when no host profile supplies one (#1691). On September 30, 2026, hosted DocsFab runs sent 4,096 output tokens per turn and first-pass turns are bounded at 4,096, so a model that cannot finish one tool call inside 4,096 tokens cannot finish a DocsFab turn. The same day a hand-built 1,024-token probe cut Nemotron 3.5 Lightning off before its tool call. A cut is reported as an output-limit finding, never as a missing capability.
+
+  - name: endpointProbe.providerMessageMaxChars
+    value: 400
+    unit: characters
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 80
+    max: 4096
+    refusal: endpoint-probe-provider-message-max-chars-bound
+    remediation: Raise endpointProbe.providerMessageMaxChars in config/limits/endpointProbe.yaml to keep a longer provider error body.
+    rationale: Characters of a refused probe response body that DocsFab reads to quote the provider's own message (#1691). Provider end-of-life, not-found, and rate-limit bodies observed on September 30, 2026 were under 200 characters; 400 is the bound the model-matrix probe already used. A longer body is marked truncated in the verdict.
+
+  - name: endpointProbe.credentialEchoMinChars
+    value: 6
+    unit: characters
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 4
+    max: 16
+    refusal: endpoint-probe-credential-echo-min-chars-bound
+    remediation: Lower endpointProbe.credentialEchoMinChars in config/limits/endpointProbe.yaml when a provider echoes shorter fragments of the credential; raise it only if ordinary provider wording is being removed.
+    rationale: Shortest run of characters copied from the probe credential that DocsFab removes from provider text before it bounds or quotes it (#1691). Raw, JSON-escaped, and URL-encoded echoes count, and invisible characters or line breaks inside the run do not split it. A provider that masks a key shows a prefix and a suffix, such as 8 characters, four asterisks, and the last 6; at 6 both visible halves are removed, and at most 5 characters of the key can survive anywhere. For a 70-character random base-62 key, any 6 characters of provider wording match one of its runs with a probability near one in a billion, so ordinary words stay. At 4, provider wording such as x-api-key would lose `api-`, which every nvapi- key contains.
+
+  - name: endpointProbe.answerSubmissionSamples
+    value: 3
+    unit: requests
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 10
+    refusal: endpoint-probe-answer-submission-samples-bound
+    remediation: Raise endpointProbe.answerSubmissionSamples in config/limits/endpointProbe.yaml when a route's answers to the same probe request disagree and more samples are needed to say which way it usually goes; each sample is one live request per variant.
+    rationale: Requests docsfab doctor --live --answer-submission sends for each of its variants (#1707). The nominal plan is V1, V3, V4 and V6, so 12 requests; the typed-shell contingency (V2, then V3, V4 and V6 typed) runs only with --answer-submission-typed-contingency. The probe binds the composition's temperature-0, top_p-1 request policy, so repeat samples do not measure model sampling; they detect server-side nondeterminism, such as batching, routing across replicas, or a tool-call parser that differs from call to call. Three identical outcomes make a systematic property of the route, and any disagreement is itself recorded as a finding.
+
+  - name: endpointProbe.answerSubmissionTransportRetries
+    value: 2
+    unit: requests
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 0
+    max: 3
+    refusal: endpoint-probe-answer-submission-transport-retries-bound
+    remediation: Raise endpointProbe.answerSubmissionTransportRetries in config/limits/endpointProbe.yaml only when V6 transport failures keep a probe inconclusive and the cost owner approves the extra requests; each retry is one more live V6 request.
+    rationale: Most V6 requests docsfab doctor --live --answer-submission re-sends after a transport failure (HTTP status 0) that is not a response byte bound (#1707). Only V6 is retried, each sample at most once. The one transport failure observed so far was a V6 sample, the large, long-running turn, under the old 120-second probe timeout; V6 now runs on the bound attempt timer. Smaller variants have shown no transport failures, so theirs make the probe inconclusive without a retry. Two retries let two of V6's three samples each recover once. At the defaults one run sends at most 14 requests without the typed-shell contingency and at most 26 with --answer-submission-typed-contingency, which needs the cost owner's approval.
+
+  - name: endpointProbe.answerRecordSamples
+    value: 3
+    unit: requests
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 3
+    refusal: endpoint-probe-answer-record-samples-bound
+    remediation: Keep endpointProbe.answerRecordSamples in config/limits/endpointProbe.yaml at 3 or lower; more seeds per rung need a budget amendment from the cost owner, because each seed is one live request per rung.
+    rationale: Seeds docsfab doctor --live --answer-records sends at each rung (#1967, design closed-schema-answer-records-decision.md §6.1). The plan is phase A at 0.5, 2, 4 and 8 KiB, phase B at about 6 KiB, 10 KiB and the per-message budget maximum, and phase C at 4 KiB, so 8 rungs and 24 requests at 3 seeds, the approved MR 1a spend (O10). The composition's temperature-0 policy makes repeat seeds a check of server-side nondeterminism and of distinct real records, and a rung counts only when every seed is admitted.
+
+  - name: endpointProbe.answerRecordTransportRetries
+    value: 2
+    unit: requests
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 0
+    max: 2
+    refusal: endpoint-probe-answer-record-transport-retries-bound
+    remediation: Keep endpointProbe.answerRecordTransportRetries in config/limits/endpointProbe.yaml at 2 or lower; the approved probe spend shares 2 transport retries across the 1a and 1b runs.
+    rationale: Most requests docsfab doctor --live --answer-records re-sends after a transport failure (HTTP status 0) that is not a response byte bound (#1967, design §4.4 and §6.1, N20). Each sample is re-sent at most once, and a re-send is withheld when it would push the run past endpointProbe.answerRecordInputTokenBudget. The approved spend (O10) is 2 retries shared across the untyped (1a) and typed (1b) runs, so a 1b run takes what 1a left, which the 1a observation records. The small-group run (--answer-record-small-groups) never draws on them; its re-sends spend only the slice-1a remainder (decision of October 7, 2026).
+
+  - name: endpointProbe.answerRecordRequestBudget
+    value: 24
+    unit: requests
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 24
+    refusal: endpoint-probe-answer-record-request-budget
+    remediation: Lower endpointProbe.answerRecordSamples, or ask the cost owner for a budget amendment before raising endpointProbe.answerRecordRequestBudget in config/limits/endpointProbe.yaml.
+    rationale: Most planned requests one docsfab doctor --live --answer-records run may send, transport retries excluded (#1967, design §6.1 and O10, approved October 6, 2026). The 1a plan is 12 phase A, 9 phase B and 3 phase C requests at endpointProbe.answerRecordSamples = 3. The probe refuses before any request when its plan exceeds this.
+
+  - name: endpointProbe.answerRecordTypedRequestBudget
+    value: 17
+    unit: requests
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 28
+    refusal: endpoint-probe-answer-record-typed-request-budget
+    remediation: The typed 1b request tranche is exhausted or too small for the A-t plan. Review retained typed-shell observations and the current recorded allocation before raising the host override; do not exceed the authorized typed request ceiling.
+    rationale: Default typed-shell allocation remains 17. The declared override range admits the separately approved one-time 28-request tranche for the exact qualification matrix; retained typed requests are charged against that cumulative ceiling. This request tranche does not create an independent input-token allowance.
+
+  - name: endpointProbe.answerRecordInputTokenBudget
+    value: 600000
+    unit: tokens
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 800000
+    refusal: endpoint-probe-answer-record-input-token-budget
+    remediation: Use the approved task-local host override only for the exact pinned qualification matrix; the padding target P comes from the committed answer-record corpus. Preserve the 600000 default and do not exceed the authorized cumulative ceiling.
+    rationale: Default cumulative input ceiling remains 600000. The declared override range admits the separately approved one-time 800000 cumulative ceiling for the exact typed qualification matrix (194034 planned incremental tokens after 579352 retained); the probe refuses before any request when its planned total exceeds the effective limit and withholds any request or retry that would cross it. This limit is charged across retained 1a and 1b observations.
+
+  - name: endpointProbe.answerRecordGroupRequestBudget
+    value: 24
+    unit: requests
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 24
+    refusal: endpoint-probe-answer-record-group-request-budget
+    remediation: Nothing or too little of the approved record-probe requests is left after the runs recorded under answer-record-probes/. Ask the cost owner for a budget amendment before raising endpointProbe.answerRecordGroupRequestBudget in config/limits/endpointProbe.yaml; never remove a retained observation to free budget.
+    rationale: Approved requests for the record-probe slice that docsfab doctor --live --answer-records --answer-record-small-groups draws on, as a ledger (#1967; R9 decision of October 7, 2026). The approval is 24 requests (O10). Each small-group run takes off every request the untyped probe's retained observations under answer-record-probes/ sent, re-sends included, plus any reservation a run left unfinished, which charges all that was left when it started (typed-shell premise runs spend a separate approval), and the premise run (evidenceSha256 a556782a…0605, 13 requests) must be among them, so the first small-group run has 11. The plan is 6 requests (2 and 3 records per message × 3 seeds). The probe refuses before any request when the plan exceeds what is left, and never sends a re-send past it. Re-sends are paid from it, never from endpointProbe.answerRecordTransportRetries, which stays for the typed (1b) run.
+
+  - name: endpointProbe.answerRecordGroupInputTokenBudget
+    value: 600000
+    unit: tokens
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 600000
+    refusal: endpoint-probe-answer-record-group-input-token-budget
+    remediation: Nothing or too little of the approved record-probe input tokens is left after the runs recorded under answer-record-probes/. Ask the cost owner for a budget amendment before raising endpointProbe.answerRecordGroupInputTokenBudget in config/limits/endpointProbe.yaml; never remove a retained observation to free budget.
+    rationale: Approved input tokens for the record-probe slice that docsfab doctor --live --answer-records --answer-record-small-groups draws on, as a ledger (#1967; R9 decision of October 7, 2026). The approval is 600,000 input tokens (O10). Each small-group run takes off what the untyped probe's retained observations under answer-record-probes/ charged, each sample at the larger of its reported and estimated input, the rule the runs themselves charge by, plus any reservation a run left unfinished, which charges all that was left when it started. The premise run (evidenceSha256 a556782a…0605) charged 78,193 (the provider reported 66,258), so the first small-group run has 521,807. The plan pads 6 prompts to P (60,588 tokens in the 2026-10 corpus), about 363,500 tokens, which leaves room for 2 padded re-sends. The probe refuses before any request when the plan exceeds what is left, and withholds a request or re-send that the reported counts say would cross it.
+
+  - name: endpointProbe.answerRecordDecodeWindowMinBasisPoints
+    value: 2500
+    unit: basis-points
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 10000
+    refusal: endpoint-probe-answer-record-decode-window-bound
+    remediation: Change endpointProbe.answerRecordDecodeWindowMinBasisPoints in config/limits/endpointProbe.yaml only with a probe observation whose tool-call argument timing shows a different stream shape; a lower value lets a burst at the end of the response pass as a decode window.
+    rationale: Shortest share of a sample's elapsed time, prefill included, in basis points, that the window from its first to its last tool-call argument delta must cover before docsfab doctor --live --answer-records computes the decode rate r from that window (#1967). On build.nvidia.com Nemotron 3 Super on October 6, 2026 every single-record call streamed its arguments in one burst at the end (TTFT within 0.2 s of elapsed), and the old rate, output tokens over elapsed minus TTFT, read 25,980 tokens/s against about 100 measured end to end. A route that streams arguments as they decode covers most of the elapsed time. One that sends each call whole when it completes covers the decode of all but the first call, about (k − 1)/k of the decode in a k-call message, and less of the elapsed time once a padded prompt's prefill is counted, so a 2-record message of short records can land near 25% and the rate source can differ from one seed to the next; every rate names its source. A burst at the end covers well under 25%. Below it the probe reports the end-to-end rate, output tokens over elapsed time with prefill included, and labels its source.

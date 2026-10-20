@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "cases": [
+    { "id": "dirty-source", "expected": "published" },
+    { "id": "stale-revision", "expected": "stale-revision" },
+    { "id": "patch-conflict", "expected": "patch-conflict" },
+    { "id": "validation-failure", "expected": "validation-failed" },
+    { "id": "missing-authorization", "expected": "invalid-input" },
+    { "id": "denied-push", "expected": "push-failed" },
+    { "id": "protection-drift", "expected": "remote-drift" },
+    { "id": "duplicate-invocation", "expected": "reused" },
+    { "id": "interruption-after-commit", "expected": "resumed" },
+    { "id": "interruption-after-push", "expected": "resumed" },
+    { "id": "interruption-after-merge-request", "expected": "resumed" }
+  ]
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Mine Agent Session Transcripts"
+  short_description: "Preserve human evidence from agent sessions"
+  default_prompt: "Use $mine-agent-session-transcripts to extract provenance-preserving human evidence from this agent session transcript."

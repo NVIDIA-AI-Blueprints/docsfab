@@ -1,0 +1,243 @@
+# DocsFab operational limits owned by the `sources` name prefix.
+# Registered in config/limits.yaml; every limit here is named `sources.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: sources.revalidationMaxEntries
+    value: 32
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 32
+    refusal: sources-revalidation-max-entries-bound
+    remediation: Revalidate fewer attached sources in one command by naming the label the source listing prints, or lower sources.revalidationMaxEntries in config/limits/sources.yaml.
+    rationale: One revalidation opens one tracked export, may read each targeted file to the version ceiling, and spends one forge identity resolution per targeted merged change. 32 keeps a single operator command inside one screenful and refuses beyond it rather than re-checking a prefix and reporting on the rest by silence. The host tier may only lower it.
+
+  - name: sources.revalidationFreshnessWindowMinutes
+    value: 15
+    unit: minutes
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 15
+    refusal: sources-revalidation-freshness-window-minutes-bound
+    remediation: Revalidate again to take a current verdict, or lower sources.revalidationFreshnessWindowMinutes in config/limits/sources.yaml.
+    rationale: A revalidation verdict is a statement about the repository at one moment, and a listing that keeps printing it makes a currency claim nothing re-checked. 15 minutes outlasts an operator attach-check-run loop and expires before a working branch ordinarily moves, so a lapsed verdict is marked rather than dropped. The host tier may only lower it.
+
+  - name: sources.purgeMaxSessionsPerInvocation
+    value: 4
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 4
+    refusal: sources-purge-max-sessions-per-invocation-bound
+    remediation: Purge fewer sessions in one command by naming them in separate invocations, or lower sources.purgeMaxSessionsPerInvocation in config/limits/sources.yaml.
+    rationale: A purge is destructive and is authorized by one confirmation over one preview, so that preview has to be readable in full before the confirmation is given. Each named session contributes its own copy rows, affected run ids and remaining retention scope. 4 keeps one confirmation over something an operator can actually read, and refuses beyond it rather than authorizing a deletion nobody reviewed. The host tier may only lower it.
+
+  - name: sources.purgePreviewMaxRows
+    value: 64
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 64
+    refusal: sources-purge-preview-max-rows-bound
+    remediation: Purge one session at a time so its copy rows fit the preview, or lower sources.purgePreviewMaxRows in config/limits/sources.yaml.
+    rationale: A purge preview prints one row per owned copy, and an unbounded list scrolls the confirmation and the retention statement off the screen. 64 rows is a screenful on an ordinary terminal. Rows beyond it are counted and reported as withheld rather than dropped, and the confirmation is minted over every copy the purge would delete, so a capped preview still authorizes exactly what it says. The host tier may only lower it.
+
+  - name: sources.claimMinWords
+    value: 4
+    unit: words
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_SOURCES_CLAIM_MIN_WORDS
+    min: 1
+    max: 64
+    refusal: sources-claim-min-words-bound
+    remediation: Set DOCSFAB_SOURCES_CLAIM_MIN_WORDS to a whole number from 1 through 64, or change sources.claimMinWords in config/limits/sources.yaml. A sentence below the floor is not checked for a citation, and an uncited sentence at or above it is recorded as a source-citation-gaps limitation, not a stop.
+    rationale: A sentence a write step adds to documentation is a material claim when it has at least this many words; only words with a letter or digit count. Three-word fragments are headings, list labels and transitions, not assertions about a source, so four is the smallest count that excludes those while admitting the shortest real claim. The host tier may raise it to label only longer sentences, or lower it to 1 to label every sentence. 64 words is about twice the longest sentence a technical style guide admits, so above it no ordinary sentence would count and the label would be off; that needs a reviewed change to this file, not a host setting. Every claim at 64 words still fits sources.citeMaxClaimCharacters, so it stays citable.
+
+  - name: sources.citeMaxSpansPerCall
+    value: 32
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 32
+    refusal: sources-cite-max-spans-per-call-bound
+    remediation: Cite fewer spans per call, or raise sources.citeMaxSpansPerCall in config/limits/sources.yaml.
+    rationale: The same per-call span ceiling docsfab_read_source already applies, so a citation cannot name more spans than a single read could have returned.
+
+  - name: sources.citeMaxClaimCharacters
+    value: 2048
+    unit: characters
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 2048
+    refusal: sources-cite-max-claim-characters-bound
+    remediation: Cite fewer sentences per call, or raise sources.citeMaxClaimCharacters in config/limits/sources.yaml. A longer claim is refused rather than truncated.
+    rationale: A claim is one or a few sentences of the documentation the step writes. The ceiling exists so the citation channel cannot be used as unbounded storage that the host then digests and records.
+
+  - name: sources.citeMaxClaimsPerCall
+    value: 8
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 8
+    refusal: sources-cite-max-claims-per-call-bound
+    remediation: Cite fewer sentences per call, or raise sources.citeMaxClaimsPerCall in config/limits/sources.yaml. Beyond the bound the call refuses rather than silently registering a prefix.
+    rationale: A model may cite a short run of sentences in one call rather than one call per sentence. Eight bounds how much a single call can register without making the receipt unreadable.
+
+  - name: sources.listMaxEntries
+    value: 256
+    unit: count
+    scope: sealed
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 256
+    refusal: sources-list-max-entries-bound
+    remediation: Request fewer entries in one docsfab_list_sources or docsfab_read_review_change_side inventory call with maxEntries or maxFiles, then follow its next cursor. Raising sources.listMaxEntries requires a reviewed change to config/limits/sources.yaml; hosts cannot override the model-visible tool schema.
+    rationale: Presentation. This retains the existing 256-entry default and maximum of docsfab_list_sources and shares them with the pinned review side inventory, so one source-list policy governs both model-visible page schemas. A page above the host output cap is explicitly marked and can be retried from the same cursor with a smaller requested size; entries are never silently skipped. The limit is sealed because the tool schema advertises its maximum before the model connects and must agree across hosts.
+
+  - name: sources.readResponseCeilingBytes
+    value: 262144
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_SOURCES_READ_RESPONSE_CEILING_BYTES
+    min: 1
+    max: 67108864
+    refusal: sources-read-response-ceiling-bytes-bound
+    remediation: Raise DOCSFAB_SOURCES_READ_RESPONSE_CEILING_BYTES to at least the bytes named, up to 67108864, so one step can read every required source whole, or bind fewer or smaller sources, then start a new run.
+    rationale: One workflow step's shared source-read budget across every bound source. Historical normalized reads charge extracted text bytes; exact-original-utf8 reads charge the actual serialized tool result or raw-attributable automatic-prompt bytes, including escaped text, source IDs, original offsets, identity labels and framing. Both modes spend the same budget in one attempt. A bound model with an attested input window lowers it to sources.readInputWindowShare of that window when that is smaller. The former 32 KiB default made a private requirements document exported at 39,789 bytes unreadable in one step, so it was cut by hand to 25,783 bytes and lost six feature sections; real requirements documents and RFCs run past 40 KB. 256 KiB holds six such documents whole. A normalized host read carries a span id and JSON framing beside every span, 1.6 to 2.6 times the extracted text for lines of 128 to 50 bytes, so a full 256 KiB budget estimates at about a fifth of the 1,000,000-token and larger windows of the pilot and benchmark compositions, and smaller windows take the share instead. Raw Git originals are charged for their measured serialization instead of this ratio; escaping may reduce how much fits. A source larger than what is left of the budget is still reachable. docsfab_read_source reads windows of whole spans from a byte offset, coverage counts every span any step of the run read, and a write step reads only the spans no step has read, so a source can be read across steps and attempts. A required source that is still not read whole is reported as partially read, with bytes read out of total and the limit that bound it, in the run record and the LIMITATIONS footer, and never as considered. A host override may raise the budget up to 64 MiB, the byte length the source-evidence contract admits for one representation. createSourceStepPolicy refuses a requested budget above this ceiling rather than clamping it. A retry restores the grant per attempt, less the bytes the host read into the step's prompt, and does not inherit bytes a prior failed attempt already spent.
+
+  - name: sources.readInputWindowShare
+    value: 0.15
+    unit: ratio
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_SOURCES_READ_INPUT_WINDOW_SHARE
+    min: 0.01
+    max: 1
+    refusal: sources-read-input-window-share-bound
+    remediation: Raise DOCSFAB_SOURCES_READ_INPUT_WINDOW_SHARE, up to 1, so source reads may fill more of the model's input window, run with a model whose input window is larger, or bind fewer or smaller sources, then start a new run.
+    rationale: Share of the bound model's input window, after its context reserve, that one step's source reads may fill, at the host token estimator's 4 bytes per token. The per-step source-read budget is the smaller of sources.readResponseCeilingBytes and this share. An installed composition's window counts whatever its profile metadata says; with provider-side context admission, a profile that matches no installed composition and whose metadata is unknown or stale, such as the placeholder window docsfab setup writes for an endpoint that matches no installed composition (modelProfile.conservativeFallbackContextWindow), or no bound model, no host window is attested and the ceiling applies alone. Context packets count windows by the same rule. A normalized host read carries a span id and JSON framing beside every span, so its prompt section runs 1.6 to 2.6 times the extracted text for lines of 128 to 50 bytes, and the context governor adds a 5/4 margin, so at 0.15 a full budget of such text estimates at 30% to 49% of the window. An exact-original Git read instead spends its measured escaped tool or automatic-prompt serialization under the same smaller-of-ceiling-and-share rule; it can reach the bound sooner without silent clipping. With the 1,024-token context reserve docsfab setup writes, that is 38,707 bytes on a 65,536-token window, more than the former 32 KiB default, so a source that default read whole still reads whole there, and 76,185 on a 128,000-token one, so a 39,789-byte requirements document reads whole on 128,000 tokens and in part on 65,536, reported as partially read. A share of 0.1 gave a 65,536-token window 25,804 bytes at that reserve and left a 29,952-byte source that the former default read whole partly read. Windows of 437,931 tokens and more keep the 262,144-byte ceiling. A source of much shorter spans, such as structured values of a few bytes, carries more framing per byte and can still exceed a window; context admission then stops the step with a coded context-exhausted rather than truncating it.
+
+  - name: sources.extractionMaxOriginalBytes
+    value: 4194304
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_SOURCES_EXTRACTION_MAX_ORIGINAL_BYTES
+    min: 1
+    max: 67108864
+    refusal: sources-extraction-max-original-bytes-bound
+    remediation: Bind a smaller source, such as a narrower merged-MR window or a smaller tracked file, or raise DOCSFAB_SOURCES_EXTRACTION_MAX_ORIGINAL_BYTES, up to 67108864, then start a new run.
+    rationale: Default original-byte ceiling for source extraction. An original one byte over this bound is refused rather than truncated, and the refusal names the bytes it observed, this limit, and the remediation. A merged merge request's rendered diff is an original too, so a diff past this ceiling stops the run at bind. A host override may raise it up to 64 MiB, the byte length the source-evidence contract admits for one original, or lower it.
+
+  - name: sources.extractionMaxDerivativeBytes
+    value: 1048576
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_SOURCES_EXTRACTION_MAX_DERIVATIVE_BYTES
+    min: 1
+    max: 67108864
+    refusal: sources-extraction-max-derivative-bytes-bound
+    remediation: Bind a smaller file or a narrower selection, or raise DOCSFAB_SOURCES_EXTRACTION_MAX_DERIVATIVE_BYTES, up to 67108864, then start a new run.
+    rationale: Default derivative-byte ceiling for source extraction. Crossing it keeps the whole spans that fit and records byte-budget-truncated, with the full derivative size, on the sealed representation, so the operator summary cannot silently clip. A merged merge request's diff between this ceiling and sources.extractionMaxOriginalBytes binds in part this way. Diff spans are whole lines of about this ceiling divided by sources.extractionMaxSpans, so raising it also lengthens them. A host override may raise it up to 64 MiB, the byte length the source-evidence contract admits for one representation, or lower it.
+
+  - name: sources.extractionMaxSpans
+    value: 2048
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_SOURCES_EXTRACTION_MAX_SPANS
+    min: 1
+    max: 2048
+    refusal: sources-extraction-max-spans-bound
+    remediation: Bind a smaller file, or raise sources.extractionMaxSpans in config/limits/sources.yaml.
+    rationale: Default span ceiling for source extraction. Crossing it records span-budget-truncated on the sealed representation. Override may only lower it.
+
+  - name: sources.extractionMaxSpanBytes
+    value: 16384
+    unit: bytes
+    scope: sealed
+    warnAt: 0.8
+    override: none
+    min: 4
+    max: 1048576
+    refusal: sources-extraction-max-span-bytes-bound
+    remediation: Change sources.extractionMaxSpanBytes in config/limits/sources.yaml through a reviewed DocsFab change; a host cannot override it. A longer extracted line or value is split into spans of at most this size rather than refused.
+    rationale: Technical capacity. The longest span one extracted line, structured value, notebook cell, or valid-UTF-8 original chunk keeps. A longer one is split into consecutive spans on UTF-8 code-point boundaries, so docsfab_read_source can page through it by window instead of meeting one span larger than the step's read budget; every byte stays in exactly one span. 16384 is half the default 32 KiB per-call tool output cap, which is the default maxBytes of a docsfab_read_source window and counts span text only, so a default window returns two whole spans of a long line, and one span fits the per-step source-read budget of any attested input window of about 28,000 tokens or more at the default sources.readInputWindowShare. A smaller window reads such a span only through a coded budget refusal that names the budget. Ordinary lines and values are far shorter and keep one span each, and sources.extractionMaxSpans still bounds the total. A raw Git view additionally checks the fully escaped result against the live tool cap before an access receipt; this span ceiling alone does not promise that every worst-case escaped span fits the per-call cap. The value is part of the extractor options digest, so representations split at different values never share an identity, and it reads the same on every host. Catalog min is 4, the longest UTF-8 code point, so every span holds at least one whole code point.
+
+  - name: sources.extractionMaxMs
+    value: 30000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_SOURCES_EXTRACTION_MAX_MS
+    min: 1
+    max: 30000
+    refusal: sources-extraction-max-ms-bound
+    remediation: Bind a smaller file, or raise sources.extractionMaxMs in config/limits/sources.yaml.
+    rationale: Default wall-clock budget for one source extraction. A parser that has not yielded inside this window is refused rather than left running. Override may only lower it.
+
+  - name: sources.pdfMaxPages
+    value: 100
+    unit: pages
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_SOURCES_PDF_MAX_PAGES
+    min: 1
+    max: 100
+    refusal: sources-pdf-max-pages-bound
+    remediation: Bind a shorter PDF, or raise sources.pdfMaxPages in config/limits/sources.yaml.
+    rationale: Page ceiling for the PDF.js text adapter. A longer document is read up to this page and records over-page-limit rather than claiming a complete extract. Override may only lower it.
+
+  - name: sources.authorityMemberPathMaxChars
+    value: 512
+    unit: characters
+    scope: sealed
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 512
+    refusal: sources-authority-member-path-max-chars-bound
+    remediation: Shorten the named tracked path, commit the change, and rerun the same command. Raising sources.authorityMemberPathMaxChars in config/limits/sources.yaml changes the sealed original source authority contract and needs a DocsFab change, not an override.
+    rationale: Longest repository-relative path, in UTF-16 code units, that the original source authority admits as a member. Every regular tracked file of a review or update run becomes a member, and sealed run evidence keeps each path, so this is the contract's own capacity and must read the same on every host; no override tier applies. 512 is the bound the member-path pattern carried before it moved to this catalog. Tracked-file reads admit paths up to 1,024 code units, so a longer tracked path stops here with this code and the path rather than with an uncoded error. A unified diff source's `diff` locators carry their file paths under the same bound; a longer diff path is carried as null with the file labeled unrepresentable-path, and the diff still binds.
+
+  - name: sources.toolRefusalRecordMaxRows
+    value: 64
+    unit: count
+    scope: sealed
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 64
+    refusal: sources-tool-refusal-record-max-rows-bound
+    remediation: Read tools.toolRefusals.overflowCount on the step, which counts every refused call that opened no row; its rows still name each distinct refusal up to the bound. Raising sources.toolRefusalRecordMaxRows in config/limits/sources.yaml changes the run record contract and needs a DocsFab change, not an override.
+    rationale: Distinct refusal rows a step attempt's tool summary keeps for source and git history tool calls. Identical refusals collapse into one row with a count, so a model that retries one refused call costs one row, and only distinct argument shapes, codes, and id classes open more. A row is content-free and under 400 bytes, so 64 rows stay under 25 KiB of run record per attempt. One attempt's refused calls are bounded by compositionExecution.maxToolCallsPerStep anyway; this keeps the record small when a model varies every call. A refused call past it is counted in overflowCount, never dropped silently. Run record decoders check rows against this value, so it must read the same on every host and no override tier applies.
+
+  - name: sources.createAddedAuthoritySourcesMax
+    value: 8
+    unit: files
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_SOURCES_CREATE_ADDED_AUTHORITY_SOURCES_MAX
+    min: 1
+    max: 64
+    refusal: sources-create-added-authority-sources-max
+    remediation: Propose fewer additional tracked sources in this run, or raise DOCSFAB_SOURCES_CREATE_ADDED_AUTHORITY_SOURCES_MAX within its supported range.
+    rationale: Additional tracked files one create run may admit beyond its plan-bound source set. Three independent retained create runs (#2023) each identified one relevant tracked source outside the plan; 8 additions leave room for more than the observed need and two extra cross-cutting sources while keeping authority growth bounded per run. Each source still passes the repository member rules and normal source-read budgets. The maximum of 64 is the closed response's source-locator ceiling, so the admission count cannot exceed the number of distinct source paths one response could cite. Duplicate proposals for already admitted paths do not consume this bound.

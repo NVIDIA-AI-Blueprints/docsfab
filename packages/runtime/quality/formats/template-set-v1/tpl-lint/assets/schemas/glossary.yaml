@@ -1,0 +1,67 @@
+schema_version: "1.0"
+library_version: "1.0.0"
+name: glossary
+description: "Lookup-oriented glossary and terminology reference"
+source_template: "templates/resources/glossary.md"
+
+structure:
+  headings:
+    h1:
+      required:
+        - pattern: "Glossary|Terminology( Reference)?"
+          description: "Main glossary title"
+      max_count: 1
+    h2:
+      required:
+        - pattern: "[A-Z]"
+          description: "Alphabetical letter section"
+          min_count: 1
+      optional:
+        - pattern: '(Numerals and Symbols|\[Optional\] Numerals and Symbols)'
+          description: "Non-alphabetic terms section"
+        - pattern: "Related Documentation"
+          description: "Related links section"
+    h3:
+      optional:
+        - pattern: ".+"
+          description: "Individual glossary term (if using heading-per-term format)"
+
+  elements:
+    - type: admonition
+      context: "for glossary usage notes"
+      required: false
+      attributes:
+        class: note
+    - type: list-table
+      context: "for terms that benefit from field breakdowns"
+      required: false
+
+  section_order: []  # Glossaries are usually alphabetical, but optional sections may vary
+
+severity:
+  missing_required_section: error
+  missing_optional_section: info
+  wrong_section_order: info
+  missing_element: info
+  duplicate_h1: error
+
+lint:
+  # Glossary entries are dictionary-style: an H3 term followed by a definition
+  # list or a one-line gloss is legitimate. Skip the orphan-heading check for
+  # this schema rather than wallpapering with lint-disable comments.
+  orphan_heading:
+    mode: skip
+  # Glossaries are intentionally long alphabetical catalogs — they should not
+  # be decomposed into per-term child pages.
+  long_file:
+    mode: skip
+
+content:
+  intro:
+    max_sentences: 2
+    should_describe_scope: true
+  glossary_entries:
+    definitions_should_be_concise: true
+    use_alphabetical_grouping: true
+    related_links: optional
+    tables_or_examples: optional

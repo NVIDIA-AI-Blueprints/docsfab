@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "cases": [
+    {
+      "kind": "roadmap-mutation-plan",
+      "schemaVersion": 1,
+      "expectedExecutionDisposition": "replan-required"
+    },
+    {
+      "kind": "roadmap-mutation-authorization",
+      "schemaVersion": 1,
+      "expectedExecutionDisposition": "replan-required"
+    },
+    {
+      "kind": "roadmap-mutation-receipt",
+      "schemaVersion": 1,
+      "expectedExecutionDisposition": "replan-required"
+    }
+  ]
+}

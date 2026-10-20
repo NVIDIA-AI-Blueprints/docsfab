@@ -1,0 +1,75 @@
+# DocsFab operational limits owned by the `runtime` name prefix.
+# Registered in config/limits.yaml; every limit here is named `runtime.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: runtime.contract.maxNodes
+    value: 100000
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_RUNTIME_CONTRACT_MAX_NODES
+    min: 1
+    max: 100000
+    refusal: runtime-contract-max-nodes-bound
+    remediation: Recover class. Reduce the decoded payload so it fits runtime.contract.maxNodes, then retry the same request.
+    rationale: Shared contract-kit inert walk ceiling. 100000 admits real sealed records and still caps CPU and memory on every createContractKit contract.
+
+  - name: runtime.contract.maxDepth
+    value: 64
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_RUNTIME_CONTRACT_MAX_DEPTH
+    min: 1
+    max: 64
+    refusal: runtime-contract-max-depth-bound
+    remediation: Recover class. Reduce nesting so it fits runtime.contract.maxDepth, then retry the same request.
+    rationale: Sealed records are shallow closed schemas. 64 is far above any honest envelope and still small enough to bound recursion.
+
+  - name: runtime.contract.maxArrayLength
+    value: 10000
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_RUNTIME_CONTRACT_MAX_ARRAY_LENGTH
+    min: 1
+    max: 10000
+    refusal: runtime-contract-max-array-length-bound
+    remediation: Recover class. Shorten the array so it fits runtime.contract.maxArrayLength, then retry the same request.
+    rationale: Same ceiling at the strict inert walk and the standard array helper. Large enough for real identifier lists; a huge array cannot hide behind a generic shape failure.
+
+  - name: runtime.contract.maxStringChars
+    value: 65536
+    unit: characters
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_RUNTIME_CONTRACT_MAX_STRING_CHARS
+    min: 1
+    max: 65536
+    refusal: runtime-contract-max-string-chars-bound
+    remediation: Recover class. Shorten the string so it fits runtime.contract.maxStringChars, then retry the same request.
+    rationale: Identifiers, hashes, and timestamps are tiny. 65536 UTF-16 code units is a generous scalar ceiling so a huge string is reported as this bound rather than as a typo.
+
+  - name: runtime.delegatedTask.stateMaxBytes
+    value: 1048576
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_RUNTIME_DELEGATED_TASK_STATE_MAX_BYTES
+    min: 1
+    max: 1048576
+    refusal: runtime-delegated-task-state-max-bytes-bound
+    remediation: Shrink the retained task record so it fits runtime.delegatedTask.stateMaxBytes, or lower DOCSFAB_RUNTIME_DELEGATED_TASK_STATE_MAX_BYTES. Raising the catalog value is a re-qualification.
+    rationale: Outcome bytes live in the private task record. The store refuses a larger pinned file before decode. 1048576 bytes (1 MiB) admits a paused outcome and still caps the allocation. A host override may only lower it.
+
+  - name: runtime.planner.summaryMaxChars
+    value: 1000000
+    unit: characters
+    scope: sealed
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 1000000
+    refusal: runtime-planner-summary-max-chars-bound
+    remediation: Ask the planner for a shorter summary, or qualify the provider response envelope, the retained run record and the terminal framing together before raising this capacity.
+    rationale: Admitted length of one planner response summary, counted in UTF-16 units rather than bytes. The provider response carries its own separate byte check that is conditional on the composition policy, so this scalar is not interchangeable with a whole-response byte envelope; the inert contract decode string policy is a different and smaller scalar that must not be substituted for it.

@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "kind": "docsfab-output-rule-fixture",
+  "code": "request-intent-target-not-file",
+  "location": "$.targets[].path",
+  "input": {
+    "instruction": "Update the CLI configuration flags in docs/cli. Use src/config.ts as the source. Keep the result local; do not commit or push.",
+    "inventory": ["docs/cli/quickstart.md", "docs/index.md", "nav.json"],
+    "declaredOperation": "update",
+    "docsRoot": [{ "kind": "root", "path": "docs" }, { "kind": "root", "path": "fern" }],
+    "grantedWriteScope": [{ "kind": "root", "path": "docs" }, { "kind": "root", "path": "fern" }],
+    "navigationSet": ["docs/index.md", "nav.json"],
+    "existence": [{ "path": "docs/cli", "existing": "directory" }]
+  },
+  "reply": "{\"operation\": \"update\", \"targets\": [{\"path\": \"docs/cli\", \"role\": \"write\", \"chosenFrom\": \"named\", \"quote\": \"docs/cli\"}], \"sources\": [{\"path\": \"src/config.ts\", \"quote\": \"Use src/config.ts as the source\"}], \"constraints\": [{\"kind\": \"non-publication\", \"quote\": \"do not commit or push\"}], \"authorityPreference\": {\"preference\": \"implementation\", \"quote\": \"Use src/config.ts as the source\"}}"
+}

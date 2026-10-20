@@ -1,0 +1,135 @@
+{
+  "description": "Four list_merged pages for the reported 2026-09-14 Los Angeles day. Page four carries an in-window merge out of merged_at order, so an undeclared ordering must be walked to exhaustion.",
+  "window": {
+    "timeZone": "America/Los_Angeles",
+    "startDate": "2026-09-14",
+    "endDate": "2026-09-14"
+  },
+  "targetBranch": "main",
+  "pages": [
+    {
+      "page": 1,
+      "nextPage": 2,
+      "truncated": false,
+      "items": [
+        {
+          "iid": 4101,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/4101",
+          "title": "Add the export output flag",
+          "description": "Export now requires --output.",
+          "state": "merged",
+          "mergedAt": "2026-09-14T16:20:00.000Z",
+          "targetBranch": "main",
+          "sourceBranch": "feature/export-output",
+          "mergeCommitSha": "aa01c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": "bb02c3d4e5b6978899aabbccddeeff0011223344"
+        },
+        {
+          "iid": 4102,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/4102",
+          "title": "Rename the setup subcommand",
+          "description": "docsfab configure becomes docsfab setup.",
+          "state": "merged",
+          "mergedAt": "2026-09-14T15:05:00.000Z",
+          "targetBranch": "main",
+          "sourceBranch": "feature/setup-rename",
+          "mergeCommitSha": "cc03c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        },
+        {
+          "iid": 4103,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/4103",
+          "title": "Backport the release note",
+          "description": "Release branch only.",
+          "state": "merged",
+          "mergedAt": "2026-09-14T14:00:00.000Z",
+          "targetBranch": "release/2026.09",
+          "sourceBranch": "backport/release-note",
+          "mergeCommitSha": "dd04c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        }
+      ]
+    },
+    {
+      "page": 2,
+      "nextPage": 3,
+      "truncated": false,
+      "items": [
+        {
+          "iid": 4104,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/4104",
+          "title": "Document the installation prerequisites",
+          "description": "Adds a prerequisites section.",
+          "state": "merged",
+          "mergedAt": "2026-09-14T09:30:00.000Z",
+          "targetBranch": "main",
+          "sourceBranch": "docs/install-prerequisites",
+          "mergeCommitSha": "ee05c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        },
+        {
+          "iid": 4105,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/4105",
+          "title": "Change the default retry budget",
+          "description": "Default retries drop from five to three.",
+          "state": "merged",
+          "mergedAt": "2026-09-14T07:00:00.000Z",
+          "targetBranch": "main",
+          "sourceBranch": "feature/retry-budget",
+          "mergeCommitSha": "ff06c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        }
+      ]
+    },
+    {
+      "page": 3,
+      "nextPage": 4,
+      "truncated": false,
+      "items": [
+        {
+          "iid": 4106,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/4106",
+          "title": "Fix an internal log field",
+          "description": "No user-visible change.",
+          "state": "merged",
+          "mergedAt": "2026-09-13T23:59:59.999Z",
+          "targetBranch": "main",
+          "sourceBranch": "chore/log-field",
+          "mergeCommitSha": "1107c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        },
+        {
+          "iid": 4107,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/4107",
+          "title": "Adjust an older benchmark",
+          "description": "Older than the reported day.",
+          "state": "merged",
+          "mergedAt": "2026-09-12T10:00:00.000Z",
+          "targetBranch": "main",
+          "sourceBranch": "chore/older-benchmark",
+          "mergeCommitSha": "2208c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        }
+      ]
+    },
+    {
+      "page": 4,
+      "nextPage": null,
+      "truncated": false,
+      "items": [
+        {
+          "iid": 4108,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/4108",
+          "title": "Add the offline profile option",
+          "description": "Reported out of merged_at order by this page source.",
+          "state": "merged",
+          "mergedAt": "2026-09-14T12:00:00.000Z",
+          "targetBranch": "main",
+          "sourceBranch": "feature/offline-profile",
+          "mergeCommitSha": "3309c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        }
+      ]
+    }
+  ]
+}

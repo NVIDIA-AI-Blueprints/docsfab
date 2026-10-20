@@ -1,0 +1,147 @@
+# DocsFab operational limits owned by the `reconciliation` name prefix.
+# Registered in config/limits.yaml; every limit here is named `reconciliation.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: reconciliation.answerTextMaxBytes
+    value: 160000
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_RECONCILIATION_ANSWER_TEXT_MAX_BYTES
+    min: 1
+    max: 160000
+    refusal: reconciliation-answer-text-max-bytes-bound
+    remediation: Reduce the reply or restore the configured answer allowance up to the full Slack message capacity.
+    rationale: Full-message capacity for a structured Slack decision, including its field headers. 40,000 characters at four UTF-8 bytes each require 160,000 bytes. Fresh intake uses the effective allowance; retained authority and knowledge replay use the catalog maximum so lowering intake never invalidates an accepted decision.
+  - name: reconciliation.sourceFailuresMax
+    value: 3
+    unit: failures
+    scope: per-host
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 16
+    refusal: reconciliation-source-failures-max-bound
+    remediation: Raise the configured source-failure allowance only after the cause is known to be transient; a permanent cause quarantines on its first pass regardless.
+    rationale: Transient source-stage failures one merged change may record before it is quarantined. The source stage runs before any coordination attempt exists, so neither the generation budget nor the convergence budget covers it. Three spaced failures absorb a busy mirror or a dropped connection without holding the outbox open; a deterministic cause never consumes the budget at all. The ceiling of 16 matches the generation bound, above which a stuck effect would outlive an operator's attention.
+  - name: reconciliation.sourceRetrySpacingMs
+    value: 60000
+    unit: milliseconds
+    scope: per-host
+    warnAt: 0.8
+    override: none
+    min: 0
+    max: 3600000
+    refusal: reconciliation-source-retry-spacing-ms-bound
+    remediation: Restore the configured spacing so a transient cause cannot exhaust the source-failure allowance inside a single drain pass.
+    rationale: Spacing between two durably recorded failures of one kind for one merged change. The source and convergence budgets have no lease to wait on, so without spacing two of three failures burn in one pump run and the one-second poll wake produces the third, quarantining a real merge within about a second. Sixty seconds matches the lease margin a generation already waits. Zero is admissible for a test clock; the one-hour ceiling keeps a mistyped value from parking an effect past an operator's shift.
+  - name: reconciliation.ownPrmMergePromotionWaitMs
+    value: 21600000
+    unit: milliseconds
+    scope: per-host
+    warnAt: 0.8
+    override: none
+    min: 0
+    max: 604800000
+    refusal: reconciliation-own-prm-merge-promotion-wait-ms-bound
+    remediation: Restore the configured wait; while the feedback publication component is stopped, its own PRM merges are compared as ordinary merges once this wait passes.
+    rationale: How long the reconciliation of DocsFab's own accepted-PRM merge waits for the publication authority to promote that merge as the next approved generation before it is compared as an ordinary merge, measured from the merge. A healthy component promotes within a few of its polls; six hours covers a component restart or a stopped-host window with about twice the headroom, and a stalled promotion never holds the merge's comparison past a working day. Zero compares at once, which a test clock uses; the week-long ceiling keeps a mistyped value from parking a merge indefinitely.
+  - name: reconciliation.slackPartMaxChars
+    value: 2800
+    unit: characters
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_RECONCILIATION_SLACK_PART_MAX_CHARS
+    min: 500
+    max: 2800
+    refusal: reconciliation-slack-part-max-chars-bound
+    remediation: Restore the configured Slack part allowance, or reduce the offered statement and scope text.
+    rationale: One Slack message renders about 3,000 characters before the client collapses it behind a show-more control. A complete offer must stay readable without truncation, so the split point is set below that rendering threshold with room for the leading part marker. The text is never shortened; a longer offer becomes more parts. The root message of a decision opens with a header (the owner, the project and the merge, and the reply line) that needs about 220 characters with a short project name and a repository link, beside the first part of the details, so the allowance cannot go below 500, because a smaller one could not hold even the header. A header whose names are long enough to need more is refused with this limit's code when it is built.
+  - name: reconciliation.offerPartsMax
+    value: 64
+    unit: parts
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_RECONCILIATION_OFFER_PARTS_MAX
+    min: 1
+    max: 64
+    refusal: reconciliation-offer-parts-max-bound
+    remediation: Restore the configured part allowance, or split the decision into separate claims so each offer fits.
+    rationale: The whole offer is posted as one thread of consecutive messages that a Maintainer has to read before replying. Sixty-four parts at the per-part character allowance carry about 180,000 characters, far beyond any real statement and scope delta, and bound both the posting burst and the persisted delivery record.
+  - name: reconciliation.reminderBusinessHours
+    value: 24
+    unit: business-hours
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_RECONCILIATION_REMINDER_BUSINESS_HOURS
+    min: 1
+    max: 720
+    refusal: reconciliation-reminder-business-hours-bound
+    remediation: Set a whole number of business hours no longer than the longest business-time span, 720 business hours.
+    rationale: Business hours an asked question waits without an answer before one reminder is posted in its thread. Only hours inside the deployment's business days count, so a weekend or a company closure never shortens the wait. One business day is the owner's default. The ceiling of 720 business hours is thirty business days, the longest business-time span the host computes.
+  - name: reconciliation.widenBusinessHours
+    value: 48
+    unit: business-hours
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_RECONCILIATION_WIDEN_BUSINESS_HOURS
+    min: 1
+    max: 720
+    refusal: reconciliation-widen-business-hours-bound
+    remediation: Set a whole number of business hours no longer than the longest business-time span, 720 business hours.
+    rationale: Business hours an asked question waits before it is widened from the people it first asked to every admitted Maintainer. Counted on business days only. Two business days is the owner's default, one business day after the reminder. The ceiling matches the longest business-time span the host computes.
+  - name: reconciliation.productOwnerBusinessHours
+    value: 96
+    unit: business-hours
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_RECONCILIATION_PRODUCT_OWNER_BUSINESS_HOURS
+    min: 1
+    max: 720
+    refusal: reconciliation-product-owner-business-hours-bound
+    remediation: Set a whole number of business hours no longer than the longest business-time span, 720 business hours.
+    rationale: Business hours the asked Maintainers have to reach consensus before the designated product owner is asked to make the final call. Counted on business days only. Four business days is the owner's default, after the widening. The ceiling matches the longest business-time span the host computes. This is a known, unresolved conflict. Today the reconciliation severity policy seals each question to close at most seven calendar days after it is asked, and in a week with company closures four business days can take longer than that, so the product owner's call can land after the question has stopped taking answers. Question sealing must count business time before this timer is used.
+  - name: reconciliation.questionExpiryBusinessDays
+    value: 7
+    unit: business-days
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_RECONCILIATION_QUESTION_EXPIRY_BUSINESS_DAYS
+    min: 1
+    max: 30
+    refusal: reconciliation-question-expiry-business-days-bound
+    remediation: Set a whole number of business days from 1 through 30.
+    rationale: Business days an asked question is meant to stay open before it expires unanswered. A business day is 24 business hours counted only inside the deployment's business days. Seven business days is the owner's default. The ceiling of thirty business days, about six calendar weeks, is the longest business-time span the host computes; elapsed-time and deadline computations both refuse a longer span, which also bounds how many calendar days one computation walks. This is a known, unresolved conflict. Today the reconciliation severity policy seals each question to close at most seven calendar days after it is asked, which comes before seven business days whenever the span holds a weekend day or a closure, so this expiry takes effect only once question sealing counts business time.
+  - name: reconciliation.businessCalendarMaxBytes
+    value: 65536
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 65536
+    refusal: reconciliation-business-calendar-max-bytes-bound
+    remediation: Remove years that no open question can still reach from the business calendar record, or restore the configured allowance.
+    rationale: Largest sealed business-calendar record the host reads at start. A year of company closures is about twenty dated entries of under a hundred bytes each, so decades of closures fit in 64 KiB. The bound refuses a mistaken file, such as a log or an archive, before it is parsed.
+  - name: reconciliation.businessCalendarClosedDatesMax
+    value: 512
+    unit: count
+    scope: per-host
+    warnAt: 0.8
+    override: none
+    min: 0
+    max: 512
+    refusal: reconciliation-business-calendar-closed-dates-max-bound
+    remediation: Remove years that no open question can still reach from the business calendar record, or restore the configured allowance.
+    rationale: Most closed dates one business calendar record may list. Twenty closures a year for twenty-five years is five hundred. The bound keeps the record, and every business-time computation that consults it, small.
+  - name: reconciliation.businessCalendarExpiryWarnDays
+    value: 60
+    unit: days
+    scope: per-host
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 366
+    refusal: reconciliation-business-calendar-expiry-warn-days-bound
+    remediation: Renew the business calendar record with the next year's closures through a receipted registry amendment before its last vouched date, or restore the configured warning window.
+    rationale: Calendar days before a business calendar's last vouched date on which the host names it expiring rather than current. Renewing it takes the next year's published closures, a review and a stopped-host amendment window; sixty days leaves room to schedule all three. Past the last vouched date holidays count as business time, so the warning has to come first. The ceiling of 366 days, one year, is as far ahead as a yearly renewal can usefully warn.

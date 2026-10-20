@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "name": "governed audit findings repeatability",
+  "assertions": [
+    { "type": "run-count", "minimum": 2 },
+    { "type": "status", "equals": "succeeded" },
+    { "type": "workflow", "equals": "review-documentation" },
+    { "type": "all-steps-succeeded" },
+    { "type": "summaries-present" },
+    {
+      "type": "step-skills",
+      "equals": [
+        "audit-documentation",
+        "verify-technical-accuracy",
+        "lint-documentation",
+        "verify-technical-accuracy",
+        "verify-technical-accuracy",
+        "review-documentation",
+        "test-audience-understanding",
+        "evaluate-document-quality"
+      ]
+    },
+    { "type": "governed-skill-evidence" },
+    { "type": "record-shape-consistent" }
+  ]
+}

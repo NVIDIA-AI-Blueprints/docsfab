@@ -1,0 +1,51 @@
+# DocsFab operational limits owned by the `publicExport` name prefix.
+# Registered in config/limits.yaml; every limit here is named `publicExport.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: publicExport.checksBudgetMs
+    value: 1800000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 60000
+    max: 3000000
+    refusal: public-export-checks-budget-ms-bound
+    remediation: Read the check's log to see where it stalled and fix it in the exported tree, or raise publicExport.checksBudgetMs in config/limits/publicExport.yaml while it stays below the project's job timeout.
+    rationale: The deadline of one unit of a public-export dry run. A run is split into units, one per CI matrix job -- the tree checks (gitleaks, the boundary gate, npm ci, check:static, check:pins), each of the four runtime fast-lane shards, the runtime isolation tests, and the knowledge, quality and skills suites -- and each unit's checks run in order against a deadline of their own, which starts at the unit's first check. A run with no --group runs every unit in turn, so it takes at most eight deadlines and never lets one unit spend another's; --group runs one group's units, and --shard one runtime shard. A check still running at its unit's deadline has its process group killed and is reported as timed out, and every later check of that unit is reported as not run, with this refusal code and the unit's name or, for a check that needs one that did not pass, with that check's name, so the report and summary always name what did not run. The five tree checks took 602 s together on the exported tree of 7518c9f73, built on a contended developer host without a warm npm cache on 2026-09-29 (npm ci 347 s, check:static 238 s, gitleaks 11 s, check:pins 6 s); on CI runners with their npm cache, runtime:static (npm ci plus check:static) took 38 to 91 s across the six successful main pipelines 70327514 to 70438241. The source's own CI jobs for the other suites, in main pipelines 70668871 to 70686237, took 238 to 249 s (knowledge:test), 72 to 95 s (quality:acceptance), 377 to 520 s for each of the four runtime:test lanes, about 1900 s together, and 195 to 451 s for each of the three runtime:isolation lanes, 1025 to 1118 s together, each job time including its own npm ci. The whole runtime fast lane would pass one deadline, so it is four units. In the dry-run matrix of merged-results pipeline 70699825 on 2026-09-30, the units' checks took 26 s (tree), 62 s (package-tests), 207 to 270 s (each runtime shard, npm ci included) and 558 s (isolation). On a contended developer host (load average 20 to 25 on 11 cores) the package-tests unit took 1414 s on the exported tree of 9a8a34366. 1800000 ms leaves every unit at least 1.6 times its CI time, and the slowest local measurement room to spare, and it leaves half of the project's 3600 s job timeout for the clone, the export build and the artifact upload. The max keeps any raised deadline 600 s below that job timeout. No CLI flag or environment variable overrides it.
+
+  - name: publicExport.reportTailLines
+    value: 60
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 1000
+    refusal: public-export-report-tail-lines-bound
+    remediation: Open logs/<check>.log in the job artifact for the full output, or raise publicExport.reportTailLines in config/limits/publicExport.yaml.
+    rationale: Last lines of each failing check's output that the public-export dry run quotes in its report.md. A longer log is quoted by its last lines, with its total line count and the path of the full log, which the job always uploads, so nothing is dropped silently. On the exported tree of 7518c9f73 on 2026-09-29 the failing check:pins log was 11 lines, npm ci 13 lines and a whole check:static run 99 lines, whose failing step prints last; npm 11 appends no error block of its own to a failing script. 60 lines quote each of those failures whole, or the end of a check:static run, without letting one check bury the others. No CLI flag or environment variable overrides it.
+
+  - name: publicExport.jobLogReportBytes
+    value: 262144
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 4096
+    max: 2097152
+    refusal: public-export-job-log-report-bytes-bound
+    remediation: Open report.md in the job artifact, which is never clipped, or raise publicExport.jobLogReportBytes in config/limits/publicExport.yaml while it stays well below the runner's job log limit.
+    rationale: Bytes of report.md that the public-export dry run prints to its job log. A longer report is printed up to this many bytes, cut at a character boundary rather than a line, so one minified line cannot escape it, and followed by a line that names this bound, the bytes shown and the report's total; report.md and summary.json in the job artifact stay complete. GitLab Runner's default output_limit stops a job log at 4096 KiB, and this job's log also carries its own test run and the gitleaks install. On main at dca7d08b3 on 2026-09-29 the printed report was 24225 bytes (623 lines, the longest 554 bytes) in a 32444-byte job log, with 81 gitleaks findings listed. 262144 bytes is about ten times that report and a sixteenth of the runner default. The min still holds the result line, the check table and the first failing check; the max keeps a raised value at half the runner default. No CLI flag or environment variable overrides it.
+
+  - name: publicExport.pushGitTimeoutMs
+    value: 600000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 10000
+    max: 900000
+    refusal: public-export-push-git-timeout-ms-bound
+    remediation: Read the job log for the git command that stalled and check that GitHub is reachable from the runner, then play the job again; raise publicExport.pushGitTimeoutMs in config/limits/publicExport.yaml only when the transfer itself needs longer.
+    rationale: The deadline of each git network command of the public-export push to the public repository, which are the ls-remote of its main, the fetch of that branch's history, and the push. A command still running at the deadline has its process group killed, and the push stops with this refusal code, naming the command, the deadline and how long it ran. The first push carries the whole exported tree. On main at 5b7719f00 on 2026-09-30 the exported repository held 3335 files, a 9.58 MiB pack, which a push to a repository on the same disk sent in 0.26 s, so the rest of any push's time is the network's. Each later push sends only the blobs a changed tree adds, and each fetch the public history, which grows by one such commit per pushed tree. The dry-run tree job on the same runners downloads its pinned gitleaks release from github.com, so those runners reach GitHub. 600000 ms carries the 9.58 MiB first push at 16 KiB/s, far below a working link, and still reports a stalled connection within one job; the max keeps three commands at their deadline 900 s under the project's 3600 s job timeout, for the clone and the artifact download. There is no automatic retry. A stopped push leaves the remote branch where it was or at the commit the push made, and playing the job again re-reads it and knows that commit as the export's. No CLI flag or environment variable overrides it.

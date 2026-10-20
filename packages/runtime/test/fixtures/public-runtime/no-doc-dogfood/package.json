@@ -1,0 +1,9 @@
+{
+  "name": "public-page-starter-example",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "docs:check": "node check-page.mjs"
+  }
+}

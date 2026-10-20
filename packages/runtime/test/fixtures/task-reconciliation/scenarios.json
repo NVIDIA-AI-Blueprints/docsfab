@@ -1,0 +1,805 @@
+{
+  "schemaVersion": 1,
+  "kind": "docsfab-task-reconciliation-qualification-manifest",
+  "issue": 940,
+  "plan": "planning/design/task-reconciliation-and-recovery-plan.md",
+  "baseRevision": "85e6316e7ed951ef3440b0dc7fee786005533923",
+  "package": "packages/runtime",
+  "composition": {
+    "product": "DocsFab runtime",
+    "surfaces": ["explicit-run", "live-agent", "delegated-do", "hosted"],
+    "legacyBareDo": "unchanged-catalog-routing",
+    "defaultActivation": false,
+    "sloClaim": false
+  },
+  "eligibilityRules": {
+    "deterministic-supported": "Host contract exists on this origin/main revision, needs no live model or tracker, and can assert physical effects or sealed receipts independently of supplier test titles.",
+    "incomplete": "An indispensable supplier API, CLI, or module is absent on this revision. Record the owning issue and exact missing interface. Not a pass.",
+    "missing-grant": "The cell requires authorized configured-model spend or a live resource that this Task does not hold. Unfinished dependent evidence, not failure-to-green.",
+    "deferred": "Later positive capability named by the plan. A safe stop or negative control must not be counted as that later capability passing."
+  },
+  "budgets": {
+    "changedHandoffRepairs": "Issue 934 policy: initial rejection plus at most two changed-handoff repairs. Not implemented on this revision; do not invent a parallel cap.",
+    "providerTurnRetry": "packages/runtime/src/model/provider-turn-retry.ts RETRYABLE_PROVIDER_TURN_CATEGORIES only: provider-transient, throttled, timeout.",
+    "workflowReadOnlyRetry": "packages/runtime/src/workflow-execution/retry.ts plus parseRetryPolicy. Write steps use maxRetries 0.",
+    "rootTaskBudget": "Issue 779 task-budget exists as a supplier on this revision, but its reconciliation/authority integration remains unqualified (issue 938). Existing lease and delegated stopReason budget-exhausted remain the available bounds.",
+    "realModel": "No authorized model grant on issue 940. Critical configured-model cells stay missing-grant."
+  },
+  "trMapping": [
+    {
+      "id": "TR-01",
+      "rows": ["S01", "S08", "S12"],
+      "owner": "#875/#879"
+    },
+    {
+      "id": "TR-02",
+      "rows": ["S01", "S02", "S03", "S04", "S05", "S06", "S07"],
+      "owner": "#933/#934, #480"
+    },
+    {
+      "id": "TR-03",
+      "rows": ["S01", "S02", "S03", "S04"],
+      "owner": "#859, #896, #934"
+    },
+    {
+      "id": "TR-04",
+      "rows": ["S04", "S07", "S13"],
+      "owner": "#779/#877"
+    },
+    {
+      "id": "TR-05",
+      "rows": ["S08", "S10"],
+      "owner": "#779/#879"
+    },
+    {
+      "id": "TR-06",
+      "rows": ["S09", "S10", "S11"],
+      "owner": "#761, #468, #939"
+    },
+    {
+      "id": "TR-07",
+      "rows": ["S05", "S12", "S13"],
+      "owner": "#733/#801"
+    },
+    {
+      "id": "TR-08",
+      "rows": ["S06", "S14"],
+      "owner": "#779/#780, #723"
+    },
+    {
+      "id": "TR-09",
+      "rows": ["S03", "S04", "S12"],
+      "owner": "#878, #910/#912"
+    },
+    {
+      "id": "TR-10",
+      "rows": ["S11", "S12", "S13", "S14"],
+      "owner": "#878/#879, #733"
+    },
+    {
+      "id": "TR-11",
+      "rows": ["S01", "S04", "S08", "S14"],
+      "owner": "#861/#880/#934"
+    },
+    {
+      "id": "TR-12",
+      "rows": [
+        "S01",
+        "S02",
+        "S03",
+        "S04",
+        "S05",
+        "S06",
+        "S07",
+        "S08",
+        "S09",
+        "S10",
+        "S11",
+        "S12",
+        "S13",
+        "S14"
+      ],
+      "owner": "W5 and each existing Task acceptance owner"
+    }
+  ],
+  "laterUnsupportedClaims": [
+    "General active-tool mutation crash recovery and resumed-operation support (issue 939).",
+    "Semantic useful-progress, oscillation policy, and plan amendment (issues 723 and 787).",
+    "Governed compaction as general session restore (issue 733).",
+    "Default activation of delegated bare do (issue 970).",
+    "Reliability, latency, or cost SLOs from this finite pilot matrix."
+  ],
+  "cells": [
+    {
+      "id": "S01-admission-diagnostic",
+      "scenario": "S01",
+      "surface": "explicit-run / observeReaderTaskContextAdmissionV1",
+      "ownerIssue": 933,
+      "trIds": ["TR-02", "TR-03", "TR-11", "TR-12"],
+      "status": "deterministic-supported",
+      "evidenceClass": "mechanics",
+      "requiresRealModel": false,
+      "expectedObservations": [
+        "Sixteen readable tracked nominations plus one missing path reject before workflow start.",
+        "Failure identifies the missing nomination and selected revision.",
+        "Replacement tracked file is readable; corrected binding admits without the missing path.",
+        "Working tree porcelain is unchanged; rejected writes are absent."
+      ],
+      "canonicalContracts": [
+        "packages/runtime/src/execution/reader-task-admission.ts",
+        "packages/runtime/src/execution/reader-task-admission-failure.ts"
+      ],
+      "missingInterface": null
+    },
+    {
+      "id": "S01-live-agent-changed-handoff-repair",
+      "scenario": "S01",
+      "surface": "live-agent",
+      "ownerIssue": 934,
+      "trIds": ["TR-02", "TR-03", "TR-11"],
+      "status": "incomplete",
+      "evidenceClass": "not-executed",
+      "requiresRealModel": false,
+      "expectedObservations": [
+        "Agent reads a real replacement through confined tools, changes the handoff, and completes the original bounded update with zero unnecessary questions."
+      ],
+      "canonicalContracts": [],
+      "missingInterface": "packages/runtime/src/execution/reader-task-admission-repair.ts and packages/runtime/scripts/pre-run-recovery-proof.mjs"
+    },
+    {
+      "id": "S01-delegated-do-repair",
+      "scenario": "S01",
+      "surface": "delegated-do",
+      "ownerIssue": 880,
+      "trIds": ["TR-11"],
+      "status": "incomplete",
+      "evidenceClass": "not-executed",
+      "requiresRealModel": false,
+      "expectedObservations": [
+        "Released docsfab do --delegate follows the same S01 repair policy on this revision."
+      ],
+      "canonicalContracts": ["packages/runtime/src/cli/commands/do.ts"],
+      "missingInterface": "delegated-do S01 repair-policy proof (issue 880 remainder after the released flag)"
+    },
+    {
+      "id": "S01-configured-model-bad-evidence-repair",
+      "scenario": "S01",
+      "surface": "live-agent configured-model",
+      "ownerIssue": 934,
+      "trIds": ["TR-12"],
+      "status": "missing-grant",
+      "evidenceClass": "model-judgment",
+      "requiresRealModel": true,
+      "expectedObservations": [
+        "First configured-model outcome on a deliberately rejected handoff with no scripted replacement."
+      ],
+      "canonicalContracts": [],
+      "missingInterface": "authorized configured-model spend and issue 934 live proof CLI on this Task"
+    },
+    {
+      "id": "S02-inventory-recount-deterministic",
+      "scenario": "S02",
+      "surface": "buildRepositoryDiscoveryInventory",
+      "ownerIssue": 940,
+      "trIds": ["TR-02", "TR-03", "TR-12"],
+      "status": "deterministic-supported",
+      "evidenceClass": "mechanics",
+      "requiresRealModel": false,
+      "expectedObservations": [
+        "A tracked tree with 17 documentation pages yields inventory document count 17.",
+        "A stale claim of 14 pages is not retained as the inventory count."
+      ],
+      "canonicalContracts": ["packages/runtime/src/repository/inventory.ts"],
+      "missingInterface": null
+    },
+    {
+      "id": "S02-task-projection-coverage-correction",
+      "scenario": "S02",
+      "surface": "task-reconciliation projection",
+      "ownerIssue": 938,
+      "trIds": ["TR-02", "TR-03"],
+      "status": "deterministic-supported",
+      "evidenceClass": "mechanics",
+      "requiresRealModel": false,
+      "expectedObservations": [
+        "Task-level coverage claims are rewritten from the recounted inventory through the W2 projection."
+      ],
+      "canonicalContracts": [
+        "packages/runtime/src/execution/task-reconciliation.ts",
+        "packages/runtime/test/task-reconciliation.test.ts"
+      ],
+      "missingInterface": null
+    },
+    {
+      "id": "S02-configured-model-inventory-recount",
+      "scenario": "S02",
+      "surface": "live-agent configured-model",
+      "ownerIssue": 938,
+      "trIds": ["TR-12"],
+      "status": "missing-grant",
+      "evidenceClass": "model-judgment",
+      "requiresRealModel": true,
+      "expectedObservations": [
+        "Configured model starts from a stale 14-page claim and accepts a real 17-page recount."
+      ],
+      "canonicalContracts": [],
+      "missingInterface": "authorized configured-model spend for issue 940"
+    },
+    {
+      "id": "S03-authorized-inventory-retrieve",
+      "scenario": "S03",
+      "surface": "buildRepositoryDiscoveryInventory",
+      "ownerIssue": 940,
+      "trIds": ["TR-03"],
+      "status": "deterministic-supported",
+      "evidenceClass": "mechanics",
+      "requiresRealModel": false,
+      "expectedObservations": [
+        "Authorized tracked documents are retrieved by inventory without an InputAsk pause."
+      ],
+      "canonicalContracts": ["packages/runtime/src/repository/inventory.ts"],
+      "missingInterface": null
+    },
+    {
+      "id": "S03-fetch-before-ask-live-agent",
+      "scenario": "S03",
+      "surface": "live-agent",
+      "ownerIssue": 896,
+      "trIds": ["TR-03", "TR-09"],
+      "status": "incomplete",
+      "evidenceClass": "not-executed",
+      "requiresRealModel": false,
+      "expectedObservations": ["Live agent fetches an authorized available fact before asking."],
+      "canonicalContracts": [],
+      "missingInterface": "issue 896 auto-acquisition recovery controller on the live-agent decision boundary"
+    },
+    {
+      "id": "S03-contradictory-authorities-clarification",
+      "scenario": "S03",
+      "surface": "delegated-do / InputAsk",
+      "ownerIssue": 878,
+      "trIds": ["TR-09"],
+      "status": "incomplete",
+      "evidenceClass": "not-executed",
+      "requiresRealModel": false,
+      "expectedObservations": [
+        "Unresolved contradictory current authorities produce one focused supported clarification after provenance reconciliation fails."
+      ],
+      "canonicalContracts": [],
+      "missingInterface": "issue 878 delegated pause plus issue 723 semantic reconciliation for contradictory current authorities"
+    },
+    {
+      "id": "S04-incidental-reader-fields",
+      "scenario": "S04",
+      "surface": "resolveInvocationContract",
+      "ownerIssue": 859,
+      "trIds": ["TR-02", "TR-03", "TR-04", "TR-11"],
+      "status": "deterministic-supported",
+      "evidenceClass": "mechanics",
+      "requiresRealModel": false,
+      "expectedObservations": [
+        "Incidental reader fields on ordinary guidance loading are rejected with retry-load-without-reader-fields.",
+        "Required reader-assessment context is not treated as incidental."
+      ],
+      "canonicalContracts": ["packages/runtime/src/execution/invocation-contracts.ts"],
+      "missingInterface": null
+    },
+    {
+      "id": "S04-required-reader-context",
+      "scenario": "S04",
+      "surface": "resolveInvocationContract",
+      "ownerIssue": 859,
+      "trIds": ["TR-03", "TR-09"],
+      "status": "deterministic-supported",
+      "evidenceClass": "mechanics",
+      "requiresRealModel": false,
+      "expectedObservations": [
+        "Missing required reader context fails closed with supply-required-reader-context and does not strip the obligation."
+      ],
+      "canonicalContracts": ["packages/runtime/src/execution/invocation-contracts.ts"],
+      "missingInterface": null
+    },
+    {
+      "id": "S05-dirty-only-workflow-export",
+      "scenario": "S05",
+      "surface": "observeReaderTaskContextAdmissionV1 workflow-export",
+      "ownerIssue": 933,
+      "trIds": ["TR-02", "TR-07"],
+      "status": "deterministic-supported",
+      "evidenceClass": "mechanics",
+      "requiresRealModel": false,
+      "expectedObservations": [
+        "A dirty-only working-tree file is not admitted as committed workflow-export evidence.",
+        "The dirty bytes remain on disk; the failure does not call the path nonexistent."
+      ],
+      "canonicalContracts": ["packages/runtime/src/execution/reader-task-admission.ts"],
+      "missingInterface": null
+    },
+    {
+      "id": "S05-selected-checkout-refuses-dirty",
+      "scenario": "S05",
+      "surface": "observeReaderTaskContextAdmissionV1 selected-checkout",
+      "ownerIssue": 933,
+      "trIds": ["TR-07"],
+      "status": "deterministic-supported",
+      "evidenceClass": "mechanics",
+      "requiresRealModel": false,
+      "expectedObservations": [
+        "selected-checkout refuses a dirty tree with identity-mismatch and does not implicitly commit or overwrite user bytes."
+      ],
+      "canonicalContracts": ["packages/runtime/src/execution/reader-task-admission.ts"],
+      "missingInterface": null
+    },
+    {
+      "id": "S05-task-level-stale-snapshot-invalidation",
+      "scenario": "S05",
+      "surface": "task-reconciliation projection",
+      "ownerIssue": 938,
+      "trIds": ["TR-07"],
+      "status": "deterministic-supported",
+      "evidenceClass": "mechanics",
+      "requiresRealModel": false,
+      "expectedObservations": [
+        "A changed admitted snapshot invalidates affected task evidence through the W2 projection."
+      ],
+      "canonicalContracts": [
+        "packages/runtime/src/execution/task-reconciliation.ts",
+        "packages/runtime/test/task-reconciliation.test.ts"
+      ],
+      "missingInterface": null
+    },
+    {
+      "id": "S06-throttle-classified-retryable",
+      "scenario": "S06",
+      "surface": "classifyModelFailure / executeInferenceStep",
+      "ownerIssue": 480,
+      "trIds": ["TR-02", "TR-08"],
+      "status": "deterministic-supported",
+      "evidenceClass": "mechanics",
+      "requiresRealModel": false,
+      "expectedObservations": [
+        "HTTP 429 is throttled and retryable under the existing provider owner.",
+        "Read-only workflow retry records physical attempts; write steps do not stack that loop."
+      ],
+      "canonicalContracts": [
+        "packages/runtime/src/model/context-budget.ts",
+        "packages/runtime/src/workflow-execution/retry.ts",
+        "packages/runtime/src/model/provider-turn-retry.ts"
+      ],
+      "missingInterface": null
+    },
+    {
+      "id": "S06-invalid-request-not-retryable",
+      "scenario": "S06",
+      "surface": "classifyModelFailure",
+      "ownerIssue": 480,
+      "trIds": ["TR-02", "TR-08"],
+      "status": "deterministic-supported",
+      "evidenceClass": "mechanics",
+      "requiresRealModel": false,
+      "expectedObservations": [
+        "Deterministic invalid-request is not retryable and is not a provider-turn retry category."
+      ],
+      "canonicalContracts": [
+        "packages/runtime/src/model/context-budget.ts",
+        "packages/runtime/src/model/provider-turn-retry.ts"
+      ],
+      "missingInterface": null
+    },
+    {
+      "id": "S06-unchanged-invalid-input-repair-cap",
+      "scenario": "S06",
+      "surface": "reader-task-admission-repair",
+      "ownerIssue": 934,
+      "trIds": ["TR-08"],
+      "status": "incomplete",
+      "evidenceClass": "not-executed",
+      "requiresRealModel": false,
+      "expectedObservations": [
+        "An unchanged invalid request is not automatically replayed; at most two changed-handoff repairs occur."
+      ],
+      "canonicalContracts": [],
+      "missingInterface": "packages/runtime/src/execution/reader-task-admission-repair.ts"
+    },
+    {
+      "id": "S06-root-budget-not-reset-by-child",
+      "scenario": "S06",
+      "surface": "task-budget",
+      "ownerIssue": 779,
+      "trIds": ["TR-08"],
+      "status": "deterministic-supported",
+      "evidenceClass": "mechanics",
+      "requiresRealModel": false,
+      "expectedObservations": [
+        "A child run cannot reset the root task budget.",
+        "Settled work reaches the root only when its own parent releases, and a later sibling adds to the root total rather than replacing it."
+      ],
+      "canonicalContracts": [
+        "packages/runtime/src/execution/task-budget.ts",
+        "packages/runtime/src/model/provider-attempt.ts",
+        "packages/runtime/test/nested-execution-budget.test.ts"
+      ],
+      "missingInterface": null
+    },
+    {
+      "id": "S07-denied-excluded-source",
+      "scenario": "S07",
+      "surface": "observeReaderTaskContextAdmissionV1",
+      "ownerIssue": 933,
+      "trIds": ["TR-02", "TR-04"],
+      "status": "deterministic-supported",
+      "evidenceClass": "mechanics",
+      "requiresRealModel": false,
+      "expectedObservations": [
+        "An excluded tracked secret file is denied with an opaque nomination identity.",
+        "Secret bytes and the path are withheld; no scope widening occurs."
+      ],
+      "canonicalContracts": ["packages/runtime/src/execution/reader-task-admission-failure.ts"],
+      "missingInterface": null
+    },
+    {
+      "id": "S07-credential-path-rejected",
+      "scenario": "S07",
+      "surface": "observeReaderTaskContextAdmissionV1",
+      "ownerIssue": 933,
+      "trIds": ["TR-04"],
+      "status": "deterministic-supported",
+      "evidenceClass": "mechanics",
+      "requiresRealModel": false,
+      "expectedObservations": [
+        "A credential-looking source identity is rejected as credential-material without probing outside the repository."
+      ],
+      "canonicalContracts": ["packages/runtime/src/execution/reader-task-admission.ts"],
+      "missingInterface": null
+    },
+    {
+      "id": "S07-revoked-access-mid-dispatch",
+      "scenario": "S07",
+      "surface": "task-reconciliation projection",
+      "ownerIssue": 938,
+      "trIds": ["TR-04", "TR-10"],
+      "status": "deterministic-supported",
+      "evidenceClass": "mechanics",
+      "requiresRealModel": false,
+      "expectedObservations": [
+        "Access revoked between observation and dispatch prevents new incompatible work through the W2 guard."
+      ],
+      "canonicalContracts": [
+        "packages/runtime/src/execution/task-reconciliation.ts",
+        "packages/runtime/test/task-reconciliation.test.ts"
+      ],
+      "missingInterface": null
+    },
+    {
+      "id": "S08-child-success-missing-check",
+      "scenario": "S08",
+      "surface": "projectDelegatedTaskFulfillment",
+      "ownerIssue": 879,
+      "trIds": ["TR-01", "TR-05", "TR-11"],
+      "status": "deterministic-supported",
+      "evidenceClass": "mechanics",
+      "requiresRealModel": false,
+      "expectedObservations": [
+        "A successful child plus a required check that never ran remains incomplete.",
+        "Model prose cannot attest complete."
+      ],
+      "canonicalContracts": ["packages/runtime/src/delegated-task/fulfillment.ts"],
+      "missingInterface": null
+    },
+    {
+      "id": "S08-failed-child-direct-recovery",
+      "scenario": "S08",
+      "surface": "projectDelegatedTaskFulfillment",
+      "ownerIssue": 879,
+      "trIds": ["TR-01", "TR-05"],
+      "status": "deterministic-supported",
+      "evidenceClass": "mechanics",
+      "requiresRealModel": false,
+      "expectedObservations": [
+        "A failed child remains failed beside later direct artifact evidence.",
+        "Direct recovery does not invent named-workflow or publication success."
+      ],
+      "canonicalContracts": ["packages/runtime/src/delegated-task/fulfillment.ts"],
+      "missingInterface": null
+    },
+    {
+      "id": "S09-pre-dispatch-failure-retry",
+      "scenario": "S09",
+      "surface": "classifyLatest knowledge continuation",
+      "ownerIssue": 761,
+      "trIds": ["TR-06"],
+      "status": "deterministic-supported",
+      "evidenceClass": "mechanics",
+      "requiresRealModel": false,
+      "expectedObservations": [
+        "failed-before-execution classifies as retry because dispatch did not start."
+      ],
+      "canonicalContracts": ["packages/runtime/src/records/knowledge-continuation-store.ts"],
+      "missingInterface": null
+    },
+    {
+      "id": "S09-uncertain-write-recovery-required",
+      "scenario": "S09",
+      "surface": "classifyLatest knowledge continuation",
+      "ownerIssue": 761,
+      "trIds": ["TR-06"],
+      "status": "deterministic-supported",
+      "evidenceClass": "mechanics",
+      "requiresRealModel": false,
+      "expectedObservations": [
+        "An executing attempt whose owner process is dead classifies as recovery-required, not silent replay."
+      ],
+      "canonicalContracts": ["packages/runtime/src/records/knowledge-continuation-store.ts"],
+      "missingInterface": null
+    },
+    {
+      "id": "S09-completed-write-not-replayed",
+      "scenario": "S09",
+      "surface": "classifyLatest knowledge continuation",
+      "ownerIssue": 761,
+      "trIds": ["TR-06"],
+      "status": "deterministic-supported",
+      "evidenceClass": "mechanics",
+      "requiresRealModel": false,
+      "expectedObservations": [
+        "writer-completed classifies as already-completed so the write is not replayed."
+      ],
+      "canonicalContracts": ["packages/runtime/src/records/knowledge-continuation-store.ts"],
+      "missingInterface": null
+    },
+    {
+      "id": "S09-general-filesystem-crash-recovery",
+      "scenario": "S09",
+      "surface": "arbitrary write tools",
+      "ownerIssue": 939,
+      "trIds": ["TR-06"],
+      "status": "deferred",
+      "evidenceClass": "not-executed",
+      "requiresRealModel": false,
+      "expectedObservations": [
+        "General filesystem write-timeout crash recovery for operations outside knowledge continuation."
+      ],
+      "canonicalContracts": [],
+      "missingInterface": "issue 939 per-operation observe/reconcile/replay contract"
+    },
+    {
+      "id": "S10-publisher-idempotent-retry",
+      "scenario": "S10",
+      "surface": "runOfflineProductTest",
+      "ownerIssue": 468,
+      "trIds": ["TR-05", "TR-06"],
+      "status": "deterministic-supported",
+      "evidenceClass": "mechanics",
+      "requiresRealModel": false,
+      "expectedObservations": [
+        "A lost publication response retried with the same idempotency key does not create a second external mutation."
+      ],
+      "canonicalContracts": ["packages/runtime/src/product-test.ts"],
+      "missingInterface": null
+    },
+    {
+      "id": "S10-live-gitlab-lost-response-operation",
+      "scenario": "S10",
+      "surface": "live GitLab publisher",
+      "ownerIssue": 939,
+      "trIds": ["TR-06"],
+      "status": "deferred",
+      "evidenceClass": "not-executed",
+      "requiresRealModel": false,
+      "expectedObservations": [
+        "Live GitLab MR-create lost-response reconciliation as a new supported operation class."
+      ],
+      "canonicalContracts": ["packages/runtime/src/delivery/receipt-store.ts"],
+      "missingInterface": "issue 939 live publisher lost-response operation proof"
+    },
+    {
+      "id": "S11-cancel-during-backoff",
+      "scenario": "S11",
+      "surface": "executeInferenceStep",
+      "ownerIssue": 780,
+      "trIds": ["TR-06", "TR-10"],
+      "status": "deterministic-supported",
+      "evidenceClass": "mechanics",
+      "requiresRealModel": false,
+      "expectedObservations": ["Cancellation during backoff prevents a further physical attempt."],
+      "canonicalContracts": [
+        "packages/runtime/src/workflow-execution/retry.ts",
+        "packages/runtime/src/execution/cancellation.ts"
+      ],
+      "missingInterface": null
+    },
+    {
+      "id": "S11-cancel-during-gated-write",
+      "scenario": "S11",
+      "surface": "createWriteToolDefinition",
+      "ownerIssue": 780,
+      "trIds": ["TR-06", "TR-10"],
+      "status": "deterministic-supported",
+      "evidenceClass": "mechanics",
+      "requiresRealModel": false,
+      "expectedObservations": [
+        "Cancellation during an in-flight write waits for the write to finish and retains the actual bytes.",
+        "Cancellation is not relabeled as task completion."
+      ],
+      "canonicalContracts": ["packages/runtime/src/execution/cancellation.ts"],
+      "missingInterface": null
+    },
+    {
+      "id": "S11-cancelled-fulfillment-partial",
+      "scenario": "S11",
+      "surface": "projectDelegatedTaskFulfillment",
+      "ownerIssue": 879,
+      "trIds": ["TR-10", "TR-11"],
+      "status": "deterministic-supported",
+      "evidenceClass": "mechanics",
+      "requiresRealModel": false,
+      "expectedObservations": ["Cancellation with a useful artifact is partial, not complete."],
+      "canonicalContracts": ["packages/runtime/src/delegated-task/fulfillment.ts"],
+      "missingInterface": null
+    },
+    {
+      "id": "S11-process-recovery-after-cancel",
+      "scenario": "S11",
+      "surface": "general process restore",
+      "ownerIssue": 939,
+      "trIds": ["TR-10"],
+      "status": "deferred",
+      "evidenceClass": "not-executed",
+      "requiresRealModel": false,
+      "expectedObservations": [
+        "Unsupported process recovery after cancellation of an arbitrary mutation."
+      ],
+      "canonicalContracts": [],
+      "missingInterface": "issue 939 process recovery"
+    },
+    {
+      "id": "S12-stale-snapshot-revalidates",
+      "scenario": "S12",
+      "surface": "evaluateResumeSkip",
+      "ownerIssue": 910,
+      "trIds": ["TR-07", "TR-09", "TR-10"],
+      "status": "deterministic-supported",
+      "evidenceClass": "mechanics",
+      "requiresRealModel": false,
+      "expectedObservations": [
+        "A changed workspace snapshot forces revalidation and does not skip planner or search observe.",
+        "A matching snapshot plus plan digest may skip those steps without replaying settled effects."
+      ],
+      "canonicalContracts": ["packages/runtime/src/inputs/operator-input-fill.ts"],
+      "missingInterface": null
+    },
+    {
+      "id": "S12-delegated-resume-cli",
+      "scenario": "S12",
+      "surface": "docsfab do --resume",
+      "ownerIssue": 880,
+      "trIds": ["TR-09", "TR-11"],
+      "status": "incomplete",
+      "evidenceClass": "not-executed",
+      "requiresRealModel": false,
+      "expectedObservations": [
+        "docsfab do --resume <task-id> --answers <json-file> continues only that exact delegated task."
+      ],
+      "canonicalContracts": ["packages/runtime/src/cli/commands/do.ts"],
+      "missingInterface": "released delegated do --resume/--answers protocol (issue 880)"
+    },
+    {
+      "id": "S12-general-compaction-restore",
+      "scenario": "S12",
+      "surface": "protected task context",
+      "ownerIssue": 733,
+      "trIds": ["TR-07", "TR-10"],
+      "status": "deferred",
+      "evidenceClass": "not-executed",
+      "requiresRealModel": false,
+      "expectedObservations": [
+        "General compaction rebuild of working context as a supported recovery action."
+      ],
+      "canonicalContracts": [],
+      "missingInterface": "issue 733 governed compaction restore"
+    },
+    {
+      "id": "S12-active-goal-amendment",
+      "scenario": "S12",
+      "surface": "active goal resume",
+      "ownerIssue": 939,
+      "trIds": ["TR-01", "TR-10"],
+      "status": "deferred",
+      "evidenceClass": "not-executed",
+      "requiresRealModel": false,
+      "expectedObservations": ["Active-goal amendment and crash support while work is pending."],
+      "canonicalContracts": [],
+      "missingInterface": "issue 939 active-goal amendment"
+    },
+    {
+      "id": "S13-busy-continuation-owner",
+      "scenario": "S13",
+      "surface": "classifyLatest knowledge continuation",
+      "ownerIssue": 761,
+      "trIds": ["TR-04", "TR-07"],
+      "status": "deterministic-supported",
+      "evidenceClass": "mechanics",
+      "requiresRealModel": false,
+      "expectedObservations": [
+        "A live matching process identity classifies as busy and is not a grant to compete."
+      ],
+      "canonicalContracts": ["packages/runtime/src/records/knowledge-continuation-store.ts"],
+      "missingInterface": null
+    },
+    {
+      "id": "S13-dirty-checkout-preserves-user-bytes",
+      "scenario": "S13",
+      "surface": "selected-checkout admission",
+      "ownerIssue": 933,
+      "trIds": ["TR-04", "TR-07"],
+      "status": "deterministic-supported",
+      "evidenceClass": "mechanics",
+      "requiresRealModel": false,
+      "expectedObservations": [
+        "User dirty bytes remain after selected-checkout identity-mismatch; no implicit overwrite."
+      ],
+      "canonicalContracts": ["packages/runtime/src/execution/reader-task-admission.ts"],
+      "missingInterface": null
+    },
+    {
+      "id": "S13-resumed-mutation-preimage-guard",
+      "scenario": "S13",
+      "surface": "resumed mutation",
+      "ownerIssue": 939,
+      "trIds": ["TR-04", "TR-07"],
+      "status": "deferred",
+      "evidenceClass": "not-executed",
+      "requiresRealModel": false,
+      "expectedObservations": [
+        "New resumed-operation preimage guard for competing mutations beyond specialized continuation."
+      ],
+      "canonicalContracts": [],
+      "missingInterface": "issue 939 resumed-operation support"
+    },
+    {
+      "id": "S14-budget-exhausted-partial",
+      "scenario": "S14",
+      "surface": "projectDelegatedTaskFulfillment",
+      "ownerIssue": 879,
+      "trIds": ["TR-08", "TR-10", "TR-11"],
+      "status": "deterministic-supported",
+      "evidenceClass": "mechanics",
+      "requiresRealModel": false,
+      "expectedObservations": [
+        "Budget exhaustion retains a useful artifact and unmet obligations without complete."
+      ],
+      "canonicalContracts": ["packages/runtime/src/delegated-task/fulfillment.ts"],
+      "missingInterface": null
+    },
+    {
+      "id": "S14-invalid-request-stops",
+      "scenario": "S14",
+      "surface": "classifyModelFailure",
+      "ownerIssue": 480,
+      "trIds": ["TR-08"],
+      "status": "deterministic-supported",
+      "evidenceClass": "mechanics",
+      "requiresRealModel": false,
+      "expectedObservations": [
+        "Unchanged invalid-request remains non-retryable; no fabricated success."
+      ],
+      "canonicalContracts": ["packages/runtime/src/model/context-budget.ts"],
+      "missingInterface": null
+    },
+    {
+      "id": "S14-repair-oscillation-policy",
+      "scenario": "S14",
+      "surface": "semantic progress policy",
+      "ownerIssue": 723,
+      "trIds": ["TR-08"],
+      "status": "deferred",
+      "evidenceClass": "not-executed",
+      "requiresRealModel": false,
+      "expectedObservations": [
+        "Repetition and oscillation between equivalent source sets under a frozen useful-progress policy."
+      ],
+      "canonicalContracts": [],
+      "missingInterface": "issue 723 semantic exploration and oscillation policy"
+    }
+  ]
+}

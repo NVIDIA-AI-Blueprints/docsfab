@@ -1,0 +1,176 @@
+{
+  "repository": {
+    "identitySha256": "1111111111111111111111111111111111111111111111111111111111111111",
+    "revision": "2222222222222222222222222222222222222222"
+  },
+  "request": {
+    "kind": "structured-task",
+    "requestSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "taskKind": "bounded-doc-improvement",
+    "taskSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "approval": {
+    "authorityId": "operator:fixture",
+    "operatorIdentitySha256": "3333333333333333333333333333333333333333333333333333333333333333",
+    "approvalSha256": "4444444444444444444444444444444444444444444444444444444444444444",
+    "approvedRequestSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "approvedTaskSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "approvedRecommendationSha256": null
+  },
+  "recommendation": {
+    "recommendationSha256": "5555555555555555555555555555555555555555555555555555555555555555",
+    "recommendedTaskSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "evidenceSha256s": ["6666666666666666666666666666666666666666666666666666666666666666"]
+  },
+  "autonomousSelection": {
+    "requestSha256": "7777777777777777777777777777777777777777777777777777777777777777",
+    "assessmentSha256": "8888888888888888888888888888888888888888888888888888888888888888",
+    "decisionSha256": "9999999999999999999999999999999999999999999999999999999999999999",
+    "authorizationSha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+    "candidateSha256": "123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0",
+    "selectedTaskSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "maturityFindingSha256s": ["abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789"]
+  },
+  "candidates": [
+    {
+      "id": "candidate:update-documentation",
+      "workflow": "update-documentation",
+      "taskSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "prerequisiteIds": ["audit-complete"],
+      "prerequisiteEvidenceSha256s": [
+        "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      ],
+      "eligibility": "eligible",
+      "reasonCode": "prerequisites-satisfied"
+    },
+    {
+      "id": "candidate:review-documentation",
+      "workflow": "review-documentation",
+      "taskSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "prerequisiteIds": ["write-task-compatible"],
+      "prerequisiteEvidenceSha256s": [
+        "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+      ],
+      "eligibility": "ineligible",
+      "reasonCode": "write-task-required"
+    }
+  ],
+  "selectedCandidateSha256": "912c12911922823e754d25237568bcf87614cffe30f856ba7f2f319fa8723fc6",
+  "rejectedAlternatives": [
+    {
+      "candidateSha256": "34097939483db367bcd1b2977510aad2b45f13c61b06471036644a38ea35ac07",
+      "reasonCode": "task-kind-incompatible",
+      "evidenceSha256s": ["dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"]
+    }
+  ],
+  "sharedDecisions": [
+    {
+      "id": "decision:repository",
+      "domain": "repository",
+      "actor": "host-policy",
+      "effect": "authoritative",
+      "outcomeSha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "authoritySource": "host-policy",
+      "authoritySha256": "1010101010101010101010101010101010101010101010101010101010101010",
+      "evidenceSha256s": ["1111111111111111111111111111111111111111111111111111111111111111"],
+      "boundedByDecisionIds": [],
+      "reasonCode": "workspace-ceiling"
+    },
+    {
+      "id": "decision:workflow",
+      "domain": "workflow",
+      "actor": "deterministic-workflow",
+      "effect": "authoritative",
+      "outcomeSha256": "912c12911922823e754d25237568bcf87614cffe30f856ba7f2f319fa8723fc6",
+      "authoritySource": "workflow-contract",
+      "authoritySha256": "1212121212121212121212121212121212121212121212121212121212121212",
+      "evidenceSha256s": ["cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"],
+      "boundedByDecisionIds": [],
+      "reasonCode": "eligible-candidate-selected"
+    },
+    {
+      "id": "decision:path-ceiling",
+      "domain": "path",
+      "actor": "host-policy",
+      "effect": "authoritative",
+      "outcomeSha256": "1313131313131313131313131313131313131313131313131313131313131313",
+      "authoritySource": "host-policy",
+      "authoritySha256": "1414141414141414141414141414141414141414141414141414141414141414",
+      "evidenceSha256s": ["1515151515151515151515151515151515151515151515151515151515151515"],
+      "boundedByDecisionIds": [],
+      "reasonCode": "path-prefix-ceiling"
+    },
+    {
+      "id": "decision:scope",
+      "domain": "scope",
+      "actor": "deterministic-workflow",
+      "effect": "authoritative",
+      "outcomeSha256": "2121212121212121212121212121212121212121212121212121212121212121",
+      "authoritySource": "workflow-contract",
+      "authoritySha256": "2222222222222222222222222222222222222222222222222222222222222222",
+      "evidenceSha256s": ["2323232323232323232323232323232323232323232323232323232323232323"],
+      "boundedByDecisionIds": [],
+      "reasonCode": "workflow-scope"
+    },
+    {
+      "id": "decision:write",
+      "domain": "write",
+      "actor": "host-policy",
+      "effect": "authoritative",
+      "outcomeSha256": "2424242424242424242424242424242424242424242424242424242424242424",
+      "authoritySource": "host-policy",
+      "authoritySha256": "2525252525252525252525252525252525252525252525252525252525252525",
+      "evidenceSha256s": ["2626262626262626262626262626262626262626262626262626262626262626"],
+      "boundedByDecisionIds": [],
+      "reasonCode": "write-ceiling"
+    },
+    {
+      "id": "decision:tracker",
+      "domain": "tracker",
+      "actor": "host-policy",
+      "effect": "authoritative",
+      "outcomeSha256": "2727272727272727272727272727272727272727272727272727272727272727",
+      "authoritySource": "host-policy",
+      "authoritySha256": "2828282828282828282828282828282828282828282828282828282828282828",
+      "evidenceSha256s": ["2929292929292929292929292929292929292929292929292929292929292929"],
+      "boundedByDecisionIds": [],
+      "reasonCode": "tracker-observe-only"
+    },
+    {
+      "id": "decision:publication",
+      "domain": "publication",
+      "actor": "host-policy",
+      "effect": "authoritative",
+      "outcomeSha256": "3030303030303030303030303030303030303030303030303030303030303030",
+      "authoritySource": "host-policy",
+      "authoritySha256": "3131313131313131313131313131313131313131313131313131313131313131",
+      "evidenceSha256s": ["3232323232323232323232323232323232323232323232323232323232323232"],
+      "boundedByDecisionIds": [],
+      "reasonCode": "publication-ceiling"
+    },
+    {
+      "id": "decision:path-suggestion",
+      "domain": "path",
+      "actor": "model",
+      "effect": "advisory",
+      "outcomeSha256": "1616161616161616161616161616161616161616161616161616161616161616",
+      "authoritySource": "none",
+      "authoritySha256": null,
+      "evidenceSha256s": ["1717171717171717171717171717171717171717171717171717171717171717"],
+      "boundedByDecisionIds": ["decision:path-ceiling"],
+      "reasonCode": "model-path-proposal"
+    },
+    {
+      "id": "decision:validation",
+      "domain": "validation",
+      "actor": "deterministic-workflow",
+      "effect": "authoritative",
+      "outcomeSha256": "1818181818181818181818181818181818181818181818181818181818181818",
+      "authoritySource": "workflow-contract",
+      "authoritySha256": "1919191919191919191919191919191919191919191919191919191919191919",
+      "evidenceSha256s": ["2020202020202020202020202020202020202020202020202020202020202020"],
+      "boundedByDecisionIds": [],
+      "reasonCode": "registered-validation"
+    }
+  ]
+}

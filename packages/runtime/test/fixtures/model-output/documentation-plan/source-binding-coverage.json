@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "kind": "docsfab-output-rule-fixture",
+  "code": "documentation-plan-source-binding-coverage",
+  "location": "$.planBinding.sourceBindings[].pagePath",
+  "input": {
+    "workflow": "create-documentation",
+    "repositoryRevision": "0bd6fa60ceefdf49d8b92fb760d446cda3434761"
+  },
+  "reply": "{\"summary\":\"Plan one CLI reference page and leave the guide out of scope.\",\"planBinding\":{\"mode\":\"create\",\"pages\":[{\"path\":\"docs/cli-reference.md\",\"disposition\":\"create\"},{\"path\":\"docs/guide.md\",\"disposition\":\"out-of-scope\"}],\"sourceBindings\":[{\"pagePath\":\"docs/cli-reference.md\",\"sources\":[\"src/cli.ts\"]},{\"pagePath\":\"docs/guide.md\",\"sources\":[\"src/cli.ts\"]}]}}"
+}

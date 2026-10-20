@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "kind": "docsfab-source-coverage-runner-fixtures",
+  "knownGoodScenarioIds": [
+    "plain-markdown-create",
+    "plain-markdown-update",
+    "plain-markdown-review",
+    "mkdocs-create",
+    "mkdocs-update",
+    "mkdocs-review",
+    "docusaurus-create",
+    "docusaurus-update",
+    "docusaurus-review",
+    "sphinx-create",
+    "sphinx-update",
+    "sphinx-review",
+    "fern-create",
+    "fern-update",
+    "fern-review"
+  ],
+  "negativeRecords": [
+    {
+      "id": "writer-absent",
+      "scenarioId": "plain-markdown-create",
+      "mutation": "writer-absent",
+      "expectedCondition": "writer-absent"
+    },
+    {
+      "id": "bootstrap-only-mutation",
+      "scenarioId": "plain-markdown-update",
+      "mutation": "bootstrap-only",
+      "expectedCondition": "documentation-output-absent"
+    },
+    {
+      "id": "missing-required-text",
+      "scenarioId": "plain-markdown-update",
+      "mutation": "missing-required-text",
+      "expectedCondition": "missing-required-text"
+    },
+    {
+      "id": "bad-relative-link",
+      "scenarioId": "plain-markdown-update",
+      "mutation": "bad-link",
+      "expectedCondition": "unresolved-link"
+    },
+    {
+      "id": "bad-anchor",
+      "scenarioId": "plain-markdown-update",
+      "mutation": "bad-anchor",
+      "expectedCondition": "unresolved-anchor"
+    },
+    {
+      "id": "navigation-deletion",
+      "scenarioId": "mkdocs-update",
+      "mutation": "navigation-deletion",
+      "expectedCondition": "missing-navigation-entry"
+    },
+    {
+      "id": "forbidden-config-path",
+      "scenarioId": "plain-markdown-update",
+      "mutation": "config-escape",
+      "expectedCondition": "outside-output-paths"
+    },
+    {
+      "id": "fabricated-citation",
+      "scenarioId": "plain-markdown-update",
+      "mutation": "fabricated-citation",
+      "expectedCondition": "citation-integrity-invalid"
+    },
+    {
+      "id": "malformed-formal-quality-report",
+      "scenarioId": "plain-markdown-update",
+      "mutation": "malformed-quality-report",
+      "expectedCondition": "quality-report-invalid"
+    },
+    {
+      "id": "fixture-evidence-mislabeled-installed",
+      "scenarioId": "plain-markdown-update",
+      "mutation": "fake-installed-evidence",
+      "expectedCondition": "fixture-evidence-cannot-qualify-installed"
+    },
+    {
+      "id": "swapped-genuine-ledger",
+      "scenarioId": "plain-markdown-update",
+      "mutation": "swapped-ledger",
+      "expectedCondition": "citation-run-mismatch"
+    },
+    {
+      "id": "symlink-documentation-output",
+      "scenarioId": "plain-markdown-update",
+      "mutation": "symlink-output",
+      "expectedCondition": "unsafe-candidate-path"
+    }
+  ]
+}

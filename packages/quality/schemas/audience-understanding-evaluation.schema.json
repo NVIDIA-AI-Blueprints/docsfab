@@ -1,0 +1,468 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://docsfab.invalid/schemas/audience-understanding-evaluation.schema.json",
+  "title": "Audience-understanding evaluation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "evaluation_id",
+    "evaluation_version",
+    "evaluated_at",
+    "target",
+    "evaluator",
+    "protocol",
+    "scenarios",
+    "participants",
+    "population_summaries",
+    "evidence_status",
+    "findings",
+    "limitations"
+  ],
+  "properties": {
+    "schema_version": {"const": "docsfab.quality.audience-understanding-evaluation/v1"},
+    "evaluation_id": {"type": "string", "minLength": 1},
+    "evaluation_version": {"type": "string", "minLength": 1},
+    "evaluated_at": {"type": "string", "format": "date-time"},
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repository_revision",
+        "documentation_revision",
+        "documentation_paths",
+        "delivery_surface_locator",
+        "product_version",
+        "product_reference_model",
+        "approved_evidence_revision",
+        "audience_profile_id",
+        "declared_prerequisites",
+        "allowed_tools",
+        "risk_boundary"
+      ],
+      "properties": {
+        "repository_revision": {"type": "string", "minLength": 1},
+        "documentation_revision": {"type": "string", "minLength": 1},
+        "documentation_paths": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "delivery_surface_locator": {"type": "string", "minLength": 1},
+        "product_version": {"type": "string", "minLength": 1},
+        "product_reference_model": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "version", "locator"],
+          "properties": {
+            "id": {"type": "string", "minLength": 1},
+            "version": {"type": "string", "minLength": 1},
+            "locator": {"type": "string", "minLength": 1}
+          }
+        },
+        "approved_evidence_revision": {"type": "string", "minLength": 1},
+        "audience_profile_id": {"type": "string", "minLength": 1},
+        "declared_prerequisites": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "allowed_tools": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "risk_boundary": {"type": "string", "minLength": 1}
+      }
+    },
+    "evaluator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provider_id", "provider_type", "independent_of_authors", "independence_evidence"],
+      "properties": {
+        "provider_id": {"type": "string", "minLength": 1},
+        "provider_type": {"enum": ["human", "agent", "mixed"]},
+        "independent_of_authors": {"type": "boolean"},
+        "independence_evidence": {"type": "string", "minLength": 1}
+      }
+    },
+    "protocol": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "protocol_version",
+        "scenario_corpus_id",
+        "scenario_corpus_version",
+        "scenario_corpus_locator",
+        "scenario_frozen_at",
+        "exposure_started_at",
+        "measured_phase_ended_at",
+        "scored_at",
+        "realistic_entry_point",
+        "maximum_prompts_per_scenario",
+        "maximum_attempts_per_participant",
+        "agent_repeats_per_configuration",
+        "correction_policy",
+        "debrief_after_measurement",
+        "raw_evidence_boundary"
+      ],
+      "properties": {
+        "protocol_version": {"const": "audience-understanding-v1"},
+        "scenario_corpus_id": {"type": "string", "minLength": 1},
+        "scenario_corpus_version": {"type": "string", "minLength": 1},
+        "scenario_corpus_locator": {"type": "string", "minLength": 1},
+        "scenario_frozen_at": {"type": "string", "format": "date-time"},
+        "exposure_started_at": {"type": "string", "format": "date-time"},
+        "measured_phase_ended_at": {"type": "string", "format": "date-time"},
+        "scored_at": {"type": "string", "format": "date-time"},
+        "realistic_entry_point": {"type": "string", "minLength": 1},
+        "maximum_prompts_per_scenario": {"type": "integer", "exclusiveMinimum": 0},
+        "maximum_attempts_per_participant": {"type": "integer", "exclusiveMinimum": 0},
+        "agent_repeats_per_configuration": {"type": "integer", "minimum": 0},
+        "correction_policy": {"const": "no-substantive-correction-during-measurement"},
+        "debrief_after_measurement": {"const": true},
+        "raw_evidence_boundary": {"type": "string", "minLength": 1}
+      }
+    },
+    "scenarios": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/scenario"}
+    },
+    "participants": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/participant"}
+    },
+    "population_summaries": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["human", "agent"],
+      "properties": {
+        "human": {"$ref": "#/$defs/populationSummary"},
+        "agent": {"$ref": "#/$defs/populationSummary"}
+      }
+    },
+    "evidence_status": {
+      "enum": [
+        "direct-outcome-evidence",
+        "proxy-evidence",
+        "contaminated",
+        "insufficient-evidence",
+        "failed-protocol"
+      ]
+    },
+    "findings": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/finding"}
+    },
+    "limitations": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    }
+  },
+  "$defs": {
+    "scenario": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scenario_id",
+        "version",
+        "prompt_locator",
+        "oracle_locator",
+        "acceptance_criteria_locator",
+        "model_claim_ids",
+        "methods",
+        "starting_point",
+        "risk_boundary"
+      ],
+      "properties": {
+        "scenario_id": {"type": "string", "minLength": 1},
+        "version": {"type": "string", "minLength": 1},
+        "prompt_locator": {"type": "string", "minLength": 1},
+        "oracle_locator": {"type": "string", "minLength": 1},
+        "acceptance_criteria_locator": {"type": "string", "minLength": 1},
+        "model_claim_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "methods": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "teach-back",
+              "relationship",
+              "boundary",
+              "prediction",
+              "counterfactual",
+              "transfer",
+              "evidence-location",
+              "findability",
+              "task-use"
+            ]
+          }
+        },
+        "starting_point": {"type": "string", "minLength": 1},
+        "risk_boundary": {"type": "string", "minLength": 1}
+      }
+    },
+    "participant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "participant_id",
+        "population",
+        "audience_match",
+        "prerequisite_evidence",
+        "consent_or_run_authorization_locator",
+        "configuration",
+        "contamination",
+        "attempts",
+        "evidence_status",
+        "limitations"
+      ],
+      "properties": {
+        "participant_id": {"type": "string", "minLength": 1},
+        "population": {"enum": ["human", "agent"]},
+        "audience_match": {"enum": ["matched", "partial", "not-matched", "unknown"]},
+        "prerequisite_evidence": {"type": "string", "minLength": 1},
+        "consent_or_run_authorization_locator": {"type": "string", "minLength": 1},
+        "configuration": {"$ref": "#/$defs/participantConfiguration"},
+        "contamination": {"$ref": "#/$defs/contamination"},
+        "attempts": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/attempt"}
+        },
+        "evidence_status": {
+          "enum": [
+            "direct-outcome-evidence",
+            "proxy-evidence",
+            "contaminated",
+            "insufficient-evidence",
+            "failed-protocol"
+          ]
+        },
+        "limitations": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "participantConfiguration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "human_profile_locator",
+        "agent_provider",
+        "agent_model",
+        "system_instructions_hash",
+        "retrieval_configuration",
+        "tool_configuration",
+        "context_budget",
+        "run_id"
+      ],
+      "properties": {
+        "human_profile_locator": {"type": ["string", "null"]},
+        "agent_provider": {"type": ["string", "null"]},
+        "agent_model": {"type": ["string", "null"]},
+        "system_instructions_hash": {"type": ["string", "null"]},
+        "retrieval_configuration": {"type": ["string", "null"]},
+        "tool_configuration": {"type": ["string", "null"]},
+        "context_budget": {"type": ["integer", "null"], "minimum": 1},
+        "run_id": {"type": ["string", "null"]}
+      }
+    },
+    "contamination": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "authorship_participation",
+        "synthesis_participation",
+        "prior_review_participation",
+        "expected_answers_exposed",
+        "private_authoring_context_exposed",
+        "prior_results_exposed",
+        "non_safety_coaching_during_measurement",
+        "evidence_locator",
+        "rationale"
+      ],
+      "properties": {
+        "state": {"enum": ["clean", "contaminated", "unknown"]},
+        "authorship_participation": {"type": "boolean"},
+        "synthesis_participation": {"type": "boolean"},
+        "prior_review_participation": {"type": "boolean"},
+        "expected_answers_exposed": {"type": "boolean"},
+        "private_authoring_context_exposed": {"type": "boolean"},
+        "prior_results_exposed": {"type": "boolean"},
+        "non_safety_coaching_during_measurement": {"type": "boolean"},
+        "evidence_locator": {"type": "string", "minLength": 1},
+        "rationale": {"type": "string", "minLength": 1}
+      }
+    },
+    "attempt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "attempt_id",
+        "scenario_id",
+        "started_at",
+        "completed_at",
+        "prompt_locator",
+        "response_locator",
+        "trace_locator",
+        "outcome",
+        "correctness",
+        "relationship_fidelity",
+        "boundary_recognition",
+        "prediction_or_transfer",
+        "confidence",
+        "evidence_location_success",
+        "interventions",
+        "misconceptions",
+        "scored_by",
+        "score_evidence_locator",
+        "limitations"
+      ],
+      "properties": {
+        "attempt_id": {"type": "string", "minLength": 1},
+        "scenario_id": {"type": "string", "minLength": 1},
+        "started_at": {"type": "string", "format": "date-time"},
+        "completed_at": {"type": "string", "format": "date-time"},
+        "prompt_locator": {"type": "string", "minLength": 1},
+        "response_locator": {"type": "string", "minLength": 1},
+        "trace_locator": {"type": "string", "minLength": 1},
+        "outcome": {"enum": ["success", "partial", "failure", "not-completed"]},
+        "correctness": {"$ref": "#/$defs/assessment"},
+        "relationship_fidelity": {"$ref": "#/$defs/assessment"},
+        "boundary_recognition": {"$ref": "#/$defs/assessment"},
+        "prediction_or_transfer": {"$ref": "#/$defs/assessment"},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+        "evidence_location_success": {"enum": ["met", "partially-met", "not-met", "not-assessed"]},
+        "interventions": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/intervention"}
+        },
+        "misconceptions": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/misconception"}
+        },
+        "scored_by": {"type": "string", "minLength": 1},
+        "score_evidence_locator": {"type": "string", "minLength": 1},
+        "limitations": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "assessment": {
+      "enum": ["met", "partially-met", "not-met", "not-assessed"]
+    },
+    "intervention": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "during_measured_phase", "description", "evidence_locator"],
+      "properties": {
+        "kind": {"enum": ["safety", "logistical", "substantive-coaching"]},
+        "during_measured_phase": {"type": "boolean"},
+        "description": {"type": "string", "minLength": 1},
+        "evidence_locator": {"type": "string", "minLength": 1}
+      }
+    },
+    "misconception": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "severity", "description", "model_claim_ids", "evidence_locator"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "severity": {"enum": ["critical", "major", "moderate", "minor"]},
+        "description": {"type": "string", "minLength": 1},
+        "model_claim_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "evidence_locator": {"type": "string", "minLength": 1}
+      }
+    },
+    "populationSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "participant_count",
+        "direct_evidence_participant_count",
+        "attempt_count",
+        "direct_evidence_attempt_count",
+        "scenario_ids",
+        "measures",
+        "limitations"
+      ],
+      "properties": {
+        "participant_count": {"type": "integer", "minimum": 0},
+        "direct_evidence_participant_count": {"type": "integer", "minimum": 0},
+        "attempt_count": {"type": "integer", "minimum": 0},
+        "direct_evidence_attempt_count": {"type": "integer", "minimum": 0},
+        "scenario_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "measures": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/measure"}
+        },
+        "limitations": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "measure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["metric_id", "value", "unit", "sample_size", "method", "interpretation"],
+      "properties": {
+        "metric_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$"},
+        "value": {"type": ["number", "string", "boolean"]},
+        "unit": {"type": "string"},
+        "sample_size": {"type": "integer", "minimum": 0},
+        "method": {"type": "string", "minLength": 1},
+        "interpretation": {"type": "string", "minLength": 1}
+      }
+    },
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "severity", "owner_loop", "description", "evidence_locator", "acceptance_condition", "status"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "severity": {"enum": ["critical", "major", "moderate", "minor"]},
+        "owner_loop": {
+          "enum": [
+            "documentation",
+            "product-reference-model",
+            "product",
+            "delivery-or-retrieval",
+            "tool-or-agent",
+            "evaluation"
+          ]
+        },
+        "description": {"type": "string", "minLength": 1},
+        "evidence_locator": {"type": "string", "minLength": 1},
+        "acceptance_condition": {"type": "string", "minLength": 1},
+        "status": {"enum": ["open", "addressed-awaiting-verification", "verified", "dismissed-with-rationale"]}
+      }
+    }
+  }
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Converge Documentation"
+  short_description: "Keep evidence, models, and documentation aligned"
+  default_prompt: "Use $converge-documentation to detect drift and refresh the DocsFab reference model and documentation."

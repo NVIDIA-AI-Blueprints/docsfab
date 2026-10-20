@@ -1,0 +1,39 @@
+# DocsFab operational limits owned by the `churn` name prefix.
+# Registered in config/limits.yaml; every limit here is named `churn.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: churn.windowDays
+    value: 14
+    unit: days
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 90
+    refusal: churn-window-days-bound
+    remediation: Lower churn.windowDays in config/limits/churn.yaml, or accept a longer lookback window.
+    rationale: scripts/orchestration/churn-report.sh's first-parent-merge lookback window, in days, counted backward from the reported revision's committer date (inclusive on both ends). 14 matches Epic(#1304)'s hand-produced baseline table, 641 merged MRs over 14 days to cc86e7278, Task(#1318), so a re-run reproduces that table byte-for-byte. No CLI flag overrides this value, override is null; a future per-invocation need becomes a catalog DOCSFAB_* environment override validated against min/max at startup, per the limits contract, not a bare script flag.
+
+  - name: churn.reviewThreshold
+    value: 30
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 500
+    refusal: churn-review-threshold-bound
+    remediation: Assign an owner and a split plan for the flagged file, or raise churn.reviewThreshold in config/limits/churn.yaml after confirming the new floor still catches real magnets.
+    rationale: A hand-written file whose first-parent-merge touch count over churn.windowDays is strictly greater than this value is flagged for review as a merge magnet, comparator is `>`, matching Epic(#1304)'s "above" wording; a file at exactly this count is not flagged. 30 is the floor of Epic(#1304)'s own 12-row Evidence table, config/limits-allowlist.json at 30 touches, the table's lowest-ranked row, so the same baseline revision cc86e7278 flags every row that table names. Generated mirrors, packages/runtime/src/config/limits.generated.ts and similar, are never flagged regardless of count; they are covered by Investigation(#1173), item 3, not by per-file ownership.
+
+  - name: churn.topN
+    value: 20
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 200
+    refusal: churn-top-n-bound
+    remediation: Raise churn.topN in config/limits/churn.yaml to see further down the ranked list, or lower it to shorten the report; the full hand-written and generated totals are always disclosed separately regardless of this bound.
+    rationale: Hand-written rows shown by scripts/orchestration/churn-report.sh's default, non-JSON, report, ranked by touch count descending then path ascending, before generated mirrors are excluded from ranking, they are listed separately, never consuming a top-N slot. 20 is sized so every one of Epic(#1304)'s 12 Evidence-table rows appears at the baseline revision cc86e7278 -- the table's lowest-touch row, config/limits-allowlist.json, 30 touches, is hand-written rank 16 counting only present-at-rev generated exclusions, or rank 17 if the two paths absent at cc86e7278, packages/host/src/config/limits.generated.ts and packages/runtime/src/native-compositions/generated-comparison-kit-pins.ts, both themselves generated mirrors so this only affects bookkeeping and not candidacy, are kept as ranked-but-unresolvable rows rather than dropped; 20 clears both countings with headroom. Output always discloses a "showing N of M files" line so a clipped tail is never silent.

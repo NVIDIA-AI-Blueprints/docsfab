@@ -1,0 +1,540 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://docsfab.nvidia.internal/schemas/knowledge/source-item-v1.schema.json",
+  "title": "DocsFab knowledge source item v1/v2 compatibility schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "item_id",
+    "thread_id",
+    "artifact_type",
+    "title",
+    "attribution",
+    "timestamps",
+    "version",
+    "scope",
+    "representations",
+    "members",
+    "governance",
+    "lineage",
+    "evidence_state",
+    "limitations"
+  ],
+  "properties": {
+    "schema_version": {
+      "enum": [
+        "docsfab.knowledge.source-item/v1",
+        "docsfab.knowledge.source-item/v2"
+      ]
+    },
+    "item_id": {"type": "string", "minLength": 1},
+    "thread_id": {"type": "string", "minLength": 1},
+    "artifact_type": {
+      "enum": [
+        "interview",
+        "document",
+        "document-collection",
+        "presentation",
+        "diagram",
+        "image",
+        "audio",
+        "video",
+        "repository-snapshot",
+        "test",
+        "runtime-observation",
+        "correction",
+        "decision",
+        "other"
+      ]
+    },
+    "governed_visual": {"type": "boolean"},
+    "title": {"type": "string", "minLength": 1},
+    "summary": {"type": ["string", "null"]},
+    "attribution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["author", "contributors", "collector"],
+      "properties": {
+        "author": {"type": ["string", "null"]},
+        "contributors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["identity", "relation", "scope"],
+            "properties": {
+              "identity": {"type": ["string", "null"]},
+              "relation": {"type": "string", "minLength": 1},
+              "scope": {"type": ["string", "null"]}
+            }
+          }
+        },
+        "collector": {"type": "string", "minLength": 1}
+      }
+    },
+    "timestamps": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_created_at", "ingested_at"],
+      "properties": {
+        "source_created_at": {"type": ["string", "null"], "format": "date-time"},
+        "ingested_at": {"type": "string", "format": "date-time"}
+      }
+    },
+    "version": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "value"],
+      "properties": {
+        "kind": {"type": "string", "minLength": 1},
+        "value": {"type": ["string", "null"]}
+      }
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["product_version", "deployment", "audience", "model_region"],
+      "properties": {
+        "product_version": {"type": ["string", "null"]},
+        "deployment": {"type": ["string", "null"]},
+        "audience": {"type": ["string", "null"]},
+        "model_region": {"type": ["string", "null"]}
+      }
+    },
+    "representations": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/representation"}
+    },
+    "members": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/member"}
+    },
+    "governance": {"$ref": "#/$defs/governance"},
+    "lineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["parent_item_ids", "supersedes", "related_item_ids"],
+      "properties": {
+        "parent_item_ids": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        },
+        "supersedes": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        },
+        "related_item_ids": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        }
+      }
+    },
+    "transforms": {
+      "type": "array",
+      "items": {"type": "object"}
+    },
+    "evidence_state": {
+      "enum": [
+        "raw",
+        "source-authored",
+        "participant-edited",
+        "transformed",
+        "proxy-awaiting-author-confirmation",
+        "attribution-unverified"
+      ]
+    },
+    "limitations": {
+      "type": "array",
+      "items": {"type": "string"}
+    }
+  },
+  "anyOf": [
+    {"properties": {"representations": {"minItems": 1}}},
+    {"properties": {"members": {"minItems": 1}}}
+  ],
+  "$defs": {
+    "integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "value"],
+      "properties": {
+        "algorithm": {"type": ["string", "null"]},
+        "value": {"type": ["string", "null"]}
+      }
+    },
+    "locator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scheme", "uri"],
+      "properties": {
+        "scheme": {"type": "string", "minLength": 1},
+        "uri": {"type": "string", "minLength": 1},
+        "repository": {"type": ["string", "null"]},
+        "commit": {"type": ["string", "null"]},
+        "path": {"type": ["string", "null"]},
+        "external_version": {"type": ["string", "null"]},
+        "retained_copy": {"type": ["string", "null"]}
+      }
+    },
+    "transform": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "properties": {
+        "tool": {"type": ["string", "null"]},
+        "version": {"type": ["string", "null"]},
+        "method": {"type": ["string", "null"]},
+        "review_state": {"type": ["string", "null"]}
+      }
+    },
+    "visualArtifactType": {
+      "enum": [
+        "diagram",
+        "image",
+        "presentation",
+        "architecture-view",
+        "diagram-collection",
+        "state-machine",
+        "timeline"
+      ]
+    },
+    "visualMedia": {
+      "properties": {
+        "media_type": {
+          "type": "string",
+          "pattern": "^(?:[iI][mM][aA][gG][eE]/[^;\\s]+|[tT][eE][xX][tT]/(?:(?:[vV][nN][dD]\\.)|(?:[xX]-))?(?:[mM][eE][rR][mM][aA][iI][dD]|[gG][rR][aA][pP][hH][vV][iI][zZ]|[pP][lL][aA][nN][tT][uU][mM][lL])|[aA][pP][pP][lL][iI][cC][aA][tT][iI][oO][nN]/[vV][nN][dD]\\.(?:[jJ][gG][rR][aA][pP][hH]\\.[mM][xX][fF][iI][lL][eE]|[gG][rR][aA][pP][hH][vV][iI][zZ]|[pP][lL][aA][nN][tT][uU][mM][lL]))\\s*(?:;.*)?$"
+        }
+      },
+      "required": ["media_type"]
+    },
+    "visualMediaRequiresMetadata": {
+      "if": {"$ref": "#/$defs/visualMedia"},
+      "then": {"required": ["visual_metadata"]}
+    },
+    "representation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "representation_id",
+        "role",
+        "media_type",
+        "original_filename",
+        "size_bytes",
+        "locator",
+        "integrity",
+        "derived_from",
+        "transform"
+      ],
+      "properties": {
+        "representation_id": {"type": "string", "minLength": 1},
+        "role": {"type": "string", "minLength": 1},
+        "visual_metadata": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "artifact_kind",
+            "provenance_role",
+            "lifecycle_disposition"
+          ],
+          "properties": {
+            "artifact_kind": {
+              "enum": [
+                "diagram",
+                "architecture-view",
+                "state-machine",
+                "timeline",
+                "rendered-representation"
+              ]
+            },
+            "provenance_role": {"enum": ["source", "derived"]},
+            "lifecycle_disposition": {
+              "enum": ["current", "superseded", "rejected"]
+            }
+          }
+        },
+        "media_type": {"type": "string", "minLength": 1},
+        "original_filename": {"type": ["string", "null"]},
+        "size_bytes": {"type": ["integer", "null"], "minimum": 0},
+        "locator": {"$ref": "#/$defs/locator"},
+        "integrity": {"$ref": "#/$defs/integrity"},
+        "derived_from": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        },
+        "transform": {"$ref": "#/$defs/transform"},
+        "access_override": {"type": ["string", "null"]}
+      },
+      "allOf": [
+        {
+          "if": {"required": ["visual_metadata"]},
+          "then": {
+            "properties": {
+              "integrity": {
+                "type": "object",
+                "required": ["algorithm", "value"],
+                "properties": {
+                  "algorithm": {"const": "sha256"},
+                  "value": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+                }
+              },
+              "locator": {
+                "oneOf": [
+                  {
+                    "properties": {
+                      "scheme": {"const": "thread-artifact"},
+                      "uri": {"type": "string", "pattern": "^artifacts/sha256/[a-f0-9]{2}/[a-f0-9]{64}$"},
+                      "retained_copy": {"type": "string", "pattern": "^artifacts/sha256/[a-f0-9]{2}/[a-f0-9]{64}$"}
+                    },
+                    "required": ["scheme", "uri", "retained_copy"]
+                  },
+                  {
+                    "properties": {
+                      "scheme": {"const": "content-addressed"},
+                      "uri": {"type": "string", "pattern": "^(urn:)?sha256:[a-f0-9]{64}$"},
+                      "retained_copy": {"const": null}
+                    },
+                    "required": ["scheme", "uri", "retained_copy"]
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "visual_metadata": {
+                "properties": {"provenance_role": {"const": "source"}},
+                "required": ["provenance_role"]
+              }
+            },
+            "required": ["visual_metadata"]
+          },
+          "then": {"properties": {"derived_from": {"maxItems": 0}}}
+        },
+        {
+          "if": {
+            "properties": {
+              "visual_metadata": {
+                "properties": {"provenance_role": {"const": "derived"}},
+                "required": ["provenance_role"]
+              }
+            },
+            "required": ["visual_metadata"]
+          },
+          "then": {
+            "properties": {
+              "derived_from": {"minItems": 1},
+              "transform": {"type": "object"}
+            }
+          }
+        }
+      ]
+    },
+    "member": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["member_id", "title", "artifact_type", "representations"],
+      "properties": {
+        "member_id": {"type": "string", "minLength": 1},
+        "title": {"type": "string", "minLength": 1},
+        "artifact_type": {"type": "string", "minLength": 1},
+        "representations": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/representation"},
+          "minItems": 1
+        }
+      }
+    },
+    "governance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "consent",
+        "citation_boundary",
+        "retention_boundary",
+        "redistribution_boundary",
+        "access_classification"
+      ],
+      "properties": {
+        "consent": {"type": ["string", "null"]},
+        "citation_boundary": {"type": ["string", "null"]},
+        "retention_boundary": {"type": ["string", "null"]},
+        "redistribution_boundary": {"type": ["string", "null"]},
+        "access_classification": {"type": "string", "minLength": 1}
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "schema_version": {"const": "docsfab.knowledge.source-item/v2"}
+        },
+        "required": ["schema_version"]
+      },
+      "then": {"required": ["governed_visual"]}
+    },
+    {
+      "if": {
+        "properties": {
+          "schema_version": {"const": "docsfab.knowledge.source-item/v2"},
+          "artifact_type": {"enum": ["diagram", "image", "presentation"]}
+        },
+        "required": ["schema_version", "artifact_type"]
+      },
+      "then": {"properties": {"governed_visual": {"const": true}}}
+    },
+    {
+      "if": {
+        "properties": {
+          "schema_version": {"const": "docsfab.knowledge.source-item/v2"}
+        },
+        "required": ["schema_version"],
+        "anyOf": [
+          {
+            "properties": {
+              "representations": {
+                "contains": {"$ref": "#/$defs/visualMedia"},
+                "minContains": 1
+              }
+            },
+            "required": ["representations"]
+          },
+          {
+            "properties": {
+              "members": {
+                "contains": {
+                  "properties": {
+                    "representations": {
+                      "contains": {"$ref": "#/$defs/visualMedia"},
+                      "minContains": 1
+                    }
+                  },
+                  "required": ["representations"]
+                },
+                "minContains": 1
+              }
+            },
+            "required": ["members"]
+          },
+          {
+            "properties": {
+              "representations": {
+                "contains": {"required": ["visual_metadata"]},
+                "minContains": 1
+              }
+            },
+            "required": ["representations"]
+          },
+          {
+            "properties": {
+              "members": {
+                "contains": {
+                  "properties": {
+                    "representations": {
+                      "contains": {"required": ["visual_metadata"]},
+                      "minContains": 1
+                    }
+                  },
+                  "required": ["representations"]
+                },
+                "minContains": 1
+              }
+            },
+            "required": ["members"]
+          },
+          {
+            "properties": {
+              "members": {
+                "contains": {
+                  "properties": {
+                    "artifact_type": {"$ref": "#/$defs/visualArtifactType"}
+                  },
+                  "required": ["artifact_type"]
+                },
+                "minContains": 1
+              }
+            },
+            "required": ["members"]
+          }
+        ]
+      },
+      "then": {"properties": {"governed_visual": {"const": true}}}
+    },
+    {
+      "if": {
+        "properties": {
+          "schema_version": {"const": "docsfab.knowledge.source-item/v2"},
+          "governed_visual": {"const": true}
+        },
+        "required": ["schema_version", "governed_visual"]
+      },
+      "then": {
+        "properties": {
+          "representations": {
+            "items": {"$ref": "#/$defs/visualMediaRequiresMetadata"}
+          },
+          "members": {
+            "items": {
+              "allOf": [
+                {
+                  "properties": {
+                    "representations": {
+                      "items": {"$ref": "#/$defs/visualMediaRequiresMetadata"}
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "artifact_type": {"$ref": "#/$defs/visualArtifactType"}
+                    },
+                    "required": ["artifact_type"]
+                  },
+                  "then": {
+                    "properties": {
+                      "representations": {
+                        "items": {"required": ["visual_metadata"]}
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "anyOf": [
+          {
+            "properties": {
+              "representations": {
+                "contains": {"required": ["visual_metadata"]},
+                "minContains": 1
+              }
+            }
+          },
+          {
+            "properties": {
+              "members": {
+                "contains": {
+                  "properties": {
+                    "representations": {
+                      "contains": {"required": ["visual_metadata"]},
+                      "minContains": 1
+                    }
+                  },
+                  "required": ["representations"]
+                },
+                "minContains": 1
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

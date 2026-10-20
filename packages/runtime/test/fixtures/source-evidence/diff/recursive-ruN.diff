@@ -1,0 +1,25 @@
+diff -ruN old/guide/added.txt new/guide/added.txt
+--- old/guide/added.txt	1970-01-01 00:00:00
++++ new/guide/added.txt	2026-01-05 15:00:00
+@@ -0,0 +1 @@
++New page.
+diff -ruN old/guide/contact.txt new/guide/contact.txt
+--- old/guide/contact.txt	2026-01-05 15:00:00
++++ new/guide/contact.txt	2026-01-05 15:00:00
+@@ -1 +1 @@
+-Contact the team at support@example.test.
++Contact the team at help@example.test.
+diff -ruN old/guide/retired.txt new/guide/retired.txt
+--- old/guide/retired.txt	2026-01-05 15:00:00
++++ new/guide/retired.txt	1970-01-01 00:00:00
+@@ -1 +0,0 @@
+-Retired page.
+diff -ruN old/guide/steps.txt new/guide/steps.txt
+--- old/guide/steps.txt	2026-01-05 15:00:00
++++ new/guide/steps.txt	2026-01-05 15:00:00
+@@ -1,3 +1,4 @@
+ Step one.
+-Step two.
++Step two, revised.
+ Step three.
++Step four.

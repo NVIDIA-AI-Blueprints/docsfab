@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "kind": "docsfab-output-rule-fixture",
+  "code": "quality-submission-report-envelope",
+  "location": "$.reportMarkdown",
+  "input": {
+    "workflow": "review-documentation",
+    "submission": "{\"evaluation\":{\"evaluation_id\":\"eval-1\",\"overall_decision\":\"insufficient-evidence\"},\"qualityScore\":null}"
+  },
+  "reply": "# Documentation quality evaluation report\n\n```json\n{\"evaluation\":{\"evaluation_id\":\"eval-1\",\"overall_decision\":\"insufficient-evidence\"},\"qualityScore\":null,\"reportMarkdown\":\"# Report\"}\n```\n"
+}

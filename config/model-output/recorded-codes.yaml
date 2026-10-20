@@ -1,0 +1,113 @@
+# Every rejection code the catalog has ever declared (ADR question 8, approved
+# in #1128 note 71135882). Recorded codes live in run records, so they are
+# never renamed or removed: each entry here must stay a declared code, or be
+# listed in the `aliases` of the rule that replaced it. Append new codes; never
+# delete an entry.
+#
+# `pinned` fixes a security or authority code's kind (ADR "Pinned terminal
+# codes"). The code, or the rule that aliases it, must keep that kind and stay
+# terminal; any change is a `pinned-code` gate finding that needs an allowlist
+# rationale. Codes the ADR pins that no family declares yet (for example
+# credential-material) are pinned when their family migrates (#1289).
+schemaVersion: 1
+kind: docsfab-recorded-codes
+codes:
+  - code: revision-accounting-invalid-json
+  - code: revision-accounting-unsafe-disclosure
+    pinned: disclosure
+  - code: revision-accounting-invalid-root-shape
+  - code: revision-accounting-invalid-issue-row
+  - code: revision-accounting-issue-coverage
+  - code: revision-accounting-source-locator-membership
+    pinned: authority
+  - code: revision-accounting-invalid-changed-paths
+  - code: revision-accounting-invalid-unresolved-facts
+  - code: revision-accounting-changed-path-mismatch
+  - code: revision-accounting-unchanged-applied
+  - code: plan-source-locator-grammar
+  - code: plan-source-locator-revision-mismatch
+  - code: documentation-plan-source-binding-coverage
+  - code: reply-json-wrapped
+  - code: editorial-assessment-evidence-unavailable
+  - code: review-result-verdict-issues
+  - code: judgment-fact-unlinked
+  - code: judgment-links-no-open-fact
+  - code: judgment-documentation-disposition-invalid
+  - code: quality-envelope-json
+  - code: quality-envelope-shape
+  - code: quality-envelope-duplicate-key
+  - code: quality-envelope-report
+  - code: quality-envelope-json-after-object
+  - code: quality-envelope-report-fence
+  - code: quality-envelope-report-member
+  - code: quality-envelope-report-envelope
+  - code: evaluation-layer-residual-invalid
+  - code: source-citation-locator-shape
+  - code: source-citation-untracked-path
+  - code: source-citation-unreadable-text
+  - code: source-citation-line-range
+  - code: source-citation-blank-span
+  - code: source-citation-unobserved
+  - code: source-citation-minted-max-chars-bound
+  - code: ledger-key-missing
+  - code: dimension-applicable-without-obligations
+  - code: dimension-applicable-with-locators
+  - code: dimension-not-applicable-with-obligations
+  - code: dimension-unverified-with-obligations
+  - code: dimension-not-applicable-unsourced
+  - code: dimension-unverified-reason-unlisted
+  - code: source-locator-span-missing
+  - code: quality-submission-json
+  - code: quality-submission-duplicate-key
+  - code: quality-submission-shape
+  - code: quality-submission-missing
+  - code: quality-submission-cut
+  - code: quality-submission-report
+  - code: quality-submission-report-fence
+  - code: quality-submission-report-member
+  - code: quality-submission-report-envelope
+  - code: documentation-plan-source-write-target
+  - code: write-target-source
+  - code: request-intent-shape
+  - code: request-intent-host-field
+  - code: request-intent-path-grammar
+  - code: request-intent-duplicate-target
+  - code: request-intent-size
+  - code: request-intent-quote-ungrounded
+  - code: request-intent-inventory-unmatched
+  - code: request-intent-proposed-new-operation
+  - code: request-intent-excluded-target
+  - code: request-intent-question-count
+  - code: request-intent-question-default
+  - code: request-intent-disclosure
+    pinned: disclosure
+  - code: request-intent-model-question
+  - code: request-intent-named-ungrounded
+  - code: request-intent-internal-path
+    pinned: authority
+  - code: request-intent-companion-not-navigation
+  - code: request-intent-target-not-granted
+    pinned: authority
+  - code: request-intent-outside-docs-root
+    pinned: authority
+  - code: request-intent-outside-write-scope
+    pinned: authority
+  - code: request-intent-operation-mismatch
+  - code: request-intent-target-missing
+  - code: request-intent-target-absent
+  - code: request-intent-target-present
+  - code: request-intent-target-case-ambiguous
+  - code: request-intent-target-not-file
+  - code: answer-record-json
+  - code: answer-record-duplicate-key
+  - code: answer-record-shape
+  - code: answer-record-target-path
+  - code: answer-record-key
+  - code: answer-record-too-large
+  - code: answer-record-duplicate
+  - code: answer-record-open-set-bound
+  - code: answer-record-exhausted
+  - code: answer-record-closed
+  - code: source-locator-unobservable
+  - code: source-proposal-required
+  - code: source-proposal-refused

@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "kind": "docsfab-output-rule-fixture",
+  "code": "answer-record-duplicate-key",
+  "location": "$.record",
+  "input": {
+    "contract": "quality-evaluation"
+  },
+  "reply": "{\"type\":\"evaluation-note\",\"record\":\"{\\\"limitations\\\":[],\\\"findings_complete\\\":true,\\\"findings_complete\\\":true}\"}"
+}

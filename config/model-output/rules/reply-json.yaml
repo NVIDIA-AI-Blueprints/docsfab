@@ -1,0 +1,48 @@
+# Model-output rules for a reply that must hold one JSON object (#1423, #1426).
+# Canonical source; generated bindings are produced by
+# `npm run generate:model-output` from packages/runtime.
+#
+# The planner reply admission (harness/reply-admission/planner.ts) and the
+# editorial assessment envelope (harness/reply-admission/editorial-assessment.ts)
+# read the reply's document through the one shared extraction policy
+# (execution/json-envelope.ts `jsonEnvelopeBody`), as the judgment and review
+# decoders already did (#1426). A reply holding exactly one JSON document inside
+# a Markdown fence or beside prose is that document, admitted or refused on its
+# content.
+# When the parse still fails, they record which rule broke: this family's code
+# when the reply holds two eligible fenced answers, even if one is malformed,
+# or the shared invalid-json code when the reply holds no JSON document.
+schemaVersion: 1
+kind: docsfab-output-rules
+family: reply-json
+# Both admitting steps are read-only: a retry re-asks from the same repository.
+replay: read-only
+rules:
+  - code: reply-json-wrapped
+    locations:
+      - $
+    kind: syntax
+    retry: model-correctable
+    reason: >-
+      The reply held more than one Markdown fence eligible as a JSON answer
+      (an empty or json info string), so the host could not tell which one was
+      the reply, even if one is malformed; the model can return one object as
+      the whole reply.
+    statement: >-
+      Return the JSON object itself as the whole response. Do not put it in a
+      Markdown code fence, and do not write any prose, heading, or note before
+      or after it.
+    operator:
+      kind: correct
+      meaning: >-
+        The step returned more than one eligible fenced answer, which this
+        admission refuses as ambiguous rather than guess between, and its
+        bounded retries did not correct it.
+      next: >-
+        Inspect the saved run's attempts, then start a new run. If the model
+        keeps returning several eligible fenced answers, record it as model-compatibility
+        evidence; the admission reads one fenced or prose-wrapped document but
+        never chooses between two.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/reply-json/wrapped.json
+    docs: reply-json-wrapped

@@ -1,0 +1,92 @@
+{
+  "description": "A port that declares merged_at descending ordering and then contradicts it on page two, where 6603 is newer than page one's last row. The walk must refuse the page instead of trusting the declaration.",
+  "window": {
+    "timeZone": "America/Los_Angeles",
+    "startDate": "2026-09-14",
+    "endDate": "2026-09-14"
+  },
+  "targetBranch": "main",
+  "pages": [
+    {
+      "page": 1,
+      "nextPage": 2,
+      "truncated": false,
+      "items": [
+        {
+          "iid": 6601,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/6601",
+          "title": "Read first, newest of the honest page",
+          "description": "Selected and retained.",
+          "state": "merged",
+          "mergedAt": "2026-09-14T20:00:00.000Z",
+          "targetBranch": "main",
+          "sourceBranch": "feature/honest-newest",
+          "mergeCommitSha": "66a1c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        },
+        {
+          "iid": 6602,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/6602",
+          "title": "Read second, oldest of the honest page",
+          "description": "Selected and retained.",
+          "state": "merged",
+          "mergedAt": "2026-09-14T10:00:00.000Z",
+          "targetBranch": "main",
+          "sourceBranch": "feature/honest-oldest",
+          "mergeCommitSha": "66a2c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        }
+      ]
+    },
+    {
+      "page": 2,
+      "nextPage": 3,
+      "truncated": false,
+      "items": [
+        {
+          "iid": 6603,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/6603",
+          "title": "Contradict the declared ordering",
+          "description": "Newer than the previous page's last row, so this page is not trusted.",
+          "state": "merged",
+          "mergedAt": "2026-09-14T23:30:00.000Z",
+          "targetBranch": "main",
+          "sourceBranch": "feature/out-of-order",
+          "mergeCommitSha": "66a3c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        },
+        {
+          "iid": 6604,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/6604",
+          "title": "Ride along on the untrusted page",
+          "description": "Reachable only when the port makes no ordering claim.",
+          "state": "merged",
+          "mergedAt": "2026-09-14T09:00:00.000Z",
+          "targetBranch": "main",
+          "sourceBranch": "feature/untrusted-page-rider",
+          "mergeCommitSha": "66a4c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        }
+      ]
+    },
+    {
+      "page": 3,
+      "nextPage": null,
+      "truncated": false,
+      "items": [
+        {
+          "iid": 6605,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/6605",
+          "title": "Sit beyond the refused page",
+          "description": "Never read once the ordering claim fails.",
+          "state": "merged",
+          "mergedAt": "2026-09-14T08:00:00.000Z",
+          "targetBranch": "main",
+          "sourceBranch": "feature/beyond-the-refusal",
+          "mergeCommitSha": "66a5c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        }
+      ]
+    }
+  ]
+}

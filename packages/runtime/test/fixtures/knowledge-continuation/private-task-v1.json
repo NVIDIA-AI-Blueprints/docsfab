@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "kind": "docsfab-knowledge-continuation-private-task",
+  "originalRunId": "legacy-v1-001",
+  "workflow": "update-documentation",
+  "instruction": "Bring docs/guide.md and docs/reference.md up to date with the implementation.",
+  "instructionSha256": "5663ff1b8e19592bfa538a6f625de6f0f82a53e14d79c985f248849309c5b263",
+  "repository": {
+    "identitySha256": "3e474fd57be38c63cde1759369cc9a9321f8eca3ee9cbb5f9d0e03c1549dbebf",
+    "revision": "ffffffffffffffffffffffffffffffffffffffff",
+    "sourcePath": "/fixture/repository",
+    "requestedRevision": "HEAD"
+  },
+  "delivery": {
+    "schemaVersion": 1,
+    "kind": "docsfab-knowledge-continuation-delivery-intent",
+    "mode": "patch-only",
+    "remoteName": null,
+    "targetBranch": null,
+    "targetRevision": null,
+    "intentSha256": "07154910b5ffb91ba2997f7f3e99dbb7a9c1f1c78fc9db83ea731bb9beecedd2"
+  },
+  "targetConflictReceipt": null,
+  "taskLineage": {
+    "schemaVersion": 1,
+    "kind": "docsfab-task-lineage-projection",
+    "lineageIdSha256": "b4c2ace539a397bb0a24e903213d781ae551e1250dfe0660e6628503d4d81b5a",
+    "repositoryIdentitySha256": "3e474fd57be38c63cde1759369cc9a9321f8eca3ee9cbb5f9d0e03c1549dbebf",
+    "repositoryRevision": "ffffffffffffffffffffffffffffffffffffffff",
+    "origin": "operator-directed",
+    "requestKind": "bounded-instruction",
+    "requestSha256": "3eccbe0c1441d56a1388759e3c48a49ba0d92c894f6f45d0120cce073b674b33",
+    "taskSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+    "selectedWorkflow": "update-documentation",
+    "selectedCandidateSha256": "8f07e452b19b7f8ef7f8bc6aa79f331d5335b3bca60aa51ebdeff1689672706f",
+    "selectedSourceAutoCandidateSha256": null,
+    "decisionResponsibility": [
+      {
+        "domain": "path",
+        "actor": "host-policy",
+        "effect": "authoritative",
+        "decisionSha256": "2448e6d9b032b8b74524c17133e1e023e922449c6165fe0dc52bf4682ec38493"
+      },
+      {
+        "domain": "publication",
+        "actor": "host-policy",
+        "effect": "authoritative",
+        "decisionSha256": "0d06d77faf5dddf593e71a3a18c7615f8f45bda9eb7374e479c76179b64da3cb"
+      },
+      {
+        "domain": "repository",
+        "actor": "host-policy",
+        "effect": "authoritative",
+        "decisionSha256": "367acfe55a160915cc3254bb14411c008c42cc26f644ce37d5dcbed3bc4dcf46"
+      },
+      {
+        "domain": "scope",
+        "actor": "host-policy",
+        "effect": "authoritative",
+        "decisionSha256": "a4d8ac122035e945406689854ab116fe746af054886ca95b5a16d5417814ecde"
+      },
+      {
+        "domain": "task",
+        "actor": "operator",
+        "effect": "authoritative",
+        "decisionSha256": "2a8ecb2f11c5a79192b3a5faac9c66bcbd31c13f3b4dec1300f051dfe625a9d6"
+      },
+      {
+        "domain": "tracker",
+        "actor": "host-policy",
+        "effect": "authoritative",
+        "decisionSha256": "6d90cca52e2ee9b66421b3a3c59f88f9a8a9d25f0ce460b83674509698c8dc15"
+      },
+      {
+        "domain": "validation",
+        "actor": "host-policy",
+        "effect": "authoritative",
+        "decisionSha256": "e8a57d943529a3d56b44397ffc4ee2954dcdcc03bef6b329cf758dc0cc61c5b6"
+      },
+      {
+        "domain": "workflow",
+        "actor": "deterministic-workflow",
+        "effect": "authoritative",
+        "decisionSha256": "1644b9a2f80ea4b910765a8b4efe11e3b413a7e1484f1daccde1349f22910765"
+      },
+      {
+        "domain": "write",
+        "actor": "host-policy",
+        "effect": "authoritative",
+        "decisionSha256": "4a1032591f1a095490ce0af175704869c6df1879dddf14a4c06ca65023f15bad"
+      }
+    ],
+    "originSha256": "48c559cf38b6e227cc40ae752286d7c2bb9d5ef5608d118cfcc2be1e92800842",
+    "lineageSha256": "e250c003d5948df8b14bff721b47e8a2319ff215a5e6240f34961497c56001d6",
+    "authorityStatus": "host-authenticated",
+    "projectionSha256": "4f1c7d8adae2dd6f2281523c8fb27114bdbda64bcc0fb99335e69be0489c19b9"
+  }
+}

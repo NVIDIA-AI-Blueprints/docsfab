@@ -1,0 +1,548 @@
+[
+  {
+    "name": "available rubric without hard gates preserves the scored decision",
+    "valid": true,
+    "projection": {
+      "schemaVersion": 1,
+      "kind": "docsfab-quality-report-projection",
+      "decision": "conditional-pass",
+      "confidence": 0.92,
+      "hardGateFailures": [],
+      "limitations": [
+        "Audience testing used the supplied reviewer profile."
+      ],
+      "rubric": {
+        "status": "available",
+        "id": "documentation-quality-v1",
+        "total": 78,
+        "threshold": 80,
+        "interpretationBand": "Yellow",
+        "decision": "conditional-pass",
+        "confidence": 0.9
+      },
+      "reportLocator": {
+        "kind": "artifact-digest",
+        "digestSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "repositoryRevision": "dddddddddddddddddddddddddddddddddddddddd",
+      "patchSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    }
+  },
+  {
+    "name": "unavailable rubric with hard gates fails",
+    "valid": true,
+    "projection": {
+      "schemaVersion": 1,
+      "kind": "docsfab-quality-report-projection",
+      "decision": "fail",
+      "confidence": 0,
+      "hardGateFailures": [
+        "critical-factual-error"
+      ],
+      "limitations": [
+        "No approved rubric was present in the quality pack."
+      ],
+      "rubric": {
+        "status": "unavailable",
+        "reason": "No unambiguous content-type rubric was evidenced."
+      },
+      "reportLocator": {
+        "kind": "artifact-digest",
+        "digestSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "repositoryRevision": "dddddddddddddddddddddddddddddddddddddddd",
+      "patchSha256": null
+    }
+  },
+  {
+    "name": "unavailable rubric without hard gates is insufficient evidence",
+    "valid": true,
+    "projection": {
+      "schemaVersion": 1,
+      "kind": "docsfab-quality-report-projection",
+      "decision": "insufficient-evidence",
+      "confidence": 0,
+      "hardGateFailures": [],
+      "limitations": [
+        "No approved rubric was present in the quality pack."
+      ],
+      "rubric": {
+        "status": "unavailable",
+        "reason": "No unambiguous content-type rubric was evidenced."
+      },
+      "reportLocator": {
+        "kind": "artifact-digest",
+        "digestSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "repositoryRevision": "dddddddddddddddddddddddddddddddddddddddd",
+      "patchSha256": null
+    }
+  },
+  {
+    "name": "hard gates contradict conditional pass",
+    "valid": false,
+    "projection": {
+      "schemaVersion": 1,
+      "kind": "docsfab-quality-report-projection",
+      "decision": "conditional-pass",
+      "confidence": 0.5,
+      "hardGateFailures": [
+        "critical-factual-error"
+      ],
+      "limitations": [],
+      "rubric": {
+        "status": "available",
+        "id": "documentation-quality-v1",
+        "total": 78,
+        "threshold": 80,
+        "interpretationBand": "Yellow",
+        "decision": "conditional-pass",
+        "confidence": 0.9
+      },
+      "reportLocator": {
+        "kind": "artifact-digest",
+        "digestSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "repositoryRevision": "dddddddddddddddddddddddddddddddddddddddd",
+      "patchSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    }
+  },
+  {
+    "name": "unavailable rubric without hard gates contradicts fail",
+    "valid": false,
+    "projection": {
+      "schemaVersion": 1,
+      "kind": "docsfab-quality-report-projection",
+      "decision": "fail",
+      "confidence": 0,
+      "hardGateFailures": [],
+      "limitations": [],
+      "rubric": {
+        "status": "unavailable",
+        "reason": "No unambiguous content-type rubric was evidenced."
+      },
+      "reportLocator": {
+        "kind": "artifact-digest",
+        "digestSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "repositoryRevision": "dddddddddddddddddddddddddddddddddddddddd",
+      "patchSha256": null
+    }
+  },
+  {
+    "name": "unavailable rubric rejects available fields",
+    "valid": false,
+    "projection": {
+      "schemaVersion": 1,
+      "kind": "docsfab-quality-report-projection",
+      "decision": "insufficient-evidence",
+      "confidence": 0,
+      "hardGateFailures": [],
+      "limitations": [],
+      "rubric": {
+        "status": "unavailable",
+        "reason": "No unambiguous content-type rubric was evidenced.",
+        "total": 0
+      },
+      "reportLocator": {
+        "kind": "artifact-digest",
+        "digestSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "repositoryRevision": "dddddddddddddddddddddddddddddddddddddddd",
+      "patchSha256": null
+    }
+  },
+  {
+    "name": "root rejects an unexpected key",
+    "valid": false,
+    "projection": {
+      "schemaVersion": 1,
+      "kind": "docsfab-quality-report-projection",
+      "decision": "insufficient-evidence",
+      "confidence": 0,
+      "hardGateFailures": [],
+      "limitations": [],
+      "rubric": {
+        "status": "unavailable",
+        "reason": "No unambiguous content-type rubric was evidenced."
+      },
+      "reportLocator": {
+        "kind": "artifact-digest",
+        "digestSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "repositoryRevision": "dddddddddddddddddddddddddddddddddddddddd",
+      "patchSha256": null,
+      "unexpected": true
+    }
+  },
+  {
+    "name": "confidence rejects a string",
+    "valid": false,
+    "projection": {
+      "schemaVersion": 1,
+      "kind": "docsfab-quality-report-projection",
+      "decision": "insufficient-evidence",
+      "confidence": "low",
+      "hardGateFailures": [],
+      "limitations": [],
+      "rubric": {
+        "status": "unavailable",
+        "reason": "No unambiguous content-type rubric was evidenced."
+      },
+      "reportLocator": {
+        "kind": "artifact-digest",
+        "digestSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "repositoryRevision": "dddddddddddddddddddddddddddddddddddddddd",
+      "patchSha256": null
+    }
+  },
+  {
+    "name": "v2 partitions exact retained gaps from an arbitrary technical limitation",
+    "valid": true,
+    "projection": {
+      "schemaVersion": 2,
+      "kind": "docsfab-quality-report-projection",
+      "decision": "insufficient-evidence",
+      "confidence": 0,
+      "hardGateFailures": [],
+      "limitations": [
+        "The selected quality profile caps decisions at insufficient-evidence while it remains experimental.",
+        "The selected quality profile has pending human and agent outcome baselines.",
+        "Technical verification did not cover an optional example."
+      ],
+      "retainedGapEvidence": [
+        {
+          "limitation": "The selected quality profile caps decisions at insufficient-evidence while it remains experimental.",
+          "reason": "experimental-profile-ceiling",
+          "evidence": {
+            "kind": "profile-decision-policy",
+            "artifactLocator": "profiles/docsfab-documentation-quality/profile.json",
+            "artifactSha256": "579023cebc031149d559c070e86dfc0c43f596c0dac8fa68eb2f8dd65ad555a1",
+            "profileId": "docsfab-documentation-quality",
+            "profileVersion": "v0.1",
+            "profileStatus": "experimental",
+            "releaseGateEligible": false,
+            "decisionPolicyField": "experimental_profile_maximum_decision",
+            "decisionPolicyValue": "insufficient-evidence"
+          }
+        },
+        {
+          "limitation": "The selected quality profile has pending human and agent outcome baselines.",
+          "reason": "audience-prerequisites-missing",
+          "evidence": {
+            "kind": "audience-prerequisite-policy",
+            "artifactLocator": "profiles/docsfab-documentation-quality/profile.json",
+            "artifactSha256": "579023cebc031149d559c070e86dfc0c43f596c0dac8fa68eb2f8dd65ad555a1",
+            "profileId": "docsfab-documentation-quality",
+            "profileVersion": "v0.1",
+            "prerequisites": [
+              {
+                "field": "calibration.human_outcome_baseline",
+                "value": "pending"
+              },
+              {
+                "field": "calibration.agent_outcome_baseline",
+                "value": "pending"
+              }
+            ]
+          }
+        }
+      ],
+      "unclassifiedLimitations": [
+        "Technical verification did not cover an optional example."
+      ],
+      "rubric": {
+        "status": "unavailable",
+        "reason": "No unambiguous content-type rubric was evidenced."
+      },
+      "reportLocator": {
+        "kind": "artifact-digest",
+        "digestSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "repositoryRevision": "dddddddddddddddddddddddddddddddddddddddd",
+      "patchSha256": null
+    }
+  },
+  {
+    "name": "v2 rejects an omitted unclassified limitation",
+    "valid": false,
+    "projection": {
+      "schemaVersion": 2,
+      "kind": "docsfab-quality-report-projection",
+      "decision": "insufficient-evidence",
+      "confidence": 0,
+      "hardGateFailures": [],
+      "limitations": [
+        "The selected quality profile caps decisions at insufficient-evidence while it remains experimental.",
+        "The selected quality profile has pending human and agent outcome baselines.",
+        "Technical verification did not cover an optional example."
+      ],
+      "retainedGapEvidence": [
+        {
+          "limitation": "The selected quality profile caps decisions at insufficient-evidence while it remains experimental.",
+          "reason": "experimental-profile-ceiling",
+          "evidence": {
+            "kind": "profile-decision-policy",
+            "artifactLocator": "profiles/docsfab-documentation-quality/profile.json",
+            "artifactSha256": "579023cebc031149d559c070e86dfc0c43f596c0dac8fa68eb2f8dd65ad555a1",
+            "profileId": "docsfab-documentation-quality",
+            "profileVersion": "v0.1",
+            "profileStatus": "experimental",
+            "releaseGateEligible": false,
+            "decisionPolicyField": "experimental_profile_maximum_decision",
+            "decisionPolicyValue": "insufficient-evidence"
+          }
+        },
+        {
+          "limitation": "The selected quality profile has pending human and agent outcome baselines.",
+          "reason": "audience-prerequisites-missing",
+          "evidence": {
+            "kind": "audience-prerequisite-policy",
+            "artifactLocator": "profiles/docsfab-documentation-quality/profile.json",
+            "artifactSha256": "579023cebc031149d559c070e86dfc0c43f596c0dac8fa68eb2f8dd65ad555a1",
+            "profileId": "docsfab-documentation-quality",
+            "profileVersion": "v0.1",
+            "prerequisites": [
+              {
+                "field": "calibration.human_outcome_baseline",
+                "value": "pending"
+              },
+              {
+                "field": "calibration.agent_outcome_baseline",
+                "value": "pending"
+              }
+            ]
+          }
+        }
+      ],
+      "unclassifiedLimitations": [],
+      "rubric": {
+        "status": "unavailable",
+        "reason": "No unambiguous content-type rubric was evidenced."
+      },
+      "reportLocator": {
+        "kind": "artifact-digest",
+        "digestSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "repositoryRevision": "dddddddddddddddddddddddddddddddddddddddd",
+      "patchSha256": null
+    }
+  },
+  {
+    "name": "v2 rejects reordered audience prerequisite fields",
+    "valid": false,
+    "projection": {
+      "schemaVersion": 2,
+      "kind": "docsfab-quality-report-projection",
+      "decision": "insufficient-evidence",
+      "confidence": 0,
+      "hardGateFailures": [],
+      "limitations": [
+        "The selected quality profile caps decisions at insufficient-evidence while it remains experimental.",
+        "The selected quality profile has pending human and agent outcome baselines.",
+        "Technical verification did not cover an optional example."
+      ],
+      "retainedGapEvidence": [
+        {
+          "limitation": "The selected quality profile caps decisions at insufficient-evidence while it remains experimental.",
+          "reason": "experimental-profile-ceiling",
+          "evidence": {
+            "kind": "profile-decision-policy",
+            "artifactLocator": "profiles/docsfab-documentation-quality/profile.json",
+            "artifactSha256": "579023cebc031149d559c070e86dfc0c43f596c0dac8fa68eb2f8dd65ad555a1",
+            "profileId": "docsfab-documentation-quality",
+            "profileVersion": "v0.1",
+            "profileStatus": "experimental",
+            "releaseGateEligible": false,
+            "decisionPolicyField": "experimental_profile_maximum_decision",
+            "decisionPolicyValue": "insufficient-evidence"
+          }
+        },
+        {
+          "limitation": "The selected quality profile has pending human and agent outcome baselines.",
+          "reason": "audience-prerequisites-missing",
+          "evidence": {
+            "kind": "audience-prerequisite-policy",
+            "artifactLocator": "profiles/docsfab-documentation-quality/profile.json",
+            "artifactSha256": "579023cebc031149d559c070e86dfc0c43f596c0dac8fa68eb2f8dd65ad555a1",
+            "profileId": "docsfab-documentation-quality",
+            "profileVersion": "v0.1",
+            "prerequisites": [
+              {
+                "field": "calibration.agent_outcome_baseline",
+                "value": "pending"
+              },
+              {
+                "field": "calibration.human_outcome_baseline",
+                "value": "pending"
+              }
+            ]
+          }
+        }
+      ],
+      "unclassifiedLimitations": [
+        "Technical verification did not cover an optional example."
+      ],
+      "rubric": {
+        "status": "unavailable",
+        "reason": "No unambiguous content-type rubric was evidenced."
+      },
+      "reportLocator": {
+        "kind": "artifact-digest",
+        "digestSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "repositoryRevision": "dddddddddddddddddddddddddddddddddddddddd",
+      "patchSha256": null
+    }
+  },
+  {
+    "name": "v2 rejects a retained entry that relabels a technical limitation",
+    "valid": false,
+    "projection": {
+      "schemaVersion": 2,
+      "kind": "docsfab-quality-report-projection",
+      "decision": "insufficient-evidence",
+      "confidence": 0,
+      "hardGateFailures": [],
+      "limitations": [
+        "The selected quality profile caps decisions at insufficient-evidence while it remains experimental.",
+        "The selected quality profile has pending human and agent outcome baselines.",
+        "Technical verification did not cover an optional example."
+      ],
+      "retainedGapEvidence": [
+        {
+          "limitation": "Technical verification did not cover an optional example.",
+          "reason": "experimental-profile-ceiling",
+          "evidence": {
+            "kind": "profile-decision-policy",
+            "artifactLocator": "profiles/docsfab-documentation-quality/profile.json",
+            "artifactSha256": "579023cebc031149d559c070e86dfc0c43f596c0dac8fa68eb2f8dd65ad555a1",
+            "profileId": "docsfab-documentation-quality",
+            "profileVersion": "v0.1",
+            "profileStatus": "experimental",
+            "releaseGateEligible": false,
+            "decisionPolicyField": "experimental_profile_maximum_decision",
+            "decisionPolicyValue": "insufficient-evidence"
+          }
+        },
+        {
+          "limitation": "The selected quality profile has pending human and agent outcome baselines.",
+          "reason": "audience-prerequisites-missing",
+          "evidence": {
+            "kind": "audience-prerequisite-policy",
+            "artifactLocator": "profiles/docsfab-documentation-quality/profile.json",
+            "artifactSha256": "579023cebc031149d559c070e86dfc0c43f596c0dac8fa68eb2f8dd65ad555a1",
+            "profileId": "docsfab-documentation-quality",
+            "profileVersion": "v0.1",
+            "prerequisites": [
+              {
+                "field": "calibration.human_outcome_baseline",
+                "value": "pending"
+              },
+              {
+                "field": "calibration.agent_outcome_baseline",
+                "value": "pending"
+              }
+            ]
+          }
+        }
+      ],
+      "unclassifiedLimitations": [
+        "The selected quality profile caps decisions at insufficient-evidence while it remains experimental."
+      ],
+      "rubric": {
+        "status": "unavailable",
+        "reason": "No unambiguous content-type rubric was evidenced."
+      },
+      "reportLocator": {
+        "kind": "artifact-digest",
+        "digestSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "repositoryRevision": "dddddddddddddddddddddddddddddddddddddddd",
+      "patchSha256": null
+    }
+  },
+  {
+    "name": "v2 rejects duplicate retained evidence",
+    "valid": false,
+    "projection": {
+      "schemaVersion": 2,
+      "kind": "docsfab-quality-report-projection",
+      "decision": "insufficient-evidence",
+      "confidence": 0,
+      "hardGateFailures": [],
+      "limitations": [
+        "The selected quality profile caps decisions at insufficient-evidence while it remains experimental.",
+        "The selected quality profile has pending human and agent outcome baselines.",
+        "Technical verification did not cover an optional example."
+      ],
+      "retainedGapEvidence": [
+        {
+          "limitation": "The selected quality profile caps decisions at insufficient-evidence while it remains experimental.",
+          "reason": "experimental-profile-ceiling",
+          "evidence": {
+            "kind": "profile-decision-policy",
+            "artifactLocator": "profiles/docsfab-documentation-quality/profile.json",
+            "artifactSha256": "579023cebc031149d559c070e86dfc0c43f596c0dac8fa68eb2f8dd65ad555a1",
+            "profileId": "docsfab-documentation-quality",
+            "profileVersion": "v0.1",
+            "profileStatus": "experimental",
+            "releaseGateEligible": false,
+            "decisionPolicyField": "experimental_profile_maximum_decision",
+            "decisionPolicyValue": "insufficient-evidence"
+          }
+        },
+        {
+          "limitation": "The selected quality profile has pending human and agent outcome baselines.",
+          "reason": "audience-prerequisites-missing",
+          "evidence": {
+            "kind": "audience-prerequisite-policy",
+            "artifactLocator": "profiles/docsfab-documentation-quality/profile.json",
+            "artifactSha256": "579023cebc031149d559c070e86dfc0c43f596c0dac8fa68eb2f8dd65ad555a1",
+            "profileId": "docsfab-documentation-quality",
+            "profileVersion": "v0.1",
+            "prerequisites": [
+              {
+                "field": "calibration.human_outcome_baseline",
+                "value": "pending"
+              },
+              {
+                "field": "calibration.agent_outcome_baseline",
+                "value": "pending"
+              }
+            ]
+          }
+        },
+        {
+          "limitation": "The selected quality profile caps decisions at insufficient-evidence while it remains experimental.",
+          "reason": "experimental-profile-ceiling",
+          "evidence": {
+            "kind": "profile-decision-policy",
+            "artifactLocator": "profiles/docsfab-documentation-quality/profile.json",
+            "artifactSha256": "579023cebc031149d559c070e86dfc0c43f596c0dac8fa68eb2f8dd65ad555a1",
+            "profileId": "docsfab-documentation-quality",
+            "profileVersion": "v0.1",
+            "profileStatus": "experimental",
+            "releaseGateEligible": false,
+            "decisionPolicyField": "experimental_profile_maximum_decision",
+            "decisionPolicyValue": "insufficient-evidence"
+          }
+        }
+      ],
+      "unclassifiedLimitations": [
+        "Technical verification did not cover an optional example."
+      ],
+      "rubric": {
+        "status": "unavailable",
+        "reason": "No unambiguous content-type rubric was evidenced."
+      },
+      "reportLocator": {
+        "kind": "artifact-digest",
+        "digestSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "repositoryRevision": "dddddddddddddddddddddddddddddddddddddddd",
+      "patchSha256": null
+    }
+  }
+]

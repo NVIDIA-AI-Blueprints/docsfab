@@ -1,0 +1,27 @@
+# DocsFab operational limits owned by the `operatorAmendment` name prefix.
+# Registered in config/limits.yaml; every limit here is named `operatorAmendment.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: operatorAmendment.documentMaxBytes
+    value: 524288
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: null
+    min: 4096
+    max: 524288
+    refusal: operator-amendment-document-max-bytes-bound
+    remediation: Shrink the installed dispatcher policy, registry, Slack map, activation state, frozen context projection, identity map or staged candidate, or raise operatorAmendment.documentMaxBytes in config/limits/operatorAmendment.yaml.
+    rationale: Largest installed or staged document the dispatcher-composition amendment, documentation-write upgrade and project-registry correction read before parsing. Defaults to the 512 KiB each of them already admitted; the documents still pass their own schema and authority checks.
+
+  - name: operatorAmendment.registryCandidateMaxBytes
+    value: 65536
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: null
+    min: 1024
+    max: 65536
+    refusal: operator-amendment-registry-candidate-max-bytes-bound
+    remediation: Stage a smaller projection-policy candidate, or raise operatorAmendment.registryCandidateMaxBytes in config/limits/operatorAmendment.yaml.
+    rationale: Largest staged projection-policy candidate the project-registry correction reads, defaulting to the existing admitted maximum. Candidate shape and author resolution remain independently validated.

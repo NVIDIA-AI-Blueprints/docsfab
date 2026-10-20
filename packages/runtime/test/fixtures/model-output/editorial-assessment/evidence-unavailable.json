@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "kind": "docsfab-output-rule-fixture",
+  "code": "editorial-assessment-evidence-unavailable",
+  "location": "$.editorialAssessmentProposal.evidenceRefs[]",
+  "input": {
+    "step": "test-audience-understanding",
+    "admittedEvidenceRefs": [
+      {
+        "kind": "context-packet",
+        "schemaVersion": 1,
+        "digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "repositoryRevision": "dddddddddddddddddddddddddddddddddddddddd",
+        "repositoryContentDigest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+      }
+    ]
+  },
+  "reply": "{\"summary\":\"The audience exercise found no blocking gap for the reader task.\",\"editorialAssessmentProposal\":{\"schemaVersion\":1,\"kind\":\"docsfab-editorial-assessment-proposal\",\"assessment\":\"accepted\",\"rationale\":\"The admitted context packet supports the audience assessment.\",\"evidenceRefs\":[{\"kind\":\"context-packet\",\"schemaVersion\":1,\"digest\":\"9999999999999999999999999999999999999999999999999999999999999999\",\"repositoryRevision\":\"dddddddddddddddddddddddddddddddddddddddd\",\"repositoryContentDigest\":\"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\"}],\"limitations\":[],\"recommendation\":null}}"
+}

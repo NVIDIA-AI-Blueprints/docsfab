@@ -1,0 +1,17 @@
+{
+  "attempt": 1,
+  "outcome": "malformed-response",
+  "retryable": false,
+  "retryScheduled": false,
+  "conditionRetryability": "eligible",
+  "retryDecision": "declined",
+  "durationMs": 2,
+  "rejection": {
+    "code": "host-path-disclosure",
+    "location": "$"
+  },
+  "hostPathDisclosure": {
+    "root": "usr",
+    "inAdmittedSource": "no"
+  }
+}

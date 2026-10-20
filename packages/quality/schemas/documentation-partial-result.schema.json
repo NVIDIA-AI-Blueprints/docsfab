@@ -1,0 +1,173 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/documentation-partial-result.schema.json",
+  "title": "Documentation partial result",
+  "description": "Labeled host-held supported-subset draft beside an incomplete original CREATE. Not publication eligibility and not original-request completion.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "kind",
+    "originalRequest",
+    "sourceIdentity",
+    "applicability",
+    "obligations",
+    "unresolvedQuestions",
+    "originalUnmetRequirementIds",
+    "claimsNotMade",
+    "publicationEligible"
+  ],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "kind": {"const": "docsfab-documentation-partial-result"},
+    "originalRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "instructionSha256",
+        "workflow",
+        "repositoryRevision",
+        "targetPaths"
+      ],
+      "properties": {
+        "instructionSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "workflow": {"const": "create-documentation"},
+        "repositoryRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{40,64}$"
+        },
+        "targetPaths": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        }
+      }
+    },
+    "sourceIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["assessmentIdentitySha256"],
+      "properties": {
+        "assessmentIdentitySha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "snapshotSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "planBindingSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
+    "applicability": {
+      "type": "string",
+      "enum": [
+        "useful-partial",
+        "scaffold-only",
+        "no-useful-deliverable",
+        "cancellation",
+        "execution-failure"
+      ]
+    },
+    "draft": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["format", "bytesSha256", "locator"],
+      "properties": {
+        "format": {"const": "markdown"},
+        "bytesSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "locator": {
+          "type": "string",
+          "pattern": "^(?:record:sha256:|bytes:sha256:)[a-f0-9]{64}$"
+        }
+      }
+    },
+    "obligations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "origin",
+          "targetPaths",
+          "condition",
+          "status",
+          "evidenceSpanIds",
+          "detail",
+          "proposedDeliverable"
+        ],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "origin": {
+            "type": "string",
+            "enum": ["explicit", "workflow", "inferred"]
+          },
+          "targetPaths": {
+            "type": "array",
+            "minItems": 1,
+            "items": {"type": "string", "minLength": 1}
+          },
+          "condition": {"type": "string", "minLength": 1, "maxLength": 500},
+          "status": {
+            "type": "string",
+            "enum": [
+              "supported",
+              "missing",
+              "contradicted",
+              "unavailable",
+              "budget-exhausted"
+            ]
+          },
+          "evidenceSpanIds": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "detail": {"type": "string", "maxLength": 1000},
+          "proposedDeliverable": {
+            "type": "string",
+            "enum": [
+              "included-supported",
+              "deferred",
+              "conflicted",
+              "cannot-proceed",
+              "template-structure"
+            ]
+          }
+        }
+      }
+    },
+    "unresolvedQuestions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["obligationId", "readerTask", "neededSourceOrDecision"],
+        "properties": {
+          "obligationId": {"type": "string", "minLength": 1},
+          "readerTask": {"type": "string", "minLength": 1},
+          "neededSourceOrDecision": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "originalUnmetRequirementIds": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "claimsNotMade": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1}
+    },
+    "publicationEligible": {"const": false}
+  }
+}

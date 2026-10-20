@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "provenance": "Sanitized serving-route exchange for the endpoint compatibility probe. Provider messages (410 end of life, 404 function not found, in-stream 503) are the text recorded from the hosted NVIDIA API Catalog session of 2026-09-30 (evidence report on MR !1390), which retained no raw captures; stream framing follows that route's OpenAI-compatible chunk shape. Account, function, call, and completion identifiers are replaced with [redacted-...] placeholders. Responses are returned in request order and the last one repeats.",
+  "description": "Nemotron 3 Super answers HTTP 200, then the event stream carries the provider's overload error.",
+  "route": "nvidia-api-catalog",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "responses": [
+    {
+      "status": 200,
+      "contentType": "text/event-stream; charset=utf-8",
+      "events": [
+        {
+          "error": {
+            "message": "Service temporarily overloaded",
+            "type": "service_unavailable",
+            "code": 503
+          }
+        },
+        "[DONE]"
+      ]
+    },
+    {
+      "status": 200,
+      "contentType": "text/event-stream; charset=utf-8",
+      "events": [
+        {
+          "id": "chatcmpl-[redacted-completion-id]",
+          "object": "chat.completion.chunk",
+          "created": 1790755200,
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-[redacted-completion-id]",
+          "object": "chat.completion.chunk",
+          "created": 1790755200,
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": "{\"result\":\"ok\","
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-[redacted-completion-id]",
+          "object": "chat.completion.chunk",
+          "created": 1790755200,
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": "\"checks\":[\"tool-calls\",\"structured-output\"]}"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-[redacted-completion-id]",
+          "object": "chat.completion.chunk",
+          "created": 1790755200,
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "stop"
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-[redacted-completion-id]",
+          "object": "chat.completion.chunk",
+          "created": 1790755200,
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "choices": [],
+          "usage": {
+            "prompt_tokens": 296,
+            "completion_tokens": 17,
+            "total_tokens": 313
+          }
+        },
+        "[DONE]"
+      ]
+    }
+  ]
+}

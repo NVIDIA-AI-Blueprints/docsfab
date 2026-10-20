@@ -1,0 +1,112 @@
+# DocsFab operational limits owned by the `sealed` name prefix.
+# Registered in config/limits.yaml; every limit here is named `sealed.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: sealed.compositionLimits.contextWindow
+    value: 1050000
+    unit: tokens
+    scope: sealed
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 1050000
+    refusal: sealed-composition-context-window-bound
+    remediation: Changing a sealed compositionLimits field is a re-qualification event, not an edit of this file.
+    rationale: Ceiling across composition-registry compositionLimits.contextWindow records.
+
+  - name: sealed.compositionLimits.maxInputTokens
+    value: 1050000
+    unit: tokens
+    scope: sealed
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 1050000
+    refusal: sealed-composition-max-input-tokens-bound
+    remediation: Changing a sealed compositionLimits field is a re-qualification event, not an edit of this file.
+    rationale: Ceiling across composition-registry compositionLimits.maxInputTokens records.
+
+  - name: sealed.compositionLimits.maxOutputTokens
+    value: 384000
+    unit: tokens
+    scope: sealed
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 384000
+    refusal: sealed-composition-max-output-tokens-bound
+    remediation: Changing a sealed compositionLimits field is a re-qualification event, not an edit of this file.
+    rationale: Ceiling across composition-registry compositionLimits.maxOutputTokens records.
+
+  - name: sealed.compositionLimits.maxProviderTurns
+    value: 512
+    unit: count
+    scope: sealed
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 512
+    refusal: sealed-composition-execution-max-provider-turns-bound
+    remediation: Changing a sealed compositionLimits field is a re-qualification event, not an edit of this file.
+    rationale: Ceiling across composition-registry compositionLimits.maxProviderTurns records.
+
+  - name: sealed.compositionLimits.maxResponseBytes
+    value: 4194304
+    unit: bytes
+    scope: sealed
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 4194304
+    refusal: sealed-composition-execution-max-response-bytes-bound
+    remediation: Changing a sealed compositionLimits field is a re-qualification event, not an edit of this file.
+    rationale: Unique composition-registry compositionLimits.maxResponseBytes value.
+
+  - name: sealed.compositionLimits.timeoutMs
+    value: 1800000
+    unit: ms
+    scope: sealed
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 1800000
+    refusal: sealed-composition-execution-timeout-ms-bound
+    remediation: Changing a sealed compositionLimits field is a re-qualification event, not an edit of this file.
+    rationale: Ceiling across composition-registry compositionLimits.timeoutMs records.
+
+  - name: sealed.answerSubmission.maxRecordBytes
+    value: 8192
+    unit: bytes
+    scope: sealed
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 8192
+    refusal: sealed-answer-submission-max-record-bytes-bound
+    remediation: A composition's record byte bound is sealed by re-qualification (a reseal with the records capability), not an edit of this file.
+    rationale: Ceiling on the raw outer bytes of one submit_answer_record call, wrapper included, that any composition may admit (closed-schema-answer-records-decision.md §4.4, B4). It is the top rung of the premise probe's phase A (8 KiB); the 2026-10-06 Nemotron Super probe (#1967) admitted 12 of 12 single-record calls up to that rung. A composition's sealed value is the largest rung its probe admitted 3 of 3, and GO requires at least the largest real record call × 1.5 (4,085 B raw outer bytes on the committed answer-record corpus, whose largest call is 2,723 B). No composition records the records capability yet (design §7, MR 6).
+
+  - name: sealed.answerSubmission.maxMessageBytes
+    value: 18743
+    unit: bytes
+    scope: sealed
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 18743
+    refusal: sealed-answer-submission-max-message-bytes-bound
+    remediation: A composition's per-message record byte budget is sealed by re-qualification, not an edit of this file.
+    rationale: Ceiling on the planned record bytes of one answer message (closed-schema-answer-records-decision.md §4.1 and §4.4, B4) - floor(inference.answerRecordAllowanceShareBasisPoints × the 8,192-token allowance × inference.answerRecordBytesPerTokenFloorMilli) = floor(0.8 × 8,192 × 2.86) = 18,743 B, the largest message the formula can plan before the largest phase B message a route admitted 3 of 3 lowers it. The 2026-10-06 probe on Nemotron Super (#1967) admitted no multi-record message, so that route plans one record per message (R9); the R9 amendment to the design record may change this row. No composition records the records capability yet (design §7, MR 6).
+
+  - name: sealed.answerSubmission.maxPredictedTimerMs
+    value: 600000
+    unit: ms
+    scope: sealed
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 600000
+    refusal: answer-record-timer-review-required
+    remediation: Return the records qualification to the design owner for an explicit review; do not increase a composition timer or this review threshold silently.
+    rationale: Accepted planning/review threshold from closed-schema-answer-records-decision.md §§4.3–4.4. This is a qualification decision boundary, not a general runtime timeout cap; a derived T* above it requires design-owner review.
+

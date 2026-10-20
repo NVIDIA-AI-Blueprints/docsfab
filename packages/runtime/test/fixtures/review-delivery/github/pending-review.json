@@ -1,0 +1,8 @@
+{
+  "id": 700,
+  "user": { "id": 42, "login": "docs-reviewer" },
+  "body": "__REVIEW_BODY__",
+  "state": "PENDING",
+  "commit_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "pull_request_url": "https://api.github.com/repos/team/docs/pulls/7"
+}

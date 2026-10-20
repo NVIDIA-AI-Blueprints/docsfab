@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "catalogVersion": "1.0.0",
+  "gateOrder": ["G0", "G1", "G2", "G3", "G4", "G5"],
+  "stages": ["foundations", "coverage", "structure", "content", "polish", "maintenance"],
+  "issuePriorities": ["P0", "P1", "P2"],
+  "dispositions": [
+    "observed-absence",
+    "bounded-not-found",
+    "unknown",
+    "not-applicable",
+    "blocked",
+    "satisfied"
+  ]
+}

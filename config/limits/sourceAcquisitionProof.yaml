@@ -1,0 +1,27 @@
+# DocsFab operational limits owned by the `sourceAcquisitionProof` name prefix.
+# Registered in config/limits.yaml; every limit here is named `sourceAcquisitionProof.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: sourceAcquisitionProof.installedInvocationTimeoutMs
+    value: 2700000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_SOURCE_ACQUISITION_PROOF_INSTALLED_INVOCATION_TIMEOUT_MS
+    min: 1000
+    max: 2700000
+    refusal: source-acquisition-proof-installed-invocation-timeout-ms-bound
+    remediation: Shorten the installed run, or raise sourceAcquisitionProof.installedInvocationTimeoutMs in config/limits/sourceAcquisitionProof.yaml. The cell is recorded with this refusal code and is never counted as passed.
+    rationale: Wall-clock ceiling for one installed docsfab run or do invocation driven by scripts/source-acquisition-proof.mjs. A qualifying installed cell is a full model-backed workflow, so the former fixed 30 s refused every real run; the value is the shared live-model job ceiling (ci.liveModel.jobTimeoutMs) because one cell cannot usefully outlive the job that hosts installed collection. A host override may only lower it.
+
+  - name: sourceAcquisitionProof.installedOutputMaxBytes
+    value: 16777216
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_SOURCE_ACQUISITION_PROOF_INSTALLED_OUTPUT_MAX_BYTES
+    min: 1048576
+    max: 16777216
+    refusal: source-acquisition-proof-installed-output-max-bytes-bound
+    remediation: Reduce the installed invocation's output, or raise sourceAcquisitionProof.installedOutputMaxBytes in config/limits/sourceAcquisitionProof.yaml. The cell is recorded with this refusal code and is never counted as passed.
+    rationale: Spawn buffer for the stdout or stderr of one installed invocation driven by scripts/source-acquisition-proof.mjs. Under --json the collector reads one run-result or operator-error envelope line; 16 MiB matches the previous fixed maxBuffer. A host override may only lower it.

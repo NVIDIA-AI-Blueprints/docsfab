@@ -1,0 +1,25 @@
+id: example-public-docs-v0.1
+name: Example public developer documentation
+default_audience: Application developers
+stylesheet_source: packages/quality/formats/html/base.css
+approved_sources:
+  - product-specification
+  - source-code
+  - existing-public-documentation
+source_priority:
+  - product-specification
+  - source-code
+  - existing-public-documentation
+supported_document_types:
+  - task-guide
+  - concept-guide
+  - api-reference
+required_checks:
+  - html-doctype
+  - html-language
+  - html-title
+  - html-required-sections
+  - html-no-placeholders
+  - html-no-scripts
+pass_threshold: 90
+publication_policy: review-ready-only

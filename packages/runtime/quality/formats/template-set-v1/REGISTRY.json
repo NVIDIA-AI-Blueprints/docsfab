@@ -1,0 +1,127 @@
+{
+  "registry": "skills",
+  "version": "1.0.0",
+  "description": "NVIDIA documentation template library - pick, scaffold, apply, validate, report, and bootstrap full sites",
+  "homepage": "https://github.com/NVIDIA-AI-Blueprints/docsfab",
+  "skills": [
+    {
+      "name": "tpl-pick",
+      "path": "tpl-pick",
+      "category": "discovery",
+      "aliases": [
+        "::tpl-pick",
+        "::tpl",
+        "::tpl pick",
+        "::template",
+        "::tpl --version"
+      ],
+      "description": "Recommend which template fits the user's goal. Returns one template, one format, and a ready-to-run `tpl-new-page` or `tpl-apply-template` command.",
+      "time_estimate": "1-2 minutes",
+      "deterministic": false
+    },
+    {
+      "name": "tpl-new-page",
+      "path": "tpl-new-page",
+      "category": "creation",
+      "aliases": [
+        "::tpl-new-page",
+        "::tpl new",
+        "::scaffold"
+      ],
+      "description": "Scaffold one new page from a named template without silently overwriting authored content. Copies template, fills placeholders, strips author-only content.",
+      "time_estimate": "2-5 minutes",
+      "deterministic": false
+    },
+    {
+      "name": "tpl-apply-template",
+      "path": "tpl-apply-template",
+      "category": "refactor",
+      "aliases": [
+        "::tpl-apply-template",
+        "::tpl apply",
+        "::tpl update",
+        "::tpl conform"
+      ],
+      "description": "Patch an existing documentation page so it conforms to a named template while preserving verified content, frontmatter, links, anchors, and commands.",
+      "time_estimate": "5-15 minutes",
+      "deterministic": false
+    },
+    {
+      "name": "tpl-lint",
+      "path": "tpl-lint",
+      "category": "validation",
+      "aliases": [
+        "::tpl-lint",
+        "::tpl lint",
+        "::tpl validate",
+        "::tpl check"
+      ],
+      "description": "Validate a page against a template schema. Reports missing sections, wrong order, orphan headings with fix recommendations.",
+      "time_estimate": "1-2 minutes",
+      "deterministic": true
+    },
+    {
+      "name": "tpl-quality-report",
+      "path": "tpl-quality-report",
+      "category": "report",
+      "aliases": [
+        "::tpl-quality-report",
+        "::tpl report",
+        "::tpl quality-report",
+        "::tpl before-after"
+      ],
+      "description": "Generate a canonical HTML report for before/after updates or existing-page evaluations against a template.",
+      "time_estimate": "5-10 minutes",
+      "deterministic": false
+    },
+    {
+      "name": "tpl-new-site",
+      "path": "tpl-new-site",
+      "category": "creation",
+      "aliases": [
+        "::tpl-new-site",
+        "::tpl site",
+        "::tpl new-site",
+        "::site"
+      ],
+      "description": "Bootstrap a complete documentation site from the canonical IA. Generates the full directory tree with scaffolded pages.",
+      "time_estimate": "5-10 minutes",
+      "deterministic": false
+    },
+    {
+      "name": "tpl-migrate-site",
+      "path": "tpl-migrate-site",
+      "category": "refactor",
+      "aliases": [
+        "::tpl-migrate-site",
+        "::tpl migrate",
+        "::migrate"
+      ],
+      "description": "Migrate an existing book toward the canonical IA: renames, splits, moves, indexes, flattens.",
+      "time_estimate": "10-30 minutes",
+      "deterministic": false
+    }
+  ],
+  "shared_resources": [
+    "resources/template-catalog.md",
+    "resources/template-application-workflow.md",
+    "resources/template-owners.md",
+    "resources/format-comparison.md"
+  ],
+  "chains": [
+    "tpl-pipeline",
+    "tpl-apply-template-workflow",
+    "tpl-quick-validate",
+    "tpl-full-site",
+    "tpl-migrate-site-and-validate"
+  ],
+  "skill_hashes": {
+    "tpl-pick": "f3774fdfa36f",
+    "tpl-new-page": "78ea12d924f6",
+    "tpl-apply-template": "bec448bcf9a0",
+    "tpl-lint": "1db5100500c3",
+    "tpl-quality-report": "3324d7117f97",
+    "tpl-new-site": "27aa8f62212c",
+    "tpl-migrate-site": "336024603ea8"
+  }
+}

@@ -1,0 +1,639 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/quality-report-projection.schema.json",
+  "title": "DocsFab host quality report projection v1/v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "kind",
+    "decision",
+    "confidence",
+    "hardGateFailures",
+    "limitations",
+    "rubric",
+    "reportLocator",
+    "repositoryRevision",
+    "patchSha256"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "enum": [
+        1,
+        2
+      ]
+    },
+    "kind": {
+      "const": "docsfab-quality-report-projection"
+    },
+    "decision": {
+      "$ref": "#/$defs/decision"
+    },
+    "confidence": {
+      "$ref": "#/$defs/confidence"
+    },
+    "hardGateFailures": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/boundedString"
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/limitationString"
+      }
+    },
+    "rubric": {
+      "$ref": "#/$defs/rubric"
+    },
+    "reportLocator": {
+      "$ref": "#/$defs/artifactDigest"
+    },
+    "repositoryRevision": {
+      "$ref": "#/$defs/repositoryRevision"
+    },
+    "patchSha256": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "retainedGapEvidence": {
+      "type": "array",
+      "maxItems": 2,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/retainedGapEvidence"
+      }
+    },
+    "unclassifiedLimitations": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/limitationString"
+      }
+    }
+  },
+  "$defs": {
+    "boundedString": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "pattern": "^(?:\\S|\\S.*\\S)$"
+    },
+    "limitationString": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?:[^\\u0009-\\u000d\\u0020\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]|[^\\u0009-\\u000d\\u0020\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff][\\s\\S]*[^\\u0009-\\u000d\\u0020\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff])(?![\\s\\S])"
+    },
+    "identifier": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+    },
+    "decision": {
+      "enum": [
+        "pass",
+        "conditional-pass",
+        "fail",
+        "human-review",
+        "insufficient-evidence"
+      ]
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "artifactDigest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "digestSha256"
+      ],
+      "properties": {
+        "kind": {
+          "const": "artifact-digest"
+        },
+        "digestSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
+    "repositoryRevision": {
+      "type": "string",
+      "pattern": "^(?:[a-f0-9]{40}|[a-f0-9]{64})$"
+    },
+    "rubric": {
+      "type": "object",
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "available",
+            "unavailable"
+          ]
+        },
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "total": {
+          "$ref": "#/$defs/score"
+        },
+        "threshold": {
+          "$ref": "#/$defs/score"
+        },
+        "interpretationBand": {
+          "enum": [
+            "Green",
+            "Yellow",
+            "Red"
+          ]
+        },
+        "decision": {
+          "enum": [
+            "pass",
+            "conditional-pass",
+            "fail",
+            "human-review"
+          ]
+        },
+        "confidence": {
+          "$ref": "#/$defs/confidence"
+        },
+        "reason": {
+          "$ref": "#/$defs/boundedString"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "available"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "required": [
+              "status",
+              "id",
+              "total",
+              "threshold",
+              "interpretationBand",
+              "decision",
+              "confidence"
+            ],
+            "properties": {
+              "status": {
+                "const": "available"
+              },
+              "id": {
+                "$ref": "#/$defs/identifier"
+              },
+              "total": {
+                "$ref": "#/$defs/score"
+              },
+              "threshold": {
+                "$ref": "#/$defs/score"
+              },
+              "interpretationBand": {
+                "enum": [
+                  "Green",
+                  "Yellow",
+                  "Red"
+                ]
+              },
+              "decision": {
+                "enum": [
+                  "pass",
+                  "conditional-pass",
+                  "fail",
+                  "human-review"
+                ]
+              },
+              "confidence": {
+                "$ref": "#/$defs/confidence"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "unavailable"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "required": [
+              "status",
+              "reason"
+            ],
+            "properties": {
+              "status": {
+                "const": "unavailable"
+              },
+              "reason": {
+                "$ref": "#/$defs/boundedString"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "profileEvidence": {
+      "type": "object",
+      "required": [
+        "kind"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "profile-decision-policy",
+            "audience-prerequisite-policy"
+          ]
+        },
+        "artifactLocator": {
+          "$ref": "#/$defs/boundedString"
+        },
+        "artifactSha256": {
+          "$ref": "#/$defs/hash"
+        },
+        "profileId": {
+          "$ref": "#/$defs/identifier"
+        },
+        "profileVersion": {
+          "$ref": "#/$defs/boundedString"
+        },
+        "profileStatus": {
+          "const": "experimental"
+        },
+        "releaseGateEligible": {
+          "const": false
+        },
+        "decisionPolicyField": {
+          "const": "experimental_profile_maximum_decision"
+        },
+        "decisionPolicyValue": {
+          "const": "insufficient-evidence"
+        },
+        "prerequisites": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/audiencePrerequisite"
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "profile-decision-policy"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "artifactLocator",
+              "artifactSha256",
+              "profileId",
+              "profileVersion",
+              "profileStatus",
+              "releaseGateEligible",
+              "decisionPolicyField",
+              "decisionPolicyValue"
+            ],
+            "properties": {
+              "kind": {
+                "const": "profile-decision-policy"
+              },
+              "artifactLocator": {
+                "$ref": "#/$defs/boundedString"
+              },
+              "artifactSha256": {
+                "$ref": "#/$defs/hash"
+              },
+              "profileId": {
+                "$ref": "#/$defs/identifier"
+              },
+              "profileVersion": {
+                "$ref": "#/$defs/boundedString"
+              },
+              "profileStatus": {
+                "const": "experimental"
+              },
+              "releaseGateEligible": {
+                "const": false
+              },
+              "decisionPolicyField": {
+                "const": "experimental_profile_maximum_decision"
+              },
+              "decisionPolicyValue": {
+                "const": "insufficient-evidence"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "audience-prerequisite-policy"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "artifactLocator",
+              "artifactSha256",
+              "profileId",
+              "profileVersion",
+              "prerequisites"
+            ],
+            "properties": {
+              "kind": {
+                "const": "audience-prerequisite-policy"
+              },
+              "artifactLocator": {
+                "$ref": "#/$defs/boundedString"
+              },
+              "artifactSha256": {
+                "$ref": "#/$defs/hash"
+              },
+              "profileId": {
+                "$ref": "#/$defs/identifier"
+              },
+              "profileVersion": {
+                "$ref": "#/$defs/boundedString"
+              },
+              "prerequisites": {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
+                "uniqueItems": true,
+                "items": {
+                  "$ref": "#/$defs/audiencePrerequisite"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "audiencePrerequisite": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "field",
+        "value"
+      ],
+      "properties": {
+        "field": {
+          "enum": [
+            "calibration.human_outcome_baseline",
+            "calibration.agent_outcome_baseline"
+          ]
+        },
+        "value": {
+          "const": "pending"
+        }
+      }
+    },
+    "retainedGapEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "limitation",
+        "reason",
+        "evidence"
+      ],
+      "properties": {
+        "limitation": {
+          "$ref": "#/$defs/boundedString"
+        },
+        "reason": {
+          "enum": [
+            "experimental-profile-ceiling",
+            "audience-prerequisites-missing"
+          ]
+        },
+        "evidence": {
+          "$ref": "#/$defs/profileEvidence"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "reason": {
+                "const": "experimental-profile-ceiling"
+              }
+            },
+            "required": [
+              "reason"
+            ]
+          },
+          "then": {
+            "properties": {
+              "limitation": {
+                "const": "The selected quality profile caps decisions at insufficient-evidence while it remains experimental."
+              },
+              "evidence": {
+                "properties": {
+                  "kind": {
+                    "const": "profile-decision-policy"
+                  }
+                },
+                "required": [
+                  "kind"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "reason": {
+                "const": "audience-prerequisites-missing"
+              }
+            },
+            "required": [
+              "reason"
+            ]
+          },
+          "then": {
+            "properties": {
+              "limitation": {
+                "const": "The selected quality profile has pending human and agent outcome baselines."
+              },
+              "evidence": {
+                "properties": {
+                  "kind": {
+                    "const": "audience-prerequisite-policy"
+                  }
+                },
+                "required": [
+                  "kind"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "schemaVersion": {
+            "const": 2
+          }
+        },
+        "required": [
+          "schemaVersion"
+        ]
+      },
+      "then": {
+        "required": [
+          "retainedGapEvidence",
+          "unclassifiedLimitations"
+        ],
+        "properties": {
+          "limitations": {
+            "items": {
+              "$ref": "#/$defs/limitationString"
+            }
+          },
+          "unclassifiedLimitations": {
+            "items": {
+              "$ref": "#/$defs/limitationString"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "schemaVersion": {
+            "const": 1
+          }
+        },
+        "required": [
+          "schemaVersion"
+        ]
+      },
+      "then": {
+        "properties": {
+          "limitations": {
+            "items": {
+              "$ref": "#/$defs/boundedString"
+            }
+          },
+          "unclassifiedLimitations": {
+            "items": {
+              "$ref": "#/$defs/boundedString"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "hardGateFailures": {
+            "minItems": 1
+          }
+        },
+        "required": [
+          "hardGateFailures"
+        ]
+      },
+      "then": {
+        "properties": {
+          "decision": {
+            "const": "fail"
+          }
+        },
+        "required": [
+          "decision"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "hardGateFailures": {
+            "maxItems": 0
+          },
+          "rubric": {
+            "properties": {
+              "status": {
+                "const": "unavailable"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          }
+        },
+        "required": [
+          "hardGateFailures",
+          "rubric"
+        ]
+      },
+      "then": {
+        "properties": {
+          "decision": {
+            "const": "insufficient-evidence"
+          }
+        },
+        "required": [
+          "decision"
+        ]
+      }
+    }
+  ]
+}

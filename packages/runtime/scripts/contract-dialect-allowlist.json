@@ -1,0 +1,13 @@
+{
+  "notes": "Baseline exceptions pending future contract-kit migrations. Do not add entries for new modules \u2014 consume src/contract-kit/ instead. authorityInternal entries under autonomy/inputs/lineage must import createHostAuthorityFactory.",
+  "authorityInternal": [
+    "src/autonomy/authority-internal.ts",
+    "src/inputs/authority-internal.ts",
+    "src/lineage/authority-internal.ts",
+    "src/maturity/tracker-snapshot-authority-internal.ts",
+    "src/roadmap/issue-lifecycle-authority-internal.ts",
+    "src/roadmap/managed-issue-observer-authority-internal.ts",
+    "src/roadmap/planning-authority-internal.ts"
+  ],
+  "dialectBottoms": []
+}

@@ -1,0 +1,85 @@
+# DocsFab operational limits owned by the `slackRoutes` name prefix.
+# Registered in config/limits.yaml; every limit here is named `slackRoutes.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: slackRoutes.documentMaxBytes
+    value: 1048576
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: null
+    min: 4096
+    max: 1048576
+    refusal: slack-routes-document-max-bytes-bound
+    remediation: Shrink the installed registry, Slack map, activation state, dispatcher policy, identity map or grant snapshot, or raise slackRoutes.documentMaxBytes in config/limits/slackRoutes.yaml without exceeding the 1 MiB the activation-state validator itself reads.
+    rationale: Largest installed sealed document a Slack route operation reads before parsing. Defaults to the existing 1 MiB maximum, matching the activation-state validator; the documents still pass their existing schema and authority checks.
+    docValue: 1,048,576 bytes (1 MiB)
+    docSummary: Installed sealed document read by a Slack route operation.
+
+  - name: slackRoutes.candidateMaxBytes
+    value: 65536
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: null
+    min: 1024
+    max: 65536
+    refusal: slack-routes-candidate-max-bytes-bound
+    remediation: Stage a smaller single-route candidate, or raise slackRoutes.candidateMaxBytes in config/limits/slackRoutes.yaml.
+    rationale: Largest staged single-route candidate the Slack route amendment reads, defaulting to the existing admitted maximum. Candidate shape and route authority remain independently validated.
+    docValue: 65,536 bytes (64 KiB)
+    docSummary: Staged single-route amendment candidate.
+
+  - name: slackRoutes.replacementCandidateMaxBytes
+    value: 524288
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: null
+    min: 1024
+    max: 524288
+    refusal: slack-routes-replacement-candidate-max-bytes-bound
+    remediation: Declare fewer projects or routes in one replacement candidate, or raise slackRoutes.replacementCandidateMaxBytes in config/limits/slackRoutes.yaml.
+    rationale: Largest staged desired-state candidate the Slack route replacement reads, defaulting to the existing admitted maximum. Project count, route count, and installed document bounds still apply independently.
+    docValue: 524,288 bytes (512 KiB)
+    docSummary: Staged replacement candidate containing the desired routes.
+
+  - name: slackRoutes.reasonMaxChars
+    value: 1024
+    unit: characters
+    scope: per-host
+    warnAt: 0.8
+    override: null
+    min: 16
+    max: 1024
+    refusal: slack-routes-reason-max-chars-bound
+    remediation: State the reason in one shorter line that names the Task, or raise slackRoutes.reasonMaxChars in config/limits/slackRoutes.yaml.
+    rationale: Longest operator reason a Slack route receipt records, defaulting to the existing admitted maximum. Single-line and credential checks remain separate from this length allowance.
+    docValue: 1,024 characters
+    docSummary: Operator reason retained in a Slack route receipt.
+
+  - name: slackRoutes.replacementMaxProjects
+    value: 32
+    unit: count
+    scope: per-host
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 32
+    refusal: slack-routes-replacement-max-projects-bound
+    remediation: Name at most slackRoutes.replacementMaxProjects projects in one replacement candidate; the installed registry itself admits no more.
+    rationale: Most projects one Slack route replacement may name. The ingress registry admits 1 through 32 project policies, so a candidate naming more than 32 projects cannot describe any installed registry and is refused before the registry is consulted.
+
+  - name: slackRoutes.replacementMaxRoutesPerProject
+    value: 256
+    unit: count
+    scope: per-host
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 256
+    refusal: slack-routes-replacement-max-routes-per-project-bound
+    remediation: Declare fewer routes for the project, or raise slackRoutes.replacementMaxRoutesPerProject in config/limits/slackRoutes.yaml.
+    rationale: Most desired routes one project may declare in a replacement candidate, defaulting to the existing admitted maximum. Candidate byte limits and route binding validation still apply.
+    docValue: 256 routes
+    docSummary: Desired routes for one project in a replacement candidate.

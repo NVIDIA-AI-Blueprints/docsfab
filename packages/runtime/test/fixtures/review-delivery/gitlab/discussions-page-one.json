@@ -1,0 +1,23 @@
+[
+  {
+    "id": "discussion-added-line",
+    "individual_note": false,
+    "notes": [
+      {
+        "id": 8101,
+        "body": "Finding: verify added text",
+        "author": { "id": 65356, "username": "docsfab-bot" },
+        "system": false,
+        "position": {
+          "position_type": "text",
+          "base_sha": "base-commit-sha",
+          "start_sha": "target-start-sha",
+          "head_sha": "source-head-sha",
+          "old_path": "docs/old-name.md",
+          "new_path": "docs/new-name.md",
+          "new_line": 11
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "kind": "docsfab-output-rule-fixture",
+  "code": "evaluation-layer-residual-invalid",
+  "location": "$.evaluation.layers",
+  "input": {
+    "workflow": "review-documentation"
+  },
+  "reply": "{\"evaluation\":{\"layers\":{\"transferable_understanding\":{\"decision\":\"open\"}}},\"qualityScore\":null}\n\n# Documentation quality review\n"
+}

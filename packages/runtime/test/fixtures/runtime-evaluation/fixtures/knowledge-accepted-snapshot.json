@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "kind": "knowledge-accepted-snapshot",
+  "projectId": "PRJ-001",
+  "modelVersionId": "MODEL-001",
+  "streamVersion": 6,
+  "status": "approved",
+  "claims": [
+    {
+      "id": "CL-001",
+      "kind": "intent",
+      "scope": "Example Product",
+      "statement": "The knowledge-gathering workflow establishes a shared model before documentation generation.",
+      "modelState": "canonical",
+      "evidenceIds": ["SRC-001"]
+    }
+  ],
+  "sources": [
+    {
+      "id": "SRC-001",
+      "locator": "design"
+    }
+  ],
+  "conflicts": [],
+  "snapshotSha256": "9985247a7bb21e9b0a62bb983f6f106aa41e4bb43d382f1ab561a986dd4eb92a"
+}

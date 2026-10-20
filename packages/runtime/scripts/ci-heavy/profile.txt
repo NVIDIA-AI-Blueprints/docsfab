@@ -1,0 +1,7 @@
+# Profile apply, init leases, IA lifecycle, and roadmap/managed-issue megafiles.
+test/ia-lifecycle.test.ts
+test/init.test.ts
+test/managed-issue-convention.test.ts
+test/profile-apply.test.ts
+test/roadmap-contracts.test.ts
+test/roadmap-execution-v2.test.ts

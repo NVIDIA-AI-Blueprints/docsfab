@@ -1,0 +1,39 @@
+# DocsFab operational limits owned by the `dogfood` name prefix.
+# Registered in config/limits.yaml; every limit here is named `dogfood.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: dogfood.proofReplayCount
+    value: 2
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_DOGFOOD_PROOF_REPLAY_COUNT
+    min: 1
+    max: 2
+    refusal: dogfood-proof-replay-count-bound
+    remediation: Lower DOCSFAB_DOGFOOD_PROOF_REPLAY_COUNT, or raise dogfood.proofReplayCount in config/limits/dogfood.yaml. The repository-event proof recipe is a developer dogfood script, so no host configuration file widens it.
+    rationale: How many times the repository-event proposal-proof dogfood recipe replays one sealed delivery request against the same journal, to demonstrate that replay is idempotent. Two is the smallest count that can show idempotence at all - one attempt proves nothing about a second - and each extra attempt costs another full publish pass with no new evidence, so the default is the minimum that proves the property. Operators may only lower it, to one, which turns the replay assertion off rather than widening any external effect. This bounds a dogfood script's own loop, never a product path.
+
+  - name: dogfood.proofManifestMaxBytes
+    value: 2097152
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_DOGFOOD_PROOF_MANIFEST_MAX_BYTES
+    min: 1
+    max: 2097152
+    refusal: dogfood-proof-manifest-max-bytes-bound
+    remediation: Lower DOCSFAB_DOGFOOD_PROOF_MANIFEST_MAX_BYTES, or raise dogfood.proofManifestMaxBytes in config/limits/dogfood.yaml. If a real run exceeds it, shrink the manifest rather than widening the bound.
+    rationale: Largest composition manifest the repository-event proposal-proof dogfood recipe will write. Deliberately mirrors recovery.manifestMaxBytes, the existing bound on the largest manifest or restore receipt a verifier reads, so a proof artefact never outgrows what the verifier side of the same repository already accepts. The recipe compares before writing and refuses with this entry's own slug, so an oversized manifest is a named refusal and no partial file, not a silent truncation. Operators may only lower it.
+
+  - name: dogfood.noDocLauncherMaxBufferBytes
+    value: 33554432
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 33554432
+    refusal: dogfood-no-doc-launcher-max-buffer-bytes-bound
+    remediation: Find out why the launcher printed that much, from the refused command's own log. If the output is expected, raise dogfood.noDocLauncherMaxBufferBytes in config/limits/dogfood.yaml and run `npm run generate:limits` from packages/runtime.
+    rationale: Largest stdout or stderr, per stream, that the create-documentation no-doc dogfood captures from one launcher command (list, init preview, init apply, and the create-documentation run, all with --json). Each prints one JSON document or a short listing, kilobytes in practice; the run record itself is read from its file, not from output. The value keeps the 32 MiB the script used before it was catalogued, so no run that passed then refuses now, and it still bounds the memory a runaway launcher can take. Node kills a child that crosses it and truncates the stream, so the script refuses with this entry's slug rather than parse the truncated output or report the command as having succeeded. This bounds a developer dogfood script, never a product path, so no host configuration widens it.

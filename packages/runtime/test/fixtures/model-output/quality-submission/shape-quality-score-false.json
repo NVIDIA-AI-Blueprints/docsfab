@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "kind": "docsfab-output-rule-fixture",
+  "code": "quality-submission-shape",
+  "location": "$.qualityScore",
+  "input": {
+    "workflow": "review-documentation",
+    "submission": "{\"evaluation\":{\"evaluation_id\":\"eval-1\",\"overall_decision\":\"insufficient-evidence\"},\"qualityScore\":false}"
+  },
+  "reply": ""
+}

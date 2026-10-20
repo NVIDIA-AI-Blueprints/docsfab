@@ -1,0 +1,6 @@
+{
+  "schemaVersion": 1,
+  "gitlab": { "remote": "origin", "defaultBranch": "main" },
+  "provider": { "configuration": "host" },
+  "storage": { "scope": "user-private" }
+}

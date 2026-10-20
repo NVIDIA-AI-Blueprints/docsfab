@@ -1,0 +1,56 @@
+{
+  "id": "tpl-design-ia",
+  "contentSha256": "4232151a4aa963cf25bef72efe9759182f1831b596e80ef7c522e89b7026cf4c",
+  "bundleSha256": "f8071a9b07a0f716d367350800531e32b59c7b788835a8c62417356a102aba73",
+  "version": "0.1.0-local.1",
+  "license": "UNLICENSED",
+  "provenanceStatus": "docsfab-local",
+  "source": {
+    "repository": "https://upstream.invalid/archived-tpl-design-ia.git",
+    "revision": "a9bd1e5692ad4f05cb2444d192920baa56f3d53d",
+    "path": "skills/tpl-design-ia/SKILL.md"
+  },
+  "inputs": [
+    {
+      "name": "scope",
+      "description": "Analysis boundary; exactly site, section, or page"
+    },
+    {
+      "name": "mode",
+      "description": "Planning behavior; exactly create or reevaluate"
+    },
+    {
+      "name": "repository_index",
+      "description": "Revision-bound Content IR identity and structural evidence"
+    },
+    {
+      "name": "target_node_id",
+      "description": "Required Content IR node for section and page scope"
+    },
+    {
+      "name": "prior_decisions",
+      "description": "Optional revision-bound decision references used only in reevaluate mode"
+    },
+    {
+      "name": "navigation_queries",
+      "description": "Query IDs and text only; answers and ranked destinations are never supplied"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "analysis_submission",
+      "description": "Model-derived ontology, IA-candidate, navigation, and design payloads conforming to references/output-contract.md"
+    }
+  ],
+  "toolPolicy": {
+    "declared": ["Read", "Grep", "Glob"],
+    "granted": ["read", "grep", "find", "ls"],
+    "withheld": []
+  },
+  "evaluation": {
+    "id": "tpl-design-ia.behavior",
+    "version": 1,
+    "path": "evaluations/manifest.json",
+    "sha256": "a064f6c9f528c0fcea5b4be8fa4673e2db5fe3088c2d84472f93c317f462a1a0"
+  }
+}

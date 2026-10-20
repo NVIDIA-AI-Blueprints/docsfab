@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "name": "foundation-to-patch",
+  "title": "Foundation-to-patch documentation composition",
+  "outcome": "A reviewable scoped patch with real foundation, authoring, independent review, and impact evidence.",
+  "contextPolicy": {
+    "schemaVersion": 1,
+    "steps": [
+      {
+        "stepId": "compose-foundation-to-patch",
+        "required": true,
+        "level": "corpus",
+        "query": "expand",
+        "allowReadOnlyDegraded": true
+      }
+    ]
+  },
+  "steps": [
+    {
+      "id": "compose-foundation-to-patch",
+      "title": "Compose foundation-to-patch documentation workflow",
+      "kind": "host-operation",
+      "operation": "foundation-to-patch",
+      "invokes": "create-documentation",
+      "skill": "plan-documentation",
+      "mode": "write",
+      "prompt": "Inspect the current approved foundation without mutation, execute the actual source-grounded authoring and independent review pipeline under the bound write scope, retain real checkpoints and unresolved questions, and return only a verified patch with its actual limitations. Do not merge or publish."
+    }
+  ]
+}

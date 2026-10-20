@@ -1,0 +1,28 @@
+# DocsFab operational limits owned by the `conflictPrediction` name prefix.
+# Registered in config/limits.yaml; every limit here is named
+# `conflictPrediction.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: conflictPrediction.maxHeads
+    value: 25
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 200
+    refusal: conflict-prediction-max-heads-bound
+    remediation: Narrow the snapshot to the heads that matter, dropping merged or stacked rows, or raise conflictPrediction.maxHeads in config/limits/conflictPrediction.yaml after accepting the extra fetch and merge-tree cost of each additional head.
+    rationale: Other heads scripts/orchestration/predict-conflicts.sh compares one candidate against in a single run, counting every open merge request plus every active merge-train car named by the snapshot; the run refuses when the observed head count is strictly greater than this value, comparator is `>`, so a snapshot naming exactly this many heads still runs. 25 is sized against the measured population rather than a guess, Task(#1393), namely 6 open merge requests and 0 active cars at 2026-09-25T01:44Z, unchanged on a re-read ten minutes later, and single-digit concurrent open merge requests across the 719 merge requests created since 2026-09-10. Each compared head costs one ref fetch and two `git merge-tree --write-tree` runs, so this is a cost ceiling on an advisory read-only report, never a correctness bound; a run that legitimately needs more heads is a signal to narrow the candidate set first. No CLI flag overrides this value, override is null; a future per-invocation need becomes a catalog DOCSFAB_* environment override validated against min/max at startup, per the limits contract, not a bare script flag.
+
+  - name: conflictPrediction.snapshotMaxAgeMinutes
+    value: 15
+    unit: minutes
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 1440
+    refusal: conflict-prediction-snapshot-stale
+    remediation: Re-read the snapshot with scripts/orchestration/predict-conflicts.sh --live, or raise conflictPrediction.snapshotMaxAgeMinutes in config/limits/conflictPrediction.yaml if a deliberately older snapshot is being replayed.
+    rationale: Maximum age of the snapshot's `generated_at` timestamp, measured against the clock at run time, before scripts/orchestration/predict-conflicts.sh refuses to report from it; the run refuses when the observed age is strictly greater than this value, comparator is `>`, so a snapshot at exactly this age still runs. 15 minutes bounds the gap between reading the open merge-request list and comparing against it, which is the interval over which a prediction can actually be trusted, Task(#1393). It deliberately does not attempt to make the active merge-train car list fresh, because a car is created and removed within one second, so no age bound makes a car list trustworthy; the report instead discloses the snapshot timestamp on every run so a reader never mistakes a replayed car list for live state. No CLI flag overrides this value, override is null; a future per-invocation need becomes a catalog DOCSFAB_* environment override validated against min/max at startup, per the limits contract, not a bare script flag.

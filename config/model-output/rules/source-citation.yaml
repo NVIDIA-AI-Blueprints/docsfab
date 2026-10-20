@@ -1,0 +1,211 @@
+# Model-output rules for a source citation: the locator a model writes in place
+# of quoted text. Canonical source; generated bindings are produced by
+# `npm run generate:model-output` from packages/runtime.
+#
+# The model names a tracked file and a line range it read; the host copies the
+# exact text of those lines into the admitted artifact
+# (packages/runtime/src/repository/source-citation.ts), so quote fidelity can
+# no longer fail a step. The readiness assessment
+# (readiness/assessment.ts) and the repository bootstrap result
+# (onboarding/bootstrap-adapter.ts) both raise these codes through that one
+# module.
+#
+# No `replay` mode: the family is raised from a read-only step (readiness,
+# which re-asks with these statements) and from a write step (bootstrap, which
+# never re-asks), and neither mode adds a hint suffix.
+schemaVersion: 1
+kind: docsfab-output-rules
+family: source-citation
+# Recorded codes keep this prefix; a persisted code is never renamed.
+recordedPrefix: source-citation-
+rules:
+  - code: source-citation-locator-shape
+    locations:
+      - $.criteria[].citations[]
+      - $.evidence[]
+    kind: shape
+    retry: model-correctable
+    reason: >-
+      The citation was not a locator the host can resolve, for example it
+      carried quoted text or a malformed line number; the model can restate it
+      as a path and a line range.
+    statement: >-
+      Cite each passage only by its location, as an object with exactly the
+      keys path, startLine, and endLine. path is the repository-relative path
+      of a tracked file, and startLine and endLine are the first and last
+      [source-line N] numbers the read tool showed for the passage, with
+      endLine not before startLine. Do not write the passage text: the host
+      copies the exact text of those lines from the file.
+    operator:
+      kind: correct
+      meaning: >-
+        The step cited evidence in a form other than a repository path and
+        line range, such as copied or paraphrased text, and its bounded retries
+        did not correct it.
+      next: >-
+        Inspect the saved run's attempts, then start a new run. If the model
+        keeps writing quoted text instead of line ranges, record it as
+        model-compatibility evidence.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/source-citation/locator-shape.json
+    docs: source-citation-locator-shape
+
+  - code: source-citation-untracked-path
+    locations:
+      - $.criteria[].citations[]
+      - $.evidence[]
+    kind: content
+    retry: model-correctable
+    reason: >-
+      The cited path is not a regular file tracked at the run's repository
+      revision; the model can cite a file it read from the repository.
+    statement: >-
+      Cite only a regular file tracked at this run's repository revision, by
+      the repository-relative path you read it from.
+    operator:
+      kind: correct
+      meaning: >-
+        The step cited a path that is not a tracked regular file at the run's
+        revision, and its bounded retries did not correct it.
+      next: >-
+        Inspect the saved run's attempts, then start a new run. If the model
+        keeps citing files outside the repository, record it as
+        model-compatibility evidence.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/source-citation/untracked-path.json
+    docs: source-citation-untracked-path
+
+  - code: source-citation-unreadable-text
+    locations:
+      - $.criteria[].citations[]
+      - $.evidence[]
+    kind: content
+    retry: model-correctable
+    reason: >-
+      The cited file is not UTF-8 text with LF or CRLF line breaks that the
+      host can read whole: it is undecodable or over the reader ceiling, holds
+      a NUL byte, or breaks a line with a lone CR, which the host's tools
+      number differently. It has no lines to copy; the model can cite a text
+      file instead.
+    statement: >-
+      Cite only a text file; a binary or undecodable file, or one with a line
+      break the read tool does not number, has no lines the host can copy.
+    operator:
+      kind: correct
+      meaning: >-
+        The step cited a file that is not readable UTF-8 text within the host's
+        file reader ceiling, holds a NUL byte, or breaks lines with a lone
+        carriage return, and its bounded retries did not correct it.
+      next: >-
+        Inspect the saved run's attempts, then start a new run. If the
+        evidence the step needs lives only in that file, record the gap rather
+        than widening the reader.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/source-citation/unreadable-text.json
+    docs: source-citation-unreadable-text
+
+  - code: source-citation-line-range
+    locations:
+      - $.criteria[].citations[]
+      - $.evidence[]
+    kind: content
+    retry: model-correctable
+    reason: >-
+      The cited endLine is past the file's last line; the model can cite lines
+      the file has.
+    statement: >-
+      endLine must not be past the end of the file. The last line you can cite
+      is the last [source-line N] number the read tool showed for that file,
+      or the empty line after it when the file ends with a line break; an
+      empty file has no lines to cite.
+    operator:
+      kind: correct
+      meaning: >-
+        The step cited lines beyond the end of a tracked file, and its bounded
+        retries did not correct it.
+      next: >-
+        Inspect the saved run's attempts, then start a new run. If the model
+        keeps miscounting lines, record it as model-compatibility evidence.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/source-citation/line-range.json
+    docs: source-citation-line-range
+
+  - code: source-citation-blank-span
+    locations:
+      - $.criteria[].citations[]
+      - $.evidence[]
+    kind: content
+    retry: model-correctable
+    reason: >-
+      The cited lines hold only whitespace, so they are not evidence; the
+      model can cite the lines that hold the text it relies on.
+    statement: >-
+      Cite lines that hold the evidence text, not only blank lines.
+    operator:
+      kind: correct
+      meaning: >-
+        The step cited a range of blank lines as evidence, and its bounded
+        retries did not correct it.
+      next: >-
+        Inspect the saved run's attempts, then start a new run. If the model
+        keeps citing blank lines, record it as model-compatibility evidence.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/source-citation/blank-span.json
+    docs: source-citation-blank-span
+
+  - code: source-citation-unobserved
+    locations:
+      - $.criteria[].citations[]
+      - $.evidence[]
+    kind: content
+    retry: model-correctable
+    reason: >-
+      The cited lines were not shown to the model by a read in this attempt,
+      or were read only after the model edited that file, so the host cannot
+      tell that the model saw the text it cites; the model can read those
+      lines first.
+    statement: >-
+      Cite only lines you read in this attempt with the read tool, where each
+      cited line showed its [source-line N] number, and read a file before you
+      edit it; lines you did not read, or read only after editing that file,
+      cannot be cited.
+    operator:
+      kind: correct
+      meaning: >-
+        The step cited lines its read calls in that attempt never showed, so
+        the cited text was not observed, and its bounded retries did not
+        correct it.
+      next: >-
+        Inspect the saved run's attempts and their read calls, then start a new
+        run. If the model keeps citing without reading, record it as
+        model-compatibility evidence.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/source-citation/unobserved.json
+    docs: source-citation-unobserved
+
+  - code: source-citation-minted-max-chars-bound
+    locations:
+      - $.criteria
+      - $.evidence
+    kind: size
+    retry: model-correctable
+    reason: >-
+      The cited ranges together span more source text than one artifact may
+      carry; the model can cite narrower ranges.
+    statement: >-
+      Cite the narrowest lines that support each judgment. Together, the cited
+      lines may hold at most {limit:sourceCitation.mintedMaxChars} characters
+      of source text.
+    operator:
+      kind: correct
+      meaning: >-
+        The step's cited line ranges together exceeded
+        sourceCitation.mintedMaxChars characters of minted source text, and its
+        bounded retries did not narrow them.
+      next: >-
+        Inspect the saved run's attempts, then start a new run. Raising
+        sourceCitation.mintedMaxChars in config/limits/sourceCitation.yaml is a
+        re-qualification of the summary readers, not a retry.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/source-citation/minted-max-chars-bound.json
+    docs: source-citation-minted-max-chars-bound

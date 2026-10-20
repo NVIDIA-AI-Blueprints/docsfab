@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/documentation-request.schema.json",
+  "title": "Documentation request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["request_id", "task", "document_type", "profile", "output_path"],
+  "properties": {
+    "request_id": {"type": "string", "minLength": 1},
+    "task": {"enum": ["create", "update", "review", "evaluate"]},
+    "document_type": {"enum": ["task-guide", "concept-guide", "api-reference"]},
+    "profile": {"type": "string", "minLength": 1},
+    "repository": {"type": "string"},
+    "revision": {"type": "string"},
+    "output_path": {"type": "string", "minLength": 1},
+    "request_summary": {"type": "string", "minLength": 1}
+  }
+}

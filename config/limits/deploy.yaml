@@ -1,0 +1,87 @@
+# DocsFab operational limits owned by the `deploy` name prefix.
+# Registered in config/limits.yaml; every limit here is named `deploy.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: deploy.diskHeadroomOverBytes
+    value: 1342177280
+    unit: bytes
+    scope: per-host
+    warnAt: 1
+    override: DOCSFAB_DEPLOY_DISK_HEADROOM_OVER_BYTES
+    min: 1
+    max: 1342177280
+    refusal: deploy-disk-headroom-over-bytes-bound
+    remediation: Lower DOCSFAB_DEPLOY_DISK_HEADROOM_OVER_BYTES so effective warn still exceeds over, or raise deploy.diskHeadroomOverBytes in config/limits/deploy.yaml. Keep deploy.diskHeadroomWarnBytes strictly greater than this floor.
+    rationale: Absolute available-bytes floor at which docsfab-status reports disk headroom over (exit 3, never exit 1). 1342177280 is 1.25 GiB, the critical threshold already used by service-status.sh after the pilot host reached ~1.06 GiB free at 98% used. Percent-used is not the signal; available bytes are. A host override may only lower it. Effective deploy.diskHeadroomWarnBytes must exceed this floor.
+
+  - name: deploy.diskHeadroomWarnBytes
+    value: 3221225472
+    unit: bytes
+    scope: per-host
+    warnAt: 1
+    override: DOCSFAB_DEPLOY_DISK_HEADROOM_WARN_BYTES
+    min: 1
+    max: 3221225472
+    refusal: deploy-disk-headroom-warn-bytes-bound
+    remediation: Lower DOCSFAB_DEPLOY_DISK_HEADROOM_WARN_BYTES so effective warn still exceeds over, or raise deploy.diskHeadroomWarnBytes in config/limits/deploy.yaml. The warn floor must stay strictly greater than deploy.diskHeadroomOverBytes.
+    rationale: Absolute available-bytes floor at which docsfab-status reports disk headroom warn (exit 3). 3221225472 is 3 GiB, the early-warning threshold already used by service-status.sh so one release or core-tooling refresh still fits. A host override may only lower it. Effective warn must exceed deploy.diskHeadroomOverBytes.
+
+  - name: deploy.diskFreeMinBytes
+    value: 536870887
+    unit: bytes
+    scope: per-host
+    warnAt: 1
+    override: DOCSFAB_DEPLOY_DISK_FREE_MIN_BYTES
+    min: 536870887
+    max: 536870887
+    refusal: deploy-disk-free-min-bytes-bound
+    remediation: Free space on the recovery staging volume, then retry the backup.
+    rationale: First backup staging disk-free precondition. Sized to recovery.logicalObjectMaxBytes so one logical object can be staged. Available bytes at this floor pass; one byte less refuses rather than filling the volume. Catalog min is that one-logical-object floor. A host can restate the floor through DOCSFAB_DEPLOY_DISK_FREE_MIN_BYTES in recovery.env; install, systemd, the env -i backup transition, and backup start parse that override fail-fast. A value below one logical object refuses.
+
+  - name: deploy.hostTimeoutStopSeconds
+    value: 30
+    unit: seconds
+    scope: sealed
+    warnAt: 1
+    override: null
+    min: 1
+    max: 30
+    refusal: deploy-host-timeout-stop-seconds-bound
+    remediation: Keep TimeoutStopSec on docsfab-host.service equal to this named value. Changing it is a deployment change, not a live edit.
+    rationale: Fixed release invariant equal to TimeoutStopSec on docsfab-host.service. T2 audits that unit and the unset timeouts on docsfab-recovery.service without changing those defaults. Host configuration cannot override it.
+
+  - name: deploy.statusProbeTimeoutSeconds
+    value: 5
+    unit: seconds
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_STATUS_PROBE_TIMEOUT_SECONDS
+    min: 1
+    max: 9007199254740991
+    refusal: status-probe-timeout-invalid
+    remediation: Configure a positive whole-second observation deadline within the supported safe-integer domain; a timed-out probe reports unavailable health.
+    rationale: Preserves the five-second observation policy. On the supported 64-bit hosts curl secs2ms accepts LONG_MAX divided by 1000 seconds, which exceeds JavaScript MAX_SAFE_INTEGER; safe-integer seconds are therefore the narrower configuration domain. This is an observation deadline, not a job allowance or retry delay.
+
+  - name: deploy.statusLogLines
+    value: 9007199254740991
+    unit: count
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_STATUS_LOG_LINES
+    min: 1
+    max: 9007199254740991
+    refusal: status-log-lines-invalid
+    remediation: Select a positive safe-integer line count with --log-lines or DOCSFAB_STATUS_LOG_LINES; logs remain streamed by tail from the selected regular file.
+    rationale: Diagnostic output allowance at the supported configuration maximum. The deployed 64-bit tail accepts this count without an arbitrary 1000-line ceiling; JavaScript's exact integer domain is narrower than tail's signed 64-bit count. This does not change log contents, custody or credential screening.
+
+  - name: deploy.coreLineageDocumentMaxBytes
+    value: 131072
+    unit: bytes
+    scope: sealed
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 131072
+    refusal: deploy-core-lineage-document-max-bytes-bound
+    remediation: Inspect the named document in the approved root session; the installer never writes one this large. Raise deploy.coreLineageDocumentMaxBytes in config/limits/deploy.yaml only through a reviewed change, then refresh the core tooling from that clone.
+    rationale: Largest document the installer's core-tooling lineage program reads before parsing it - a lineage receipt, a recovery-hook or core artifact transition backup plan, the feedback publication persistence receipt, and the deployment state. Each is a fixed-shape record of a few kilobytes that grows only with the core artifact count, so 128 KiB bounds a corrupt or hostile file without refusing any document the installer writes. The installer reads the value from the generated shell mirror installed beside it and has no default. The early warning fires on stderr at warnAt of the bound. Sealed, because a host override could make an already sealed lineage unreadable.

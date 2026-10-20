@@ -1,0 +1,317 @@
+# DocsFab operational limits owned by the `compositionExecution` name prefix.
+# Registered in config/limits.yaml; every limit here is named `compositionExecution.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: compositionExecution.callsPerLease
+    value: 100
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_COMPOSITION_EXECUTION_CALLS_PER_LEASE
+    min: 1
+    max: 100
+    refusal: composition-execution-calls-per-lease-bound
+    remediation: Lower DOCSFAB_COMPOSITION_EXECUTION_CALLS_PER_LEASE or raise this limit in config/limits/compositionExecution.yaml.
+    rationale: Host execution envelope; mirrors EXECUTION_LEASE_DEFAULTS.callsPerLease. Override may only lower it.
+
+  - name: compositionExecution.maxLeases
+    value: 4
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_COMPOSITION_EXECUTION_MAX_LEASES
+    min: 1
+    max: 4
+    refusal: composition-execution-max-leases-bound
+    remediation: Lower DOCSFAB_COMPOSITION_EXECUTION_MAX_LEASES or raise this limit in config/limits/compositionExecution.yaml.
+    rationale: Host execution envelope; mirrors EXECUTION_LEASE_DEFAULTS.maxLeases. Override may only lower it.
+
+  - name: compositionExecution.maxToolCallsPerStep
+    value: 400
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_COMPOSITION_EXECUTION_MAX_TOOL_CALLS_PER_STEP
+    min: 1
+    max: 400
+    refusal: composition-execution-max-tool-calls-per-step-bound
+    remediation: Lower DOCSFAB_COMPOSITION_EXECUTION_MAX_TOOL_CALLS_PER_STEP or raise this limit in config/limits/compositionExecution.yaml.
+    rationale: Host execution envelope; mirrors EXECUTION_LEASE_DEFAULTS.hardToolCallCeiling. Override may only lower it.
+
+  - name: compositionExecution.maxCumulativeInputTokens
+    value: 16777216
+    unit: tokens
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_COMPOSITION_EXECUTION_MAX_CUMULATIVE_INPUT_TOKENS
+    min: 1
+    max: 16777216
+    refusal: composition-execution-max-cumulative-input-tokens-bound
+    remediation: Lower the step's input tokens or raise DOCSFAB_COMPOSITION_EXECUTION_MAX_CUMULATIVE_INPUT_TOKENS within max.
+    rationale: Cumulative input allowance for one composition step attempt. Defaults to the existing admitted maximum; operators may lower it. The former 1,600,000-token default came from the August 27 measured P100 with headroom.
+    docValue: 16,777,216 tokens
+    docSummary: Cumulative input for one step attempt.
+
+  - name: compositionExecution.maxCumulativeOutputTokens
+    value: 4194304
+    unit: tokens
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_COMPOSITION_EXECUTION_MAX_CUMULATIVE_OUTPUT_TOKENS
+    min: 1
+    max: 4194304
+    refusal: composition-execution-max-cumulative-output-tokens-bound
+    remediation: Lower the step's output tokens or raise DOCSFAB_COMPOSITION_EXECUTION_MAX_CUMULATIVE_OUTPUT_TOKENS within max.
+    rationale: Cumulative output allowance for one composition step attempt. Defaults to the existing admitted maximum; per-request composition limits and attempt deadlines still apply. Operators may lower it.
+    docValue: 4,194,304 tokens
+    docSummary: Cumulative output for one step attempt.
+
+  - name: compositionExecution.maxProviderTurns
+    value: 512
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_COMPOSITION_EXECUTION_MAX_PROVIDER_TURNS
+    min: 2
+    max: 512
+    refusal: composition-execution-max-provider-turns-bound
+    remediation: Lower DOCSFAB_COMPOSITION_EXECUTION_MAX_PROVIDER_TURNS or raise this limit in config/limits/compositionExecution.yaml.
+    rationale: Host operational turn budget; mirrors EXECUTION_LEASE_DEFAULTS.maxProviderTurns. Override may only lower it.
+
+  - name: compositionExecution.timeoutMs
+    value: 3600000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_COMPOSITION_EXECUTION_TIMEOUT_MS
+    min: 1
+    max: 3600000
+    refusal: composition-execution-timeout-ms-bound
+    remediation: Shorten the attempt or raise DOCSFAB_COMPOSITION_EXECUTION_TIMEOUT_MS within max.
+    rationale: Host timer for one composition step attempt, defaulting to the existing admitted maximum. Candidate, composition, and package timeout ceilings still clamp the effective timer.
+    docValue: 3,600,000 ms (1 hour)
+    docSummary: Host ceiling for one step attempt; a narrower installed composition still wins.
+
+  - name: compositionExecution.maxResponseBytes
+    value: 4194304
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_COMPOSITION_EXECUTION_MAX_RESPONSE_BYTES
+    min: 1
+    max: 4194304
+    refusal: composition-execution-max-response-bytes-bound
+    remediation: Reduce the provider response size or raise this limit in config/limits/compositionExecution.yaml.
+    rationale: Host response ceiling; override may only lower it.
+
+  - name: compositionExecution.answerNowElapsedShareBasisPoints
+    value: 4000
+    unit: basis-points
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_COMPOSITION_EXECUTION_ANSWER_NOW_ELAPSED_SHARE_BASIS_POINTS
+    min: 1000
+    max: 4000
+    refusal: composition-execution-answer-now-elapsed-share-basis-points-bound
+    remediation: Set DOCSFAB_COMPOSITION_EXECUTION_ANSWER_NOW_ELAPSED_SHARE_BASIS_POINTS to an integer from 1000 through 4000.
+    rationale: Share of one composition step attempt a judgment step may spend reading before the host stops offering tools and asks for the answer it already has. Basis points of the effective attempt timer, so the share follows whatever timer the installed composition seals. Measured basis, 2026-09-25 review probe attempt 1 of the provisional judgment step - 160,765 output tokens over 24 turns inside a 30-minute attempt, 89 tokens per second sustained including tool round trips - and the two later attempts of the same step, which answered in 11 and 2 turns once the host told them to. At the default the answer turn and its one continuation still fit the remainder at that measured rate. Override may only lower it, so an operator can force the answer sooner but never later; the floor keeps a step from being asked to answer before it has read anything.
+    docValue: 4,000 basis points (40% of the attempt)
+    docSummary: Reading share of one judgment step attempt before the host asks for the answer.
+
+  - name: compositionExecution.answerPlan.defaultTokens
+    value: 11800
+    unit: tokens
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_COMPOSITION_EXECUTION_ANSWER_PLAN_DEFAULT_TOKENS
+    min: 11800
+    max: 65536
+    refusal: composition-execution-answer-plan-tokens-bound
+    remediation: Set DOCSFAB_COMPOSITION_EXECUTION_ANSWER_PLAN_DEFAULT_TOKENS to an integer from 11800 through 65536, or declare an answer plan entry for the step in config/limits/compositionExecution.yaml.
+    rationale: Output tokens the answer plan of a step with no compositionExecution.answerPlan entry of its own reserves for the answer the host asks for inside its attempt. docsfab doctor --limits lists every step that uses it, so the fallback is never silent. 11,800 is the largest whole structured answer the closed-schema answer records decision (#1961, section 4.2) plans with, so an unmeasured step gets the most conservative plan, the earliest ask. It and the per-step entries replaced a fixed 1,100,000 ms reserve (two 32,768-token turns at 60 tokens per second) that exceeded the 300,000 ms attempt timer 13 of 16 sealed compositions carry, so the answer-now reading share never armed there (#1978). Override may only raise it, which moves the ask earlier; the maximum is the former reserve's two 32,768-token turns. A reserve at or above the attempt timer leaves the budget unarmed, and doctor names that.
+    docValue: 11,800 tokens
+    docSummary: Planned answer size for a step with no measured plan of its own; docsfab doctor --limits lists those steps.
+
+  - name: compositionExecution.answerPlan.assessReadinessTokens
+    value: 2300
+    unit: tokens
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_COMPOSITION_EXECUTION_ANSWER_PLAN_ASSESS_READINESS_TOKENS
+    min: 2300
+    max: 65536
+    refusal: composition-execution-answer-plan-tokens-bound
+    remediation: Set DOCSFAB_COMPOSITION_EXECUTION_ANSWER_PLAN_ASSESS_READINESS_TOKENS to an integer from 2300 through 65536.
+    rationale: Output tokens the answer plan of the assess-readiness step reserves for the answer the host asks for inside its attempt. The step's answer-now reserve is this answer's decode time at compositionExecution.answerNowDecodeTokensPerSecond plus one compositionExecution.answerNowTurnLatencyMs for the answer turn and each length-stop continuation, capped at what those turns can carry under the bound composition's per-turn output limit (#1978). Measured basis, the answerOutputTokens of every succeeded attempt of this step in the retained run index of the r9-measure lane (2026-10-07; 102 runs from 2026-09-30 through 2026-10-06 across Super, Ultra, gpt-6-sol and gpt-oss on build.nvidia.com and the inference hub), read with docsfab runs query --group-by stepId,answerOutputTokens. answerOutputTokens sums the answer turn and any continuation. Only succeeded attempts are counted, so an answer that a cut or a refusal ended is not in the basis. 9 attempts, p50 1,339, p90 and max 1,503 tokens; 1.5 times the maximum, rounded up to 100. Override may only raise it, which moves the ask earlier. A step with no entry of its own uses compositionExecution.answerPlan.defaultTokens, and docsfab doctor --limits lists which steps do.
+
+  - name: compositionExecution.answerPlan.assessReleaseDocumentationReadinessTokens
+    value: 5500
+    unit: tokens
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_COMPOSITION_EXECUTION_ANSWER_PLAN_ASSESS_RELEASE_DOCUMENTATION_READINESS_TOKENS
+    min: 5500
+    max: 65536
+    refusal: composition-execution-answer-plan-tokens-bound
+    remediation: Set DOCSFAB_COMPOSITION_EXECUTION_ANSWER_PLAN_ASSESS_RELEASE_DOCUMENTATION_READINESS_TOKENS to an integer from 5500 through 65536.
+    rationale: Output tokens the answer plan of the assess-release-documentation-readiness step reserves for the answer the host asks for inside its attempt. The step's answer-now reserve is this answer's decode time at compositionExecution.answerNowDecodeTokensPerSecond plus one compositionExecution.answerNowTurnLatencyMs for the answer turn and each length-stop continuation, capped at what those turns can carry under the bound composition's per-turn output limit (#1978). Measured basis, the answerOutputTokens of every succeeded attempt of this step in the retained run index of the r9-measure lane (2026-10-07; 102 runs from 2026-09-30 through 2026-10-06 across Super, Ultra, gpt-6-sol and gpt-oss on build.nvidia.com and the inference hub), read with docsfab runs query --group-by stepId,answerOutputTokens. answerOutputTokens sums the answer turn and any continuation. Only succeeded attempts are counted, so an answer that a cut or a refusal ended is not in the basis. 11 attempts, p50 1,447, p90 2,631, max 3,645 tokens; 1.5 times the maximum, rounded up to 100. Override may only raise it, which moves the ask earlier. A step with no entry of its own uses compositionExecution.answerPlan.defaultTokens, and docsfab doctor --limits lists which steps do.
+
+  - name: compositionExecution.answerPlan.auditDocumentationTokens
+    value: 5900
+    unit: tokens
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_COMPOSITION_EXECUTION_ANSWER_PLAN_AUDIT_DOCUMENTATION_TOKENS
+    min: 5900
+    max: 65536
+    refusal: composition-execution-answer-plan-tokens-bound
+    remediation: Set DOCSFAB_COMPOSITION_EXECUTION_ANSWER_PLAN_AUDIT_DOCUMENTATION_TOKENS to an integer from 5900 through 65536.
+    rationale: Output tokens the answer plan of the audit-documentation step reserves for the answer the host asks for inside its attempt. The step's answer-now reserve is this answer's decode time at compositionExecution.answerNowDecodeTokensPerSecond plus one compositionExecution.answerNowTurnLatencyMs for the answer turn and each length-stop continuation, capped at what those turns can carry under the bound composition's per-turn output limit (#1978). Measured basis, the answerOutputTokens of every succeeded attempt of this step in the retained run index of the r9-measure lane (2026-10-07; 102 runs from 2026-09-30 through 2026-10-06 across Super, Ultra, gpt-6-sol and gpt-oss on build.nvidia.com and the inference hub), read with docsfab runs query --group-by stepId,answerOutputTokens. answerOutputTokens sums the answer turn and any continuation. Only succeeded attempts are counted, so an answer that a cut or a refusal ended is not in the basis. 45 attempts, p50 1,103, p90 2,849, max 3,890 tokens; 1.5 times the maximum, rounded up to 100. Override may only raise it, which moves the ask earlier. A step with no entry of its own uses compositionExecution.answerPlan.defaultTokens, and docsfab doctor --limits lists which steps do.
+
+  - name: compositionExecution.answerPlan.deriveSourceObligationsTokens
+    value: 4700
+    unit: tokens
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_COMPOSITION_EXECUTION_ANSWER_PLAN_DERIVE_SOURCE_OBLIGATIONS_TOKENS
+    min: 4700
+    max: 65536
+    refusal: composition-execution-answer-plan-tokens-bound
+    remediation: Set DOCSFAB_COMPOSITION_EXECUTION_ANSWER_PLAN_DERIVE_SOURCE_OBLIGATIONS_TOKENS to an integer from 4700 through 65536.
+    rationale: Output tokens the answer plan of the derive-source-obligations step reserves for the answer the host asks for inside its attempt. The step's answer-now reserve is this answer's decode time at compositionExecution.answerNowDecodeTokensPerSecond plus one compositionExecution.answerNowTurnLatencyMs for the answer turn and each length-stop continuation, capped at what those turns can carry under the bound composition's per-turn output limit (#1978). Measured basis, the answerOutputTokens of every succeeded attempt of this step in the retained run index of the r9-measure lane (2026-10-07; 102 runs from 2026-09-30 through 2026-10-06 across Super, Ultra, gpt-6-sol and gpt-oss on build.nvidia.com and the inference hub), read with docsfab runs query --group-by stepId,answerOutputTokens. answerOutputTokens sums the answer turn and any continuation. Only succeeded attempts are counted, so an answer that a cut or a refusal ended is not in the basis. 61 attempts, p50 1,613, p90 2,788, max 3,123 tokens; 1.5 times the maximum, rounded up to 100. Override may only raise it, which moves the ask earlier. A step with no entry of its own uses compositionExecution.answerPlan.defaultTokens, and docsfab doctor --limits lists which steps do.
+
+  - name: compositionExecution.answerPlan.evaluateDocumentQualityTokens
+    value: 11800
+    unit: tokens
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_COMPOSITION_EXECUTION_ANSWER_PLAN_EVALUATE_DOCUMENT_QUALITY_TOKENS
+    min: 11800
+    max: 65536
+    refusal: composition-execution-answer-plan-tokens-bound
+    remediation: Set DOCSFAB_COMPOSITION_EXECUTION_ANSWER_PLAN_EVALUATE_DOCUMENT_QUALITY_TOKENS to an integer from 11800 through 65536.
+    rationale: Output tokens the answer plan of the evaluate-document-quality step reserves for the answer the host asks for inside its attempt. The step's answer-now reserve is this answer's decode time at compositionExecution.answerNowDecodeTokensPerSecond plus one compositionExecution.answerNowTurnLatencyMs for the answer turn and each length-stop continuation, capped at what those turns can carry under the bound composition's per-turn output limit (#1978). Measured basis, the answerOutputTokens of every succeeded attempt of this step in the retained run index of the r9-measure lane (2026-10-07; 102 runs from 2026-09-30 through 2026-10-06 across Super, Ultra, gpt-6-sol and gpt-oss on build.nvidia.com and the inference hub), read with docsfab runs query --group-by stepId,answerOutputTokens. answerOutputTokens sums the answer turn and any continuation. Only succeeded attempts are counted, so an answer that a cut or a refusal ended is not in the basis. 27 attempts, p50 5,584, p90 7,504, max 8,970 tokens. The value is not 1.5 times the maximum; it is the largest whole structured answer the closed-schema answer records decision (#1961, section 4.2) plans step 8 with, at the 2.86 compact-JSON characters per token floor, 1.3 times the measured maximum. Override may only raise it, which moves the ask earlier. A step with no entry of its own uses compositionExecution.answerPlan.defaultTokens, and docsfab doctor --limits lists which steps do.
+
+  - name: compositionExecution.answerPlan.planDocumentationTokens
+    value: 2500
+    unit: tokens
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_COMPOSITION_EXECUTION_ANSWER_PLAN_PLAN_DOCUMENTATION_TOKENS
+    min: 2500
+    max: 65536
+    refusal: composition-execution-answer-plan-tokens-bound
+    remediation: Set DOCSFAB_COMPOSITION_EXECUTION_ANSWER_PLAN_PLAN_DOCUMENTATION_TOKENS to an integer from 2500 through 65536.
+    rationale: Output tokens the answer plan of the plan-documentation step reserves for the answer the host asks for inside its attempt. The step's answer-now reserve is this answer's decode time at compositionExecution.answerNowDecodeTokensPerSecond plus one compositionExecution.answerNowTurnLatencyMs for the answer turn and each length-stop continuation, capped at what those turns can carry under the bound composition's per-turn output limit (#1978). Measured basis, the answerOutputTokens of every succeeded attempt of this step in the retained run index of the r9-measure lane (2026-10-07; 102 runs from 2026-09-30 through 2026-10-06 across Super, Ultra, gpt-6-sol and gpt-oss on build.nvidia.com and the inference hub), read with docsfab runs query --group-by stepId,answerOutputTokens. answerOutputTokens sums the answer turn and any continuation. Only succeeded attempts are counted, so an answer that a cut or a refusal ended is not in the basis. 36 attempts, p50 560, p90 1,315, max 1,621 tokens; 1.5 times the maximum, rounded up to 100. Refused runaway plans of 18,428 to 65,536 tokens are not answers and are not planned for (#1961 follow-up 3). Override may only raise it, which moves the ask earlier. A step with no entry of its own uses compositionExecution.answerPlan.defaultTokens, and docsfab doctor --limits lists which steps do.
+
+  - name: compositionExecution.answerPlan.provisionalRevisedTechnicalVerificationTokens
+    value: 3800
+    unit: tokens
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_COMPOSITION_EXECUTION_ANSWER_PLAN_PROVISIONAL_REVISED_TECHNICAL_VERIFICATION_TOKENS
+    min: 3800
+    max: 65536
+    refusal: composition-execution-answer-plan-tokens-bound
+    remediation: Set DOCSFAB_COMPOSITION_EXECUTION_ANSWER_PLAN_PROVISIONAL_REVISED_TECHNICAL_VERIFICATION_TOKENS to an integer from 3800 through 65536.
+    rationale: Output tokens the answer plan of the provisional-revised-technical-verification step reserves for the answer the host asks for inside its attempt. The step's answer-now reserve is this answer's decode time at compositionExecution.answerNowDecodeTokensPerSecond plus one compositionExecution.answerNowTurnLatencyMs for the answer turn and each length-stop continuation, capped at what those turns can carry under the bound composition's per-turn output limit (#1978). Measured basis, the answerOutputTokens of every succeeded attempt of this step in the retained run index of the r9-measure lane (2026-10-07; 102 runs from 2026-09-30 through 2026-10-06 across Super, Ultra, gpt-6-sol and gpt-oss on build.nvidia.com and the inference hub), read with docsfab runs query --group-by stepId,answerOutputTokens. answerOutputTokens sums the answer turn and any continuation. Only succeeded attempts are counted, so an answer that a cut or a refusal ended is not in the basis. 3 attempts, p50 2,436, max 2,526 tokens; 1.5 times the maximum, rounded up to 100. Three attempts are a thin basis; re-qualification replaces it. Override may only raise it, which moves the ask earlier. A step with no entry of its own uses compositionExecution.answerPlan.defaultTokens, and docsfab doctor --limits lists which steps do.
+
+  - name: compositionExecution.answerPlan.provisionalTechnicalVerificationTokens
+    value: 8200
+    unit: tokens
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_COMPOSITION_EXECUTION_ANSWER_PLAN_PROVISIONAL_TECHNICAL_VERIFICATION_TOKENS
+    min: 8200
+    max: 65536
+    refusal: composition-execution-answer-plan-tokens-bound
+    remediation: Set DOCSFAB_COMPOSITION_EXECUTION_ANSWER_PLAN_PROVISIONAL_TECHNICAL_VERIFICATION_TOKENS to an integer from 8200 through 65536.
+    rationale: Output tokens the answer plan of the provisional-technical-verification step reserves for the answer the host asks for inside its attempt. The step's answer-now reserve is this answer's decode time at compositionExecution.answerNowDecodeTokensPerSecond plus one compositionExecution.answerNowTurnLatencyMs for the answer turn and each length-stop continuation, capped at what those turns can carry under the bound composition's per-turn output limit (#1978). Measured basis, the answerOutputTokens of every succeeded attempt of this step in the retained run index of the r9-measure lane (2026-10-07; 102 runs from 2026-09-30 through 2026-10-06 across Super, Ultra, gpt-6-sol and gpt-oss on build.nvidia.com and the inference hub), read with docsfab runs query --group-by stepId,answerOutputTokens. answerOutputTokens sums the answer turn and any continuation. Only succeeded attempts are counted, so an answer that a cut or a refusal ended is not in the basis. 39 attempts, p50 1,185, p90 2,576, max 3,476 tokens. The value is not 1.5 times that maximum; the 2026-09-30 hosted Nemotron evidence report records a Super provisional judgment over 3 obligations and 5 pages that reached its 4,096-token limit after one continuation, so at least 8,192 tokens, and 8,200 covers it. On a 300,000 ms attempt the reading share still governs at this value. Override may only raise it, which moves the ask earlier. A step with no entry of its own uses compositionExecution.answerPlan.defaultTokens, and docsfab doctor --limits lists which steps do.
+
+  - name: compositionExecution.answerPlan.reviewDocumentationTokens
+    value: 5500
+    unit: tokens
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_COMPOSITION_EXECUTION_ANSWER_PLAN_REVIEW_DOCUMENTATION_TOKENS
+    min: 5500
+    max: 65536
+    refusal: composition-execution-answer-plan-tokens-bound
+    remediation: Set DOCSFAB_COMPOSITION_EXECUTION_ANSWER_PLAN_REVIEW_DOCUMENTATION_TOKENS to an integer from 5500 through 65536.
+    rationale: Output tokens the answer plan of the review-documentation step reserves for the answer the host asks for inside its attempt. The step's answer-now reserve is this answer's decode time at compositionExecution.answerNowDecodeTokensPerSecond plus one compositionExecution.answerNowTurnLatencyMs for the answer turn and each length-stop continuation, capped at what those turns can carry under the bound composition's per-turn output limit (#1978). Measured basis, the answerOutputTokens of every succeeded attempt of this step in the retained run index of the r9-measure lane (2026-10-07; 102 runs from 2026-09-30 through 2026-10-06 across Super, Ultra, gpt-6-sol and gpt-oss on build.nvidia.com and the inference hub), read with docsfab runs query --group-by stepId,answerOutputTokens. answerOutputTokens sums the answer turn and any continuation. Only succeeded attempts are counted, so an answer that a cut or a refusal ended is not in the basis. 55 attempts, p50 604, p90 1,495, max 3,665 tokens; 1.5 times the maximum, rounded up to 100. Override may only raise it, which moves the ask earlier. A step with no entry of its own uses compositionExecution.answerPlan.defaultTokens, and docsfab doctor --limits lists which steps do.
+
+  - name: compositionExecution.answerPlan.reviewRevisedDocumentationTokens
+    value: 2300
+    unit: tokens
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_COMPOSITION_EXECUTION_ANSWER_PLAN_REVIEW_REVISED_DOCUMENTATION_TOKENS
+    min: 2300
+    max: 65536
+    refusal: composition-execution-answer-plan-tokens-bound
+    remediation: Set DOCSFAB_COMPOSITION_EXECUTION_ANSWER_PLAN_REVIEW_REVISED_DOCUMENTATION_TOKENS to an integer from 2300 through 65536.
+    rationale: Output tokens the answer plan of the review-revised-documentation step reserves for the answer the host asks for inside its attempt. The step's answer-now reserve is this answer's decode time at compositionExecution.answerNowDecodeTokensPerSecond plus one compositionExecution.answerNowTurnLatencyMs for the answer turn and each length-stop continuation, capped at what those turns can carry under the bound composition's per-turn output limit (#1978). Measured basis, the answerOutputTokens of every succeeded attempt of this step in the retained run index of the r9-measure lane (2026-10-07; 102 runs from 2026-09-30 through 2026-10-06 across Super, Ultra, gpt-6-sol and gpt-oss on build.nvidia.com and the inference hub), read with docsfab runs query --group-by stepId,answerOutputTokens. answerOutputTokens sums the answer turn and any continuation. Only succeeded attempts are counted, so an answer that a cut or a refusal ended is not in the basis. 3 attempts, p50 762, max 1,480 tokens; 1.5 times the maximum, rounded up to 100. Three attempts are a thin basis; re-qualification replaces it. Override may only raise it, which moves the ask earlier. A step with no entry of its own uses compositionExecution.answerPlan.defaultTokens, and docsfab doctor --limits lists which steps do.
+
+  - name: compositionExecution.answerPlan.testAudienceUnderstandingTokens
+    value: 2900
+    unit: tokens
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_COMPOSITION_EXECUTION_ANSWER_PLAN_TEST_AUDIENCE_UNDERSTANDING_TOKENS
+    min: 2900
+    max: 65536
+    refusal: composition-execution-answer-plan-tokens-bound
+    remediation: Set DOCSFAB_COMPOSITION_EXECUTION_ANSWER_PLAN_TEST_AUDIENCE_UNDERSTANDING_TOKENS to an integer from 2900 through 65536.
+    rationale: Output tokens the answer plan of the test-audience-understanding step reserves for the answer the host asks for inside its attempt. The step's answer-now reserve is this answer's decode time at compositionExecution.answerNowDecodeTokensPerSecond plus one compositionExecution.answerNowTurnLatencyMs for the answer turn and each length-stop continuation, capped at what those turns can carry under the bound composition's per-turn output limit (#1978). Measured basis, the answerOutputTokens of every succeeded attempt of this step in the retained run index of the r9-measure lane (2026-10-07; 102 runs from 2026-09-30 through 2026-10-06 across Super, Ultra, gpt-6-sol and gpt-oss on build.nvidia.com and the inference hub), read with docsfab runs query --group-by stepId,answerOutputTokens. answerOutputTokens sums the answer turn and any continuation. Only succeeded attempts are counted, so an answer that a cut or a refusal ended is not in the basis. 46 attempts, p50 385, p90 997, max 1,887 tokens; 1.5 times the maximum, rounded up to 100. Override may only raise it, which moves the ask earlier. A step with no entry of its own uses compositionExecution.answerPlan.defaultTokens, and docsfab doctor --limits lists which steps do.
+
+  - name: compositionExecution.answerPlan.verifyRevisedTechnicalAccuracyTokens
+    value: 3400
+    unit: tokens
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_COMPOSITION_EXECUTION_ANSWER_PLAN_VERIFY_REVISED_TECHNICAL_ACCURACY_TOKENS
+    min: 3400
+    max: 65536
+    refusal: composition-execution-answer-plan-tokens-bound
+    remediation: Set DOCSFAB_COMPOSITION_EXECUTION_ANSWER_PLAN_VERIFY_REVISED_TECHNICAL_ACCURACY_TOKENS to an integer from 3400 through 65536.
+    rationale: Output tokens the answer plan of the verify-revised-technical-accuracy step reserves for the answer the host asks for inside its attempt. The step's answer-now reserve is this answer's decode time at compositionExecution.answerNowDecodeTokensPerSecond plus one compositionExecution.answerNowTurnLatencyMs for the answer turn and each length-stop continuation, capped at what those turns can carry under the bound composition's per-turn output limit (#1978). Measured basis, the answerOutputTokens of every succeeded attempt of this step in the retained run index of the r9-measure lane (2026-10-07; 102 runs from 2026-09-30 through 2026-10-06 across Super, Ultra, gpt-6-sol and gpt-oss on build.nvidia.com and the inference hub), read with docsfab runs query --group-by stepId,answerOutputTokens. answerOutputTokens sums the answer turn and any continuation. Only succeeded attempts are counted, so an answer that a cut or a refusal ended is not in the basis. 3 attempts, p50 2,031, max 2,214 tokens; 1.5 times the maximum, rounded up to 100. Three attempts are a thin basis; re-qualification replaces it. Override may only raise it, which moves the ask earlier. A step with no entry of its own uses compositionExecution.answerPlan.defaultTokens, and docsfab doctor --limits lists which steps do.
+
+  - name: compositionExecution.answerPlan.verifyTechnicalAccuracyTokens
+    value: 6300
+    unit: tokens
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_COMPOSITION_EXECUTION_ANSWER_PLAN_VERIFY_TECHNICAL_ACCURACY_TOKENS
+    min: 6300
+    max: 65536
+    refusal: composition-execution-answer-plan-tokens-bound
+    remediation: Set DOCSFAB_COMPOSITION_EXECUTION_ANSWER_PLAN_VERIFY_TECHNICAL_ACCURACY_TOKENS to an integer from 6300 through 65536.
+    rationale: Output tokens the answer plan of the verify-technical-accuracy step reserves for the answer the host asks for inside its attempt. The step's answer-now reserve is this answer's decode time at compositionExecution.answerNowDecodeTokensPerSecond plus one compositionExecution.answerNowTurnLatencyMs for the answer turn and each length-stop continuation, capped at what those turns can carry under the bound composition's per-turn output limit (#1978). Measured basis, the answerOutputTokens of every succeeded attempt of this step in the retained run index of the r9-measure lane (2026-10-07; 102 runs from 2026-09-30 through 2026-10-06 across Super, Ultra, gpt-6-sol and gpt-oss on build.nvidia.com and the inference hub), read with docsfab runs query --group-by stepId,answerOutputTokens. answerOutputTokens sums the answer turn and any continuation. Only succeeded attempts are counted, so an answer that a cut or a refusal ended is not in the basis. 53 attempts, p50 1,505, p90 3,456, max 4,189 tokens; 1.5 times the maximum, rounded up to 100. Override may only raise it, which moves the ask earlier. A step with no entry of its own uses compositionExecution.answerPlan.defaultTokens, and docsfab doctor --limits lists which steps do.
+
+  - name: compositionExecution.answerNowDecodeTokensPerSecond
+    value: 80
+    unit: tokens-per-second
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_COMPOSITION_EXECUTION_ANSWER_NOW_DECODE_TOKENS_PER_SECOND
+    min: 1
+    max: 80
+    refusal: composition-execution-answer-now-decode-tokens-per-second-bound
+    remediation: Set DOCSFAB_COMPOSITION_EXECUTION_ANSWER_NOW_DECODE_TOKENS_PER_SECOND to an integer from 1 through 80.
+    rationale: Output decode rate the answer-now reserve assumes for the forced answer. 80 tokens per second is the rate the closed-schema answer records decision (#1961, section 4.2) plans step 8 with; the 2026-09-25 review probe sustained 89 tokens per second including tool round trips. Override may only lower it, which lengthens the reserve and moves the ask earlier; a rate low enough that the reserve meets the attempt timer leaves the budget unarmed, and doctor names that. It is a declared design planning default for every composition, not a per-composition measurement; the composition re-qualification of issue 1973 replaces it with measured rates when it reseals each composition.
+    docValue: 80 tokens per second
+    docSummary: Decode rate the answer reserve assumes for a step's asked-for answer.
+
+  - name: compositionExecution.answerNowTurnLatencyMs
+    value: 25000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_COMPOSITION_EXECUTION_ANSWER_NOW_TURN_LATENCY_MS
+    min: 25000
+    max: 120000
+    refusal: composition-execution-answer-now-turn-latency-ms-bound
+    remediation: Set DOCSFAB_COMPOSITION_EXECUTION_ANSWER_NOW_TURN_LATENCY_MS to an integer from 25000 through 120000.
+    rationale: Time the answer-now reserve charges each planned answer turn before its first output token (time to first token plus per-call overhead). 25,000 ms is the top of the planning range the closed-schema answer records decision (#1961, section 4.2) uses, 8 to 25 seconds, because a forced answer turn prefills the whole reading context and values above 15 seconds are expected there. Override may only raise it, which moves the ask earlier; the maximum is two minutes, where the two planned turns alone take 240,000 ms of a 300,000 ms attempt. It is a declared design planning default for every composition, not a per-composition measurement, and it can be optimistic for long answer turns. The retained step 8 attempts measured per-turn upper bounds (attempt duration over provider turns, decode included) with a median of 9.4 seconds on Super through build.nvidia.com, and up to 118 seconds on two-turn continuation attempts at a 300,000 ms timer. The composition re-qualification of issue 1973 replaces it with measured latencies when it reseals each composition.
+    docValue: 25,000 ms (25 seconds)
+    docSummary: Latency the answer reserve charges each turn of a step's asked-for answer.

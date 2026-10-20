@@ -1,0 +1,4 @@
+interface:
+  display_name: "Register Source Thread"
+  short_description: "Register provenance-rich source lineage items"
+  default_prompt: "Use $register-source-thread to add these artifacts to stable, provenance-rich source lineages."

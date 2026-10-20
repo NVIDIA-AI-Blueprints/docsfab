@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "skillId": "plan-documentation",
+  "profiles": [
+    {
+      "id": "plain-guidance",
+      "operation": "load-guidance",
+      "contextPhase": "absent",
+      "acceptedCallerFields": [],
+      "requiredCallerFields": [],
+      "schemaReferences": [],
+      "immediateToolResultKind": "instructions-loaded",
+      "applicationResultKind": "none",
+      "participantContext": "not-applicable"
+    },
+    {
+      "id": "supporting-reference",
+      "operation": "load-supporting-reference",
+      "contextPhase": "absent",
+      "acceptedCallerFields": [],
+      "requiredCallerFields": [],
+      "schemaReferences": [],
+      "immediateToolResultKind": "reference-loaded",
+      "applicationResultKind": "none",
+      "participantContext": "not-applicable"
+    },
+    {
+      "id": "direct-reader-assessment",
+      "operation": "load-reader-assessment-guidance",
+      "contextPhase": "reader-input",
+      "acceptedCallerFields": [
+        "readerContext",
+        "readerSources",
+        "readerComparison"
+      ],
+      "requiredCallerFields": [
+        "readerContext"
+      ],
+      "schemaReferences": [
+        "reader-context.schema.json#/$defs/readerContextInputV1"
+      ],
+      "immediateToolResultKind": "instructions-plus-input-projection",
+      "applicationResultKind": "none",
+      "participantContext": "not-applicable"
+    },
+    {
+      "id": "workflow-step-reader-input",
+      "operation": "execute-workflow-step",
+      "contextPhase": "reader-input",
+      "acceptedCallerFields": [],
+      "requiredCallerFields": [],
+      "schemaReferences": [
+        "reader-context.schema.json#/$defs/readerContextInputV1"
+      ],
+      "immediateToolResultKind": "workflow-step-result",
+      "applicationResultKind": "plan-proposal",
+      "participantContext": "not-applicable"
+    },
+    {
+      "id": "workflow-step-absent",
+      "operation": "execute-workflow-step",
+      "contextPhase": "absent",
+      "acceptedCallerFields": [],
+      "requiredCallerFields": [],
+      "schemaReferences": [],
+      "immediateToolResultKind": "workflow-step-result",
+      "applicationResultKind": "plan-proposal",
+      "participantContext": "not-applicable"
+    }
+  ]
+}

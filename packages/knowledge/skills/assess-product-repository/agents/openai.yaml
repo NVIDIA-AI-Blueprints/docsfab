@@ -1,0 +1,4 @@
+interface:
+  display_name: "Assess Product Repository"
+  short_description: "Assess product evidence and documentation readiness"
+  default_prompt: "Use $assess-product-repository to map product boundaries, evidence, and documentation readiness."

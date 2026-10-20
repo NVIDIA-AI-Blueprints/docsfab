@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "name": "release-documentation-readiness",
+  "title": "Public release-documentation readiness",
+  "outcome": "A revision-bound public documentation readiness disposition and executable, non-mutating work plan.",
+  "contextPolicy": {
+    "schemaVersion": 1,
+    "steps": [
+      {
+        "stepId": "assess-release-documentation-readiness",
+        "required": true,
+        "level": "corpus",
+        "query": "expand",
+        "allowReadOnlyDegraded": true
+      }
+    ]
+  },
+  "steps": [
+    {
+      "id": "assess-release-documentation-readiness",
+      "title": "Assess public release-documentation readiness",
+      "kind": "inference",
+      "skill": "assess-documentation-readiness",
+      "mode": "read-only",
+      "prompt": "Assess public release documentation only from the supplied governed target-specific search evidence. Preserve bounded absence, incomplete inventory, unsupported probes, and unknown human decisions exactly. Never infer owners, support channels, promises, security claims, or release policy; never mutate the repository or issue tracker.",
+      "searchMode": "observe",
+      "searchPlan": "release-documentation-readiness"
+    }
+  ]
+}

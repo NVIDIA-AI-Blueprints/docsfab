@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en" data-doc-type="task-guide">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{title}}</title>
+    <link rel="stylesheet" href="base.css">
+  </head>
+  <body>
+    <main>
+      <header id="title">
+        <p>Task guide</p>
+        <h1>{{title}}</h1>
+        <p class="summary">{{summary}}</p>
+        <div class="metadata" id="metadata">
+          <span><strong>Audience:</strong> {{audience}}</span>
+          <span><strong>Release:</strong> {{release_status}}</span>
+          <span><strong>Last verified:</strong> {{last_verified}}</span>
+        </div>
+      </header>
+
+      <section id="prerequisites">
+        <h2>Prerequisites</h2>
+        {{prerequisites}}
+      </section>
+
+      <section id="procedure">
+        <h2>Procedure</h2>
+        {{procedure}}
+      </section>
+
+      <section id="expected-result">
+        <h2>Expected result</h2>
+        {{expected_result}}
+      </section>
+
+      <section id="troubleshooting">
+        <h2>Troubleshooting</h2>
+        {{troubleshooting}}
+      </section>
+
+      <section id="next-steps">
+        <h2>Next steps</h2>
+        {{next_steps}}
+      </section>
+    </main>
+  </body>
+</html>

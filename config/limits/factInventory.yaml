@@ -1,0 +1,59 @@
+# DocsFab operational limits owned by the `factInventory` name prefix.
+# Registered in config/limits.yaml; every limit here is named `factInventory.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: factInventory.maxLimitations
+    value: 64
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_FACT_INVENTORY_MAX_LIMITATIONS
+    min: 1
+    max: 256
+    refusal: fact-inventory-max-limitations-bound
+    remediation: Raise factInventory.maxLimitations in config/limits/factInventory.yaml (up to 256), or narrow the run to fewer source obligations, for example by splitting the documentation page. Retaining obligations the source does not establish is not a remedy.
+    rationale: Limitations one technical fact inventory may hold, in the source-obligation ledger, a model-authored verification result, and the host-built judgment inventory, where each rejected obligation adds one (#1254). 64 is the previous hand-declared value in both decoders. An override may raise it to 256, the fact-inventory fact ceiling, so each obligation's limitation can fit.
+  - name: factInventory.maxHostLimitations
+    value: 6
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_FACT_INVENTORY_MAX_HOST_LIMITATIONS
+    min: 1
+    max: 6
+    refusal: fact-inventory-max-host-limitations-bound
+    remediation: This bound is reached only when every technical dimension degraded at once, so read the limitations the inventory already carries; each one names the dimension that lost its source locators. Raising it above the number of technical dimensions cannot help, because the host authors at most one note per dimension.
+    rationale: Host-authored limitations one source-obligation ledger may hold above the model's own limitations bound, one per technical dimension whose cited source locators the host could not read (#1401). Without headroom a model that had already filled factInventory.maxLimitations would make the host's own degradation note fail the step it was added to keep alive. 6 is the number of technical fact dimensions, which is the most notes the host can author.
+  - name: factInventory.maxDegradedLocatorChars
+    value: 1024
+    unit: chars
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_FACT_INVENTORY_MAX_DEGRADED_LOCATOR_CHARS
+    min: 64
+    max: 1024
+    refusal: fact-inventory-max-degraded-locator-chars-bound
+    remediation: Locators past this budget are counted in the same note instead of quoted, so the note still says how many were removed. Lower it to quote less; it cannot be raised, because the quoted list must fit inside the dimension reason bound with the fixed host sentence around it.
+    rationale: Characters of removed source-locator text one host degradation note quotes before it summarises the rest as a count (#1401). The note is both a dimension reason and a limitations entry, each bounded text, so the quoted list needs a bound of its own that leaves room for the fixed host sentence around it. 1024 is half the dimension reason bound, which fits the longest sentence the host builds around it.
+  - name: factInventory.minDimensionReasonChars
+    value: 12
+    unit: chars
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_FACT_INVENTORY_MIN_DIMENSION_REASON_CHARS
+    min: 1
+    max: 256
+    refusal: fact-inventory-min-dimension-reason-chars-bound
+    remediation: Explain in the dimension reason why the dimension has the status it has, in at least this many characters, or lower factInventory.minDimensionReasonChars in config/limits/factInventory.yaml. A one-word reason cannot be acted on by the reviewer who reads it.
+    rationale: Characters a source-obligation dimension reason must hold before it counts as an answer (#1401). This is a minimum, not a capacity allowance, so raising it refuses more replies rather than admitting more text. 12 is the previous hand-declared value at this position, kept so no existing reply changes meaning; the ceiling of 256 is the smallest value factInventory.maxDimensionReasonChars may be overridden to, so the pair can never invert.
+  - name: factInventory.maxDimensionReasonChars
+    value: 2048
+    unit: chars
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_FACT_INVENTORY_MAX_DIMENSION_REASON_CHARS
+    min: 256
+    max: 4096
+    refusal: fact-inventory-max-dimension-reason-chars-bound
+    remediation: Shorten the dimension reason, or raise factInventory.maxDimensionReasonChars up to 4096, which is the bounded-text ceiling the rest of the ledger uses. A reason longer than the statement it explains is usually a sign the obligation belongs in more than one dimension.
+    rationale: Characters one source-obligation dimension reason may hold, model-authored or host-authored (#1401). 2048 is the previous hand-declared value at this position, kept so no existing reply changes meaning. It also bounds the host degradation note, which is a dimension reason, so factInventory.maxDegradedLocatorChars must stay below it with room for the fixed host sentence.

@@ -1,0 +1,17 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+
+# Prebuilt CI image for DocsFab verify jobs.
+# Until this is published to a registry and referenced from .gitlab-ci.yml,
+# jobs install bubblewrap/ripgrep via apt when missing (see before_script).
+FROM node:24.21.0-bookworm
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update -qq \
+  && apt-get install -y -qq --no-install-recommends bubblewrap ripgrep \
+  && rm -rf /var/lib/apt/lists/*
+
+# Jobs still create the unprivileged `docsfab` user and trusted TMPDIR at
+# runtime so uid/HOME semantics stay under pipeline control.
+WORKDIR /builds

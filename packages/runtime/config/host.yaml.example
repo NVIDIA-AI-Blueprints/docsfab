@@ -1,0 +1,35 @@
+schemaVersion: 1
+kind: docsfab-host-config
+# Canonical: name installed compositions per purpose. Secrets stay in secrets.env.
+# `docsfab setup --profile nvidia-inference-gpt-6-sol-pi` writes this
+# selection. Setup has no default model; bare setup never writes one.
+# activeExecutionProfile / compositionId remain writing-slot aliases.
+# Judge is independent and optional. Qualification stays not-run and never
+# blocks ordinary writing. Review and retrieval slots come later.
+activeExecutionProfile: nvidia-inference-gpt-6-sol-pi
+compositionId: nvidia-inference-gpt-6-sol-pi
+active:
+  writing:
+    compositionId: nvidia-inference-gpt-6-sol-pi
+    qualification: not-run
+#   judge:
+#     compositionId: nvidia-inference-nemotron-3-super-v3-pi
+#     qualification: not-run
+# `activePolicyProfile: profiles/<name>.yaml` names a YAML policy profile
+# instead. `--preset` and `--provider` selections write one; YAML-only hosts
+# keep working via unique (providerId, baseUrl, modelId) match until the next
+# setup or an explicit migrate.
+# Relative paths resolve against this configuration root, not the current directory.
+# Skill crate, quality, and quality-pack assets come from the installed runtime package.
+paths:
+  stateDir: ./.docsfab/runs
+retryPolicy:
+  readOnlyMaxRetries: 1
+  baseDelayMs: 1000
+  maxDelayMs: 2000
+  retryableCategories:
+    - blank-response
+    - malformed-response
+    - timeout
+    - throttled
+    - provider-transient

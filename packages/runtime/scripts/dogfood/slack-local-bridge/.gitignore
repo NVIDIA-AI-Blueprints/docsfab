@@ -1,0 +1,4 @@
+allowlist.json
+*.local.json
+.env
+.env.*

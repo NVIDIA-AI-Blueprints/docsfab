@@ -1,0 +1,4 @@
+interface:
+  display_name: "Design Information Architecture"
+  short_description: "Propose IA from a fixed, governed task"
+  default_prompt: "Within a DocsFab IA workflow, analyze the fixed task and return the host's closed, source-backed recommendation without granting approval or writes."

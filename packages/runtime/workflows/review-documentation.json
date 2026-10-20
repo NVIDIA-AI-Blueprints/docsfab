@@ -1,0 +1,167 @@
+{
+  "schemaVersion": 1,
+  "name": "review-documentation",
+  "title": "Comprehensive documentation review",
+  "outcome": "A read-only, revision-bound documentation review with separate audit, deterministic, technical, editorial, audience, and scored quality evidence.",
+  "contextPolicy": {
+    "schemaVersion": 1,
+    "steps": [
+      {
+        "stepId": "audit-documentation",
+        "required": true,
+        "level": "corpus",
+        "query": "expand",
+        "allowReadOnlyDegraded": true
+      },
+      {
+        "stepId": "derive-source-obligations",
+        "required": true,
+        "level": "corpus",
+        "query": "expand",
+        "allowReadOnlyDegraded": true
+      },
+      {
+        "stepId": "lint-documentation",
+        "required": true,
+        "level": "corpus",
+        "query": "expand",
+        "allowReadOnlyDegraded": true
+      },
+      {
+        "stepId": "provisional-technical-verification",
+        "required": true,
+        "level": "corpus",
+        "query": "expand",
+        "allowReadOnlyDegraded": true
+      },
+      {
+        "stepId": "verify-technical-accuracy",
+        "required": true,
+        "level": "corpus",
+        "query": "expand",
+        "allowReadOnlyDegraded": true
+      },
+      {
+        "stepId": "review-documentation",
+        "required": true,
+        "level": "corpus",
+        "query": "expand",
+        "allowReadOnlyDegraded": true
+      },
+      {
+        "stepId": "test-audience-understanding",
+        "required": true,
+        "level": "corpus",
+        "query": "expand",
+        "allowReadOnlyDegraded": true
+      },
+      {
+        "stepId": "evaluate-document-quality",
+        "required": true,
+        "level": "corpus",
+        "query": "expand",
+        "allowReadOnlyDegraded": true
+      }
+    ]
+  },
+  "steps": [
+    {
+      "id": "audit-documentation",
+      "title": "Freeze and audit the evaluation scope",
+      "kind": "evaluate",
+      "skill": "audit-documentation",
+      "mode": "read-only",
+      "searchPlan": "documentation-audit",
+      "searchMode": "observe",
+      "prompt": "Use documentation-set scope for the declared target, even when it contains one document. Freeze the revision and inventory only that target, its required dependencies, source links, applicable checks, and material coverage or delivery risks. Documentation-set scope does not authorize a repository-wide audit. Reuse supplied scope and observation evidence; expand discovery only for a named missing dependency or material evidence gap. Return concise revision-bound inventory, locators, findings, and limitations without repeating the full document or performing the later editorial and technical reviews. Do not invoke another skill, edit files, or claim release readiness."
+    },
+    {
+      "id": "derive-source-obligations",
+      "title": "Derive source obligations",
+      "kind": "evaluate",
+      "skill": "verify-technical-accuracy",
+      "mode": "read-only",
+      "prompt": "Use the locked verify-technical-accuracy catalog skill in inventory-only mode. Derive a bounded atomic source-obligation ledger from the frozen review scope and admitted repository sources. Inspect every required technical dimension, cite exact establishing source locators, preserve uncertainty, and return only the host-required ledger proposal. Do not inspect or edit the documentation candidate, assign documentation dispositions, draft findings, review findings, edit files, widen the source boundary, or grant authority.",
+      "searchPlan": "documentation-audit",
+      "searchMode": "revalidate"
+    },
+    {
+      "id": "lint-documentation",
+      "title": "Run deterministic documentation checks",
+      "kind": "host-operation",
+      "skill": "lint-documentation",
+      "mode": "read-only",
+      "searchPlan": "documentation-audit",
+      "searchMode": "reuse",
+      "prompt": "Run applicable repository-native documentation checks through the isolated host executor. Use the declared target and available check inventory; prefer checks scoped to those paths when supported, and report a broader check's actual coverage when scoping is unsupported. Report exact commands as passed, failed, or unavailable with concise evidence and untested scope. Do not repeat editorial or technical review, install missing tools, or edit the target repository."
+    },
+    {
+      "id": "provisional-technical-verification",
+      "title": "Compare technical accuracy provisionally",
+      "kind": "evaluate",
+      "skill": "verify-technical-accuracy",
+      "mode": "read-only",
+      "prompt": "Independently compare the governed documentation target with the frozen source and source-obligation ledger. Return the existing strict three-field technical verification wrapper. This result is provisional evidence and must preserve uncertainty; do not edit files or claim final admission.",
+      "searchPlan": "documentation-audit",
+      "searchMode": "reuse",
+      "consumes": [
+        "derive-source-obligations"
+      ]
+    },
+    {
+      "id": "verify-technical-accuracy",
+      "title": "Verify technical accuracy",
+      "kind": "evaluate",
+      "skill": "verify-technical-accuracy",
+      "mode": "read-only",
+      "searchPlan": "documentation-audit",
+      "searchMode": "revalidate",
+      "prompt": "Start from a fresh context and re-read the governed target plus every establishing source span. Correct the provisional comparison against the immutable source-obligation ledger, account for every obligation as retained, refined, or rejected, and return only the host-required correction envelope. Do not edit files, widen scope, or treat either earlier result as authority.",
+      "consumes": [
+        "derive-source-obligations",
+        "provisional-technical-verification"
+      ],
+      "consumesEvidence": [
+        "derive-source-obligations",
+        "provisional-technical-verification"
+      ]
+    },
+    {
+      "id": "review-documentation",
+      "title": "Review the documentation",
+      "kind": "evaluate",
+      "skill": "review-documentation",
+      "mode": "read-only",
+      "searchPlan": "documentation-audit",
+      "searchMode": "reuse",
+      "prompt": "Perform a clean non-author review of editorial clarity, structure, and usability in the exact governed documentation target. Establish findings independently from the artifact and approved primary evidence; do not treat author conclusions or earlier review verdicts as your own evidence. Read linked context only when needed to assess a concrete reader task or defect. Return actionable findings with locations, reader consequence, supporting evidence, and correction; consolidate duplicate findings without dropping distinct defects or limitations. Do not repeat the scope inventory, rerun technical verification, edit files, or expand into unrelated pages."
+    },
+    {
+      "id": "test-audience-understanding",
+      "title": "Test audience understanding",
+      "kind": "evaluate",
+      "skill": "test-audience-understanding",
+      "mode": "read-only",
+      "searchPlan": "documentation-audit",
+      "searchMode": "reuse",
+      "prompt": "Check the supplied audience prerequisites once: immutable candidate identity, authoritative reference model, versioned scenario corpus and oracle, representative participant, independence, retention boundary, and run authority. Inspect only explicit evidence locators needed to establish those prerequisites. If any are missing or invalid, return insufficient-evidence now with the missing prerequisites and any observed invalid evidence or candidate revision mismatch; do not search for participants, create a corpus or oracle, or simulate a participant. Otherwise run the bounded declared protocol with a clean participant. Exclude author, reviewer, evaluator, scoring oracle, private authoring context, and prior evaluation results from participant context. Preserve failed or contaminated attempts separately. Do not edit files or claim delivery, publication, or release approval."
+    },
+    {
+      "id": "evaluate-document-quality",
+      "title": "Evaluate document quality",
+      "kind": "evaluate",
+      "skill": "evaluate-document-quality",
+      "mode": "read-only",
+      "searchPlan": "documentation-audit",
+      "searchMode": "reuse",
+      "consumes": [
+        "audit-documentation",
+        "lint-documentation",
+        "verify-technical-accuracy",
+        "review-documentation",
+        "test-audience-understanding"
+      ],
+      "prompt": "Evaluate the complete evidence package with the locked skill and staged quality crate. Produce candidate evaluation.json and quality-score.json when available under their locked schemas, plus the complete narrative quality-report.md. The model writes the report narrative; after validation, the host writes the validated result summary. Preserve the layered vector, rubric score, human and agent outcomes, hard failures, gaps, and limitations separately. Do not edit source files or perform SCM, publication, merge, or release-approval actions. Use the supplied evidence package and exact target to assess quality; inspect additional evidence only to resolve a specific material gap. Do not rerun earlier reviews or repeat repository discovery. Keep human-readable summaries within the required response artifacts concise; retain every required finding, evidence gap, schema field, and complete artifact. Do not add prose outside the host response contract."
+    }
+  ]
+}

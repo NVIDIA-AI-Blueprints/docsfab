@@ -1,0 +1,56 @@
+{
+  "schemaVersion": "docsfab-model-profile-candidate-excerpt/v1",
+  "profileId": "generation-llama-3-3-nemotron-super-49b-v1-5",
+  "status": "candidate",
+  "profileKind": "generative",
+  "purposes": [
+    "main-documentation",
+    "review",
+    "evaluation"
+  ],
+  "identity": {
+    "provider": "nvidia-api-catalog",
+    "modelId": "nvidia/llama-3.3-nemotron-super-49b-v1.5",
+    "endpoint": null,
+    "region": null
+  },
+  "interface": {
+    "transport": "openai-compatible",
+    "apiFormat": "chat_completions",
+    "route": "/v1/chat/completions",
+    "inputTypes": [
+      "text"
+    ],
+    "outputType": "text"
+  },
+  "proposedConfiguration": {
+    "contextWindow": 131072,
+    "maxInputTokens": 128000,
+    "maxOutputTokens": 8192,
+    "documentedMaxOutputTokens": 65536,
+    "reasoning": false,
+    "supportsDeveloperRole": false,
+    "supportsReasoningEffort": false,
+    "requestControls": [
+      "frequency_penalty",
+      "max_tokens",
+      "presence_penalty",
+      "seed",
+      "stop",
+      "stream",
+      "temperature",
+      "top_p"
+    ],
+    "candidateRequestPolicy": {
+      "mode": "reasoning-off",
+      "systemInstruction": "/no_think",
+      "temperature": 0,
+      "topP": 1
+    }
+  },
+  "approvalStatus": "not-approved",
+  "projection": {
+    "runtimeConfiguration": "not-authorized",
+    "modelRequest": "blocked"
+  }
+}

@@ -1,0 +1,517 @@
+# DocsFab operational limits owned by the `benchmarks` name prefix.
+# Registered in config/limits.yaml; every limit here is named `benchmarks.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+#
+# These bound the DocsFab Bench commands (benchmarks/docsfab-bench.mjs):
+# what `validate` reads from a corpus tier, what `score`, `rescore`, and
+# `report` read from a run directory, and what `prepare` fetches, extracts,
+# and captures from git and `verify-prepared` re-reads. Scoring semantics (the 100-point scale,
+# the P0 cap, and rounding) are not limits: they live in the versioned scoring
+# contract under benchmarks/contracts/, so two runs with different cap
+# semantics can never carry identical comparability blocks.
+# The `benchmarks.sandbox.*` entries bound the live jobs' Docker Engine API
+# access through the TLS docker:dind service (benchmarks/sandbox/).
+limits:
+  - name: benchmarks.manifest.maxBytes
+    value: 262144
+    unit: bytes
+    scope: per-project
+    warnAt: 0.8
+    override: null
+    min: 4096
+    max: 1048576
+    refusal: benchmarks-manifest-max-bytes-bound
+    remediation: Split the task or move long material out of the manifest; a manifest holds pointers and our own authored criteria, never upstream bytes. If an authored task legitimately needs more, raise benchmarks.manifest.maxBytes in config/limits/benchmarks.yaml.
+    rationale: Largest task manifest file validate reads before parsing it. A manifest holds a trigger, pointers, and authored criteria; a task with 40 criteria of a few hundred characters each is under 32 KiB. 256 KiB leaves room for long triggers and usage scenarios while keeping a pasted upstream file or a binary out of the parser. Unmeasured planning value; the first dev-tier corpus is the measured basis to revisit it.
+
+  - name: benchmarks.manifest.maxTextChars
+    value: 16384
+    unit: characters
+    scope: per-project
+    warnAt: 0.8
+    override: null
+    min: 256
+    max: 65536
+    refusal: benchmarks-manifest-max-text-chars-bound
+    remediation: Shorten the named field; a trigger, rubric, or evidence note is authored prose, not a copy of upstream material. If an authored field legitimately needs more, raise benchmarks.manifest.maxTextChars in config/limits/benchmarks.yaml.
+    rationale: Longest single string field in a task manifest (trigger, rubric, condition, evidence, usage prompt). A long issue-style trigger is a few thousand characters; 16384 allows about four times that while refusing a pasted document. Unmeasured planning value.
+
+  - name: benchmarks.manifest.maxVerbatimChars
+    value: 120
+    unit: characters
+    scope: per-project
+    warnAt: 1
+    override: null
+    min: 16
+    max: 400
+    refusal: benchmarks-manifest-max-verbatim-chars-bound
+    remediation: Paraphrase the quoted span in your own words, or quote only the identifier, flag, config key, or path the criterion needs. If a criterion legitimately needs a longer literal, raise benchmarks.manifest.maxVerbatimChars in config/limits/benchmarks.yaml and record why in the review.
+    rationale: Longest quoted span (double quotes, curly quotes, a code span, or a fenced block) allowed in a trigger, criterion rubric or condition, or expected evidence, and the longest required or forbidden text a deterministic check may match. It bounds verbatim upstream quotation in our authored criteria (the plan section on real inputs). Flag names, config keys, file paths, and identifiers are well under 120 characters; a quoted upstream paragraph is not. Unmeasured planning value; writer review of the first dev tasks is the basis to revisit it.
+
+  - name: benchmarks.corpus.maxManifestsPerTier
+    value: 1000
+    unit: count
+    scope: per-project
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 10000
+    refusal: benchmarks-corpus-max-manifests-per-tier-bound
+    remediation: Check the tier directory for stray or generated files. If the corpus legitimately grew past it, raise benchmarks.corpus.maxManifestsPerTier in config/limits/benchmarks.yaml.
+    rationale: Most entries validate reads from one corpus tier directory before reading any of them. The plan grows the dev tier toward 300 tasks and keeps held-out tasks outside this repository, so 1000 is more than three times the planned tier size.
+
+  - name: benchmarks.run.maxFileBytes
+    value: 16777216
+    unit: bytes
+    scope: per-project
+    warnAt: 0.8
+    override: null
+    min: 65536
+    max: 67108864
+    refusal: benchmarks-run-max-file-bytes-bound
+    remediation: Inspect the named file; a run result that carries a whole repository or a log is a harness defect, not a patch. If a representative documentation patch legitimately exceeds it, raise benchmarks.run.maxFileBytes in config/limits/benchmarks.yaml.
+    rationale: Largest run-config, run-result, judgment, retained patch, or report file score, rescore, and report read before parsing, and the largest prepared record (attestation, attribution, masking map) verify-prepared reads. A documentation patch across a few dozen pages is under 1 MiB; 16 MiB keeps a pasted repository or log out of the parser. Unmeasured planning value; the first live run is the measured basis to revisit it.
+
+  - name: benchmarks.run.maxTrials
+    value: 10000
+    unit: count
+    scope: per-project
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 100000
+    refusal: benchmarks-run-max-trials-bound
+    remediation: Lower the run's repeats or split the run by tier. If a campaign legitimately needs more trials in one report, raise benchmarks.run.maxTrials in config/limits/benchmarks.yaml.
+    rationale: Most trials (tasks times arms times repeats) one run directory may declare, and most run-result or judgment files score reads from it. The planned campaign is 300 tasks, three arms, and a handful of repeats, about 4500 trials; 10000 leaves room for a larger repeat count without reading an unbounded directory.
+
+  - name: benchmarks.run.maxPhysicalSendsPerTrial
+    value: 4096
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 65536
+    refusal: benchmarks-run-max-physical-sends-per-trial-bound
+    remediation: Inspect the trial's provider loop and retry policy; if a supported workflow legitimately needs more sends, raise this catalog entry after measuring one representative run.
+    rationale: Maximum physically dispatched model requests in one arm trial, including admission, workflow retries, and agent turns. The existing composition turn ceiling is 512 for one step; 4096 admits several steps plus retries and leaves substantial room for a three-arm representative run. Unmeasured planning value pending protected execution.
+
+  - name: benchmarks.run.armWallTimeoutMs
+    value: 14400000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 60000
+    max: 28800000
+    refusal: benchmarks-run-arm-wall-timeout-ms-bound
+    remediation: Inspect the stopped arm and provider latency; raise this catalog entry only if a representative supported task needs more execution time.
+    rationale: Wall duration from one arm container start to exit, including provider backoff. A composition step can run for up to one hour, so four hours admits a multi-step workflow without silently shortening its own timer. This is an outer safety bound, not a model or token budget. Unmeasured planning value pending protected execution.
+
+  - name: benchmarks.usage.verifierTimeoutMs
+    value: 180000
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_BENCHMARKS_USAGE_VERIFIER_TIMEOUT_MS
+    min: 1000
+    max: 3600000
+    refusal: benchmarks-usage-verifier-timeout-ms-bound
+    remediation: Inspect the offline verifier output and the host load. If the accepted executable verifier legitimately needs longer, raise DOCSFAB_BENCHMARKS_USAGE_VERIFIER_TIMEOUT_MS for this host within the catalog range.
+    rationale: Wall deadline for one offline usage fixture verifier process, including its Python interpreter and the accepted CPU task command. The committed verifier bounds its inner command at 120 seconds; 180 seconds gives interpreter startup and checks time around it without turning a stalled subprocess into an unbounded benchmark run. Early seven-trial scripted campaigns finished in 3 to 6 seconds locally and in the Node 24 Bookworm image; a later contended local run took 11 seconds. One verifier is far below 180 seconds in these observations, but the default is provisional pending representative loaded-runner evidence. This is host execution capacity, not a correctness score; the effective value is recorded with each trial identity.
+
+  - name: benchmarks.run.exportMaxEntries
+    value: 10000
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 100000
+    refusal: benchmarks-run-export-max-entries-bound
+    remediation: Inspect the arm's bounded state and artifact output; raise this entry only for a measured supported workflow with more retained files.
+    rationale: Maximum files and directories under one arm-only export root before host import. Product run records and editorial artifacts occupy far fewer entries in a normal task; this stops an unbounded participant output tree. Unmeasured planning value.
+
+  - name: benchmarks.run.exportMaxBytes
+    value: 67108864
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 65536
+    max: 1073741824
+    refusal: benchmarks-run-export-max-bytes-bound
+    remediation: Inspect the arm's state artifact sizes; retain only outcome and usage evidence, or raise this entry for a measured supported workflow.
+    rationale: Maximum aggregate bytes under one arm-only export root before import. Individual result and record files also obey the shared run file bound; 64 MiB allows several product records while rejecting a repository or provider transcript. Unmeasured planning value.
+
+  - name: benchmarks.sandbox.relayRequestMaxBytes
+    value: 16777216
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 65536
+    max: 67108864
+    refusal: benchmarks-sandbox-relay-request-max-bytes-bound
+    remediation: Inspect the model request size and the installed composition's context limits; raise only for a representative supported request that exceeds this bound.
+    rationale: Maximum single model request body transferred from an arm through the credential-free relay to the job custodian. The installed model accepts a large context and several megabytes of text; 16 MiB is above its ordinary serialized request while preventing an unbounded in-memory relay body. Unmeasured planning value.
+
+  - name: benchmarks.sandbox.relayResponseMaxBytes
+    value: 8388608
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 65536
+    max: 67108864
+    refusal: benchmarks-sandbox-relay-response-max-bytes-bound
+    remediation: Inspect the provider's response or event stream; raise only if the installed composition admits a larger supported response.
+    rationale: Maximum single provider response body held and returned by the job custodian. The composition's response ceiling is 4 MiB, so 8 MiB admits its complete serialized stream with transport framing while bounding both memory and control traffic. Unmeasured planning value.
+
+  - name: benchmarks.sandbox.relayReadyTimeoutMs
+    value: 30000
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_BENCHMARKS_SANDBOX_RELAY_READY_TIMEOUT_MS
+    min: 1000
+    max: 300000
+    refusal: benchmarks-sandbox-relay-ready-timeout-ms-bound
+    remediation: Read the relay container's bounded startup status and the dind published-port mapping; raise this host override only for measured slow starts.
+    rationale: Maximum wait after a validated relay starts for the job-side outbound mTLS control channel to answer readiness. Node listener startup is normally seconds; 30 seconds allows a loaded runner without permitting an absent route to hold the trial indefinitely. Unmeasured planning value.
+
+  - name: benchmarks.sandbox.relayPendingMaxRequests
+    value: 4
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 16
+    refusal: benchmarks-sandbox-relay-pending-max-requests-bound
+    remediation: Inspect the arm's concurrent model requests; raise this entry only after showing the larger queue fits benchmarks.sandbox.serviceMemoryBytes.
+    rationale: Most in-flight arm model requests retained by the relay. At the 16 MiB request-body ceiling, four raw bodies and their base64 control copies use about 150 MiB, leaving headroom in the gateway's 256 MiB service memory. A normal Pi agent sends one request at a time. Expired and closed requests leave the queue immediately.
+
+  - name: benchmarks.prepare.fetchTimeoutMs
+    value: 600000
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_BENCHMARKS_PREPARE_FETCH_TIMEOUT_MS
+    min: 1000
+    max: 3600000
+    refusal: benchmarks-prepare-fetch-timeout-ms-bound
+    remediation: Check the network path to the source host, or prepare from a local mirror with --source-mirror. If the host's link is legitimately slower, raise DOCSFAB_BENCHMARKS_PREPARE_FETCH_TIMEOUT_MS for this host, up to the catalog max.
+    rationale: Longest wall-clock time DocsFab Bench prepare lets one git command run. The shallow fetch of a single pinned commit is the longest such command; the local commands (init, ls-tree, the blob batch, add, commit) on the same tree finish well inside it. Ten minutes covers a depth-1 fetch of a tree at the tree-bytes bound over a slow link. The host override exists because network latency is a host property, not task semantics. Unmeasured planning value; the first three smoke prepares are the measured basis to revisit it.
+
+  - name: benchmarks.prepare.maxTreeBytes
+    value: 1073741824
+    unit: bytes
+    scope: per-project
+    warnAt: 0.8
+    override: null
+    min: 1048576
+    max: 8589934592
+    refusal: benchmarks-prepare-max-tree-bytes-bound
+    remediation: Pick a source whose pinned tree is smaller, or confirm the repository really needs this many bytes of blobs. If representative documentation repositories legitimately exceed it, raise benchmarks.prepare.maxTreeBytes in config/limits/benchmarks.yaml.
+    rationale: Largest sum of blob sizes in one pinned source tree, read from the tree listing before any blob is written. Documentation repositories with images run to a few hundred MiB; 1 GiB leaves room for one with large assets while keeping a monorepo or a dataset out of the output directory. Unmeasured planning value; the three smoke prepares and the largest mined candidate are the measured basis to revisit it.
+
+  - name: benchmarks.prepare.maxFiles
+    value: 100000
+    unit: count
+    scope: per-project
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 1000000
+    refusal: benchmarks-prepare-max-files-bound
+    remediation: Pick a source with a smaller pinned tree, or confirm the repository really holds this many entries. If representative documentation repositories legitimately exceed it, raise benchmarks.prepare.maxFiles in config/limits/benchmarks.yaml.
+    rationale: Most entries in one pinned source tree, counting files, symlinks, submodule links, and every directory that holds them. Prepare counts them from the tree listing before any blob is written, and the seal walk of prepare and verify-prepared counts the same population on disk, so a tree that passes the listing never refuses at the seal. Large documentation sites hold tens of thousands of files in a few thousand directories; 100000 leaves room for one with many generated reference pages. Unmeasured planning value; the three smoke prepares are the measured basis to revisit it.
+
+  - name: benchmarks.prepare.maxFileBytes
+    value: 104857600
+    unit: bytes
+    scope: per-project
+    warnAt: 0.8
+    override: null
+    min: 1024
+    max: 1073741824
+    refusal: benchmarks-prepare-max-file-bytes-bound
+    remediation: Inspect the named file; a documentation source rarely carries a single blob this large. If a representative source legitimately does, raise benchmarks.prepare.maxFileBytes in config/limits/benchmarks.yaml.
+    rationale: Largest single blob in a pinned source tree, read from the tree listing before any blob is written, and the largest file verify-prepared hashes. Large images and PDFs in documentation stay under tens of MiB; 100 MiB keeps a committed archive or dataset out. It stays under benchmarks.prepare.maxTreeBytes so the per-file bound fires first for a single large blob. Unmeasured planning value; the three smoke prepares are the measured basis to revisit it.
+
+  - name: benchmarks.prepare.maxGitOutputBytes
+    value: 67108864
+    unit: bytes
+    scope: per-project
+    warnAt: 0.8
+    override: null
+    min: 65536
+    max: 268435456
+    refusal: benchmarks-prepare-max-git-output-bytes-bound
+    remediation: A git command printed far more than its listing or status needs; inspect the source tree for an unusual entry count or path length. If a representative source legitimately needs more, raise benchmarks.prepare.maxGitOutputBytes in config/limits/benchmarks.yaml.
+    rationale: Most bytes DocsFab Bench prepare and verify-prepared capture from stdout or stderr of one git command other than the blob batch. The only blob read through it is the license file, a few KiB; every other blob goes to a scratch file bounded by benchmarks.prepare.maxTreeBytes and benchmarks.prepare.maxFileBytes. The largest capture is the recursive tree listing, about 60 bytes plus the path per entry, so 64 MiB covers benchmarks.prepare.maxFiles entries with paths averaging over 500 bytes, and the combined defaults never refuse a listing that passes the entry-count bound.
+
+  - name: benchmarks.sandbox.daemonReadyTimeoutMs
+    value: 120000
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_BENCHMARKS_SANDBOX_DAEMON_READY_TIMEOUT_MS
+    min: 1000
+    max: 600000
+    refusal: benchmarks-sandbox-daemon-ready-timeout-ms-bound
+    remediation: Read the dind service log in the job for a start-up error (certificate generation, storage driver, or privileged mode). If the runner is legitimately slower to start the service, raise DOCSFAB_BENCHMARKS_SANDBOX_DAEMON_READY_TIMEOUT_MS for this host, up to the catalog max.
+    rationale: Longest time a DocsFab Bench job waits for the docker:dind service to answer an authenticated GET /_ping before it refuses with bench-sandbox-dind-missing. The service generates a CA, a server and a client key pair, then starts the daemon; on a shared runner that takes seconds, and two minutes covers a slow image pull of the service plus key generation. Only connection failures are retried inside this window; a TLS, API or lost-connection failure refuses at once. The host override exists because service start time is a runner property. Planning value; the milestone-1 job prints each channel's time to ready (its ok-after line, in milliseconds), which is the measured basis to revisit it.
+
+  - name: benchmarks.sandbox.daemonPollIntervalMs
+    value: 1000
+    unit: ms
+    scope: per-host
+    warnAt: 1
+    override: null
+    min: 100
+    max: 10000
+    refusal: benchmarks-sandbox-daemon-poll-interval-ms-bound
+    remediation: This is the pause between readiness attempts, not a bound an observed value can exceed; change it in config/limits/benchmarks.yaml only if the readiness wait polls too often or too rarely.
+    rationale: Pause between two readiness attempts against the docker:dind service inside benchmarks.sandbox.daemonReadyTimeoutMs. One second keeps the wait within a second of the daemon becoming ready without flooding a service that is still generating keys; the default wait allows about 120 attempts.
+
+  - name: benchmarks.sandbox.apiRequestTimeoutMs
+    value: 30000
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_BENCHMARKS_SANDBOX_API_REQUEST_TIMEOUT_MS
+    min: 1000
+    max: 300000
+    refusal: benchmarks-sandbox-api-request-timeout-ms-bound
+    remediation: Read the dind service log for a daemon that stopped answering. If the runner's daemon is legitimately slower, raise DOCSFAB_BENCHMARKS_SANDBOX_API_REQUEST_TIMEOUT_MS for this host, up to the catalog max.
+    rationale: Longest wall-clock time one Docker Engine API request from a DocsFab Bench job may take, from connect to the last response byte, other than an image pull or a container wait, which have their own bounds. Ping, version, info, create, start, logs, and remove answer in milliseconds on a healthy daemon, and the upstream seam probe applies the same deadline to its one TLS handshake inside its container; 30 seconds absorbs a loaded shared runner without letting a hung daemon hold the job. Unmeasured planning value.
+
+  - name: benchmarks.sandbox.imagePullTimeoutMs
+    value: 600000
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_BENCHMARKS_SANDBOX_IMAGE_PULL_TIMEOUT_MS
+    min: 1000
+    max: 3600000
+    refusal: benchmarks-sandbox-image-pull-timeout-ms-bound
+    remediation: Check the runner's path to the image registry and the registry's rate limit for anonymous pulls. If the link is legitimately slower, raise DOCSFAB_BENCHMARKS_SANDBOX_IMAGE_PULL_TIMEOUT_MS for this host, up to the catalog max.
+    rationale: Longest time one digest-pinned sandbox image pull inside the dind service may take. The dind daemon starts empty in every job, so each job pulls the sandbox image fresh; the Node bookworm image is about 400 MiB compressed, and ten minutes covers it over a slow shared link. The host override exists because registry latency is a host property. Measured basis, the milestone-1 job pulled the digest-pinned image in 8273 ms and 8982 ms on the shared Docker runners (two runs); ten minutes keeps a cold registry path and anonymous rate-limit back-off inside the bound.
+
+  - name: benchmarks.sandbox.seamProbeTimeoutMs
+    value: 60000
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_BENCHMARKS_SANDBOX_SEAM_PROBE_TIMEOUT_MS
+    min: 1000
+    max: 600000
+    refusal: benchmarks-sandbox-seam-probe-timeout-ms-bound
+    remediation: Read the probe's recorded output for the step that hung (a bind-mount read or an upstream TLS handshake). If the runner is legitimately slower, raise DOCSFAB_BENCHMARKS_SANDBOX_SEAM_PROBE_TIMEOUT_MS for this host, up to the catalog max.
+    rationale: Longest time one milestone seam-probe container may run, from start to exit. A bind-mount read and one TLS handshake finish in seconds; a minute covers container start on a loaded runner and a slow upstream handshake. Unmeasured planning value.
+
+  - name: benchmarks.sandbox.apiResponseMaxBytes
+    value: 1048576
+    unit: bytes
+    scope: per-project
+    warnAt: 0.8
+    override: null
+    min: 4096
+    max: 16777216
+    refusal: benchmarks-sandbox-api-response-max-bytes-bound
+    remediation: Inspect the request that produced the response; a ping, version, create, or probe log does not legitimately reach this size. If a representative response does, raise benchmarks.sandbox.apiResponseMaxBytes in config/limits/benchmarks.yaml.
+    rationale: Most bytes a DocsFab Bench job reads from one Docker Engine API response body, one line of an image-pull progress stream, or one probe container's log. Version and info documents are a few KiB and a pull progress line is under 1 KiB; 1 MiB keeps a runaway log or a hostile response out of memory with a wide margin.
+
+  - name: benchmarks.sandbox.workloadPidsLimit
+    value: 1024
+    unit: count
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_BENCHMARKS_SANDBOX_WORKLOAD_PIDS_LIMIT
+    min: 1
+    max: 32768
+    refusal: benchmarks-sandbox-workload-pids-limit-bound
+    remediation: Read the container's create-time inspect in the dind proof report. A PidsLimit of 0, -1 or null means unlimited and is never admitted. If a representative arm, judge, prepare or verifier run legitimately needs more processes, raise DOCSFAB_BENCHMARKS_SANDBOX_WORKLOAD_PIDS_LIMIT for this host, up to the catalog max.
+    rationale: Process-count limit (HostConfig.PidsLimit) of each workload-family sandbox container (arm, judge, prepare, verifier), one value per container. An agent arm runs Node, git and the product's own subprocesses; 1024 leaves room for a parallel install or test run while a fork bomb stops at the cgroup instead of exhausting the shared dind host. Per family, not per class, because no measurement yet separates an arm from a verifier. The catalog min of 1 is the daemon's own floor. Unmeasured planning value.
+
+  - name: benchmarks.sandbox.workloadMemoryBytes
+    value: 2147483648
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_BENCHMARKS_SANDBOX_WORKLOAD_MEMORY_BYTES
+    min: 6291456
+    max: 68719476736
+    refusal: benchmarks-sandbox-workload-memory-bytes-bound
+    remediation: Read the container's create-time inspect and the printed MemTotal in the dind proof job log. Memory 0 means unlimited and is never admitted. If a representative workload legitimately needs more and the runner has the room, raise DOCSFAB_BENCHMARKS_SANDBOX_WORKLOAD_MEMORY_BYTES for this host, up to the catalog max.
+    rationale: Memory limit (HostConfig.Memory, with MemorySwap equal to it where the daemon supports swap limits) of each workload-family sandbox container, one value per container; tmpfs pages count against it. 2 GiB holds a Node agent process, git and an npm install. The arm runs together with the gateway and the proxy, so the dind proof refuses before the first create when this plus both benchmarks.sandbox.serviceMemoryBytes exceed the daemon's MemTotal; MemTotal is the runner host's total, shared with the job container, the dind daemon and other concurrent jobs, so the 2.5 GiB sum must leave most of it free. The catalog min of 6 MiB is the daemon's own floor. Unmeasured planning value.
+
+  - name: benchmarks.sandbox.workloadNanoCpus
+    value: 2000000000
+    unit: nanocpus
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_BENCHMARKS_SANDBOX_WORKLOAD_NANO_CPUS
+    min: 10000000
+    max: 64000000000
+    refusal: benchmarks-sandbox-workload-nano-cpus-bound
+    remediation: Read the container's create-time inspect and the printed NCPU in the dind proof job log. NanoCpus 0 means unlimited and is never admitted. If the runner has fewer CPUs than this, lower DOCSFAB_BENCHMARKS_SANDBOX_WORKLOAD_NANO_CPUS for this host; if a representative workload legitimately needs more, raise it, up to the catalog max.
+    rationale: CPU limit (HostConfig.NanoCpus, in billionths of a CPU) of each workload-family sandbox container, one value per container. Two CPUs let an agent run a build or test step without starving the other jobs on a shared runner. The daemon refuses a value above its NCPU at create, so the dind proof checks it against GET /info before the first create. The catalog min of 10000000 (0.01 CPU) is the daemon's own floor. Unmeasured planning value.
+
+  - name: benchmarks.sandbox.workloadTmpfsBytes
+    value: 536870912
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_BENCHMARKS_SANDBOX_WORKLOAD_TMPFS_BYTES
+    min: 1048576
+    max: 8589934592
+    refusal: benchmarks-sandbox-workload-tmpfs-bytes-bound
+    remediation: Read the tmpfs options in the container's create-time inspect. A tmpfs without a size defaults to half the host's memory and is never admitted. If a representative workload legitimately writes more scratch data, raise DOCSFAB_BENCHMARKS_SANDBOX_WORKLOAD_TMPFS_BYTES for this host, up to the catalog max, and keep it below benchmarks.sandbox.workloadMemoryBytes.
+    rationale: Size of each tmpfs mount (the writable /tmp and, for an arm, the home directory that holds agent state outside the workspace) in a workload-family sandbox container. Per mount, not per class; tmpfs pages also count against the container's memory limit, which caps the sum. 512 MiB holds an npm cache and agent state for one trial. The catalog min of 1 MiB keeps a tmpfs usable. Unmeasured planning value.
+
+  - name: benchmarks.sandbox.servicePidsLimit
+    value: 256
+    unit: count
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_BENCHMARKS_SANDBOX_SERVICE_PIDS_LIMIT
+    min: 1
+    max: 32768
+    refusal: benchmarks-sandbox-service-pids-limit-bound
+    remediation: Read the container's create-time inspect in the dind proof report. A PidsLimit of 0, -1 or null means unlimited and is never admitted. If the gateway or the proxy legitimately needs more processes, raise DOCSFAB_BENCHMARKS_SANDBOX_SERVICE_PIDS_LIMIT for this host, up to the catalog max.
+    rationale: Process-count limit of each service-family container (the model gateway and the allowlist proxy), one value per container. Each is one Node process with a few worker threads; 256 is generous for that and still stops a runaway. The catalog min of 1 is the daemon's own floor. Unmeasured planning value.
+
+  - name: benchmarks.sandbox.serviceMemoryBytes
+    value: 268435456
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_BENCHMARKS_SANDBOX_SERVICE_MEMORY_BYTES
+    min: 6291456
+    max: 68719476736
+    refusal: benchmarks-sandbox-service-memory-bytes-bound
+    remediation: Read the container's create-time inspect and the printed MemTotal in the dind proof job log. Memory 0 means unlimited and is never admitted. If the gateway or the proxy legitimately needs more, raise DOCSFAB_BENCHMARKS_SANDBOX_SERVICE_MEMORY_BYTES for this host, up to the catalog max.
+    rationale: Memory limit of each service-family container (gateway, proxy), one value per container. A forwarding Node process stays well under 256 MiB. Both count, with the arm's benchmarks.sandbox.workloadMemoryBytes, in the pre-create MemTotal check. The catalog min of 6 MiB is the daemon's own floor. Unmeasured planning value.
+
+  - name: benchmarks.sandbox.serviceNanoCpus
+    value: 500000000
+    unit: nanocpus
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_BENCHMARKS_SANDBOX_SERVICE_NANO_CPUS
+    min: 10000000
+    max: 64000000000
+    refusal: benchmarks-sandbox-service-nano-cpus-bound
+    remediation: Read the container's create-time inspect and the printed NCPU in the dind proof job log. NanoCpus 0 means unlimited and is never admitted. If the gateway or the proxy legitimately needs more CPU, raise DOCSFAB_BENCHMARKS_SANDBOX_SERVICE_NANO_CPUS for this host, up to the catalog max.
+    rationale: CPU limit of each service-family container (gateway, proxy), one value per container. Half a CPU forwards one trial's model and registry traffic. The dind proof checks it against the daemon's NCPU before the first create. The catalog min of 10000000 (0.01 CPU) is the daemon's own floor. Unmeasured planning value.
+
+  - name: benchmarks.sandbox.serviceTmpfsBytes
+    value: 67108864
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_BENCHMARKS_SANDBOX_SERVICE_TMPFS_BYTES
+    min: 1048576
+    max: 8589934592
+    refusal: benchmarks-sandbox-service-tmpfs-bytes-bound
+    remediation: Read the tmpfs options in the container's create-time inspect. A tmpfs without a size defaults to half the host's memory and is never admitted. If the gateway or the proxy legitimately writes more scratch data, raise DOCSFAB_BENCHMARKS_SANDBOX_SERVICE_TMPFS_BYTES for this host, up to the catalog max.
+    rationale: Size of each tmpfs mount (the writable /tmp) in a service-family container. Per mount, not per class; it also counts against the container's memory limit. The gateway and the proxy keep no state, so 64 MiB is scratch room only. The catalog min of 1 MiB keeps a tmpfs usable. Unmeasured planning value.
+
+  - name: benchmarks.sandbox.proxyConnectTimeoutMs
+    value: 15000
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_BENCHMARKS_SANDBOX_PROXY_CONNECT_TIMEOUT_MS
+    min: 1000
+    max: 120000
+    refusal: benchmarks-sandbox-proxy-connect-timeout-ms-bound
+    remediation: Read the proxy log line for the host; a registry that resolves and accepts a TCP connection does so in well under a second. If the runner's resolver or route to an allowlisted host is legitimately slower, raise DOCSFAB_BENCHMARKS_SANDBOX_PROXY_CONNECT_TIMEOUT_MS for this host, up to the catalog max.
+    rationale: Longest time the DocsFab Bench egress proxy spends on one CONNECT from the end of its request head to an open upstream socket, name resolution and the TCP dial together, before it answers 504. One timer spans both, so a resolver that never answers cannot hold a tunnel slot past it. The glibc resolver's own default is a 5-second timeout with two attempts, so 15 seconds covers one slow resolution plus a dial on a loaded runner, and stays well inside benchmarks.sandbox.seamProbeTimeoutMs so a probe that goes through the proxy reports the proxy's code, not its own timeout. The host override exists because resolver and route latency are runner properties. Unmeasured planning value.
+
+  - name: benchmarks.sandbox.proxyIdleTimeoutMs
+    value: 120000
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_BENCHMARKS_SANDBOX_PROXY_IDLE_TIMEOUT_MS
+    min: 1000
+    max: 1800000
+    refusal: benchmarks-sandbox-proxy-idle-timeout-ms-bound
+    remediation: Read the proxy log line for the host; a tunnel that moves no byte in either direction for this long is stalled. If a representative fetch legitimately pauses longer (a large git pack computed server side), raise DOCSFAB_BENCHMARKS_SANDBOX_PROXY_IDLE_TIMEOUT_MS for this host, up to the catalog max.
+    rationale: Longest time one egress proxy connection may go without a byte, read or written, before the proxy closes it; it also bounds reading a client's request head, so a client that opens a connection and sends nothing frees its slot. A registry download or a git fetch streams progress continuously, and two minutes covers a server-side pause such as pack generation. The host override exists because upstream latency is a runner property. Unmeasured planning value.
+
+  - name: benchmarks.sandbox.proxyMaxTunnels
+    value: 64
+    unit: count
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_BENCHMARKS_SANDBOX_PROXY_MAX_TUNNELS
+    min: 1
+    max: 1024
+    refusal: benchmarks-sandbox-proxy-max-tunnels-bound
+    remediation: Read the proxy log for the hosts that held the slots; a prepare step that opens this many connections at once is a runaway or a client without a socket limit. If a representative install legitimately needs more, raise DOCSFAB_BENCHMARKS_SANDBOX_PROXY_MAX_TUNNELS for this host, up to the catalog max, and keep the tunnels' buffers inside benchmarks.sandbox.serviceMemoryBytes.
+    rationale: Most client connections the egress proxy holds at once, counted from accept to the close of both sockets, so a connection still sending its request head holds a slot too; the next one is answered 503. A package manager opens at most a few dozen sockets per registry. Each tunnel buffers at most two sockets at Node's default stream highWaterMark in each direction (64 KiB on Node 24), so 64 tunnels hold 16 MiB, well inside the proxy's 256 MiB benchmarks.sandbox.serviceMemoryBytes. Kernel socket buffers are not counted here. Unmeasured planning value.
+
+  - name: benchmarks.sandbox.proxyAllowlistMaxEntries
+    value: 64
+    unit: count
+    scope: per-project
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 4096
+    refusal: benchmarks-sandbox-proxy-allowlist-max-entries-bound
+    remediation: List only the registry and source hosts the prepare step contacts; each entry is an exact host name, so a long list is usually a list of mirrors or a pasted file. If a representative task legitimately needs more hosts, raise benchmarks.sandbox.proxyAllowlistMaxEntries in config/limits/benchmarks.yaml.
+    rationale: Most host names the egress proxy's allowlist may hold; a longer list refuses at load and the proxy does not start. A prepare step reaches a package registry, its download host and a source host or two, so 64 exact names leave wide room while a list that has grown into a mirror directory is caught. Unmeasured planning value.
+
+  - name: benchmarks.sandbox.proxyAllowlistMaxBytes
+    value: 16384
+    unit: bytes
+    scope: per-project
+    warnAt: 0.8
+    override: null
+    min: 64
+    max: 65536
+    refusal: benchmarks-sandbox-proxy-allowlist-max-bytes-bound
+    remediation: List only exact host names in the allowlist JSON array, with no comments or other fields. If a representative allowlist legitimately needs more bytes, raise benchmarks.sandbox.proxyAllowlistMaxBytes in config/limits/benchmarks.yaml, up to the catalog max.
+    rationale: Most bytes of the egress proxy's allowlist, a JSON array of host names, checked before it is parsed; a larger one refuses at load. benchmarks.sandbox.proxyAllowlistMaxEntries names of up to 253 characters, quoted and comma-separated, fit in 16 KiB. The allowlist reaches the proxy as one argument of its command, and Linux caps one argument at 131072 bytes, so the catalog max stays at half of that. Unmeasured planning value.
+
+  - name: benchmarks.sandbox.proxyRequestMaxBytes
+    value: 8192
+    unit: bytes
+    scope: per-project
+    warnAt: 0.8
+    override: null
+    min: 1024
+    max: 65536
+    refusal: benchmarks-sandbox-proxy-request-max-bytes-bound
+    remediation: Read the proxy log line for the byte count; a CONNECT request head is one short line and a few headers, so a larger one is a client sending a body or junk before the tunnel opens. If a representative client legitimately sends more headers, raise benchmarks.sandbox.proxyRequestMaxBytes in config/limits/benchmarks.yaml.
+    rationale: Most bytes of one CONNECT request head the egress proxy reads, the request line and every header up to and including the blank line that ends them; a longer head is answered 431 and closed. A CONNECT line for a 253-character host is under 300 bytes, and npm, git and curl add a handful of short headers, so 8 KiB leaves wide room, below Node's own 16 KiB default for HTTP headers. Unmeasured planning value.
+
+  - name: benchmarks.sandbox.negativeProbeMaxAddresses
+    value: 16
+    unit: count
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_BENCHMARKS_SANDBOX_NEGATIVE_PROBE_MAX_ADDRESSES
+    min: 1
+    max: 256
+    refusal: benchmarks-sandbox-negative-probe-max-addresses-bound
+    remediation: Read the smoke job's denied-range lines for the networks and dind addresses it derived; a fresh dind daemon reports its default bridge and the run's own three networks, so a longer list means another network outlived an earlier run or the daemon was given extra networks. Remove the stray networks; if a representative daemon legitimately reports more, raise DOCSFAB_BENCHMARKS_SANDBOX_NEGATIVE_PROBE_MAX_ADDRESSES for this host, up to the catalog max.
+    rationale: Most entries of the one address list the sandbox start path derives at launch, which the egress proxy takes as its denied ranges and the negative dind probe takes as its targets. It counts list entries, not probes. The list holds one entry per IPAM subnet of every network GET /networks reports, IPv4 and IPv6 apart, plus one per resolved address of each dind service alias. A longer list refuses, never truncates. A fresh dind daemon holds the default bridge and the run's gateway, proxy and egress networks, four subnets or eight when dual-stack, and the job sees two dind services; 16 covers that with room for a dual-stack daemon. Unmeasured planning value.
+
+  - name: benchmarks.sandbox.proxyListenTimeoutMs
+    value: 30000
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_BENCHMARKS_SANDBOX_PROXY_LISTEN_TIMEOUT_MS
+    min: 1000
+    max: 300000
+    refusal: benchmarks-sandbox-proxy-listen-timeout-ms-bound
+    remediation: Read the proxy container's log and its state in the smoke report; a proxy that has neither listened nor exited this long after start is stuck in node start-up or in the daemon. If the runner is legitimately slower, raise DOCSFAB_BENCHMARKS_SANDBOX_PROXY_LISTEN_TIMEOUT_MS for this host, up to the catalog max.
+    rationale: Longest time the job waits, from the egress proxy container's start, for the proxy's listening record in its log, polling every benchmarks.sandbox.daemonPollIntervalMs. A proxy that exits first is reported by its own refusal code at once, not after this wait. Node starts and the proxy checks its inputs in well under a second; half a minute covers container start on a loaded runner. Unmeasured planning value.

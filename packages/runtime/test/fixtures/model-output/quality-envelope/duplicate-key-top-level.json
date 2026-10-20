@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "kind": "docsfab-output-rule-fixture",
+  "code": "quality-envelope-duplicate-key",
+  "location": "$.qualityScore",
+  "input": {
+    "workflow": "review-documentation"
+  },
+  "reply": "{\"evaluation\":{\"evaluation_id\":\"eval-1\",\"overall_decision\":\"insufficient-evidence\",\"target\":{\"paths\":[\"docs/index.md\"]}},\"qualityScore\":null,\"reportMarkdown\":\"# Report\\n\\n## Findings\\n\\n- none\\n\",\"qualityScore\":null}"
+}

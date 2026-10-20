@@ -1,0 +1,59 @@
+# DocsFab operational limits owned by the `checks` name prefix.
+# Registered in config/limits.yaml; every limit here is named `checks.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: checks.commandTimeoutMs
+    value: 600000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_CHECKS_COMMAND_TIMEOUT_MS
+    min: 1000
+    max: 86400000
+    refusal: checks-command-timeout-ms-bound
+    remediation: Run the check yourself before you merge the change, or raise DOCSFAB_CHECKS_COMMAND_TIMEOUT_MS (up to 86400000 ms) so the check finishes in the isolated check executor.
+    rationale: Technical capacity. Wall clock for one repository check command in the isolated check executor, for each repository-required and repository-native documentation check (#1932). The default equals the delivery validation backend's 10-minute command timeout (DOCSFAB_VALIDATION_BACKEND_POLICY_V1 in delivery/worktree/validation-backend.ts), so a documentation build such as mkdocs build, sphinx-build, or a Docusaurus build on a 1,000 to 10,000-file repository fits; the previous 30-second clamp stopped them. At the limit the executor stops the command's whole process group; a required check that stops there is a recorded limitation, not a failure, and the patch is still delivered (#1918). The same limit bounds each Git command that presents Git metadata for the checked copy before any check runs (#1918). The maximum stays inside one Node.js timer. Override may raise it.
+    docValue: 600,000 ms (10 minutes)
+    docSummary: Wall clock for one repository check command in the isolated check executor. A required check that reaches it is recorded as a limitation that names this setting, and the patch is still delivered.
+
+  - name: checks.outputRetainedBytes
+    value: 16384
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_CHECKS_OUTPUT_RETAINED_BYTES
+    min: 2
+    max: 262144
+    refusal: checks-output-retained-bytes-bound
+    remediation: Read the retained head and tail with docsfab runs show <run-id>, or raise DOCSFAB_CHECKS_OUTPUT_RETAINED_BYTES (up to 262144 bytes) to keep more of each check's output.
+    rationale: Presentation. Bytes of one check command's output kept in the lint-documentation evidence, half from the start and half from the end, with the omitted byte count between them (#1932). Output volume never stops a check; the previous 16 KiB cap killed a noisy build and recorded it as failed. The default keeps 16 KiB per check, so the run record does not grow. Every check's retained output shares one step summary, which the publication run-record reader admits up to 1,000,000 characters, so raise this with the number of checks in mind. Override may raise it.
+    docValue: 16,384 bytes (16 KiB)
+    docSummary: Output kept from one check command, half from the start and half from the end, with the omitted byte count between them. Output volume never stops a check.
+
+  - name: checks.nativeCommandMax
+    value: 8
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_CHECKS_NATIVE_COMMAND_MAX
+    min: 0
+    max: 256
+    refusal: checks-native-command-max-bound
+    remediation: Run the remaining documentation checks yourself, or raise DOCSFAB_CHECKS_NATIVE_COMMAND_MAX (up to 256) so one lint step runs them. Repository-required checks always run.
+    rationale: Cost. Repository-native documentation checks, which DocsFab discovers from package scripts and Make targets, that one lint-documentation step runs after every repository-required check (#1932). Required checks are never capped; the previous 8-command batch left required checks past the eighth unrun and refused the patch. Native checks inform review and never gate a proposal. Checks past the limit are recorded in the step evidence with this limit's name and the number discovered. The default keeps the previous 8. Override may raise it.
+    docValue: 8 checks
+    docSummary: Discovered documentation checks, such as a `lint:docs` script or a `docs-check` Make target, that one lint step runs. Repository-required checks always run and do not count.
+
+  - name: checks.credentialScanMaxEntries
+    value: 1000000
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_CHECKS_CREDENTIAL_SCAN_MAX_ENTRIES
+    min: 1
+    max: 100000000
+    refusal: checks-credential-scan-max-entries-bound
+    remediation: Run the required checks yourself, or raise DOCSFAB_CHECKS_CREDENTIAL_SCAN_MAX_ENTRIES (up to 100000000) so the credential scan covers the whole checkout.
+    rationale: Cost. Directory entries the check executor's credential scan visits before it masks credential files and runs any repository command (#1932). The scan must finish, so a checkout it cannot cover runs no check, and its required checks become recorded limitations (#1918). The default is ten times the workspace export's 100,000-entry tree bound, so every exported workspace fits with its directories. Raising it widens the scan; it never unmasks a credential file. Override may raise it.
+    docValue: 1,000,000 entries
+    docSummary: Directory entries the check executor's credential scan visits before any check runs. A larger checkout runs no check, and its required checks are recorded as limitations.

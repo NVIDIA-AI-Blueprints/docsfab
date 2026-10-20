@@ -1,0 +1,173 @@
+{
+  "description": "Six pages that genuinely honour merged_at descending ordering. Pages five and six sit far below the window, so a declared ordering may stop after the confirmation page and must still select exactly what an exhaustive walk selects.",
+  "window": {
+    "timeZone": "America/Los_Angeles",
+    "startDate": "2026-09-14",
+    "endDate": "2026-09-14"
+  },
+  "targetBranch": "main",
+  "pages": [
+    {
+      "page": 1,
+      "nextPage": 2,
+      "truncated": false,
+      "items": [
+        {
+          "iid": 5501,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/5501",
+          "title": "Newest in-window merge",
+          "description": "Selected.",
+          "state": "merged",
+          "mergedAt": "2026-09-14T18:00:00.000Z",
+          "targetBranch": "main",
+          "sourceBranch": "feature/newest-in-window",
+          "mergeCommitSha": "55a1c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        },
+        {
+          "iid": 5502,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/5502",
+          "title": "In-window merge into the release branch",
+          "description": "Excluded: other-target-branch.",
+          "state": "merged",
+          "mergedAt": "2026-09-14T16:00:00.000Z",
+          "targetBranch": "release/2026.09",
+          "sourceBranch": "feature/release-target",
+          "mergeCommitSha": "55a2c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        },
+        {
+          "iid": 5503,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/5503",
+          "title": "Midday in-window merge",
+          "description": "Selected.",
+          "state": "merged",
+          "mergedAt": "2026-09-14T11:30:00.000Z",
+          "targetBranch": "main",
+          "sourceBranch": "feature/midday-change",
+          "mergeCommitSha": "55a3c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        }
+      ]
+    },
+    {
+      "page": 2,
+      "nextPage": 3,
+      "truncated": false,
+      "items": [
+        {
+          "iid": 5504,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/5504",
+          "title": "Morning in-window merge",
+          "description": "Selected.",
+          "state": "merged",
+          "mergedAt": "2026-09-14T09:00:00.000Z",
+          "targetBranch": "main",
+          "sourceBranch": "feature/morning-change",
+          "mergeCommitSha": "55a4c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        },
+        {
+          "iid": 5505,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/5505",
+          "title": "Merge at the exact inclusive window start",
+          "description": "Selected: the last in-window merge in descending order.",
+          "state": "merged",
+          "mergedAt": "2026-09-14T07:00:00.000Z",
+          "targetBranch": "main",
+          "sourceBranch": "feature/window-start-change",
+          "mergeCommitSha": "55a5c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        }
+      ]
+    },
+    {
+      "page": 3,
+      "nextPage": 4,
+      "truncated": false,
+      "items": [
+        {
+          "iid": 5506,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/5506",
+          "title": "First merge below the window start",
+          "description": "Excluded: before-window. Triggers the early stop.",
+          "state": "merged",
+          "mergedAt": "2026-09-13T22:00:00.000Z",
+          "targetBranch": "main",
+          "sourceBranch": "feature/below-window-first",
+          "mergeCommitSha": "55a6c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        },
+        {
+          "iid": 5507,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/5507",
+          "title": "Second merge below the window start",
+          "description": "Excluded: before-window.",
+          "state": "merged",
+          "mergedAt": "2026-09-13T20:00:00.000Z",
+          "targetBranch": "main",
+          "sourceBranch": "feature/below-window-second",
+          "mergeCommitSha": "55a7c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        }
+      ]
+    },
+    {
+      "page": 4,
+      "nextPage": 5,
+      "truncated": false,
+      "items": [
+        {
+          "iid": 5508,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/5508",
+          "title": "Confirmation page still descending",
+          "description": "Read once to confirm the declared ordering before the walk stops.",
+          "state": "merged",
+          "mergedAt": "2026-09-13T10:00:00.000Z",
+          "targetBranch": "main",
+          "sourceBranch": "feature/confirmation-page",
+          "mergeCommitSha": "55a8c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        }
+      ]
+    },
+    {
+      "page": 5,
+      "nextPage": 6,
+      "truncated": false,
+      "items": [
+        {
+          "iid": 5509,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/5509",
+          "title": "Older merge an exhaustive walk still reads",
+          "description": "Excluded: before-window.",
+          "state": "merged",
+          "mergedAt": "2026-09-12T10:00:00.000Z",
+          "targetBranch": "main",
+          "sourceBranch": "feature/older-merge",
+          "mergeCommitSha": "55a9c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        }
+      ]
+    },
+    {
+      "page": 6,
+      "nextPage": null,
+      "truncated": false,
+      "items": [
+        {
+          "iid": 5510,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/5510",
+          "title": "Oldest merge in the fixture",
+          "description": "Excluded: before-window.",
+          "state": "merged",
+          "mergedAt": "2026-09-11T10:00:00.000Z",
+          "targetBranch": "main",
+          "sourceBranch": "feature/oldest-merge",
+          "mergeCommitSha": "55b0c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        }
+      ]
+    }
+  ]
+}

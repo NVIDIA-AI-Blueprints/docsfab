@@ -1,0 +1,481 @@
+{
+  "literals": [
+    {
+      "path": "packages/runtime/src/model/anthropic-api-catalog.ts",
+      "kind": "slice-cap",
+      "lexeme": ".slice(0, 32)",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/catalog-contracts.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 64",
+      "count": 3
+    },
+    {
+      "path": "packages/runtime/src/model/catalog-contracts.ts",
+      "kind": "slice-cap",
+      "lexeme": ".slice(0, 10)",
+      "count": 2
+    },
+    {
+      "path": "packages/runtime/src/model/catalog-discovery-http.ts",
+      "kind": "kib-product",
+      "lexeme": "1024 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/catalog-discovery-http.ts",
+      "kind": "kib-product",
+      "lexeme": "64 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/catalog-discovery-http.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 10",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/catalog-discovery-http.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 64",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/catalog-discovery-http.ts",
+      "kind": "max-assign",
+      "lexeme": "DIRECT_PROVIDER_CATALOG_MAX_BYTES = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/model/catalog-discovery-http.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_JSON_DEPTH = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/model/catalog-discovery-http.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_JSON_NODES = 5",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/model/catalog-discovery-http.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_JSON_OBJECT_FIELDS = 6",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/model/catalog-discovery-http.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_JSON_STRING_BYTES = 6",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/model/catalog-discovery-http.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_RESPONSE_CHUNKS = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/model/catalog-discovery-http.ts",
+      "kind": "timeout-assign",
+      "lexeme": "DIRECT_PROVIDER_CATALOG_TIMEOUT_MS = 5",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/model/catalog-provenance.ts",
+      "kind": "kib-product",
+      "lexeme": "1024 * 1024",
+      "count": 2
+    },
+    {
+      "path": "packages/runtime/src/model/catalog-provenance.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 128",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/catalog-provenance.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 64",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/catalog-provenance.ts",
+      "kind": "slice-cap",
+      "lexeme": ".slice(0, 10)",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/inference-hub-metadata.ts",
+      "kind": "kib-product",
+      "lexeme": "1024 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/inference-hub-metadata.ts",
+      "kind": "kib-product",
+      "lexeme": "4 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/inference-hub-metadata.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 256",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/inference-hub-metadata.ts",
+      "kind": "length-gt",
+      "lexeme": ".length > 512",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/inference-hub-metadata.ts",
+      "kind": "max-assign",
+      "lexeme": "maxCursorBytes: 1",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/inference-hub-metadata.ts",
+      "kind": "max-assign",
+      "lexeme": "maxCursorBytes: 5",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/inference-hub-metadata.ts",
+      "kind": "max-assign",
+      "lexeme": "maxItems: 1",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/inference-hub-metadata.ts",
+      "kind": "max-assign",
+      "lexeme": "maxItems: 2",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/inference-hub-metadata.ts",
+      "kind": "max-assign",
+      "lexeme": "maxItemsPerPage: 1",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/inference-hub-metadata.ts",
+      "kind": "max-assign",
+      "lexeme": "maxItemsPerPage: 2",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/inference-hub-metadata.ts",
+      "kind": "max-assign",
+      "lexeme": "maxJsonDepth: 2",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/inference-hub-metadata.ts",
+      "kind": "max-assign",
+      "lexeme": "maxJsonDepth: 6",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/inference-hub-metadata.ts",
+      "kind": "max-assign",
+      "lexeme": "maxJsonNodes: 1",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/inference-hub-metadata.ts",
+      "kind": "max-assign",
+      "lexeme": "maxJsonNodes: 2",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/inference-hub-metadata.ts",
+      "kind": "max-assign",
+      "lexeme": "maxPages: 1",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/inference-hub-metadata.ts",
+      "kind": "max-assign",
+      "lexeme": "maxPages: 8",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/inference-hub-metadata.ts",
+      "kind": "max-assign",
+      "lexeme": "maxResponseBytes: 1",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/inference-hub-metadata.ts",
+      "kind": "max-assign",
+      "lexeme": "maxResponseBytes: 4",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/inference-hub-metadata.ts",
+      "kind": "max-assign",
+      "lexeme": "maxResponseChunks: 1",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/inference-hub-metadata.ts",
+      "kind": "max-assign",
+      "lexeme": "maxResponseChunks: 4",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/inference-hub-metadata.ts",
+      "kind": "max-assign",
+      "lexeme": "maxStringBytes: 1",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/inference-hub-metadata.ts",
+      "kind": "max-assign",
+      "lexeme": "maxStringBytes: 6",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/inference-hub-metadata.ts",
+      "kind": "slice-cap",
+      "lexeme": ".slice(0, 32)",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/inference-hub-metadata.ts",
+      "kind": "timeout-assign",
+      "lexeme": "timeoutMs: 3",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/inference-hub-metadata.ts",
+      "kind": "timeout-assign",
+      "lexeme": "timeoutMs: 5",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/nvidia-inference-catalog.ts",
+      "kind": "kib-product",
+      "lexeme": "1024 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/nvidia-inference-catalog.ts",
+      "kind": "kib-product",
+      "lexeme": "64 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/nvidia-inference-catalog.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_JSON_DEPTH = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/model/nvidia-inference-catalog.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_JSON_NODES = 5",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/model/nvidia-inference-catalog.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_JSON_OBJECT_FIELDS = 6",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/model/nvidia-inference-catalog.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_JSON_STRING_BYTES = 6",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/model/nvidia-inference-catalog.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_RESPONSE_CHUNKS = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/model/nvidia-inference-catalog.ts",
+      "kind": "max-assign",
+      "lexeme": "NVIDIA_INFERENCE_CATALOG_MAX_BYTES = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/model/nvidia-inference-catalog.ts",
+      "kind": "max-assign",
+      "lexeme": "NVIDIA_INFERENCE_CATALOG_MAX_MODELS = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/model/nvidia-inference-catalog.ts",
+      "kind": "slice-cap",
+      "lexeme": ".slice(0, 32)",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/nvidia-inference-catalog.ts",
+      "kind": "timeout-assign",
+      "lexeme": "NVIDIA_INFERENCE_CATALOG_TIMEOUT_MS = 5",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/model/openai-api-catalog.ts",
+      "kind": "slice-cap",
+      "lexeme": ".slice(0, 32)",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/profile-apply/host.ts",
+      "kind": "kib-product",
+      "lexeme": "16 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/profile-apply/host.ts",
+      "kind": "kib-product",
+      "lexeme": "64 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/profile-apply/host.ts",
+      "kind": "kib-product",
+      "lexeme": "8 * 1024",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/profile-apply/host.ts",
+      "kind": "max-assign",
+      "lexeme": "maxBuffer: 1",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/profile-apply/host.ts",
+      "kind": "max-assign",
+      "lexeme": "maxBuffer: 6",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/profile-apply/host.ts",
+      "kind": "max-assign",
+      "lexeme": "maxBuffer: 8",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/profile-apply/host.ts",
+      "kind": "max-buffer",
+      "lexeme": "maxBuffer: 1",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/profile-apply/host.ts",
+      "kind": "max-buffer",
+      "lexeme": "maxBuffer: 6",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/profile-apply/host.ts",
+      "kind": "max-buffer",
+      "lexeme": "maxBuffer: 8",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/profile-apply/host.ts",
+      "kind": "timeout-assign",
+      "lexeme": "timeout: 5",
+      "count": 3
+    },
+    {
+      "path": "packages/runtime/src/model/profile-approval.ts",
+      "kind": "max-assign",
+      "lexeme": "PROFILE_APPROVAL_MAX_EVIDENCE_AGE_MS = 2",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/model/profile-approval.ts",
+      "kind": "slice-cap",
+      "lexeme": ".slice(0, 32)",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/profile-inspection/projection.ts",
+      "kind": "slice-cap",
+      "lexeme": ".slice(0, 32)",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/provider-turn-retry.ts",
+      "kind": "max-assign",
+      "lexeme": "LENGTH_STOP_NUDGE_MAX_CHARS = 6",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/model/provider-turn-retry.ts",
+      "kind": "max-assign",
+      "lexeme": "MAX_LENGTH_STOP_NUDGED_REPLAYS = 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/model/provider.ts",
+      "kind": "max-assign",
+      "lexeme": "maxCompactions: 8",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/provider.ts",
+      "kind": "max-assign",
+      "lexeme": "maxProviderTurns: 1",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/provider.ts",
+      "kind": "max-assign",
+      "lexeme": "maxToolCalls: 1",
+      "count": 1
+    },
+    {
+      "path": "packages/runtime/src/model/provider.ts",
+      "kind": "max-assign",
+      "lexeme": "minRecentToolTurns: 1",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/model/provider.ts",
+      "kind": "timeout-assign",
+      "lexeme": "contextWindow: 0",
+      "count": 2,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    },
+    {
+      "path": "packages/runtime/src/model/turn-governor.ts",
+      "kind": "max-assign",
+      "lexeme": "contextBudgetSchemaVersion: 2",
+      "count": 1,
+      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
+    }
+  ]
+}

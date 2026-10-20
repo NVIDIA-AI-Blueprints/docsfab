@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 2,
+  "fixtureId": "payload-poisoned",
+  "id": "fixture-poisoned-0001",
+  "workflow": "create-documentation",
+  "instruction": "POISON_PROMPT_DO_NOT_EXPORT",
+  "apiKey": "sk-POISON_CREDENTIAL_DO_NOT_EXPORT",
+  "summary": "POISON_MODEL_SUMMARY_DO_NOT_EXPORT",
+  "steps": [
+    {
+      "id": "write-documentation",
+      "status": "succeeded",
+      "summary": "POISON_STEP_SUMMARY_DO_NOT_EXPORT",
+      "tools": {
+        "totalCalls": 1,
+        "failedCalls": 0,
+        "byTool": [
+          {
+            "name": "read",
+            "calls": 1,
+            "failures": 0,
+            "arguments": {
+              "path": "POISON_TOOL_ARGS_DO_NOT_EXPORT"
+            },
+            "result": "POISON_TOOL_RESULT_DO_NOT_EXPORT"
+          }
+        ],
+        "calls": [
+          {
+            "name": "read",
+            "arguments": {
+              "path": "POISON_NESTED_ARGS_DO_NOT_EXPORT"
+            },
+            "result": "POISON_NESTED_RESULT_DO_NOT_EXPORT"
+          }
+        ]
+      },
+      "inference": {
+        "attempts": [
+          {
+            "attempt": 1,
+            "retryScheduled": true,
+            "turns": [
+              {
+                "turn": 1,
+                "toolCalls": 1,
+                "prompt": "POISON_TURN_PROMPT_DO_NOT_EXPORT"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

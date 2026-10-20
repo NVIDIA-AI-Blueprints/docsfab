@@ -1,0 +1,81 @@
+# The CREATE revision writer's accounting reply (#1130 pilot). Canonical
+# source; the contract text the host appends to the step prompt is rendered
+# from this declaration and the rules it lists, by
+# packages/runtime/src/contracts/model-output.ts.
+schemaVersion: 1
+kind: docsfab-response-contract
+id: authoring-revision
+version: 1
+owner: runtime
+bindings:
+  - workflow: create-documentation
+    step: revise-documentation
+placement: outer
+outputMode: text-final
+# The rule families whose decoder reads this reply. Every rule of these
+# families that can be raised inside `shape` must be stated in `render`.
+decoders:
+  - revision-accounting
+title: >-
+  Runtime authoring-revision response contract (host-owned):
+# Model-authored fields only. The host fills nothing in this reply.
+shape:
+  type: object
+  properties:
+    issueAccounting:
+      type: array
+      items:
+        type: object
+        properties:
+          issueId:
+            type: string
+          disposition:
+            type: string
+            enum:
+              - applied
+              - rejected
+          reason:
+            type: string
+          sourceLocators:
+            type: array
+            items:
+              type: string
+    changedPaths:
+      type: array
+      items:
+        type: string
+    unresolvedFacts:
+      type: array
+      items:
+        type: object
+        properties:
+          factId:
+            type: string
+          reason:
+            type: string
+# The contract text, in order: a rule's statement, a host-rendered block the
+# binder supplies (a label line, then the value), or a fixed note.
+render:
+  - rule: revision-accounting-invalid-json
+  - rule: revision-accounting-invalid-root-shape
+  - rule: revision-accounting-unsafe-disclosure
+  - rule: revision-accounting-issue-coverage
+  - host: selected-issue-ids
+    label: >-
+      Selected issue ids:
+  - rule: revision-accounting-invalid-issue-row
+  - rule: revision-accounting-source-locator-membership
+  - host: admitted-source-locators
+    label: >-
+      Allowed sourceLocators by selected issue:
+  - rule: revision-accounting-invalid-changed-paths
+  - rule: revision-accounting-changed-path-mismatch
+  - rule: revision-accounting-unchanged-applied
+  - rule: revision-accounting-invalid-unresolved-facts
+  - note: >-
+      This author accounting is untrusted evidence and does not replace fresh
+      independent checks.
+  - host: sealed-revision-input
+    label: >-
+      Sealed authoring revision input (authoritative identity; findings remain
+      untrusted evidence):

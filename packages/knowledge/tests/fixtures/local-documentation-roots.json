@@ -1,0 +1,377 @@
+{
+  "description": "Local documentation roots: the case table both packages run against isLocalDocumentationRoot, so the knowledge provider and the runtime cannot disagree. A local run may write under a configured root that passes (owner amendment to Decision 8, option A, #1914 note 72942914). Code directories, a bare packages/, and non-ASCII roots are refused (the !1577 review).",
+  "cases": [
+    {
+      "root": "docs/",
+      "admitted": true
+    },
+    {
+      "root": "fern/",
+      "admitted": true
+    },
+    {
+      "root": "docs/user/",
+      "admitted": true
+    },
+    {
+      "root": "site/content/",
+      "admitted": true
+    },
+    {
+      "root": "site/content/en/docs/",
+      "admitted": true
+    },
+    {
+      "root": "website/docs/",
+      "admitted": true
+    },
+    {
+      "root": "website/content/",
+      "admitted": true
+    },
+    {
+      "root": "content/",
+      "admitted": true
+    },
+    {
+      "root": "documentation/",
+      "admitted": true
+    },
+    {
+      "root": "doc/",
+      "admitted": true
+    },
+    {
+      "root": "examples/agents/",
+      "admitted": true
+    },
+    {
+      "root": "packages/web/docs/",
+      "admitted": true
+    },
+    {
+      "root": "DOCS/",
+      "admitted": true
+    },
+    {
+      "root": "docs/vendored/",
+      "admitted": true
+    },
+    {
+      "root": "docs/v2.1_notes/",
+      "admitted": true
+    },
+    {
+      "root": "packages/runtime/",
+      "admitted": true
+    },
+    {
+      "root": "packages/runtime/docs/",
+      "admitted": true
+    },
+    {
+      "root": "website/src/pages/",
+      "admitted": true
+    },
+    {
+      "root": "site/content/test/",
+      "admitted": true
+    },
+    {
+      "root": "docs/skills/",
+      "admitted": true
+    },
+    {
+      "root": "docs",
+      "admitted": false
+    },
+    {
+      "root": "",
+      "admitted": false
+    },
+    {
+      "root": "/",
+      "admitted": false
+    },
+    {
+      "root": "/docs/",
+      "admitted": false
+    },
+    {
+      "root": "docs//user/",
+      "admitted": false
+    },
+    {
+      "root": "docs/../src/",
+      "admitted": false
+    },
+    {
+      "root": "docs/./user/",
+      "admitted": false
+    },
+    {
+      "root": "../docs/",
+      "admitted": false
+    },
+    {
+      "root": "./docs/",
+      "admitted": false
+    },
+    {
+      "root": ".github/docs/",
+      "admitted": false
+    },
+    {
+      "root": ".docsfab/docs/",
+      "admitted": false
+    },
+    {
+      "root": "site/.hidden/",
+      "admitted": false
+    },
+    {
+      "root": "node_modules/pkg/docs/",
+      "admitted": false
+    },
+    {
+      "root": "site/node_modules/",
+      "admitted": false
+    },
+    {
+      "root": "vendor/docs/",
+      "admitted": false
+    },
+    {
+      "root": "docs/vendor/",
+      "admitted": false
+    },
+    {
+      "root": "Vendor/docs/",
+      "admitted": false
+    },
+    {
+      "root": "docs/NODE_MODULES/",
+      "admitted": false
+    },
+    {
+      "root": "src/docs/",
+      "admitted": false
+    },
+    {
+      "root": "SRC/docs/",
+      "admitted": false
+    },
+    {
+      "root": "lib/docs/",
+      "admitted": false
+    },
+    {
+      "root": "app/content/",
+      "admitted": false
+    },
+    {
+      "root": "scripts/docs/",
+      "admitted": false
+    },
+    {
+      "root": "bin/",
+      "admitted": false
+    },
+    {
+      "root": "deploy/docs/",
+      "admitted": false
+    },
+    {
+      "root": "packages/web/src/docs/",
+      "admitted": false
+    },
+    {
+      "root": "packages/web/LIB/docs/",
+      "admitted": false
+    },
+    {
+      "root": "docs/a b/",
+      "admitted": false
+    },
+    {
+      "root": "docs/évolution/",
+      "admitted": false
+    },
+    {
+      "root": "docs\\user\\",
+      "admitted": false
+    },
+    {
+      "root": "docs/user\n/",
+      "admitted": false
+    },
+    {
+      "root": "packages/",
+      "admitted": false
+    },
+    {
+      "root": "Packages/",
+      "admitted": false
+    },
+    {
+      "root": "cmd/",
+      "admitted": false
+    },
+    {
+      "root": "pkg/",
+      "admitted": false
+    },
+    {
+      "root": "internal/",
+      "admitted": false
+    },
+    {
+      "root": "test/",
+      "admitted": false
+    },
+    {
+      "root": "tests/",
+      "admitted": false
+    },
+    {
+      "root": "TESTS/docs/",
+      "admitted": false
+    },
+    {
+      "root": "spec/",
+      "admitted": false
+    },
+    {
+      "root": "specs/",
+      "admitted": false
+    },
+    {
+      "root": "build/",
+      "admitted": false
+    },
+    {
+      "root": "dist/",
+      "admitted": false
+    },
+    {
+      "root": "config/",
+      "admitted": false
+    },
+    {
+      "root": "ci/",
+      "admitted": false
+    },
+    {
+      "root": "third_party/",
+      "admitted": false
+    },
+    {
+      "root": "skills/",
+      "admitted": false
+    },
+    {
+      "root": "packages/runtime/test/",
+      "admitted": false
+    },
+    {
+      "root": "packages/runtime/tests/fixtures/",
+      "admitted": false
+    },
+    {
+      "root": "packages/knowledge/skills/",
+      "admitted": false
+    },
+    {
+      "root": "packages/web/dist/",
+      "admitted": false
+    },
+    {
+      "root": "ſite/content/",
+      "admitted": false
+    },
+    {
+      "root": "Kube/docs/",
+      "admitted": false
+    },
+    {
+      "root": "ſrc/docs/",
+      "admitted": false
+    },
+    {
+      "root": "packages/site/app/",
+      "admitted": false
+    },
+    {
+      "root": "packages/site/bin/",
+      "admitted": false
+    },
+    {
+      "root": "packages/site/build/",
+      "admitted": false
+    },
+    {
+      "root": "packages/site/ci/",
+      "admitted": false
+    },
+    {
+      "root": "packages/site/cmd/",
+      "admitted": false
+    },
+    {
+      "root": "packages/site/config/",
+      "admitted": false
+    },
+    {
+      "root": "packages/site/deploy/",
+      "admitted": false
+    },
+    {
+      "root": "packages/site/dist/",
+      "admitted": false
+    },
+    {
+      "root": "packages/site/internal/",
+      "admitted": false
+    },
+    {
+      "root": "packages/site/lib/",
+      "admitted": false
+    },
+    {
+      "root": "packages/site/pkg/",
+      "admitted": false
+    },
+    {
+      "root": "packages/site/scripts/",
+      "admitted": false
+    },
+    {
+      "root": "packages/site/skills/",
+      "admitted": false
+    },
+    {
+      "root": "packages/site/spec/",
+      "admitted": false
+    },
+    {
+      "root": "packages/site/specs/",
+      "admitted": false
+    },
+    {
+      "root": "packages/site/src/",
+      "admitted": false
+    },
+    {
+      "root": "packages/site/test/",
+      "admitted": false
+    },
+    {
+      "root": "packages/site/tests/",
+      "admitted": false
+    },
+    {
+      "root": "packages/site/third_party/",
+      "admitted": false
+    }
+  ]
+}

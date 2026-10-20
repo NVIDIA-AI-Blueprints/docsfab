@@ -1,0 +1,39 @@
+# DocsFab operational limits owned by the `sourceObligation` name prefix.
+# Registered in config/limits.yaml; change this file and run
+# `npm run generate:limits` from packages/runtime.
+limits:
+  - name: sourceObligation.maxObligations
+    value: 256
+    unit: count
+    scope: sealed
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 256
+    refusal: source-obligation-max-obligations-bound
+    remediation: Split the documentation work into focused runs with fewer source obligations while retaining every established claim and its evidence.
+    rationale: Provisional structural capacity inherited from the source-obligation decoder's MAX_OBLIGATIONS value, not a measured model or provider ceiling. One ledger and its durable V1/V2 readback admit at most 256 obligations; the downstream technical fact inventory independently admits at most 256 facts. This value is sealed because changing it on a later host could invalidate an already recorded ledger. A one-page review with 18 recorded obligations fits this cap and the complete host-filled proposal under the combined defaults.
+
+  - name: sourceObligation.maxPerDimension
+    value: 128
+    unit: count
+    scope: sealed
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 128
+    refusal: source-obligation-max-per-dimension-bound
+    remediation: Split the documentation work into focused runs with fewer obligations in each technical dimension while retaining every established claim and its evidence.
+    rationale: Provisional structural capacity inherited from the source-obligation decoder's MAX_PER_DIMENSION value, not a measured model or provider ceiling. Durable V1/V2 ledger readback checks the same cap; the downstream technical fact inventory independently admits at most 128 facts per dimension. This value is sealed so a later host cannot reject an already recorded ledger merely because of an override. The representative one-page review has fewer than 128 obligations in every dimension.
+
+  - name: sourceObligation.maxLocators
+    value: 64
+    unit: count
+    scope: sealed
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 64
+    refusal: source-obligation-max-locators-bound
+    remediation: Split the documentation work into focused runs if the ledger must cite more distinct admitted sources or source spans; keep every locator needed to establish each claim.
+    rationale: Provisional structural capacity inherited from the source-obligation decoder's MAX_LOCATORS value, not a measured model or provider ceiling. It bounds source identities and each dimension or obligation locator array in durable V1/V2 ledgers. The downstream technical fact inventory has its own independent 64-locator cap. This value is sealed because durable ledger readback uses the same decoder and must remain valid after a host restart. The representative one-page review cites fewer than 64 locators per array.

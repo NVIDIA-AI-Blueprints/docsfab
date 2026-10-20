@@ -1,0 +1,27 @@
+# DocsFab operational limits owned by the `diagnosis` name prefix.
+# Registered in config/limits.yaml; every limit here is named `diagnosis.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: diagnosis.maxRuns
+    value: 50
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 10000
+    refusal: diagnosis-max-runs-bound
+    remediation: Narrow docsfab why to one run ID, --last, --batch, or --model, or raise diagnosis.maxRuns in config/limits/diagnosis.yaml or the host limits file.
+    rationale: Runs one docsfab why invocation diagnoses when it selects several runs, such as every run in a state directory, a batch, or a model. The newest runs are diagnosed first. The hosted-model verification of September 30, 2026 left 13 failed runs in one state directory, and two eight-case local-workflows matrices hold 16, so 50 covers several batches in one answer. Over the bound, the answer states how many runs it diagnosed out of how many matched, in the human output and in the JSON runs.clipped field, and names this limit; it never drops runs silently. The maximum matches runs.indexImportMaxRecords.
+
+  - name: diagnosis.recurrenceLookbackRuns
+    value: 20
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 10000
+    refusal: diagnosis-recurrence-lookback-runs-bound
+    remediation: Count older occurrences with the printed docsfab runs query command without its --since option, or raise diagnosis.recurrenceLookbackRuns in config/limits/diagnosis.yaml or the host limits file.
+    rationale: Recent runs of the same provider and model that a diagnosis compares when it reports how often the same step failed with the same code, as N of the last M runs. Twenty covers two eight-case matrices and their reruns, which is the span in which a repeated cause usually belongs to one DocsFab revision and one serving route. The first-seen run is read from the whole index rather than from this window. When the window is shorter than the runs the index holds for that model, the recurrence line says so and its reproduce command carries the matching --since bound.

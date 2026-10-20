@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "docsfab-model-profile-candidate-excerpt/v1",
+  "profileId": "generation-deepseek-v4-pro",
+  "status": "candidate",
+  "profileKind": "generative",
+  "purposes": [
+    "main-documentation",
+    "review",
+    "evaluation"
+  ],
+  "identity": {
+    "provider": "nvidia-inference-api",
+    "modelId": "nvidia/deepseek-ai/deepseek-v4-pro",
+    "endpoint": null,
+    "region": null
+  },
+  "interface": {
+    "transport": "openai-compatible",
+    "apiFormat": "chat_completions",
+    "route": "/v1/chat/completions",
+    "inputTypes": [
+      "text"
+    ],
+    "outputType": "text"
+  },
+  "proposedConfiguration": {
+    "contextWindow": 1048576,
+    "maxInputTokens": 1048576,
+    "maxOutputTokens": 384000,
+    "documentedMaxOutputTokens": 384000,
+    "reasoning": false,
+    "supportsDeveloperRole": false,
+    "supportsReasoningEffort": true,
+    "requestControls": [
+      "max_tokens",
+      "reasoning_budget",
+      "reasoning_effort",
+      "seed",
+      "stop",
+      "stream",
+      "temperature",
+      "top_p"
+    ]
+  },
+  "approvalStatus": "not-approved",
+  "projection": {
+    "runtimeConfiguration": "not-authorized",
+    "modelRequest": "blocked"
+  }
+}

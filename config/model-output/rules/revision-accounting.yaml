@@ -1,0 +1,265 @@
+# Model-output rules for the CREATE revision writer's accounting (#1266,
+# #1130 pilot). Canonical source; generated bindings are produced by
+# `npm run generate:model-output` from packages/runtime.
+#
+# Every code here is recorded on the refused attempt as its structured
+# rejection. The decoder and the mutation check live in
+# packages/runtime/src/workflow-execution/authoring-revision.ts; the catalog
+# owns the facts about each rule, not its predicate.
+schemaVersion: 1
+kind: docsfab-output-rules
+family: revision-accounting
+# The revision writer can write. Its host restores every planned page to
+# sealed candidate 0 before a retry, so each retry hint closes with the
+# reset-write-step statement in retry-policy.yaml.
+replay: reset-write-step
+# Recorded codes keep this prefix; a persisted code is never renamed.
+recordedPrefix: revision-accounting-
+rules:
+  - code: revision-accounting-invalid-json
+    locations:
+      - $
+    kind: syntax
+    retry: model-correctable
+    reason: >-
+      The accounting was not one strict JSON object; the writer can re-emit it
+      as strict JSON.
+    statement: >-
+      Return the accounting as exactly one strict JSON object as the whole
+      response: no Markdown fence, no prose before or after it, and no comments
+      or trailing commas.
+    operator:
+      kind: correct
+      meaning: >-
+        The revision writer's accounting was not one strict JSON object.
+      next: >-
+        Inspect the saved run, then correct the revision producer or the host
+        accounting contract before starting a new run; do not replay the
+        unchanged write step.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/revision-accounting/invalid-json.json
+    docs: revision-accounting-invalid-json
+
+  - code: revision-accounting-unsafe-disclosure
+    locations:
+      - $
+    kind: disclosure
+    retry: terminal
+    reason: >-
+      One of DocsFab's own configured credentials is a security refusal and
+      is never re-asked; text that only looks like a credential is not.
+    statement: >-
+      Never put a credential, secret, or token anywhere in the accounting.
+    operator:
+      kind: correct
+      meaning: >-
+        The revision writer's accounting contained one of DocsFab's own
+        configured credentials, which the host refuses without retrying.
+      next: >-
+        Inspect the saved run, then correct the revision producer or the host
+        accounting contract before starting a new run; do not replay the
+        unchanged write step.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/revision-accounting/unsafe-disclosure.json
+    docs: revision-accounting-unsafe-disclosure
+
+  - code: revision-accounting-invalid-root-shape
+    locations:
+      - $
+    kind: shape
+    retry: model-correctable
+    reason: >-
+      The object must have exactly issueAccounting, changedPaths, and
+      unresolvedFacts, as the contract states.
+    statement: >-
+      The accounting object has exactly three keys, issueAccounting,
+      changedPaths, and unresolvedFacts, and no others; each of them is an
+      array.
+    operator:
+      kind: correct
+      meaning: >-
+        The revision writer's accounting object did not have exactly the three
+        declared array keys.
+      next: >-
+        Inspect the saved run, then correct the revision producer or the host
+        accounting contract before starting a new run; do not replay the
+        unchanged write step.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/revision-accounting/invalid-root-shape.json
+    docs: revision-accounting-invalid-root-shape
+
+  - code: revision-accounting-invalid-issue-row
+    locations:
+      - $.issueAccounting[]
+    kind: shape
+    retry: model-correctable
+    reason: >-
+      Each issue row has exactly the declared keys, an issue id, a
+      disposition, a substantive reason, and distinct specific locators.
+    statement: >-
+      Each issueAccounting row has exactly issueId, disposition, reason, and
+      sourceLocators: issueId is one of the selected issue ids, disposition is
+      "applied" or "rejected", reason is substantive text without leading or
+      trailing whitespace, and sourceLocators lists one or more distinct
+      specific repository locators.
+    operator:
+      kind: correct
+      meaning: >-
+        An issueAccounting row did not have the declared keys and values.
+      next: >-
+        Inspect the saved run, then correct the revision producer or the host
+        accounting contract before starting a new run; do not replay the
+        unchanged write step.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/revision-accounting/invalid-issue-row.json
+    docs: revision-accounting-invalid-issue-row
+
+  - code: revision-accounting-issue-coverage
+    locations:
+      - $.issueAccounting[].issueId
+    kind: content
+    retry: model-correctable
+    reason: >-
+      The rows must account for each selected issue exactly once; the contract
+      lists the issue ids.
+    statement: >-
+      issueAccounting contains exactly one row for each selected issue id the
+      contract lists, and no row for any other id.
+    operator:
+      kind: correct
+      meaning: >-
+        The accounting did not cover each selected issue exactly once.
+      next: >-
+        Inspect the saved run, then correct the revision producer or the host
+        accounting contract before starting a new run; do not replay the
+        unchanged write step.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/revision-accounting/issue-coverage.json
+    docs: revision-accounting-issue-coverage
+
+  - code: revision-accounting-source-locator-membership
+    locations:
+      - $.issueAccounting[].sourceLocators[]
+    kind: authority
+    retry: terminal
+    reason: >-
+      A row cites a locator outside the list the host admitted for that issue,
+      which is an authority refusal (#1128).
+    statement: >-
+      For each row, copy one or more sourceLocators verbatim from that same
+      issue's allowed list the contract lists; do not reconstruct, combine,
+      narrow, broaden, normalize, or substitute a different citation.
+    operator:
+      kind: correct
+      meaning: >-
+        An issueAccounting row cited a source locator the host did not admit
+        for that issue.
+      next: >-
+        Inspect the saved run, then correct the revision producer or the host
+        accounting contract before starting a new run; do not replay the
+        unchanged write step.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/revision-accounting/source-locator-membership.json
+    docs: revision-accounting-source-locator-membership
+
+  - code: revision-accounting-invalid-changed-paths
+    locations:
+      - $.changedPaths[]
+    kind: content
+    retry: model-correctable
+    reason: >-
+      changedPaths must list distinct, safe paths from the plan write scope,
+      which the contract states; the mutation boundary refuses any actual write
+      outside it.
+    statement: >-
+      changedPaths lists each changed path once, using only repository-relative
+      paths from the unchanged plan write scope in the sealed revision input.
+    operator:
+      kind: correct
+      meaning: >-
+        changedPaths named a path outside the plan write scope, an unsafe path,
+        or a path twice.
+      next: >-
+        Inspect the saved run, then correct the revision producer or the host
+        accounting contract before starting a new run; do not replay the
+        unchanged write step.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/revision-accounting/invalid-changed-paths.json
+    docs: revision-accounting-invalid-changed-paths
+
+  - code: revision-accounting-invalid-unresolved-facts
+    locations:
+      - $.unresolvedFacts[]
+    kind: content
+    retry: model-correctable
+    reason: >-
+      Each unresolved fact names a selected admitted fact once, with a
+      substantive reason; the sealed revision input lists the facts.
+    statement: >-
+      Each unresolvedFacts entry has exactly factId and reason, names a
+      selected admitted fact from the sealed revision input once, and gives a
+      substantive reason.
+    operator:
+      kind: correct
+      meaning: >-
+        An unresolvedFacts entry did not name a selected admitted fact once
+        with a substantive reason.
+      next: >-
+        Inspect the saved run, then correct the revision producer or the host
+        accounting contract before starting a new run; do not replay the
+        unchanged write step.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/revision-accounting/invalid-unresolved-facts.json
+    docs: revision-accounting-invalid-unresolved-facts
+
+  - code: revision-accounting-changed-path-mismatch
+    locations:
+      - $.changedPaths
+    kind: content
+    retry: model-correctable
+    reason: >-
+      changedPaths must equal the paths the writer actually changed from
+      candidate 0; the writer can make or describe the change the host
+      observes.
+    statement: >-
+      changedPaths lists exactly the planned pages whose final content differs
+      from candidate 0 after your writes, and no other path. Rewriting a page
+      with identical content does not change it. If you change no page, return
+      changedPaths as [].
+    operator:
+      kind: correct
+      meaning: >-
+        The declared changedPaths did not match the pages the writer actually
+        changed.
+      next: >-
+        Inspect the saved run, then correct the revision producer or the host
+        accounting contract before starting a new run; do not replay the
+        unchanged write step.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/revision-accounting/changed-path-mismatch.json
+    docs: revision-accounting-changed-path-mismatch
+
+  - code: revision-accounting-unchanged-applied
+    locations:
+      - $.issueAccounting[].disposition
+    kind: content
+    retry: model-correctable
+    reason: >-
+      A revision that changes nothing cannot mark an issue applied; the writer
+      can make the change or mark the issue rejected.
+    statement: >-
+      A revision that leaves every planned page identical to candidate 0
+      cannot mark any issue "applied". Either make the correction the issue
+      needs, or mark the issue "rejected" and give the reason.
+    operator:
+      kind: correct
+      meaning: >-
+        The accounting marked an issue applied although the revision changed
+        no planned page.
+      next: >-
+        Inspect the saved run, then correct the revision producer or the host
+        accounting contract before starting a new run; do not replay the
+        unchanged write step.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/revision-accounting/unchanged-applied.json
+    docs: revision-accounting-unchanged-applied

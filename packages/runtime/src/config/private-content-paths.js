@@ -1,0 +1,5 @@
+// SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+// SPDX-License-Identifier: Apache-2.0
+
+/** Benchmark and optional governed payloads are retained internally. */
+export const PRIVATE_CONTENT_PATHS = Object.freeze({});

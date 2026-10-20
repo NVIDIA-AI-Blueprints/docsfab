@@ -1,0 +1,246 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/docsfab-workflow.schema.json",
+  "title": "DocsFab public workflow manifest",
+  "description": "Pin-A job JSON under packages/runtime/workflows/. This schema file is not a public job.",
+  "oneOf": [
+    { "$ref": "#/$defs/workflowV1" },
+    { "$ref": "#/$defs/updateWorkflowV2" },
+    { "$ref": "#/$defs/createWorkflowV3" }
+  ],
+  "$defs": {
+    "workflowName": {
+      "type": "string",
+      "enum": [
+        "bootstrap",
+        "review-documentation",
+        "create-documentation",
+        "update-documentation",
+        "restructure-documentation",
+        "readiness",
+        "release-documentation-readiness",
+        "audit-documentation",
+        "live-agent-turn",
+        "reconcile-product-behavior",
+        "foundation",
+        "foundation-to-patch",
+        "ia-analysis",
+        "ia-plan",
+        "site-bootstrap"
+      ]
+    },
+    "workflowV1": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "name",
+        "title",
+        "outcome",
+        "contextPolicy",
+        "steps"
+      ],
+      "properties": {
+        "schemaVersion": { "const": 1, "type": "integer" },
+        "name": { "$ref": "#/$defs/workflowName" },
+        "title": { "type": "string", "minLength": 1 },
+        "outcome": { "type": "string", "minLength": 1 },
+        "contextPolicy": { "$ref": "#/$defs/contextPolicy" },
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/workflowStep" }
+        }
+      }
+    },
+    "updateWorkflowV2": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "name", "title", "outcome", "prefix", "selection", "branches"],
+      "properties": {
+        "schemaVersion": { "const": 2, "type": "integer" },
+        "name": { "const": "update-documentation", "type": "string" },
+        "title": { "type": "string", "minLength": 1 },
+        "outcome": { "type": "string", "minLength": 1 },
+        "prefix": { "$ref": "#/$defs/workflowSegment" },
+        "selection": { "$ref": "#/$defs/editorialSelection" },
+        "branches": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": { "$ref": "#/$defs/editorialBranch" }
+        }
+      }
+    },
+    "createWorkflowV3": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "name", "title", "outcome", "prefix", "selection", "branches"],
+      "properties": {
+        "schemaVersion": { "const": 3, "type": "integer" },
+        "name": { "const": "create-documentation", "type": "string" },
+        "title": { "type": "string", "minLength": 1 },
+        "outcome": { "type": "string", "minLength": 1 },
+        "prefix": { "$ref": "#/$defs/workflowSegment" },
+        "selection": { "$ref": "#/$defs/authoringRevisionSelection" },
+        "branches": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            { "$ref": "#/$defs/retainAuthoringBranch" },
+            { "$ref": "#/$defs/reviseAuthoringBranch" }
+          ],
+          "items": false
+        }
+      }
+    },
+    "workflowSegment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["steps", "contextPolicy"],
+      "properties": {
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/workflowStep" }
+        },
+        "contextPolicy": { "$ref": "#/$defs/contextPolicy" }
+      }
+    },
+    "editorialSelection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["afterStepId", "kind"],
+      "properties": {
+        "afterStepId": { "type": "string", "minLength": 1 },
+        "kind": { "const": "editorial-candidate-v1", "type": "string" }
+      }
+    },
+    "authoringRevisionSelection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["afterStepId", "kind"],
+      "properties": {
+        "afterStepId": {
+          "enum": ["review-documentation", "verify-technical-accuracy"],
+          "type": "string"
+        },
+        "kind": { "const": "authoring-revision-v1", "type": "string" }
+      }
+    },
+    "retainAuthoringBranch": {
+      "allOf": [
+        { "$ref": "#/$defs/authoringBranch" },
+        {
+          "type": "object",
+          "properties": { "id": { "const": "retain", "type": "string" } }
+        }
+      ]
+    },
+    "reviseAuthoringBranch": {
+      "allOf": [
+        { "$ref": "#/$defs/authoringBranch" },
+        {
+          "type": "object",
+          "properties": { "id": { "const": "revise", "type": "string" } }
+        }
+      ]
+    },
+    "authoringBranch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "steps", "contextPolicy"],
+      "properties": {
+        "id": { "type": "string", "enum": ["retain", "revise"] },
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/workflowStep" }
+        },
+        "contextPolicy": { "$ref": "#/$defs/contextPolicy" }
+      }
+    },
+    "editorialBranch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "steps", "contextPolicy"],
+      "properties": {
+        "id": { "type": "string", "enum": ["author", "assess-no-change"] },
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/workflowStep" }
+        },
+        "contextPolicy": { "$ref": "#/$defs/contextPolicy" }
+      }
+    },
+    "contextPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "steps"],
+      "properties": {
+        "schemaVersion": { "const": 1, "type": "integer" },
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/contextPolicyStep" }
+        }
+      }
+    },
+    "contextPolicyStep": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stepId", "required", "level", "query", "allowReadOnlyDegraded"],
+      "properties": {
+        "stepId": { "type": "string", "minLength": 1 },
+        "required": { "type": "boolean" },
+        "level": { "type": "string", "enum": ["local", "change-scoped", "corpus"] },
+        "query": {
+          "type": "string",
+          "enum": ["locate", "get-neighborhood", "find-home", "test-placement", "expand"]
+        },
+        "allowReadOnlyDegraded": { "type": "boolean" }
+      }
+    },
+    "workflowStep": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "kind", "skill", "mode", "prompt"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "title": { "type": "string", "minLength": 1 },
+        "kind": { "type": "string", "enum": ["inference", "host-operation", "evaluate"] },
+        "operation": {
+          "type": "string",
+          "enum": ["ia-plan", "site-bootstrap", "foundation", "foundation-to-patch"]
+        },
+        "invokes": { "type": "string", "const": "create-documentation" },
+        "skill": { "type": "string", "minLength": 1 },
+        "mode": { "type": "string", "enum": ["read-only", "write"] },
+        "prompt": { "type": "string", "minLength": 1 },
+        "consumes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "consumesEvidence": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "searchPlan": {
+          "type": "string",
+          "enum": [
+            "documentation-audit",
+            "documentation-observation",
+            "source-readiness",
+            "release-documentation-readiness",
+            "information-architecture-discovery"
+          ]
+        },
+        "searchMode": { "type": "string", "enum": ["observe", "revalidate", "reuse"] }
+      }
+    }
+  }
+}

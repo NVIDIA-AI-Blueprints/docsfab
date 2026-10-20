@@ -1,0 +1,6 @@
+site_name: Example report guide
+nav:
+  - Start: index.md
+  - Guide: guide.md
+  - Notes: myst.md
+  - Card: component.mdx

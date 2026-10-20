@@ -1,0 +1,27 @@
+# DocsFab operational limits owned by the `autonomy` name prefix.
+# Registered in config/limits.yaml; every limit here is named `autonomy.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: autonomy.authorizationWindowMs
+    value: 3600000
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_AUTONOMY_AUTHORIZATION_WINDOW_MS
+    min: 1
+    max: 3600000
+    refusal: autonomy-authorization-window-ms-bound
+    remediation: Recover by lowering the requested auto-cycle window or DOCSFAB_AUTONOMY_AUTHORIZATION_WINDOW_MS, then retry `docsfab auto --once`. Raise autonomy.authorizationWindowMs in config/limits/autonomy.yaml only when the host policy should admit a longer window.
+    rationale: Maximum auto-cycle authorization window. Requested windows at this bound are admitted; one millisecond over refuses. DocsFab never silently shortens a requested window. Host override may only lower it.
+
+  - name: autonomy.authorizationWindowDefaultMs
+    value: 900000
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: DOCSFAB_AUTONOMY_AUTHORIZATION_WINDOW_DEFAULT_MS
+    min: 1
+    max: 900000
+    refusal: autonomy-authorization-window-default-ms-bound
+    remediation: Recover by passing an explicit confirmation window at or under autonomy.authorizationWindowMs, or lower DOCSFAB_AUTONOMY_AUTHORIZATION_WINDOW_DEFAULT_MS, then retry `docsfab auto --once`. Startup refuses when the effective default exceeds the effective maximum.
+    rationale: Default auto-cycle authorization window when confirmation omits windowMs. This is a default, not a silent clamp of a requested value. Host override may only lower it, and the effective default must stay at or under the effective maximum.

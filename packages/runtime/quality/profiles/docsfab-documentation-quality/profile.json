@@ -1,0 +1,281 @@
+{
+  "schema_version": "1.0",
+  "id": "docsfab-documentation-quality",
+  "version": "v0.1",
+  "status": "experimental",
+  "release_gate_eligible": false,
+  "model": "documentation-quality-model-v0.2",
+  "source": "DocsFab layered documentation quality framework (experimental)",
+  "applicability": {
+    "documentation_set": {
+      "required_dimensions_by_layer": {
+        "trustworthy_information": [
+          "factual-accuracy",
+          "functional-validity",
+          "scoped-sufficiency",
+          "currency-version-fidelity",
+          "consistency",
+          "boundary-clarity",
+          "grounding-authority",
+          "delivery-integrity"
+        ],
+        "transferable_understanding": [
+          "audience-fit",
+          "conceptual-fidelity",
+          "purpose-rationale",
+          "terminology",
+          "clarity",
+          "editorial-style",
+          "examples",
+          "information-architecture",
+          "visual-explanation",
+          "mental-model-transfer"
+        ],
+        "effective_experience": [
+          "findability",
+          "orientation-navigation",
+          "task-effectiveness",
+          "efficiency-friction",
+          "prevention-recovery",
+          "workflow-continuity",
+          "contextualization",
+          "interaction-responsiveness",
+          "presentation-coherence",
+          "calibrated-confidence"
+        ]
+      }
+    },
+    "individual_page": {
+      "nonlisted_dimensions": "optional-unless-required-by-declared-outcome-or-risk",
+      "path_prefix_by_family": {
+        "about": "docs/about/",
+        "conceptual": "docs/conceptual/",
+        "get-started": "docs/get-started/",
+        "procedural": "docs/procedural/",
+        "reference": "docs/reference/",
+        "release-notes": "docs/release-notes/",
+        "resources": "docs/resources/",
+        "troubleshooting": "docs/troubleshooting/"
+      },
+      "required_dimensions_by_family": {
+        "about": [
+          "factual-accuracy",
+          "audience-fit",
+          "purpose-rationale",
+          "boundary-clarity",
+          "findability"
+        ],
+        "conceptual": [
+          "grounding-authority",
+          "conceptual-fidelity",
+          "purpose-rationale",
+          "information-architecture",
+          "visual-explanation",
+          "mental-model-transfer"
+        ],
+        "get-started": [
+          "functional-validity",
+          "scoped-sufficiency",
+          "information-architecture",
+          "task-effectiveness",
+          "efficiency-friction",
+          "prevention-recovery"
+        ],
+        "procedural": [
+          "functional-validity",
+          "boundary-clarity",
+          "task-effectiveness",
+          "findability",
+          "prevention-recovery"
+        ],
+        "reference": [
+          "factual-accuracy",
+          "scoped-sufficiency",
+          "currency-version-fidelity",
+          "consistency",
+          "grounding-authority",
+          "findability"
+        ],
+        "release-notes": [
+          "factual-accuracy",
+          "scoped-sufficiency",
+          "currency-version-fidelity",
+          "consistency",
+          "findability"
+        ],
+        "resources": [
+          "terminology",
+          "consistency",
+          "findability"
+        ],
+        "troubleshooting": [
+          "functional-validity",
+          "boundary-clarity",
+          "findability",
+          "task-effectiveness",
+          "prevention-recovery"
+        ]
+      }
+    },
+    "required_dimensions_by_outcome_class": {
+      "orientation": [
+        "audience-fit",
+        "purpose-rationale",
+        "findability",
+        "orientation-navigation"
+      ],
+      "conceptual-reasoning": [
+        "conceptual-fidelity",
+        "purpose-rationale",
+        "mental-model-transfer",
+        "calibrated-confidence"
+      ],
+      "task-completion": [
+        "functional-validity",
+        "task-effectiveness",
+        "efficiency-friction",
+        "prevention-recovery"
+      ],
+      "reference-lookup": [
+        "factual-accuracy",
+        "scoped-sufficiency",
+        "findability"
+      ],
+      "problem-recovery": [
+        "functional-validity",
+        "boundary-clarity",
+        "task-effectiveness",
+        "prevention-recovery"
+      ],
+      "change-awareness": [
+        "factual-accuracy",
+        "scoped-sufficiency",
+        "currency-version-fidelity",
+        "findability"
+      ]
+    },
+    "required_dimensions_by_risk_class": {
+      "general-information": [],
+      "task-execution": [
+        "functional-validity",
+        "boundary-clarity",
+        "task-effectiveness",
+        "prevention-recovery"
+      ],
+      "production-operation": [
+        "factual-accuracy",
+        "functional-validity",
+        "currency-version-fidelity",
+        "boundary-clarity",
+        "task-effectiveness",
+        "prevention-recovery",
+        "calibrated-confidence"
+      ],
+      "security-sensitive": [
+        "factual-accuracy",
+        "functional-validity",
+        "boundary-clarity",
+        "grounding-authority",
+        "prevention-recovery",
+        "calibrated-confidence"
+      ],
+      "regulated-or-safety-critical": [
+        "factual-accuracy",
+        "functional-validity",
+        "currency-version-fidelity",
+        "boundary-clarity",
+        "grounding-authority",
+        "delivery-integrity",
+        "task-effectiveness",
+        "prevention-recovery",
+        "calibrated-confidence"
+      ]
+    },
+    "not_applicable_requires_rationale": true
+  },
+  "decision_policy": {
+    "aggregation": "vector-no-opaque-total",
+    "overall_confidence": "minimum-required-dimension-confidence",
+    "missing_required_evidence": "insufficient-evidence",
+    "conditional_pass": false,
+    "hard_gate_precedence": true,
+    "experimental_profile_maximum_decision": "insufficient-evidence"
+  },
+  "constraints": {
+    "required": [
+      "accessibility-and-inclusion",
+      "safety-security-privacy",
+      "legal-policy-support",
+      "human-agent-representation-parity"
+    ],
+    "conditional": [
+      "global-and-localization-readiness"
+    ]
+  },
+  "evidence_policy": {
+    "factual-accuracy": {
+      "minimum_class": "grounded-judgment",
+      "critical_claims": "all"
+    },
+    "functional-validity": {
+      "minimum_class": "deterministic-conformance",
+      "outcome_required_for_release_claim": true
+    },
+    "mental-model-transfer": {
+      "minimum_class": "outcome-evaluation",
+      "preserve_human_agent_results_separately": true
+    },
+    "task-effectiveness": {
+      "minimum_class": "outcome-evaluation",
+      "preserve_human_agent_results_separately": true
+    },
+    "delivery-integrity": {
+      "minimum_class": "deterministic-conformance"
+    },
+    "longitudinal-claims": {
+      "minimum_class": "longitudinal-observation"
+    }
+  },
+  "outcome_policy": {
+    "required_populations": [
+      "human",
+      "agent"
+    ],
+    "minimum_verified_attempts_per_population": 1,
+    "minimum_success_rate": 1.0,
+    "unverified_attempts": "block-pass"
+  },
+  "evidence_strength": {
+    "direct": "Observed property or outcome of the frozen target under the declared conditions.",
+    "derived": "Reproducible transformation of identified direct evidence.",
+    "proxy": "Indirect correlate, heuristic, or expert prediction that does not observe the target outcome.",
+    "none": "No usable evidence for the assessment."
+  },
+  "confidence_anchors": {
+    "0.00": "No usable evidence.",
+    "0.25": "Weak or isolated proxy evidence.",
+    "0.50": "Consistent grounded judgment with limited direct coverage.",
+    "0.75": "Repeatable direct evidence with declared coverage limitations.",
+    "0.90": "Convergent direct and outcome evidence across representative cases.",
+    "1.00": "Reserved; complete certainty is not expected for an evolving documentation system."
+  },
+  "hard_gates": [
+    "critical-factual-error",
+    "unsupported-critical-claim",
+    "broken-required-example",
+    "material-omission",
+    "wrong-version-instruction",
+    "unsafe-or-insecure-instruction",
+    "accessibility-blocker",
+    "privacy-or-proprietary-data-violation",
+    "legal-policy-or-support-violation",
+    "materially-divergent-human-agent-representation"
+  ],
+  "calibration": {
+    "dimension_applicability": "experimental",
+    "human_outcome_baseline": "pending",
+    "agent_outcome_baseline": "pending",
+    "thresholds": "pending",
+    "promotion_requirement": "Calibrate with representative human and agent evaluations, approve applicability rules and thresholds, and issue a versioned release decision."
+  }
+}

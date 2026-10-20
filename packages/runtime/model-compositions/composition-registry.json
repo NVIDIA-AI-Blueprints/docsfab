@@ -1,0 +1,1141 @@
+{
+  "compositions": [
+    {
+      "adapters": {
+        "authentication": {
+          "id": "nvidia-developer-api-key",
+          "version": "1.0.0"
+        },
+        "harness": {
+          "id": "pi-governed",
+          "version": "1.0.0"
+        },
+        "providerConnection": {
+          "id": "pi-openai-compatible-nvidia-catalog",
+          "version": "1.0.0"
+        },
+        "routeEvidence": {
+          "id": "nvidia-api-catalog-route",
+          "version": "1.0.0"
+        }
+      },
+      "authentication": {
+        "credentialFamily": "nvidia-api-catalog",
+        "mechanism": "host-secret-handle",
+        "route": "nvidia-api-catalog",
+        "sourceNames": [
+          "DOCSFAB_NVIDIA_API_KEY"
+        ]
+      },
+      "compositionId": "nvidia-llama-3.3-nemotron-super-49b-v1.5-pi",
+      "compositionLimits": {
+        "contextWindow": 128000,
+        "maxInputTokens": 128000,
+        "maxOutputTokens": 8192,
+        "maxProviderTurns": 128,
+        "maxResponseBytes": 4194304,
+        "timeoutMs": 300000
+      },
+      "compositionSha256": "5c66e22146fd255a466d1f7d964e5a49dec662c83620fff73a595a39010c1dcb",
+      "deployment": {
+        "bindingKind": "exact-origin",
+        "identitySha256": "c437edd5b2cc6f292d7b051dfc728989336ca4dee8b89a48c70266e768b4a6f7",
+        "provider": "nvidia",
+        "region": null,
+        "routeId": "nvidia-api-catalog",
+        "transport": "openai-chat-completions"
+      },
+      "executionClass": "pi-provider",
+      "harness": {
+        "id": "pi",
+        "policySha256": "994bce456ec8a5efc97fd6f1b455039520df005ca089ec12f09e31e1ba7b65c4"
+      },
+      "limitations": [
+        "not-technically-approved",
+        "not-release-eligible",
+        "provider-end-of-life"
+      ],
+      "model": {
+        "requestedId": "nvidia/llama-3.3-nemotron-super-49b-v1.5",
+        "resolvedId": "nvidia/llama-3.3-nemotron-super-49b-v1.5",
+        "vendor": "nvidia"
+      },
+      "requestPolicy": {
+        "deploymentIdentitySha256": "c437edd5b2cc6f292d7b051dfc728989336ca4dee8b89a48c70266e768b4a6f7",
+        "installedSystemInstructionSha256": "c0f3322ab4450b27c5bd3a50909f45062166c4b33e4f0acde73c58a1b0d76680",
+        "modelId": "nvidia/llama-3.3-nemotron-super-49b-v1.5",
+        "policySha256": "562e1d19c2ab57e7c559e5301045cb75de88e939e61d19129153b3fc340f6178",
+        "reasoningControl": {
+          "directive": "/no_think",
+          "kind": "system-directive"
+        },
+        "reasoningMode": "disabled",
+        "routeId": "nvidia-api-catalog",
+        "schemaVersion": 1,
+        "temperature": 0,
+        "topP": 1,
+        "transport": "openai-chat-completions"
+      },
+      "retirement": {
+        "effectiveAt": "2026-08-26T09:00:00.000Z",
+        "providerNotice": "HTTP 410 Gone from POST https://integrate.api.nvidia.com/v1/chat/completions (observed 2026-09-10): The model 'nvidia/llama-3.3-nemotron-super-49b-v1.5' has reached its end of life on 2026-08-26T09:00:00Z and is no longer available.",
+        "reason": "provider-end-of-life"
+      },
+      "schemaVersion": 1,
+      "status": "retired"
+    },
+    {
+      "adapters": {
+        "authentication": {
+          "id": "openai-api-key",
+          "version": "1.0.0"
+        },
+        "harness": {
+          "id": "pi-governed",
+          "version": "1.0.0"
+        },
+        "providerConnection": {
+          "id": "pi-openai-responses",
+          "version": "1.0.0"
+        },
+        "routeEvidence": {
+          "id": "openai-api-route",
+          "version": "1.0.0"
+        }
+      },
+      "authentication": {
+        "credentialFamily": "openai-api",
+        "mechanism": "host-secret-handle",
+        "route": "openai-api-key",
+        "sourceNames": [
+          "MODEL_API_KEY",
+          "OPENAI_API_KEY"
+        ]
+      },
+      "compositionId": "openai-gpt-5.6-sol-pi",
+      "compositionLimits": {
+        "contextWindow": 65536,
+        "maxInputTokens": 65536,
+        "maxOutputTokens": 8192,
+        "maxProviderTurns": 128,
+        "maxResponseBytes": 4194304,
+        "timeoutMs": 300000
+      },
+      "compositionSha256": "1df6dfa28f6914b2722e0df2b5c162386bd9142fabee6581173bd6d1a22c4812",
+      "deployment": {
+        "bindingKind": "exact-origin",
+        "identitySha256": "989d119c54111139c9982497471399971fb113647677620e4307a81bf7d73807",
+        "provider": "openai",
+        "region": null,
+        "routeId": "openai-api",
+        "transport": "openai-responses"
+      },
+      "executionClass": "pi-provider",
+      "harness": {
+        "id": "pi",
+        "policySha256": "994bce456ec8a5efc97fd6f1b455039520df005ca089ec12f09e31e1ba7b65c4"
+      },
+      "limitations": [
+        "not-technically-approved",
+        "not-release-eligible",
+        "superseded-by-operator-decision"
+      ],
+      "model": {
+        "requestedId": "gpt-5.6-sol",
+        "resolvedId": "gpt-5.6-sol",
+        "vendor": "openai"
+      },
+      "retirement": {
+        "decision": {
+          "decidedAt": "2026-09-28T00:00:00.000Z",
+          "decidedBy": "Lawrence Lane",
+          "record": "docsfab-retirement:openai-gpt-5.6-sol-pi:2026-09-28",
+          "statement": "literally everything should switch to gpt-6"
+        },
+        "effectiveAt": "2026-09-28T00:00:00.000Z",
+        "reason": "superseded-by-operator-decision",
+        "successorCompositionId": "nvidia-inference-gpt-6-sol-pi"
+      },
+      "schemaVersion": 1,
+      "status": "retired"
+    },
+    {
+      "adapters": {
+        "authentication": {
+          "id": "anthropic-api-key",
+          "version": "1.0.0"
+        },
+        "harness": {
+          "id": "pi-governed",
+          "version": "1.0.0"
+        },
+        "providerConnection": {
+          "id": "pi-anthropic-messages",
+          "version": "1.0.0"
+        },
+        "routeEvidence": {
+          "id": "anthropic-api-route",
+          "version": "1.0.0"
+        }
+      },
+      "authentication": {
+        "credentialFamily": "anthropic-api",
+        "mechanism": "host-secret-handle",
+        "route": "anthropic-api-key",
+        "sourceNames": [
+          "MODEL_API_KEY",
+          "ANTHROPIC_API_KEY"
+        ]
+      },
+      "compositionId": "anthropic-claude-opus-4.7-pi",
+      "compositionLimits": {
+        "contextWindow": 65536,
+        "maxInputTokens": 65536,
+        "maxOutputTokens": 8192,
+        "maxProviderTurns": 128,
+        "maxResponseBytes": 4194304,
+        "timeoutMs": 300000
+      },
+      "compositionSha256": "9f8bdf3804f4104281b3e23fc1eb42d5beecf12909b52c0629a621fdbe993c7c",
+      "deployment": {
+        "bindingKind": "exact-origin",
+        "identitySha256": "d90f988b6dc289f6638be606f64b99732ec9015f536ff5e7d84c91eb48fa2651",
+        "provider": "anthropic",
+        "region": null,
+        "routeId": "anthropic-api",
+        "transport": "anthropic-messages"
+      },
+      "executionClass": "pi-provider",
+      "harness": {
+        "id": "pi",
+        "policySha256": "994bce456ec8a5efc97fd6f1b455039520df005ca089ec12f09e31e1ba7b65c4"
+      },
+      "limitations": [
+        "not-technically-approved",
+        "not-release-eligible"
+      ],
+      "model": {
+        "requestedId": "claude-opus-4-7",
+        "resolvedId": "claude-opus-4-7",
+        "vendor": "anthropic"
+      },
+      "schemaVersion": 1,
+      "status": "active"
+    },
+    {
+      "adapters": {
+        "authentication": {
+          "id": "codex-chatgpt-auth",
+          "version": "1.0.0"
+        },
+        "harness": {
+          "id": "codex-preflight",
+          "version": "1.0.0"
+        },
+        "providerConnection": {
+          "id": "codex-preflight-no-egress",
+          "version": "1.0.0"
+        },
+        "routeEvidence": {
+          "id": "codex-chatgpt-managed-route",
+          "version": "1.0.0"
+        }
+      },
+      "authentication": {
+        "credentialFamily": "chatgpt-subscription",
+        "mechanism": "cli-managed-oauth",
+        "route": "codex-chatgpt-auth",
+        "sourceNames": [
+          "codex-auth-store"
+        ]
+      },
+      "compositionId": "openai-gpt-5.6-sol-codex-preflight",
+      "compositionLimits": {
+        "contextWindow": 65536,
+        "maxInputTokens": 65536,
+        "maxOutputTokens": 8192,
+        "maxProviderTurns": 128,
+        "maxResponseBytes": 4194304,
+        "timeoutMs": 300000
+      },
+      "compositionSha256": "129004f18263e8ad5f5920cba82b9849f4527630a001f9f02d3138e600bc8c84",
+      "deployment": {
+        "bindingKind": "opaque-cli-managed",
+        "identitySha256": "adb4ffb984c32bd1f64096ec27a4b64c7471f867d04c8b75fb2732dd215ef2f8",
+        "provider": "openai",
+        "region": null,
+        "routeId": "codex-chatgpt-managed",
+        "transport": "opaque-cli-managed"
+      },
+      "executionClass": "preflight-only",
+      "harness": {
+        "id": "codex",
+        "policySha256": "0cf7bff90bb7c0a91786672ae7cdbb4da4afc7c6456152d609d213896114d8e4"
+      },
+      "limitations": [
+        "not-technically-approved",
+        "not-release-eligible",
+        "unsupported-confinement",
+        "provider-end-of-life"
+      ],
+      "model": {
+        "requestedId": "gpt-5.6-sol",
+        "resolvedId": "gpt-5.6-sol",
+        "vendor": "openai"
+      },
+      "retirement": {
+        "effectiveAt": "2026-09-30T00:00:00.000Z",
+        "providerNotice": "Sandip (NVIDIA), forwarded by Lawrence Lane on 2026-09-28: \"Effective September 30, we will disable GPT-5.6 Sol, Terra and Luna in NVIDIA's Codex and ChatGPT Work environment … This change does not include OpenAI API or Inference Hub model access.\"",
+        "reason": "provider-end-of-life",
+        "successorCompositionId": "openai-gpt-6-sol-codex-preflight"
+      },
+      "schemaVersion": 1,
+      "status": "retired"
+    },
+    {
+      "adapters": {
+        "authentication": {
+          "id": "codex-chatgpt-auth",
+          "version": "1.1.0"
+        },
+        "harness": {
+          "id": "codex-preflight",
+          "version": "1.1.0"
+        },
+        "providerConnection": {
+          "id": "codex-preflight-no-egress",
+          "version": "1.0.0"
+        },
+        "routeEvidence": {
+          "id": "codex-chatgpt-managed-route",
+          "version": "1.0.0"
+        }
+      },
+      "authentication": {
+        "credentialFamily": "chatgpt-subscription",
+        "mechanism": "cli-managed-oauth",
+        "route": "codex-chatgpt-auth",
+        "sourceNames": [
+          "codex-auth-store"
+        ]
+      },
+      "compositionId": "openai-gpt-6-sol-codex-preflight",
+      "compositionLimits": {
+        "contextWindow": 65536,
+        "maxInputTokens": 65536,
+        "maxOutputTokens": 8192,
+        "maxProviderTurns": 128,
+        "maxResponseBytes": 4194304,
+        "timeoutMs": 300000
+      },
+      "compositionSha256": "8f0f0c36f4648caf77c39c8e4cd30532f4fe4d8d41cbc2e1ed07513c3d3d25fb",
+      "deployment": {
+        "bindingKind": "opaque-cli-managed",
+        "identitySha256": "adb4ffb984c32bd1f64096ec27a4b64c7471f867d04c8b75fb2732dd215ef2f8",
+        "provider": "openai",
+        "region": null,
+        "routeId": "codex-chatgpt-managed",
+        "transport": "opaque-cli-managed"
+      },
+      "executionClass": "preflight-only",
+      "harness": {
+        "id": "codex",
+        "policySha256": "3099931dc00c4238b9387b96b014c0e10be04b846b93966ca9f9c9388a23b3b3"
+      },
+      "limitations": [
+        "not-technically-approved",
+        "not-release-eligible",
+        "unsupported-confinement"
+      ],
+      "model": {
+        "requestedId": "gpt-6-sol",
+        "resolvedId": "gpt-6-sol",
+        "vendor": "openai"
+      },
+      "schemaVersion": 1,
+      "status": "active"
+    },
+    {
+      "adapters": {
+        "authentication": {
+          "id": "claude-ai-oauth",
+          "version": "1.0.0"
+        },
+        "harness": {
+          "id": "claude-code-preflight",
+          "version": "1.0.0"
+        },
+        "providerConnection": {
+          "id": "claude-code-preflight-no-egress",
+          "version": "1.0.0"
+        },
+        "routeEvidence": {
+          "id": "claude-ai-managed-route",
+          "version": "1.0.0"
+        }
+      },
+      "authentication": {
+        "credentialFamily": "claude-ai-enterprise",
+        "mechanism": "cli-managed-oauth",
+        "route": "claude-ai-oauth",
+        "sourceNames": [
+          "claude-auth-store"
+        ]
+      },
+      "compositionId": "anthropic-claude-opus-4.7-claude-code-preflight",
+      "compositionLimits": {
+        "contextWindow": 65536,
+        "maxInputTokens": 65536,
+        "maxOutputTokens": 8192,
+        "maxProviderTurns": 128,
+        "maxResponseBytes": 4194304,
+        "timeoutMs": 300000
+      },
+      "compositionSha256": "6d895b6a58f77d02bba9632be766bfa0a4b7eaba260e8cab740c2706b0d2f7e3",
+      "deployment": {
+        "bindingKind": "opaque-cli-managed",
+        "identitySha256": "439e4895b29529a7b1e4646de98aeafe614be16856bd19757b9e630bc8bc74cf",
+        "provider": "anthropic",
+        "region": null,
+        "routeId": "claude-ai-managed",
+        "transport": "opaque-cli-managed"
+      },
+      "executionClass": "preflight-only",
+      "harness": {
+        "id": "claude-code",
+        "policySha256": "7a8f61bba138c0e0c5fb66e102a71f44e9f62928065ccab21495356b52cc8b7f"
+      },
+      "limitations": [
+        "not-technically-approved",
+        "not-release-eligible",
+        "unsupported-confinement"
+      ],
+      "model": {
+        "requestedId": "claude-opus-4-7",
+        "resolvedId": "claude-opus-4-7",
+        "vendor": "anthropic"
+      },
+      "schemaVersion": 1,
+      "status": "active"
+    },
+    {
+      "adapters": {
+        "authentication": {
+          "id": "nvidia-developer-api-key",
+          "version": "1.0.0"
+        },
+        "harness": {
+          "id": "pi-governed",
+          "version": "1.0.0"
+        },
+        "providerConnection": {
+          "id": "pi-openai-compatible-nvidia-catalog",
+          "version": "1.0.0"
+        },
+        "routeEvidence": {
+          "id": "nvidia-api-catalog-route",
+          "version": "1.0.0"
+        }
+      },
+      "authentication": {
+        "credentialFamily": "nvidia-api-catalog",
+        "mechanism": "host-secret-handle",
+        "route": "nvidia-api-catalog",
+        "sourceNames": [
+          "DOCSFAB_NVIDIA_API_KEY"
+        ]
+      },
+      "compositionId": "nvidia-nemotron-3.5-lightning-30b-a3b-pi",
+      "compositionLimits": {
+        "contextWindow": 128000,
+        "maxInputTokens": 128000,
+        "maxOutputTokens": 8192,
+        "maxProviderTurns": 128,
+        "maxResponseBytes": 4194304,
+        "timeoutMs": 300000
+      },
+      "compositionSha256": "6b93fe166f5f58f02c91f871153eb7f6dcf07605ded473f793963ca2c3447086",
+      "deployment": {
+        "bindingKind": "exact-origin",
+        "identitySha256": "c437edd5b2cc6f292d7b051dfc728989336ca4dee8b89a48c70266e768b4a6f7",
+        "provider": "nvidia",
+        "region": null,
+        "routeId": "nvidia-api-catalog",
+        "transport": "openai-chat-completions"
+      },
+      "executionClass": "pi-provider",
+      "harness": {
+        "id": "pi",
+        "policySha256": "994bce456ec8a5efc97fd6f1b455039520df005ca089ec12f09e31e1ba7b65c4"
+      },
+      "limitations": [
+        "not-technically-approved",
+        "not-release-eligible"
+      ],
+      "model": {
+        "requestedId": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "resolvedId": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "vendor": "nvidia"
+      },
+      "requestPolicy": {
+        "deploymentIdentitySha256": "c437edd5b2cc6f292d7b051dfc728989336ca4dee8b89a48c70266e768b4a6f7",
+        "installedSystemInstructionSha256": "c0f3322ab4450b27c5bd3a50909f45062166c4b33e4f0acde73c58a1b0d76680",
+        "modelId": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "policySha256": "98a64b262e8054a330a236e054ea8f5ff18504b75945da28cf44aa49314223c7",
+        "reasoningControl": {
+          "kind": "chat-template-kwarg",
+          "thinking": false
+        },
+        "reasoningMode": "disabled",
+        "routeId": "nvidia-api-catalog",
+        "schemaVersion": 1,
+        "temperature": 0,
+        "topP": 1,
+        "transport": "openai-chat-completions"
+      },
+      "schemaVersion": 1,
+      "status": "active"
+    },
+    {
+      "adapters": {
+        "authentication": {
+          "id": "nvidia-developer-api-key",
+          "version": "1.0.0"
+        },
+        "harness": {
+          "id": "pi-governed",
+          "version": "1.0.0"
+        },
+        "providerConnection": {
+          "id": "pi-openai-compatible-nvidia-catalog",
+          "version": "1.0.0"
+        },
+        "routeEvidence": {
+          "id": "nvidia-api-catalog-route",
+          "version": "1.0.0"
+        }
+      },
+      "authentication": {
+        "credentialFamily": "nvidia-api-catalog",
+        "mechanism": "host-secret-handle",
+        "route": "nvidia-api-catalog",
+        "sourceNames": [
+          "DOCSFAB_NVIDIA_API_KEY"
+        ]
+      },
+      "compositionId": "nvidia-nemotron-3-super-120b-a12b-pi",
+      "compositionLimits": {
+        "contextWindow": 524288,
+        "maxInputTokens": 524288,
+        "maxOutputTokens": 8192,
+        "maxProviderTurns": 128,
+        "maxResponseBytes": 4194304,
+        "timeoutMs": 300000
+      },
+      "compositionSha256": "f9f1500b0869b9978df29927b9fccb75940cf51b795f362fa7c0bd653c9a4bdf",
+      "deployment": {
+        "bindingKind": "exact-origin",
+        "identitySha256": "c437edd5b2cc6f292d7b051dfc728989336ca4dee8b89a48c70266e768b4a6f7",
+        "provider": "nvidia",
+        "region": null,
+        "routeId": "nvidia-api-catalog",
+        "transport": "openai-chat-completions"
+      },
+      "executionClass": "pi-provider",
+      "harness": {
+        "id": "pi",
+        "policySha256": "994bce456ec8a5efc97fd6f1b455039520df005ca089ec12f09e31e1ba7b65c4"
+      },
+      "limitations": [
+        "not-technically-approved",
+        "not-release-eligible"
+      ],
+      "model": {
+        "requestedId": "nvidia/nemotron-3-super-120b-a12b",
+        "resolvedId": "nvidia/nemotron-3-super-120b-a12b",
+        "vendor": "nvidia"
+      },
+      "requestPolicy": {
+        "deploymentIdentitySha256": "c437edd5b2cc6f292d7b051dfc728989336ca4dee8b89a48c70266e768b4a6f7",
+        "installedSystemInstructionSha256": "c0f3322ab4450b27c5bd3a50909f45062166c4b33e4f0acde73c58a1b0d76680",
+        "modelId": "nvidia/nemotron-3-super-120b-a12b",
+        "policySha256": "444d483daa50036057f0f87c18fa708e886166bcd42a29c658fe286fda186552",
+        "reasoningControl": {
+          "kind": "chat-template-kwarg",
+          "thinking": false
+        },
+        "reasoningMode": "disabled",
+        "routeId": "nvidia-api-catalog",
+        "schemaVersion": 1,
+        "temperature": 0,
+        "topP": 1,
+        "transport": "openai-chat-completions"
+      },
+      "schemaVersion": 1,
+      "status": "active"
+    },
+    {
+      "adapters": {
+        "authentication": {
+          "id": "nvidia-developer-api-key",
+          "version": "1.0.0"
+        },
+        "harness": {
+          "id": "pi-governed",
+          "version": "1.0.0"
+        },
+        "providerConnection": {
+          "id": "pi-openai-compatible-nvidia-catalog",
+          "version": "1.0.0"
+        },
+        "routeEvidence": {
+          "id": "nvidia-api-catalog-route",
+          "version": "1.0.0"
+        }
+      },
+      "authentication": {
+        "credentialFamily": "nvidia-api-catalog",
+        "mechanism": "host-secret-handle",
+        "route": "nvidia-api-catalog",
+        "sourceNames": [
+          "DOCSFAB_NVIDIA_API_KEY"
+        ]
+      },
+      "compositionId": "nvidia-nemotron-3-ultra-550b-a55b-pi",
+      "compositionLimits": {
+        "contextWindow": 128000,
+        "maxInputTokens": 128000,
+        "maxOutputTokens": 8192,
+        "maxProviderTurns": 128,
+        "maxResponseBytes": 4194304,
+        "timeoutMs": 300000
+      },
+      "compositionSha256": "b6587eff4e75449ec4ce9d79f9ec1d3cde5b3403b3b18b022d601cb1aa906c4c",
+      "deployment": {
+        "bindingKind": "exact-origin",
+        "identitySha256": "c437edd5b2cc6f292d7b051dfc728989336ca4dee8b89a48c70266e768b4a6f7",
+        "provider": "nvidia",
+        "region": null,
+        "routeId": "nvidia-api-catalog",
+        "transport": "openai-chat-completions"
+      },
+      "executionClass": "pi-provider",
+      "harness": {
+        "id": "pi",
+        "policySha256": "994bce456ec8a5efc97fd6f1b455039520df005ca089ec12f09e31e1ba7b65c4"
+      },
+      "limitations": [
+        "not-technically-approved",
+        "not-release-eligible"
+      ],
+      "model": {
+        "requestedId": "nvidia/nemotron-3-ultra-550b-a55b",
+        "resolvedId": "nvidia/nemotron-3-ultra-550b-a55b",
+        "vendor": "nvidia"
+      },
+      "requestPolicy": {
+        "deploymentIdentitySha256": "c437edd5b2cc6f292d7b051dfc728989336ca4dee8b89a48c70266e768b4a6f7",
+        "installedSystemInstructionSha256": "c0f3322ab4450b27c5bd3a50909f45062166c4b33e4f0acde73c58a1b0d76680",
+        "modelId": "nvidia/nemotron-3-ultra-550b-a55b",
+        "policySha256": "f84d9dfec4b36383662cace5f51cbb504270ab5bc241a9ba1ce6f9eab1ac70ec",
+        "reasoningControl": {
+          "kind": "chat-template-kwarg",
+          "thinking": false
+        },
+        "reasoningMode": "disabled",
+        "routeId": "nvidia-api-catalog",
+        "schemaVersion": 1,
+        "temperature": 0,
+        "topP": 1,
+        "transport": "openai-chat-completions"
+      },
+      "schemaVersion": 1,
+      "status": "active"
+    },
+    {
+      "adapters": {
+        "authentication": {
+          "id": "nvidia-inference-api-key",
+          "version": "1.0.0"
+        },
+        "harness": {
+          "id": "pi-governed",
+          "version": "1.0.0"
+        },
+        "providerConnection": {
+          "id": "pi-openai-compatible-nvidia-inference",
+          "version": "1.0.0"
+        },
+        "routeEvidence": {
+          "id": "nvidia-inference-api-route",
+          "version": "1.0.0"
+        }
+      },
+      "authentication": {
+        "credentialFamily": "nvidia-inference-api",
+        "mechanism": "host-secret-handle",
+        "route": "nvidia-inference-api",
+        "sourceNames": [
+          "MODEL_API_KEY"
+        ]
+      },
+      "compositionId": "nvidia-inference-nemotron-3-super-v3-pi",
+      "compositionLimits": {
+        "contextWindow": 1048576,
+        "maxInputTokens": 1048576,
+        "maxOutputTokens": 32768,
+        "maxProviderTurns": 128,
+        "maxResponseBytes": 4194304,
+        "timeoutMs": 300000
+      },
+      "compositionSha256": "d5b28e3abb84127a1f2d5d6891b61e41dd2b2cccc3887ae5b0651432ad6a9f57",
+      "deployment": {
+        "bindingKind": "exact-origin",
+        "identitySha256": "0918664a7485ec0cac594e00ee03ddff80ae340213d859135e348ae3119369f9",
+        "provider": "nvidia",
+        "region": null,
+        "routeId": "nvidia-inference-api",
+        "transport": "openai-chat-completions"
+      },
+      "executionClass": "pi-provider",
+      "harness": {
+        "id": "pi",
+        "policySha256": "994bce456ec8a5efc97fd6f1b455039520df005ca089ec12f09e31e1ba7b65c4"
+      },
+      "limitations": [
+        "not-technically-approved",
+        "not-release-eligible"
+      ],
+      "model": {
+        "requestedId": "nvidia/nvidia/nemotron-3-super-v3",
+        "resolvedId": "nvidia/nvidia/nemotron-3-super-v3",
+        "vendor": "nvidia"
+      },
+      "requestPolicy": {
+        "deploymentIdentitySha256": "0918664a7485ec0cac594e00ee03ddff80ae340213d859135e348ae3119369f9",
+        "installedSystemInstructionSha256": "c0f3322ab4450b27c5bd3a50909f45062166c4b33e4f0acde73c58a1b0d76680",
+        "modelId": "nvidia/nvidia/nemotron-3-super-v3",
+        "policySha256": "eb2ea4852e3746c474ad8545862cd96ba27ae4018ef61b5773bb58f39f6c178c",
+        "reasoningControl": {
+          "kind": "chat-template-kwarg",
+          "thinking": false
+        },
+        "reasoningMode": "disabled",
+        "routeId": "nvidia-inference-api",
+        "schemaVersion": 1,
+        "temperature": 0,
+        "topP": 1,
+        "transport": "openai-chat-completions"
+      },
+      "schemaVersion": 1,
+      "status": "active"
+    },
+    {
+      "adapters": {
+        "authentication": {
+          "id": "nvidia-inference-api-key",
+          "version": "1.0.0"
+        },
+        "harness": {
+          "id": "pi-governed",
+          "version": "1.0.0"
+        },
+        "providerConnection": {
+          "id": "pi-openai-compatible-nvidia-inference",
+          "version": "1.0.0"
+        },
+        "routeEvidence": {
+          "id": "nvidia-inference-api-route",
+          "version": "1.0.0"
+        }
+      },
+      "authentication": {
+        "credentialFamily": "nvidia-inference-api",
+        "mechanism": "host-secret-handle",
+        "route": "nvidia-inference-api",
+        "sourceNames": [
+          "MODEL_API_KEY"
+        ]
+      },
+      "compositionId": "nvidia-inference-nemotron-3-ultra-pi",
+      "compositionLimits": {
+        "contextWindow": 1048576,
+        "maxInputTokens": 1048576,
+        "maxOutputTokens": 32768,
+        "maxProviderTurns": 128,
+        "maxResponseBytes": 4194304,
+        "timeoutMs": 300000
+      },
+      "compositionSha256": "4c39093a7d59036305af373e8986e24235f2d2b22dcd90bf1b21867a0b914eb1",
+      "deployment": {
+        "bindingKind": "exact-origin",
+        "identitySha256": "0918664a7485ec0cac594e00ee03ddff80ae340213d859135e348ae3119369f9",
+        "provider": "nvidia",
+        "region": null,
+        "routeId": "nvidia-inference-api",
+        "transport": "openai-chat-completions"
+      },
+      "executionClass": "pi-provider",
+      "harness": {
+        "id": "pi",
+        "policySha256": "994bce456ec8a5efc97fd6f1b455039520df005ca089ec12f09e31e1ba7b65c4"
+      },
+      "limitations": [
+        "not-technically-approved",
+        "not-release-eligible"
+      ],
+      "model": {
+        "requestedId": "nvidia/nvidia/nemotron-3-ultra",
+        "resolvedId": "nvidia/nvidia/nemotron-3-ultra",
+        "vendor": "nvidia"
+      },
+      "requestPolicy": {
+        "deploymentIdentitySha256": "0918664a7485ec0cac594e00ee03ddff80ae340213d859135e348ae3119369f9",
+        "installedSystemInstructionSha256": "c0f3322ab4450b27c5bd3a50909f45062166c4b33e4f0acde73c58a1b0d76680",
+        "modelId": "nvidia/nvidia/nemotron-3-ultra",
+        "policySha256": "80e792274669fd696b5a3937840a45636cdb260cfe791b5d43607256c952503e",
+        "reasoningControl": {
+          "kind": "chat-template-kwarg",
+          "thinking": false
+        },
+        "reasoningMode": "disabled",
+        "routeId": "nvidia-inference-api",
+        "schemaVersion": 1,
+        "temperature": 0,
+        "topP": 1,
+        "transport": "openai-chat-completions"
+      },
+      "schemaVersion": 1,
+      "status": "active"
+    },
+    {
+      "adapters": {
+        "authentication": {
+          "id": "nvidia-inference-api-key",
+          "version": "1.0.0"
+        },
+        "harness": {
+          "id": "pi-governed",
+          "version": "1.0.0"
+        },
+        "providerConnection": {
+          "id": "pi-openai-compatible-nvidia-inference",
+          "version": "1.0.0"
+        },
+        "routeEvidence": {
+          "id": "nvidia-inference-api-route",
+          "version": "1.0.0"
+        }
+      },
+      "authentication": {
+        "credentialFamily": "nvidia-inference-api",
+        "mechanism": "host-secret-handle",
+        "route": "nvidia-inference-api",
+        "sourceNames": [
+          "MODEL_API_KEY"
+        ]
+      },
+      "compositionId": "nvidia-inference-qwen3-5-397b-a17b-pi",
+      "compositionLimits": {
+        "contextWindow": 262144,
+        "maxInputTokens": 262144,
+        "maxOutputTokens": 131072,
+        "maxProviderTurns": 128,
+        "maxResponseBytes": 4194304,
+        "timeoutMs": 300000
+      },
+      "compositionSha256": "c80a45a066024bc813d41d32d8b1e06da9978e35284f0e5095cfef0e23c4bd84",
+      "deployment": {
+        "bindingKind": "exact-origin",
+        "identitySha256": "0918664a7485ec0cac594e00ee03ddff80ae340213d859135e348ae3119369f9",
+        "provider": "nvidia",
+        "region": null,
+        "routeId": "nvidia-inference-api",
+        "transport": "openai-chat-completions"
+      },
+      "executionClass": "pi-provider",
+      "harness": {
+        "id": "pi",
+        "policySha256": "994bce456ec8a5efc97fd6f1b455039520df005ca089ec12f09e31e1ba7b65c4"
+      },
+      "limitations": [
+        "not-technically-approved",
+        "not-release-eligible"
+      ],
+      "model": {
+        "requestedId": "nvidia/qwen/qwen3-5-397b-a17b",
+        "resolvedId": "nvidia/qwen/qwen3-5-397b-a17b",
+        "vendor": "qwen"
+      },
+      "requestPolicy": {
+        "deploymentIdentitySha256": "0918664a7485ec0cac594e00ee03ddff80ae340213d859135e348ae3119369f9",
+        "installedSystemInstructionSha256": "c0f3322ab4450b27c5bd3a50909f45062166c4b33e4f0acde73c58a1b0d76680",
+        "modelId": "nvidia/qwen/qwen3-5-397b-a17b",
+        "policySha256": "7ddd2c59c75f6695b89897f8adbb652ff5513f6e945ad5e4abe908d1c8544295",
+        "reasoningControl": {
+          "kind": "chat-template-kwarg",
+          "thinking": false
+        },
+        "reasoningMode": "disabled",
+        "routeId": "nvidia-inference-api",
+        "schemaVersion": 1,
+        "temperature": 0,
+        "topP": 1,
+        "transport": "openai-chat-completions"
+      },
+      "schemaVersion": 1,
+      "status": "active"
+    },
+    {
+      "adapters": {
+        "authentication": {
+          "id": "nvidia-inference-api-key",
+          "version": "1.0.0"
+        },
+        "harness": {
+          "id": "pi-governed",
+          "version": "1.0.0"
+        },
+        "providerConnection": {
+          "id": "pi-openai-compatible-nvidia-inference",
+          "version": "1.0.0"
+        },
+        "routeEvidence": {
+          "id": "nvidia-inference-api-route",
+          "version": "1.0.0"
+        }
+      },
+      "authentication": {
+        "credentialFamily": "nvidia-inference-api",
+        "mechanism": "host-secret-handle",
+        "route": "nvidia-inference-api",
+        "sourceNames": [
+          "MODEL_API_KEY"
+        ]
+      },
+      "compositionId": "nvidia-inference-deepseek-v4-pro-pi",
+      "compositionLimits": {
+        "contextWindow": 1048576,
+        "maxInputTokens": 1048576,
+        "maxOutputTokens": 384000,
+        "maxProviderTurns": 128,
+        "maxResponseBytes": 4194304,
+        "timeoutMs": 300000
+      },
+      "compositionSha256": "d63a7a9aad37d805593943091c06792e4ebe5c06c64eb644d1c5ef4f84b6a6b8",
+      "deployment": {
+        "bindingKind": "exact-origin",
+        "identitySha256": "0918664a7485ec0cac594e00ee03ddff80ae340213d859135e348ae3119369f9",
+        "provider": "nvidia",
+        "region": null,
+        "routeId": "nvidia-inference-api",
+        "transport": "openai-chat-completions"
+      },
+      "executionClass": "pi-provider",
+      "harness": {
+        "id": "pi",
+        "policySha256": "994bce456ec8a5efc97fd6f1b455039520df005ca089ec12f09e31e1ba7b65c4"
+      },
+      "limitations": [
+        "not-technically-approved",
+        "not-release-eligible"
+      ],
+      "model": {
+        "requestedId": "nvidia/deepseek-ai/deepseek-v4-pro",
+        "resolvedId": "nvidia/deepseek-ai/deepseek-v4-pro",
+        "vendor": "deepseek"
+      },
+      "schemaVersion": 1,
+      "status": "active"
+    },
+    {
+      "adapters": {
+        "authentication": {
+          "id": "nvidia-inference-api-key",
+          "version": "1.0.0"
+        },
+        "harness": {
+          "id": "pi-governed",
+          "version": "1.0.0"
+        },
+        "providerConnection": {
+          "id": "pi-openai-compatible-nvidia-inference",
+          "version": "1.0.0"
+        },
+        "routeEvidence": {
+          "id": "nvidia-inference-api-route",
+          "version": "1.0.0"
+        }
+      },
+      "authentication": {
+        "credentialFamily": "nvidia-inference-api",
+        "mechanism": "host-secret-handle",
+        "route": "nvidia-inference-api",
+        "sourceNames": [
+          "MODEL_API_KEY"
+        ]
+      },
+      "compositionId": "nvidia-inference-claude-sonnet-5-pi",
+      "compositionLimits": {
+        "contextWindow": 1000000,
+        "maxInputTokens": 1000000,
+        "maxOutputTokens": 32768,
+        "maxProviderTurns": 512,
+        "maxResponseBytes": 4194304,
+        "timeoutMs": 1800000
+      },
+      "compositionSha256": "500db244822b9ace5b3e4bccbb14a98b095a9bba4a6670a0636d1a49ddeb0d2b",
+      "deployment": {
+        "bindingKind": "exact-origin",
+        "identitySha256": "0918664a7485ec0cac594e00ee03ddff80ae340213d859135e348ae3119369f9",
+        "provider": "nvidia",
+        "region": null,
+        "routeId": "nvidia-inference-api",
+        "transport": "openai-chat-completions"
+      },
+      "executionClass": "pi-provider",
+      "harness": {
+        "id": "pi",
+        "policySha256": "994bce456ec8a5efc97fd6f1b455039520df005ca089ec12f09e31e1ba7b65c4"
+      },
+      "limitations": [
+        "not-technically-approved",
+        "not-release-eligible"
+      ],
+      "model": {
+        "requestedId": "aws/anthropic/bedrock-claude-sonnet-5",
+        "resolvedId": "aws/anthropic/bedrock-claude-sonnet-5",
+        "vendor": "anthropic"
+      },
+      "schemaVersion": 1,
+      "status": "active"
+    },
+    {
+      "adapters": {
+        "authentication": {
+          "id": "nvidia-inference-api-key",
+          "version": "1.0.0"
+        },
+        "harness": {
+          "id": "pi-governed",
+          "version": "1.0.0"
+        },
+        "providerConnection": {
+          "id": "pi-openai-compatible-nvidia-inference",
+          "version": "1.0.0"
+        },
+        "routeEvidence": {
+          "id": "nvidia-inference-api-route",
+          "version": "1.0.0"
+        }
+      },
+      "authentication": {
+        "credentialFamily": "nvidia-inference-api",
+        "mechanism": "host-secret-handle",
+        "route": "nvidia-inference-api",
+        "sourceNames": [
+          "MODEL_API_KEY"
+        ]
+      },
+      "compositionId": "nvidia-inference-claude-opus-5-pi",
+      "compositionLimits": {
+        "contextWindow": 1000000,
+        "maxInputTokens": 1000000,
+        "maxOutputTokens": 32768,
+        "maxProviderTurns": 512,
+        "maxResponseBytes": 4194304,
+        "timeoutMs": 1800000
+      },
+      "compositionSha256": "0c5f042ff300dbc15dc31b87f9ab5eb335a44dc35b92ad4db7342d9fe96a925d",
+      "deployment": {
+        "bindingKind": "exact-origin",
+        "identitySha256": "0918664a7485ec0cac594e00ee03ddff80ae340213d859135e348ae3119369f9",
+        "provider": "nvidia",
+        "region": null,
+        "routeId": "nvidia-inference-api",
+        "transport": "openai-chat-completions"
+      },
+      "executionClass": "pi-provider",
+      "harness": {
+        "id": "pi",
+        "policySha256": "994bce456ec8a5efc97fd6f1b455039520df005ca089ec12f09e31e1ba7b65c4"
+      },
+      "limitations": [
+        "not-technically-approved",
+        "not-release-eligible"
+      ],
+      "model": {
+        "requestedId": "aws/anthropic/bedrock-claude-opus-5",
+        "resolvedId": "aws/anthropic/bedrock-claude-opus-5",
+        "vendor": "anthropic"
+      },
+      "schemaVersion": 1,
+      "status": "active"
+    },
+    {
+      "adapters": {
+        "authentication": {
+          "id": "nvidia-inference-api-key",
+          "version": "1.0.0"
+        },
+        "harness": {
+          "id": "pi-governed",
+          "version": "1.0.0"
+        },
+        "providerConnection": {
+          "id": "pi-openai-compatible-nvidia-inference",
+          "version": "1.0.0"
+        },
+        "routeEvidence": {
+          "id": "nvidia-inference-api-route",
+          "version": "1.0.0"
+        }
+      },
+      "authentication": {
+        "credentialFamily": "nvidia-inference-api",
+        "mechanism": "host-secret-handle",
+        "route": "nvidia-inference-api",
+        "sourceNames": [
+          "MODEL_API_KEY"
+        ]
+      },
+      "compositionId": "nvidia-inference-gpt-6-sol-pi",
+      "compositionLimits": {
+        "contextWindow": 1050000,
+        "maxInputTokens": 1050000,
+        "maxOutputTokens": 128000,
+        "maxProviderTurns": 512,
+        "maxResponseBytes": 4194304,
+        "timeoutMs": 1800000
+      },
+      "compositionSha256": "57058a1095d955a7e20e3fc1a759b94cf81b228188b2e964e408a8551a7ee44a",
+      "deployment": {
+        "bindingKind": "exact-origin",
+        "identitySha256": "0918664a7485ec0cac594e00ee03ddff80ae340213d859135e348ae3119369f9",
+        "provider": "nvidia",
+        "region": null,
+        "routeId": "nvidia-inference-api",
+        "transport": "openai-chat-completions"
+      },
+      "executionClass": "pi-provider",
+      "harness": {
+        "id": "pi",
+        "policySha256": "994bce456ec8a5efc97fd6f1b455039520df005ca089ec12f09e31e1ba7b65c4"
+      },
+      "limitations": [
+        "not-technically-approved",
+        "not-release-eligible"
+      ],
+      "model": {
+        "requestedId": "azure/openai/gpt-6-sol",
+        "resolvedId": "azure/openai/gpt-6-sol",
+        "vendor": "openai"
+      },
+      "schemaVersion": 1,
+      "status": "active"
+    }
+  ],
+  "kind": "docsfab-model-composition-registry/v1",
+  "registrySha256": "9b087928aa7ae460fa56905c21d78faff65486cdd7de6b22250672b164b7c8fd",
+  "schemaVersion": 1
+}

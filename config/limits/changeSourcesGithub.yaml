@@ -1,0 +1,125 @@
+# DocsFab operational limits owned by the `changeSourcesGithub` name prefix.
+# Registered in config/limits.yaml; every limit here is named `changeSourcesGithub.*`.
+# Read by packages/runtime/src/inputs/change-source/github-transport.ts, the anonymous
+# GitHub REST reader behind `--change <github.com pull request, commit, or compare URL>`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: changeSourcesGithub.pagesMax
+    value: 8
+    unit: pages
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_CHANGE_SOURCES_GITHUB_PAGES_MAX
+    min: 1
+    max: 64
+    refusal: change-source-github-pages-bound
+    remediation: Pass a smaller pull request or commit, check the change out and pass a local --change range, or raise DOCSFAB_CHANGE_SOURCES_GITHUB_PAGES_MAX up to 64, then run again.
+    rationale: Listing pages one GitHub --change resolution reads, at the GitHub REST maximum of 100 items a page. A pull request or a compare URL reads its compare listing, one page per 100 commits, so changeSources.commitsMax (256) needs 3 (a compare URL's two ref pins are single reads, not listing pages); a commit reads its file listing, one page per 100 files, so changeSources.changedFilesMax (512) needs 6. 8 covers both default bounds with one page to spare. Every page is one anonymous request, and GitHub allows 60 anonymous requests an hour from one address, so a raised bound spends that allowance faster. The resolution refuses before reading one page more than the bound, with the page count it would have reached, rather than bind a partial list; a raised changeSources.* bound may need this one raised too.
+
+  - name: changeSourcesGithub.responseMaxBytes
+    value: 8388608
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_CHANGE_SOURCES_GITHUB_RESPONSE_MAX_BYTES
+    min: 65536
+    max: 67108864
+    refusal: change-source-github-response-bound
+    remediation: Check the change out and pass a local --change range, or raise DOCSFAB_CHANGE_SOURCES_GITHUB_RESPONSE_MAX_BYTES up to 67108864, then run again.
+    rationale: Bytes of one GitHub API response body, counted while it streams. The largest response a resolution reads is a recursive Git tree. GitHub documents its own cap on that read as 100,000 entries or 7 MB and then marks the tree truncated (refused with change-source-github-tree-truncated), but does not say whether the 7 MB measures the JSON body. Each JSON entry also carries a url and a size, roughly 200 to 260 bytes, so a tree past about 32,000 entries can reach 8 MiB first and refuses with this bound's code and its remediation instead; that has not been measured against a live large tree. A compare page carries up to 300 files with their patches and a commit page 100, which stay well below it. A response one byte past the bound refuses with the bytes counted so far; nothing is parsed from a partial body.
+
+  - name: changeSourcesGithub.redirectsMax
+    value: 3
+    unit: count
+    scope: per-run
+    warnAt: 1
+    override: DOCSFAB_CHANGE_SOURCES_GITHUB_REDIRECTS_MAX
+    min: 1
+    max: 10
+    refusal: change-source-github-redirects-bound
+    remediation: Check that the GitHub URL names the repository by its current owner and name, or raise DOCSFAB_CHANGE_SOURCES_GITHUB_REDIRECTS_MAX up to 10, then run again.
+    rationale: Redirects one GitHub API request may follow, each within https://api.github.com; a redirect to any other origin refuses with change-source-github-redirect-cross-host whatever this bound. GitHub answers a renamed or transferred repository with one redirect to its /repositories/<id> path, and the same 3 the benchmark miner allows (benchmarkMining.redirectsMax) leaves room for a rename followed by a transfer without following a loop. The request that would follow one redirect more refuses with that count.
+
+  - name: changeSourcesGithub.requestTimeoutMs
+    value: 30000
+    unit: ms
+    scope: per-run
+    warnAt: 1
+    override: DOCSFAB_CHANGE_SOURCES_GITHUB_REQUEST_TIMEOUT_MS
+    min: 1000
+    max: 120000
+    refusal: change-source-github-timeout-bound
+    remediation: Check this host's network path to api.github.com, then run again, or raise DOCSFAB_CHANGE_SOURCES_GITHUB_REQUEST_TIMEOUT_MS up to 120000.
+    rationale: Wall-clock bound on one GitHub API request, its redirects counted separately, from sending it to the last byte of its body. The benchmark miner measured about 0.5 s a GitHub request in its 2026-10-01 smoke run and allows 30 s for a large recursive tree (benchmarkMining.githubRequestTimeoutMs); this reader uses the same 30 s and does not retry, so a resolution of about 6 requests fails within minutes, before any model call, instead of hanging. A request past the bound is aborted and refuses with the elapsed time.
+
+  - name: changeSourcesGithub.acquisitionMaxBytes
+    value: 67108864
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_CHANGE_SOURCES_GITHUB_ACQUISITION_MAX_BYTES
+    min: 1
+    max: 1073741824
+    refusal: change-source-github-acquisition-bytes-bound
+    remediation: Narrow the public PR's object range or raise DOCSFAB_CHANGE_SOURCES_GITHUB_ACQUISITION_MAX_BYTES up to 1073741824, then retry.
+    rationale: Aggregate admitted smart-HTTP response bytes, including pack, framing, control and progress, across an acquisition. 64 MiB covers a 512-path documentation change with two 64 KiB sides (64 MiB logical blob bytes) when compressed, and the ordinary 64-document fixture has substantial headroom. This is an application admission and retention limit, not a bound on bytes already received by TLS before the crossing chunk is refused.
+
+  - name: changeSourcesGithub.packInflatedMaxBytes
+    value: 268435456
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_CHANGE_SOURCES_GITHUB_PACK_INFLATED_MAX_BYTES
+    min: 1
+    max: 2147483648
+    refusal: change-source-github-pack-inflated-bound
+    remediation: Narrow the PR or raise DOCSFAB_CHANGE_SOURCES_GITHUB_PACK_INFLATED_MAX_BYTES up to 2147483648, then retry.
+    rationale: Sum of every pack entry's declared inflated payload, including delta instructions, charged before allocation across all packs. 256 MiB leaves room for tree/history objects and duplicate entries around a 64 MiB logical documentation change.
+
+  - name: changeSourcesGithub.objectMaterializedMaxBytes
+    value: 268435456
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_CHANGE_SOURCES_GITHUB_OBJECT_MATERIALIZED_MAX_BYTES
+    min: 1
+    max: 2147483648
+    refusal: change-source-github-object-materialized-bound
+    remediation: Narrow the PR or raise DOCSFAB_CHANGE_SOURCES_GITHUB_OBJECT_MATERIALIZED_MAX_BYTES up to 2147483648, then retry.
+    rationale: Sum of complete object target sizes declared by ordinary entries or delta target varints, with repeated objects charged again, before native Git reconstructs any delta. This bounds untrusted logical object payload rather than RSS or filesystem blocks.
+
+  - name: changeSourcesGithub.objectsMax
+    value: 262144
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_CHANGE_SOURCES_GITHUB_OBJECTS_MAX
+    min: 1
+    max: 1048576
+    refusal: change-source-github-objects-bound
+    remediation: Narrow the PR or raise DOCSFAB_CHANGE_SOURCES_GITHUB_OBJECTS_MAX up to 1048576, then retry.
+    rationale: Aggregate pack entries checked before array allocation and native import. 262144 provisionally admits two large tree closures plus history; actual count is reconciled in the preflight.
+
+  - name: changeSourcesGithub.historyCommitsMax
+    value: 4096
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_CHANGE_SOURCES_GITHUB_HISTORY_COMMITS_MAX
+    min: 1
+    max: 65536
+    refusal: change-source-github-history-commits-bound
+    remediation: Narrow the PR history or raise DOCSFAB_CHANGE_SOURCES_GITHUB_HISTORY_COMMITS_MAX up to 65536, then retry.
+    rationale: Actual acquired commit objects needed to certify the merge base, including fork and merge ancestry, counted independently of changeSources.commitsMax proposal commits. The ordinary fork fixture spans more than 256 ancestor commits.
+
+  - name: changeSourcesGithub.acquisitionTimeoutMs
+    value: 120000
+    unit: ms
+    scope: per-run
+    warnAt: 1
+    override: DOCSFAB_CHANGE_SOURCES_GITHUB_ACQUISITION_TIMEOUT_MS
+    min: 1000
+    max: 600000
+    refusal: change-source-github-acquisition-timeout
+    remediation: Retry when GitHub and the local host are responsive, or raise DOCSFAB_CHANGE_SOURCES_GITHUB_ACQUISITION_TIMEOUT_MS up to 600000.
+    rationale: Cumulative elapsed time across requests, pack preflight, native import and object reads. 120 seconds composes several existing 30-second request phases while bounding the full operation.

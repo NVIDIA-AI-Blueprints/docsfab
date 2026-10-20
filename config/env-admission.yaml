@@ -1,0 +1,307 @@
+# DocsFab environment-variable admission declaration. Canonical source for
+# generated mirrors. Do not edit generated files; change this file and run
+# `npm run generate:env-admission` from packages/runtime.
+#
+# Each purpose names one boundary that admits caller environment variables
+# into a narrower child environment. `admits` lists the variable names that
+# cross that boundary, in the exact order the generated mirrors emit them.
+#
+# `kind: forwarded` means the value is only ever a pass-through: the child
+# receives the name unmodified from the caller's environment, or does not
+# receive it at all when the caller left it unset. `kind: synthesized` means
+# the child receives a constructed value that never came from the caller
+# under that name. No entry below is `synthesized` yet -- issue #1090 is the
+# first consumer of that kind. The schema supports it now so adding one later
+# does not require regenerating every mirror a second time.
+#
+# `when` narrows a `forwarded` entry to specific CI jobs. Entries without
+# `when` are admitted unconditionally (subject only to the caller having set
+# them, for `forwarded` entries). `when.jobNames` is a list so more than one
+# job can share a gate. `when.requiresConfigPrepArgv: true` narrows further,
+# beyond job name: the entry is admitted only when the invoked child argv is
+# exactly `node --import tsx scripts/prepare-live-model-ci-config.ts` (no
+# `--print-approve-url`, no extra arguments). That argv predicate is not
+# itself data -- it is pattern matching against the child command line -- so
+# it stays hand-authored in .gitlab/ci/runtime-run.sh's
+# `is_live_model_config_prep`; this flag only marks which entries require it.
+schemaVersion: 1
+kind: docsfab-env-admission
+purposes:
+  - id: ci-runtime-run
+    description: >-
+      Names admitted into the child environment `env -i` builds for CI jobs
+      running under the unprivileged docsfab user
+      (.gitlab/ci/runtime-run.sh). HOME, TMPDIR, DOCSFAB_TEST_TRUSTED_ROOT,
+      PI_OFFLINE, VITEST_MAX_WORKERS, CI_PROJECT_DIR, and PATH are not
+      declared here: runtime-run.sh derives or defaults each of those from
+      more than one caller variable, which is not a plain forward.
+    admits:
+      - name: npm_config_cache
+        kind: forwarded
+      - name: DOCSFAB_CI_HOME
+        kind: forwarded
+      - name: DOCSFAB_COVERAGE_BASELINE
+        kind: forwarded
+      - name: CI
+        kind: forwarded
+      - name: CI_NODE_INDEX
+        kind: forwarded
+      - name: CI_NODE_TOTAL
+        kind: forwarded
+      - name: CI_COMMIT_SHA
+        kind: forwarded
+      # Package preparation needs GitLab's branch/tag identity to select the
+      # same retained version that the publication job expects.
+      - name: CI_COMMIT_BRANCH
+        kind: forwarded
+      - name: CI_DEFAULT_BRANCH
+        kind: forwarded
+      - name: CI_COMMIT_SHORT_SHA
+        kind: forwarded
+      - name: CI_COMMIT_TAG
+        kind: forwarded
+      # Default-branch push diff base for runtime:mr-assessment (#1087).
+      # GitLab zeroes this on schedule, web, and api pipelines and on a
+      # branch's first commit; the assessor treats all-zeros as no base.
+      - name: CI_COMMIT_BEFORE_SHA
+        kind: forwarded
+      # Merge commit body for runtime:mr-assessment (#1087). On a
+      # default-branch push GitLab sets no CI_MERGE_REQUEST_* variables, so
+      # this is how the assessed change set recovers its merge-request
+      # identity without a network lookup.
+      #
+      # Not scoped with when.jobNames, though it could usefully be: the
+      # generated renderer supports exactly one live-model job-name scope
+      # and refuses a second distinct one, so narrowing this to
+      # runtime:mr-assessment alone needs a generator change rather than a
+      # catalog edit. Forwarding it unconditionally is safe -- GitLab sets
+      # it on every pipeline and it carries no credential -- so the
+      # narrowing is deferred rather than forced through.
+      - name: CI_COMMIT_MESSAGE
+        kind: forwarded
+      - name: CI_JOB_NAME
+        kind: forwarded
+      - name: CI_JOB_IMAGE
+        kind: forwarded
+      - name: CI_MERGE_REQUEST_IID
+        kind: forwarded
+      - name: CI_MERGE_REQUEST_TITLE
+        kind: forwarded
+      - name: CI_MERGE_REQUEST_TARGET_BRANCH
+        kind: forwarded
+      - name: CI_MERGE_REQUEST_DIFF_BASE_SHA
+        kind: forwarded
+      - name: CI_MERGE_REQUEST_SOURCE_BRANCH_SHA
+        kind: forwarded
+      - name: MR_ASSESSMENT_STAGE_DIR
+        kind: forwarded
+      - name: USER
+        kind: forwarded
+      - name: LOGNAME
+        kind: forwarded
+      - name: SHELL
+        kind: forwarded
+      - name: LANG
+        kind: forwarded
+      - name: LC_ALL
+        kind: forwarded
+      - name: LC_CTYPE
+        kind: forwarded
+      - name: TZ
+        kind: forwarded
+      - name: TERM
+        kind: forwarded
+      - name: SSL_CERT_FILE
+        kind: forwarded
+      - name: SSL_CERT_DIR
+        kind: forwarded
+      - name: NODE_EXTRA_CA_CERTS
+        kind: forwarded
+      - name: GIT_SSL_CAINFO
+        kind: forwarded
+      - name: http_proxy
+        kind: forwarded
+      - name: https_proxy
+        kind: forwarded
+      - name: no_proxy
+        kind: forwarded
+      - name: HTTP_PROXY
+        kind: forwarded
+      - name: HTTPS_PROXY
+        kind: forwarded
+      - name: NO_PROXY
+        kind: forwarded
+      - name: DOCSFAB_ACCEPTANCE_LIVE
+        kind: forwarded
+        when:
+          jobNames:
+            - runtime:live-model
+            - runtime:live-journey
+            - runtime:mr-assessment
+            - runtime:workflow-canary
+      - name: DOCSFAB_CONFIG_ROOT
+        kind: forwarded
+        when:
+          jobNames:
+            - runtime:live-model
+            - runtime:live-journey
+            - runtime:mr-assessment
+            - runtime:workflow-canary
+      - name: MODEL_API_KEY
+        kind: forwarded
+        when:
+          jobNames:
+            - runtime:live-model
+            - runtime:live-journey
+            - runtime:mr-assessment
+            - runtime:workflow-canary
+          requiresConfigPrepArgv: true
+
+  - id: acceptance-local
+    description: >-
+      Credential-free environment for local Git, tar, and integrity commands
+      (packages/runtime/src/acceptance-cli.ts localAcceptanceEnvironment).
+    admits:
+      - name: PATH
+        kind: forwarded
+      - name: HOME
+        kind: forwarded
+      - name: TMPDIR
+        kind: forwarded
+      - name: TMP
+        kind: forwarded
+      - name: TEMP
+        kind: forwarded
+      - name: SYSTEMROOT
+        kind: forwarded
+      - name: ComSpec
+        kind: forwarded
+      - name: SHELL
+        kind: forwarded
+      - name: LANG
+        kind: forwarded
+      - name: LC_ALL
+        kind: forwarded
+      - name: TERM
+        kind: forwarded
+      - name: NODE_EXTRA_CA_CERTS
+        kind: forwarded
+      - name: SSL_CERT_FILE
+        kind: forwarded
+      - name: SSL_CERT_DIR
+        kind: forwarded
+
+  - id: acceptance-offline
+    description: >-
+      Base environment for the offline acceptance child process, before the
+      synthesized MODEL_* offline stub values are added
+      (packages/runtime/src/acceptance.ts offlineAcceptanceEnvironment).
+      CI is forwarded so the acceptance check phase on a CI runner gets the
+      same Vitest budgets and worker count as the other CI test jobs, instead
+      of the short local budgets meant for a developer host.
+    admits:
+      - name: PATH
+        kind: forwarded
+      - name: TMPDIR
+        kind: forwarded
+      - name: TMP
+        kind: forwarded
+      - name: TEMP
+        kind: forwarded
+      - name: SYSTEMROOT
+        kind: forwarded
+      - name: ComSpec
+        kind: forwarded
+      - name: SHELL
+        kind: forwarded
+      - name: LANG
+        kind: forwarded
+      - name: LC_ALL
+        kind: forwarded
+      - name: TERM
+        kind: forwarded
+      - name: CI
+        kind: forwarded
+
+  - id: offline-tests
+    description: >-
+      Routine changed-file and CI-tier Vitest child processes. Only local
+      process paths, locale, CI scheduling, test timing and coverage controls
+      are forwarded. Unknown variables, provider/SCM credentials, npm config,
+      proxies and injection hooks are absent. Explicit live acceptance entry
+      points retain their separate declarations.
+    admits:
+      - name: PATH
+        kind: forwarded
+      - name: HOME
+        kind: forwarded
+      - name: TMPDIR
+        kind: forwarded
+      - name: TMP
+        kind: forwarded
+      - name: TEMP
+        kind: forwarded
+      - name: SYSTEMROOT
+        kind: forwarded
+      - name: ComSpec
+        kind: forwarded
+      - name: SHELL
+        kind: forwarded
+      - name: LANG
+        kind: forwarded
+      - name: LC_ALL
+        kind: forwarded
+      - name: LC_CTYPE
+        kind: forwarded
+      - name: TZ
+        kind: forwarded
+      - name: TERM
+        kind: forwarded
+      - name: USER
+        kind: forwarded
+      - name: LOGNAME
+        kind: forwarded
+      - name: CI
+        kind: forwarded
+      - name: CI_NODE_INDEX
+        kind: forwarded
+      - name: CI_NODE_TOTAL
+        kind: forwarded
+      - name: CI_PROJECT_DIR
+        kind: forwarded
+      - name: CI_JOB_NAME
+        kind: forwarded
+      - name: PI_OFFLINE
+        kind: forwarded
+      - name: VITEST_MAX_WORKERS
+        kind: forwarded
+      - name: DOCSFAB_TEST_TRUSTED_ROOT
+        kind: forwarded
+      - name: DOCSFAB_TEST_ACTIVITY_FIXTURE_DIR
+        kind: forwarded
+      - name: DOCSFAB_TEST_PRIVATE_ROUTE_BASE_URL
+        kind: forwarded
+      - name: DOCSFAB_CI_HOME
+        kind: forwarded
+      - name: DOCSFAB_CONFIG_ROOT
+        kind: forwarded
+      - name: DOCSFAB_VITEST_GRAPH_LOCK_PATH
+        kind: forwarded
+      - name: DOCSFAB_TEST_CHANGED_PATHS
+        kind: forwarded
+      - name: DOCSFAB_TEST_CHANGED_ALLOW_RELATED
+        kind: forwarded
+      - name: DOCSFAB_TEST_CHANGED_BASE
+        kind: forwarded
+      - name: DOCSFAB_COVERAGE_SHARD
+        kind: forwarded
+      - name: DOCSFAB_COVERAGE_BASELINE
+        kind: forwarded
+      - name: NODE_V8_COVERAGE
+        kind: forwarded
+      - name: NODE_NO_WARNINGS
+        kind: forwarded
+      - name: FORCE_COLOR
+        kind: forwarded
+      - name: NO_COLOR
+        kind: forwarded

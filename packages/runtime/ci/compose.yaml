@@ -1,0 +1,50 @@
+# Local-only DocsFab dogfooding. Set DOCSFAB_REPOSITORY to one explicit host
+# checkout before starting Compose; it is mounted read-only as clone input.
+services:
+  docsfab:
+    build:
+      context: ../../..
+      dockerfile: packages/runtime/ci/Dockerfile
+    image: docsfab:dogfood
+    init: true
+    # Docker Desktop's default profile blocks bwrap's nested namespaces. These
+    # are the minimum settings verified for this local dogfood image; they
+    # relax the outer container boundary and are not a production sandbox.
+    cap_add:
+      - SYS_ADMIN
+    # Docker Desktop exposes its SSH agent socket as root:root 0660. The
+    # supplemental group grants socket access without running DocsFab as root.
+    group_add:
+      - "0"
+    security_opt:
+      - seccomp=unconfined
+      - systempaths=unconfined
+    working_dir: /home/docsfab/workspaces/repository
+    environment:
+      HOME: /home/docsfab
+      DOCSFAB_CONFIG_ROOT: /home/docsfab/config
+      DOCSFAB_STATE_DIR: /home/docsfab/state/runs
+      SSH_AUTH_SOCK: /run/host-services/ssh-auth.sock
+      TMPDIR: /home/docsfab/tmp
+    # This file is intentionally selected by the operator and must live outside
+    # this repository. /dev/null makes it optional when no live credentials are
+    # needed (for example, the isolation probe).
+    env_file:
+      - ${DOCSFAB_RUNTIME_ENV_FILE:-/dev/null}
+    volumes:
+      - docsfab-home:/home/docsfab
+      - type: bind
+        source: ${DOCSFAB_REPOSITORY:?Set DOCSFAB_REPOSITORY to one absolute host repository path.}
+        target: /workspace/source
+        read_only: true
+      - type: bind
+        source: ${DOCSFAB_SSH_KNOWN_HOSTS:?Set DOCSFAB_SSH_KNOWN_HOSTS to one approved known_hosts file.}
+        target: /home/docsfab/.ssh/known_hosts
+        read_only: true
+      - type: bind
+        source: /run/host-services/ssh-auth.sock
+        target: /run/host-services/ssh-auth.sock
+        read_only: true
+
+volumes:
+  docsfab-home:

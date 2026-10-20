@@ -1,0 +1,68 @@
+schema_version: "1.0"
+library_version: "1.0.0"
+name: prerequisites
+description: "Prerequisites and requirements page for product setup"
+source_template: "templates/get-started/prerequisites.md"
+
+structure:
+  headings:
+    h1:
+      required:
+        - pattern: "Prerequisites"
+          description: "Prerequisites title"
+      max_count: 1
+    h2:
+      required:
+        - pattern: "Hardware Requirements?"
+          description: "Hardware requirements section"
+        - pattern: "Software Requirements?"
+          description: "Software requirements section"
+      optional:
+        - pattern: "Verified Configurations?"
+          description: "Verified configurations section"
+        - pattern: "Network Requirements?"
+          description: "Network requirements section"
+        - pattern: "Pre-Installation Checklist"
+          description: "Pre-installation checklist"
+        - pattern: "Troubleshoot.*"
+          description: "Troubleshooting prerequisites"
+        - pattern: "Next Steps?"
+          description: "Next steps section"
+    h3:
+      optional:
+        - pattern: ".*"
+          description: "Requirement subsections"
+
+  elements:
+    - type: list-table
+      context: "within requirements sections"
+      required: false
+    - type: admonition
+      context: "within requirements"
+      required: false
+      attributes:
+        class: note
+    - type: dropdown
+      context: "within detailed requirements"
+      required: false
+
+  section_order:
+    - "Hardware"
+    - "Software"
+    - "Verified"
+    - "Network"
+    - "Pre-Installation"
+    - "Troubleshoot"
+    - "Next Steps"
+
+severity:
+  missing_required_section: error
+  missing_optional_section: info
+  wrong_section_order: warning
+  missing_element: info
+  duplicate_h1: error
+
+content:
+  requirements:
+    format: "tables or bullet lists"
+    include_minimum_and_recommended: recommended

@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "docsfab-model-profile-candidate-excerpt/v1",
+  "profileId": "generation-nemotron-3-super-120b-a12b",
+  "status": "candidate",
+  "profileKind": "generative",
+  "purposes": [
+    "main-documentation",
+    "review",
+    "evaluation"
+  ],
+  "identity": {
+    "provider": "nvidia-api-catalog",
+    "modelId": "nvidia/nemotron-3-super-120b-a12b",
+    "endpoint": null,
+    "region": null
+  },
+  "interface": {
+    "transport": "openai-compatible",
+    "apiFormat": "chat_completions",
+    "route": "/v1/chat/completions",
+    "inputTypes": [
+      "text"
+    ],
+    "outputType": "text"
+  },
+  "proposedConfiguration": {
+    "contextWindow": 1000000,
+    "maxInputTokens": 262144,
+    "maxOutputTokens": 8192,
+    "documentedMaxOutputTokens": 32768,
+    "reasoning": false,
+    "supportsDeveloperRole": false,
+    "supportsReasoningEffort": true,
+    "requestControls": [
+      "max_tokens",
+      "reasoning_budget",
+      "reasoning_effort",
+      "seed",
+      "stop",
+      "stream",
+      "temperature",
+      "top_p"
+    ],
+    "candidateRequestPolicy": {
+      "mode": "reasoning-off",
+      "reasoningEffort": "none",
+      "reasoningBudget": 0,
+      "temperature": 1,
+      "topP": 0.95
+    }
+  },
+  "approvalStatus": "not-approved",
+  "projection": {
+    "runtimeConfiguration": "not-authorized",
+    "modelRequest": "blocked"
+  }
+}

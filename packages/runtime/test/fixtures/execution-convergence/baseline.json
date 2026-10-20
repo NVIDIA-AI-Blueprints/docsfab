@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "evidenceClass": "deterministic-fixture",
+  "scenarios": [
+    {
+      "id": "direct-cli-read-only-review",
+      "entryAdapter": "executeRunRequest",
+      "caseRef": "mature-change-review",
+      "operation": "review-documentation",
+      "status": "declined-quality-step-run-succeeded",
+      "source": "exact-commit",
+      "artifact": "retained-report-no-quality-projection",
+      "authority": "read-only",
+      "retention": "private-run-and-report"
+    },
+    {
+      "id": "live-agent-workflow-and-direct-edit",
+      "entryAdapter": "runTerminalConversation",
+      "caseRef": "new-product-feature-live-agent",
+      "operation": "workflow-and-direct-write",
+      "status": "separate-workflow-and-checkout-results",
+      "source": "committed-head-plus-user-work",
+      "artifact": "workflow-null-patch-and-direct-file",
+      "authority": "operation-specific-write",
+      "retention": "workflow-result-and-user-work"
+    },
+    {
+      "id": "authorized-workflow-patch-persistence",
+      "entryAdapter": "LiveWorkflowDelivery",
+      "caseRef": "new-product-feature-live-agent",
+      "operation": "apply-saved-patch",
+      "status": "applied-then-already-applied",
+      "source": "bound-revision",
+      "artifact": "bound-saved-patch",
+      "authority": "operation-specific-write",
+      "retention": "private-run-and-patch"
+    },
+    {
+      "id": "headless-hosted-review",
+      "entryAdapter": "runHostedWorkflow",
+      "caseRef": "mature-change-review",
+      "operation": "readiness",
+      "status": "succeeded-read-only",
+      "source": "exact-commit-and-tree",
+      "artifact": "null-patch",
+      "authority": "read-only",
+      "retention": "private-hosted-run"
+    },
+    {
+      "id": "workflow-cancellation",
+      "entryAdapter": "createLiveAgentToolDefinitions",
+      "caseRef": "new-product-feature-live-agent",
+      "operation": "cancel-active-workflow",
+      "status": "cancelled-without-private-reason",
+      "source": "exact-commit",
+      "artifact": "typed-terminal-result",
+      "authority": "read-only",
+      "retention": "private-run"
+    },
+    {
+      "id": "typed-knowledge-stop",
+      "entryAdapter": "executeRunRequest",
+      "caseRef": "intent-gap-answer-and-resume",
+      "operation": "create-documentation",
+      "status": "needs-input",
+      "source": "exact-commit",
+      "artifact": "durable-stop",
+      "authority": "operation-specific-write-disposable",
+      "retention": "private-run"
+    },
+    {
+      "id": "provider-reasoning-content",
+      "entryAdapter": "PiHarness",
+      "caseRef": "#479",
+      "operation": "reasoning-content-tool-turn",
+      "status": "distinct-nonblank-authority",
+      "source": "exact-commit",
+      "artifact": "turn-and-lease-evidence",
+      "authority": "read-only-tool-batches",
+      "retention": "in-memory-turn-evidence"
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "name": "@docsfab/knowledge-gathering",
+  "version": "0.1.0",
+  "license": "Apache-2.0 AND CC-BY-4.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "docsfab-knowledge": "./src/cli.mjs"
+  },
+  "exports": {
+    "./backend": "./src/backend.mjs",
+    "./evidence-source": "./src/evidence-source.mjs",
+    "./exports": "./src/exports.mjs",
+    "./first-pass": "./src/first-pass.mjs",
+    "./model": "./src/model.mjs",
+    "./product-feedback-contracts": "./src/product-feedback-contracts.mjs",
+    "./reference-model-snapshot": "./src/reference-model-snapshot.mjs",
+    "./runtime-adapter": "./src/runtime-adapter.mjs",
+    "./server": "./src/server.mjs",
+    "./store": "./src/store.mjs",
+    "./adapters/hermes": "./src/adapters/hermes.mjs"
+  },
+  "engines": {
+    "node": ">=24.21.0"
+  },
+  "scripts": {
+    "start": "node src/cli.mjs serve",
+    "test": "npm run test:control-plane && npm run test:transcript-miner && npm run test:convergence",
+    "test:control-plane": "node ../runtime/scripts/ensure-derived.mjs --steps model-output,limits && node --test tests/*.test.mjs",
+    "test:transcript-miner": "python3 -m unittest discover -s skills/mine-agent-session-transcripts/tests -p 'test_*.py'",
+    "test:convergence": "python3 -m unittest discover -s skills/converge-documentation/tests -p 'test_*.py'",
+    "test:simulation": "node --test tests/workflow-simulation.test.mjs"
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "skill_name": "interview-product-model",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Interview a senior engineer who confidently says that direct endpoints are the supported production default, but the only artifact available says managed routing is recommended. Capture the result and decide its status.",
+      "expected_output": "Preserve the engineer's exact statement as an attributed participant claim; ask for scope, directness, confidence, counterexamples, and sources; keep speaker confirmation separate; do not mark behavior verified, intent approved, or canonical; record the artifact conflict and required authority or behavioral checks.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Begin an interview with a product creator about why workspaces exist. You already have a polished architecture diagram and another creator's explanation.",
+      "expected_output": "Elicit free recall one question at a time before showing either the diagram or the other participant's model; create the four interview artifacts; disclose capture and retention; reflect only after a coherent conceptual cluster.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "During a voice interview, the participant corrects an earlier answer and says the raw transcript misheard 'policy owner' as 'policy order.' Update the interview record.",
+      "expected_output": "Preserve the raw transcript event, append the participant's exact correction, mark the transcript/capture limitation, supersede or correct affected derived claims, and avoid silently rewriting the original evidence.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "Two engineers are available together and disagree about a lifecycle transition. Interview them and create the product model.",
+      "expected_output": "Preserve independent participant models before exposing either interpretation when independent recall matters; do not merge the accounts or decide by majority; leave behavioral and intent validation for evidence or accountable owners; do not create a canonical shared model from the interview skill.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "The same participant has two prior interviews and one authored design document. Register today's follow-up interview.",
+      "expected_output": "Reuse the participant's stable source_thread_id, assign a distinct item_id to today's interview, retain item-level scope and consent, and keep all four source items separately inspectable.",
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "A cross-authored PRD is discussed during one contributor's interview. Attach the PRD to every contributor and treat each extracted claim as their statement.",
+      "expected_output": "Preserve one stable PRD item with scoped contributor relations, avoid duplicating it into person threads or attributing every claim to every contributor, and keep proxy representation awaiting author confirmation where needed.",
+      "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "Without being asked a question, the participant says, 'Use this model to assess the docs,' and the backend only accepts Q-and-A events.",
+      "expected_output": "Append a participant-to-agent challenge or request with actor, direction, exact content, sequence, and related claims; record the backend schema gap and stop before inventing an interviewer question.",
+      "files": []
+    },
+    {
+      "id": 8,
+      "prompt": "A product manager says a feature might become the default next year. Record it as a directly decided product decision.",
+      "expected_output": "Preserve the tentative wording, classify it as hypothesis or possible future intent with appropriate directness, and do not use directness decided or intent approved without evidence of an actual accountable decision.",
+      "files": []
+    }
+  ]
+}

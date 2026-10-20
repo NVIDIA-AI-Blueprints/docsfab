@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "provenance": "Sanitized serving-route exchange for the endpoint compatibility probe. Provider messages (410 end of life, 404 function not found, in-stream 503) are the text recorded from the hosted NVIDIA API Catalog session of 2026-09-30 (evidence report on MR !1390), which retained no raw captures; stream framing follows that route's OpenAI-compatible chunk shape. Account, function, call, and completion identifiers are replaced with [redacted-...] placeholders. Responses are returned in request order and the last one repeats.",
+  "description": "A model id listed by GET /v1/models that the account cannot invoke answers HTTP 404.",
+  "route": "nvidia-api-catalog",
+  "model": "nvidia/nemotron-nano-3-30b-a3b",
+  "responses": [
+    {
+      "status": 404,
+      "contentType": "application/problem+json",
+      "body": "{\"type\":\"urn:kaizen:problem-details:not-found\",\"title\":\"Not Found\",\"status\":404,\"detail\":\"Function '[redacted-function-id]': Not found for account '[redacted-account-id]'\",\"instance\":\"/v2/nvcf/pexec/functions/[redacted-function-id]\"}"
+    }
+  ]
+}

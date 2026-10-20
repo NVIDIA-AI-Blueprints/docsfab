@@ -1,0 +1,44 @@
+schema_version: "1.0"
+library_version: "1.0.0"
+name: helm-parameters
+description: "Helm chart values reference page"
+source_template: "templates/reference/helm-parameters/helm-parameters.md"
+
+structure:
+  headings:
+    h1:
+      required:
+        - pattern: "Helm (Chart )?(Parameters|Values).*"
+          description: "Helm chart values title"
+      max_count: 1
+    h2:
+      required:
+        - pattern: "General Helm (Chart )?(Parameters|Values)|Common (Parameters|Values)"
+          description: "General Helm chart values section"
+      optional:
+        - pattern: "Related Topics?"
+          description: "Related topics section"
+    h3:
+      optional:
+        - pattern: ".*"
+          description: "Parameter group subsections"
+
+  elements: []
+
+  section_order: []
+
+severity:
+  missing_required_section: error
+  missing_optional_section: info
+  wrong_section_order: info
+  missing_element: info
+  duplicate_h1: error
+
+lint:
+  # Helm chart values reference pages are intentionally long catalogs.
+  long_file:
+    mode: skip
+
+content:
+  parameters:
+    format: "table with Parameter, Description, Default, Type columns"

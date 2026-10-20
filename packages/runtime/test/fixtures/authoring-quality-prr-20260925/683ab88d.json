@@ -1,0 +1,67 @@
+{
+  "source": "Trimmed from retained run record 683ab88d (create-documentation, PRR 2026-09-25, main d0ad77394). Evaluate step summary keeps the staging envelope keys {evaluation, qualityScore, reportMarkdown} with the evaluation trimmed to the fields the projector reads; host paths and digests removed.",
+  "runId": "683ab88d-467c-4645-8991-b6977bafae00",
+  "workflow": "create-documentation",
+  "repositoryRevision": "c87a44790cfe168000f7500f09bbbfdc03a2ede5",
+  "changedFiles": [
+    {
+      "path": "docs/usage.md",
+      "status": "added"
+    }
+  ],
+  "patch": {
+    "artifactPath": "/private/checkout/.docsfab/patches/683ab88d-467c-4645-8991-b6977bafae00.patch",
+    "byteLength": 4131,
+    "lineCount": 109,
+    "format": "git-diff"
+  },
+  "evaluateEnvelope": {
+    "evaluation": {
+      "profile": {
+        "id": "docsfab-documentation-quality",
+        "version": "v0.1"
+      },
+      "model_version": "documentation-quality-model-v0.2",
+      "hard_gate_failures": ["material-omission"],
+      "overall_decision": "fail",
+      "confidence": 0.25,
+      "findings": [
+        {
+          "id": "QF-TECH-001",
+          "severity": "major",
+          "dimension_id": "functional-validity",
+          "owner": "documentation-author",
+          "status": "open"
+        }
+      ]
+    },
+    "qualityScore": {
+      "status": "unavailable",
+      "reason": "No rubric can be selected safely. docs/usage.md is an individual procedural consumer page, but the available rubric set (api-reference.yaml, concept-guide.yaml, task-guide.yaml) does not provide one unambiguous versioned content-type match for the declared target under the sealed contract, so quality-score.json must remain unavailable."
+    },
+    "reportMarkdown": "# Documentation quality evaluation report\n\n## Validated result summary\n\n```json\n{\n  \"report_contract\": \"docsfab-quality-report-v0.1\",\n  \"target\": {\n    \"paths\": [\"docs/usage.md\"],\n    \"repository_revision\": \"c87a44790cfe168000f7500f09bbbfdc03a2ede5\",\n    \"documentation_revision\": \"c87a44790cfe168000f7500f09bbbfdc03a2ede5\"\n  },\n  \"profile\": {\n    \"id\": \"docsfab-documentation-quality\",\n    \"version\": \"v0.1\"\n  },\n  \"evaluation\": {\n    \"decision\": \"fail\",\n    \"confidence\": 0.25,\n    \"hard_gate_failures\": [\"material-omission\"]\n  },\n  \"rubric\": {\n    \"status\": \"unavailable\",\n    \"reason\": \"No rubric can be selected safely for the declared target from the available governed rubric set.\"\n  },\n  \"validation\": {\n    \"evaluation\": \"passed\",\n    \"quality_score\": \"unavailable\",\n    \"report_binding\": \"passed\"\n  },\n  \"artifact_locators\": {\n    \"evaluation\": \"evaluation.json\",\n    \"quality_score\": null,\n    \"quality_report\": \"quality-report.md\"\n  }\n}\n```\n"
+  },
+  "audienceSummary": "{\"status\": \"insufficient-evidence\", \"summary\": \"Prerequisite check failed. No new participant attempt ran.\", \"missingPrerequisites\": [\"immutable candidate identity for the audience-understanding target beyond the general repository revision context\", \"authoritative reference model for expected understanding outcomes\", \"versioned scenario corpus with prompts, oracles, acceptance criteria, and misconception probes\", \"representative participant identity or clean-agent execution configuration\", \"evaluator identity and evidence of independence from documentation authorship/review/scoring\", \"retention boundary\", \"run authority/consent for a participant attempt\"]}",
+  "storedWorkflowOutcome": {
+    "disposition": "inconclusive",
+    "findings": [
+      {
+        "id": "finding:authoring-quality:experimental-quality-profile",
+        "kind": "evidence-limitation",
+        "severity": "warning",
+        "code": "experimental-quality-profile",
+        "evidenceIds": ["step:evaluate-document-quality"]
+      },
+      {
+        "id": "finding:authoring-quality:insufficient-evidence",
+        "kind": "evidence-limitation",
+        "severity": "warning",
+        "code": "insufficient-evidence",
+        "evidenceIds": ["step:evaluate-document-quality", "step:test-audience-understanding"]
+      }
+    ],
+    "limitations": ["experimental-quality-profile", "insufficient-evidence"],
+    "openDecisions": [],
+    "producedArtifacts": []
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "name": "governed controlled failure",
+  "assertions": [
+    { "type": "run-count", "minimum": 1 },
+    { "type": "status", "equals": "failed" },
+    { "type": "workflow", "equals": "review-documentation" },
+    {
+      "type": "step-skills",
+      "equals": [
+        "audit-documentation",
+        "verify-technical-accuracy",
+        "lint-documentation",
+        "verify-technical-accuracy",
+        "verify-technical-accuracy",
+        "review-documentation",
+        "test-audience-understanding",
+        "evaluate-document-quality"
+      ]
+    },
+    { "type": "governed-skill-evidence" }
+  ]
+}

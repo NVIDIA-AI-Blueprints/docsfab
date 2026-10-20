@@ -1,0 +1,183 @@
+# DocsFab operational limits owned by the `manifest` name prefix.
+# Registered in config/limits.yaml; every limit here is named `manifest.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: manifest.documentMaxBytes
+    value: 1048576
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 1048576
+    refusal: manifest-document-max-bytes-bound
+    remediation: Shrink the manifest or capture document, or lower manifest.documentMaxBytes in config/limits/manifest.yaml.
+    rationale: Equals the activation-state read bound. Adopt and apply refuse a closed v1 document larger than this rather than parsing an unbounded operator file.
+
+  - name: manifest.captureMaxBytes
+    value: 1048576
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 1048576
+    refusal: manifest-capture-max-bytes-bound
+    remediation: Shrink the capture document, or lower manifest.captureMaxBytes in config/limits/manifest.yaml.
+    rationale: Capture lists core artifacts (~60) and per-project custody tuples. Same ceiling as the activation-state read bound so adopt cannot ingest a larger fact document than the host already reads.
+
+  - name: manifest.receiptMaxBytes
+    value: 131072
+    unit: bytes
+    scope: per-host
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 131072
+    refusal: manifest-receipt-max-bytes-bound
+    remediation: Shrink the apply receipt plan, or lower manifest.receiptMaxBytes in config/limits/manifest.yaml.
+    rationale: Mirrors the lineage receipt cap. One apply receipt must stay under this so a plan cannot grow without bound.
+
+  - name: manifest.maxProjects
+    value: 32
+    unit: count
+    scope: per-host
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 32
+    refusal: manifest-max-projects-bound
+    remediation: Name fewer projects in the manifest, or lower manifest.maxProjects in config/limits/manifest.yaml.
+    rationale: Registry intake already admits 1..32 projects. Adopt and apply share that ceiling rather than inventing a second one.
+
+  - name: manifest.maxRoutesPerProject
+    value: 16
+    unit: count
+    scope: per-host
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 16
+    refusal: manifest-max-routes-per-project-bound
+    remediation: Declare fewer Slack routes per project, or lower manifest.maxRoutesPerProject in config/limits/manifest.yaml.
+    rationale: Named here so S1 can bound adopt without importing slackRoutes.* from !915. When that planner lands, this ceiling stays aligned with replacementMaxRoutesPerProject.
+
+  - name: manifest.planMaxItems
+    value: 256
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 256
+    refusal: manifest-plan-max-items-bound
+    remediation: Split the change across manifests, or lower manifest.planMaxItems in config/limits/manifest.yaml.
+    rationale: One apply receipt must stay under receiptMaxBytes. 256 plan items is the named ceiling those later slices enforce.
+
+  - name: manifest.reasonMaxChars
+    value: 256
+    unit: characters
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 256
+    refusal: manifest-reason-max-chars-bound
+    remediation: Shorten the reason to one bounded line, or lower manifest.reasonMaxChars in config/limits/manifest.yaml.
+    rationale: Apply receipts carry one operator reason line. 256 characters matches the inference rejection reason bound so a reason cannot grow without a named ceiling.
+
+  - name: manifest.lockWaitSeconds
+    value: 30
+    unit: seconds
+    scope: per-host
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 30
+    refusal: manifest-lock-wait-seconds-bound
+    remediation: Retry when the deployment lock is free, or lower manifest.lockWaitSeconds in config/limits/manifest.yaml.
+    rationale: Names the flock wait today's six amendment tools hard-code. Adopt takes a shared lock at most and uses this ceiling.
+
+  - name: manifest.stopWaitSeconds
+    value: 30
+    unit: seconds
+    scope: per-host
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 30
+    refusal: manifest-stop-wait-seconds-bound
+    remediation: Inspect the unit and retry, or lower manifest.stopWaitSeconds in config/limits/manifest.yaml.
+    rationale: Matches TimeoutStopSec=30s. S1 does not stop the unit; later apply slices consume this name.
+
+  - name: manifest.startAssertSeconds
+    value: 15
+    unit: seconds
+    scope: per-host
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 15
+    refusal: manifest-start-assert-seconds-bound
+    remediation: Inspect the unit and retry, or lower manifest.startAssertSeconds in config/limits/manifest.yaml.
+    rationale: Type=simple returns at fork. S1 does not start the unit; later apply slices consume this name.
+
+  - name: manifest.clockSkewMs
+    value: 300000
+    unit: ms
+    scope: per-host
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 300000
+    refusal: manifest-clock-skew-ms-bound
+    remediation: Correct the host clock, or lower manifest.clockSkewMs in config/limits/manifest.yaml.
+    rationale: Names the five 5-minute skews once so later slices do not keep copying the literal.
+
+  - name: manifest.historyKeep
+    value: 64
+    unit: count
+    scope: per-host
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 64
+    refusal: manifest-history-keep-bound
+    remediation: Prune only above this floor, or lower manifest.historyKeep in config/limits/manifest.yaml.
+    rationale: Sealed manifests are never deleted below this floor. S1 records the bound; apply history uses it.
+
+  - name: manifest.bindingExpiryWarnDays
+    value: 30
+    unit: days
+    scope: per-host
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 30
+    refusal: manifest-binding-expiry-warn-days-bound
+    remediation: Acknowledge the expiry or rotate via a supported primitive, or lower manifest.bindingExpiryWarnDays in config/limits/manifest.yaml.
+    rationale: E2 has no status surface today. Apply later refuses binding-expiry-imminent inside this named window.
+
+  - name: manifest.aclEntriesMax
+    value: 128
+    unit: count
+    scope: per-project
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 128
+    refusal: manifest-acl-entries-max-bound
+    remediation: Declare fewer ACL grants, or lower manifest.aclEntriesMax in config/limits/manifest.yaml.
+    rationale: Matches adjudication's 128-line ACL bound so layout.aclGrants cannot grow past what the host already admits.
+
+  - name: manifest.adoptReportMaxEntries
+    value: 1024
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 1024
+    refusal: manifest-adopt-report-max-entries-bound
+    remediation: Fix the named non-derivable paths so the report shrinks, or lower manifest.adoptReportMaxEntries in config/limits/manifest.yaml.
+    rationale: Adopt-report arrays are operator output and must stay bounded. 1024 entries is a screenful of cmp misses, not an unbounded dump.

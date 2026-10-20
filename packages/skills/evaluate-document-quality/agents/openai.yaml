@@ -1,0 +1,4 @@
+interface:
+  display_name: "Evaluate Document Quality"
+  short_description: "Evaluate layered documentation quality and gates"
+  default_prompt: "Within a DocsFab runtime workflow, evaluate this documentation across the three quality layers and applicable hard constraints."

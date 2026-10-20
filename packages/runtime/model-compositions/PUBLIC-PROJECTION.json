@@ -1,0 +1,28 @@
+{
+  "compatibility": "Internal historical records retain their original private identities; this public metadata view has a distinct honest content digest.",
+  "compositionId": "openai-gpt-5.6-sol-pi",
+  "kind": "docsfab-public-composition-metadata-view",
+  "modifiedMetadata": [
+    "retirement.decision.record"
+  ],
+  "originalSourceBytesPreserved": true,
+  "publicCompositionSha256": "1df6dfa28f6914b2722e0df2b5c162386bd9142fabee6581173bd6d1a22c4812",
+  "publicInstalledManifestFileSha256": "f5afe225690ebb8eb66b60187c7b54f5c829393fce381da8494bd66f993c6f3b",
+  "publicRegistrySha256": "9b087928aa7ae460fa56905c21d78faff65486cdd7de6b22250672b164b7c8fd",
+  "publicRetirementRecord": "docsfab-retirement:openai-gpt-5.6-sol-pi:2026-09-28",
+  "schemaVersion": 1,
+  "sourceCompositionSha256": "07b9dc09c87e75a6fb2c18c669837cd305b53c6ed8705d06933fb56e5ef9b48f",
+  "sourceRegistrySha256": "e04fa399127b202d68502422feb712cd7df60af8366c75cc70c3da538647e31e",
+  "unchanged": [
+    "active-compositions",
+    "retired-status",
+    "retirement-owner-date-reason-successor-statement",
+    "deployment-identities",
+    "credentials",
+    "models",
+    "limits",
+    "request-policies",
+    "harnesses",
+    "workflows"
+  ]
+}

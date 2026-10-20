@@ -1,0 +1,5 @@
+# Intentionally empty. This repository is a read-only export, so it defines no
+# Git hooks. The runtime package's lefthook dev dependency installs hooks when
+# `npm ci` runs; with no config file here, it would create an untracked
+# lefthook.yml and every source build would report a modified (.dirty) checkout.
+{}

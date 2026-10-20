@@ -1,0 +1,183 @@
+# DocsFab operational limits owned by the `test` name prefix.
+# Registered in config/limits.yaml; every limit here is named `test.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: test.localTimeoutMs
+    value: 5000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1000
+    max: 5000
+    refusal: test-local-timeout-ms-bound
+    remediation: Make the runtime test faster, or give that one case a larger local budget through testTimeoutMs() in packages/runtime/test/helpers/test-timeouts.ts.
+    rationale: Default Vitest testTimeout for runtime tests outside CI. Keeps local and L0 smoke runs failing fast; the four slow suites tracked by issue 974 are measured against this value.
+
+  - name: test.ciTimeoutMs
+    value: 180000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 5000
+    max: 180000
+    refusal: test-ci-timeout-ms-bound
+    remediation: Make the runtime test faster, or raise test.ciTimeoutMs in config/limits/test.yaml after measuring the slowest supported CI runner.
+    rationale: Default Vitest testTimeout for runtime tests when CI is set, and the floor for every per-case budget declared through testTimeoutMs(). Shared runners such as content-engineering run far slower under load than a developer host (issue 1009).
+
+  - name: test.localHookTimeoutMs
+    value: 10000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1000
+    max: 10000
+    refusal: test-local-hook-timeout-ms-bound
+    remediation: Make the runtime test hook faster, or pass that one hook a larger timeout.
+    rationale: Default Vitest hookTimeout for runtime tests outside CI.
+
+  - name: test.ciHookTimeoutMs
+    value: 300000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 10000
+    max: 300000
+    refusal: test-ci-hook-timeout-ms-bound
+    remediation: Make the runtime test hook faster, or raise test.ciHookTimeoutMs in config/limits/test.yaml after measuring the slowest supported CI runner.
+    rationale: Default Vitest hookTimeout for runtime tests when CI is set. Shared CI runners run far slower under load than a developer host.
+
+  - name: test.pairingProducerLocalHookTimeoutMs
+    value: 150000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 10000
+    max: 150000
+    refusal: test-pairing-producer-local-hook-timeout-ms-bound
+    remediation: Profile the pairing producer setup and its teardown, or revise this test-owned local allowance after measuring a supported local host.
+    rationale: Inherited local scheduling allowance for pairing producer setup before all outcome consumer assertions, preserving the existing 150000 ms local behavior. This is not a measured local duration. A successful normal-user Windows 11 WSL2 CI diagnostic on 2026-10-14 completed producer setup in 179101.422 ms and every unchanged consumer case with clean teardown; that CI observation supports applying the existing test.ciHookTimeoutMs floor through hookTimeoutMs(), not a local timing claim or a global budget increase. A hook timeout neither cancels nor joins unfinished producer setup.
+
+  - name: test.journeyLocalTimeoutMs
+    value: 60000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 5000
+    max: 180000
+    refusal: test-journey-local-timeout-ms-bound
+    remediation: Make the journey faster, or raise test.journeyLocalTimeoutMs in config/limits/test.yaml after measuring the slowest journey in packages/runtime/test/journeys.
+    rationale: Local Vitest budget for one scripted journey case under packages/runtime/test/journeys (shipped entry point, knowledge first pass, real PiHarness steps, run store). Measured on a shared 11-core developer host with two Vitest workers on 2026-10-07, the slowest journey (create to a patch) took 11.5 s to 15.9 s and review took 12.4 s to 15.3 s; 60000 leaves about 3.7 times the slowest run for host contention while still failing a hung journey within a minute. In CI testTimeoutMs() raises it to test.ciTimeoutMs.
+
+  - name: test.applicationExecutionTimeoutMs
+    value: 60000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 5000
+    max: 180000
+    refusal: test-application-execution-timeout-ms-bound
+    remediation: Profile the CLI, live-agent, or native-simulation write applications and their evidence retention, or revise this test-owned budget after measuring a supported host.
+    rationale: Test scheduling budget for complete scripted write applications through CLI, live-agent, and native simulation runners, including source preservation, durable patches, directed-update decision and replay, and stdout-bound writer custody assertions. On normal-user Windows 11 WSL2 on 2026-10-09, the original sequential CLI/live-agent case completed in 22.23 seconds; the directed-update case completed every original assertion in 19.84 seconds after a combined-suite run exceeded its former 20-second deadline; the paired exact/wrong-path native writer case completed every original assertion in 31.44 seconds after exceeding its former 30-second deadline. The unchanged 60000 value leaves scheduling headroom for these measured workloads without changing production execution limits. The CI-aware test helper retains its existing larger floor.
+
+  - name: test.nativePilotReplayTimeoutMs
+    value: 180000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 5000
+    max: 180000
+    refusal: test-native-pilot-replay-timeout-ms-bound
+    remediation: Profile historical compilation and campaign preparation, or revise this test-owned budget after measuring a supported host.
+    rationale: Test scheduling budget for three native-pilot campaigns, historical runtime compilation, durable cross-campaign replay refusal, and nonce reuse refusal. The original normal-user Windows 11 WSL2 case completed every unchanged assertion in 75.80 seconds on 2026-10-09; 180000 permits compilation and filesystem variability while preserving the existing CI floor. This is a harness choice, not a model or production authority limit.
+
+  - name: test.offlineDeliveryAcceptanceTimeoutMs
+    value: 1200000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 180000
+    max: 1200000
+    refusal: test-offline-delivery-acceptance-timeout-ms-bound
+    remediation: Inspect per-case delivery timings and the final restart and evidence-chain assertions; diagnose an incomplete run before increasing this test-owned budget.
+    rationale: Test scheduling budget for the complete offline delivery failure matrix, duplicate invocation, three real process restarts, and artifact-chain tampering checks. Normal-user Windows 11 WSL2 measurements on 2026-10-09 show fixture preparation taking 34 to 36 seconds and completed restart cases taking 68 to 80 seconds; the former 600-second deadline interrupted the final restart case and raced teardown. The original case completed every unchanged assertion and clean teardown in 641.73 seconds under the 1200000 budget. This measured host headroom grants no production or publication authority.
+
+  - name: test.deployShellSuiteTimeoutMs
+    value: 360000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 180000
+    max: 360000
+    refusal: test-deploy-shell-suite-timeout-ms-bound
+    remediation: Inspect the completed phase timings on the native Linux runner; if the whole suite still approaches this budget, diagnose the slow phase before reconsidering this test-owned bound.
+    rationale: Provisional scheduling budget for the complete deploy grant-amendment and renewal shell suites, including all existing phase and refusal assertions. A successful main CI run completed the binding suite in 171.209 seconds, while repeated MR runs reached the former 180-second cap; 360000 leaves about 2.1 times the observed successful CI duration for shared-runner variability. The bound is provisional until the unchanged suites pass through their host:test wrappers on native Linux at the candidate head; it is not a measured necessary or sufficient duration.
+
+  - name: test.hostedEditorialRetentionCaseTimeoutMs
+    value: 540000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 180000
+    max: 540000
+    refusal: test-hosted-editorial-retention-case-timeout-ms-bound
+    remediation: Compare the hosted editorial-retention cases' durations in recent full-lane host:test traces with each job's whole-suite duration; if a case approaches this budget on a lightly loaded runner, find its slow phase before reconsidering this test-owned bound.
+    rationale: Test scheduling budget for every acceptance case in the host package's hosted editorial-retention test file, and the sealed deadline of each case's one dispatcher attempt. A case runs the installed worker, the editorial replay child and a cold replay child, whose CPU and disk work slows when the runner is loaded, while the host suite runs its other test files concurrently. Across 808 full-lane host:test jobs from 2026-10-11 to 2026-10-14, the case that retains a run record above one physical CAS object passed in 26 to 172 seconds (median 48, 99th percentile 149) and hit the former 180-second budget 12 times, each in one of the 20 jobs whose whole host suite ran slowest. The author case also timed out twice and once passed at 179 seconds (issue 2329). A passing run cannot show a need above 180 seconds, so the need comes from the timeouts. In the slowest, the attempt alone ran 228 seconds before settlement, and the steps after an attempt take about a fifth as long again, about 270 seconds in all. 540000 is about twice that, and the file's six long cases at 540 seconds each (3240 seconds) stay under the 3600-second project job timeout. This test budget grants no production deadline.
+
+  - name: test.sourceAcquisitionLocalTimeoutMs
+    value: 30000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1000
+    max: 30000
+    refusal: test-source-acquisition-local-timeout-ms-bound
+    remediation: Profile the complete fixture on supported hosts, retain the existing CI-aware scheduling floor, and revise local allowances only with matched measurements.
+    rationale: Retains the existing local thirty-second allowance for source-acquisition cases. The three cases that failed under Windows 11 WSL2 CI passed on exact-source macOS Node.js 25.9 in 13.869, 13.068 and 26.119 seconds. Test registrations use the existing CI-aware helper so loaded CI retains its already declared floor; this is a local allowance, not a new completion claim.
+
+  - name: test.sourceAcquisitionReadLocalTimeoutMs
+    value: 120000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1000
+    max: 120000
+    refusal: test-source-acquisition-read-local-timeout-ms-bound
+    remediation: Profile the complete fixture on supported hosts, retain the existing CI-aware scheduling floor, and revise local allowances only with matched measurements.
+    rationale: Retains the existing local 120000-millisecond allowance for complete source-reading, window and extraction cases. Applying the existing CI-aware helper restores the declared CI floor without changing this local deadline, assertions, model turns or production source budgets. This centralization is not a new measurement.
+
+  - name: test.sourceAcquisitionRaisedLimitsLocalTimeoutMs
+    value: 180000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1000
+    max: 180000
+    refusal: test-source-acquisition-raised-limits-local-timeout-ms-bound
+    remediation: Profile the complete fixture on supported hosts, retain the existing CI-aware scheduling floor, and revise local allowances only with matched measurements.
+    rationale: Retains the existing local 180000-millisecond allowance for the source case that compares default and raised extraction limits. The CI-aware helper preserves that value on both local and current CI defaults. This test scheduling allowance does not change any source extraction or production execution limit.
+
+  - name: test.packedProfileFixtureLocalTimeoutMs
+    value: 120000
+    unit: ms
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1000
+    max: 120000
+    refusal: test-packed-profile-fixture-local-timeout-ms-bound
+    remediation: Profile the complete fixture on supported hosts, retain the existing CI-aware scheduling floor, and revise local allowances only with matched measurements.
+    rationale: Centralizes the packed profile-probe fixture existing local 120000-millisecond allowance, including its unchanged child-process deadlines. The full Windows 11 WSL2 run hit the bare outer allowance at 121.452 seconds. The existing CI-aware helper supplies its already declared CI floor to the outer case. This is not a successful completion measurement and does not scale child deadlines, hide cleanup failures or alter real-model qualification criteria.

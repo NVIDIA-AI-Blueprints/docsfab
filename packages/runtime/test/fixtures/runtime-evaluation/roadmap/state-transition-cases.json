@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "lifecycle": [
+    {
+      "id": "filed-to-verified",
+      "states": ["observed", "proposed", "filed", "selected", "in-progress", "fixed", "verified"]
+    },
+    {
+      "id": "reopened-work",
+      "states": [
+        "observed",
+        "proposed",
+        "filed",
+        "selected",
+        "in-progress",
+        "fixed",
+        "verified",
+        "closed",
+        "observed"
+      ]
+    },
+    {
+      "id": "blocked-and-resumed",
+      "states": ["observed", "blocked", "observed", "proposed"]
+    },
+    {
+      "id": "duplicate-reconsidered",
+      "states": ["observed", "duplicate", "observed"]
+    },
+    {
+      "id": "superseded-reconsidered",
+      "states": ["observed", "superseded", "observed"]
+    }
+  ],
+  "partialFailureCodes": ["merge-request-failed", "verification-failed"],
+  "receiptScenarios": ["partial-filing", "bounded-retry", "issue-reuse"],
+  "closeoutScenarios": ["clean-supplemental-sweep", "new-finding-keeps-open"]
+}

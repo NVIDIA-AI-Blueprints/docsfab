@@ -1,0 +1,1027 @@
+{
+  "schemaVersion": 1,
+  "bundleHashFormat": "sha256-lines-v1",
+  "contractHashFormat": "sha256-catalog-skill-contract-v1",
+  "skills": [
+    {
+      "id": "assess-documentation-readiness",
+      "version": "0.1.0-docsfab-catalog.1",
+      "license": "Apache-2.0 AND CC-BY-4.0",
+      "provenanceStatus": "docsfab-local",
+      "source": {
+        "repository": "https://github.com/NVIDIA-AI-Blueprints/docsfab.git",
+        "revision": "e97a6108596d8db8cdda92edb037e659401fabd4289854ebe007d1f94e3426af"
+      },
+      "sourcePath": "packages/skills/assess-documentation-readiness/SKILL.md",
+      "skillRoot": "assess-documentation-readiness",
+      "contentSha256": "dba0ceafbc51085c6bdefd0d9ad2212fd31eb200815e5a3c382639e79db646af",
+      "bundleSha256": "05004b2aa833fc9ef01cbda5ecde0baa26b8ecc2ca3ce828edabccb2b5af1e5e",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "sha256": "dba0ceafbc51085c6bdefd0d9ad2212fd31eb200815e5a3c382639e79db646af"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "fe0515a0dc9f0530663d68f97e42ac9067cc762c1d4ef3be9b24d80fbeb9ccf2"
+        }
+      ],
+      "inputs": [
+        {
+          "name": "documentation_target",
+          "description": "Versioned documentation target for this catalog skill"
+        },
+        {
+          "name": "quality_profile",
+          "description": "Selected quality profile, rubric, or brief identity"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "skill_result",
+          "description": "Catalog skill result artifact or findings"
+        },
+        {
+          "name": "selection_rationale",
+          "description": "Catalog skill identity recorded for this run"
+        }
+      ],
+      "toolPolicy": {
+        "declared": [
+          "read",
+          "grep",
+          "find"
+        ],
+        "granted": [
+          "read",
+          "grep",
+          "find",
+          "ls"
+        ],
+        "withheld": [
+          "edit",
+          "write",
+          "bash"
+        ]
+      }
+    },
+    {
+      "id": "audit-documentation",
+      "version": "0.1.0-docsfab-catalog.1",
+      "license": "Apache-2.0 AND CC-BY-4.0",
+      "provenanceStatus": "docsfab-local",
+      "source": {
+        "repository": "https://github.com/NVIDIA-AI-Blueprints/docsfab.git",
+        "revision": "1d9663830f6a382bcf0c25e4a0ab537990c097f2285ab42931a4191d4166fe44"
+      },
+      "sourcePath": "packages/skills/audit-documentation/SKILL.md",
+      "skillRoot": "audit-documentation",
+      "contentSha256": "b26c8e021c10c693c16ee33c5cb804de6f1d91c44ff7f0eb49039bc365137593",
+      "bundleSha256": "2f564e828f8e5e0a8ffaf5ae1c3261c196c4f95ffe7989999194e14690cc87a8",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "sha256": "b26c8e021c10c693c16ee33c5cb804de6f1d91c44ff7f0eb49039bc365137593"
+        },
+        {
+          "path": "assets/audit-report-template.md",
+          "sha256": "43f0bfdf80ba2c100566974fffdefcc81ca08e559633cd750b63c68c3383eec3"
+        },
+        {
+          "path": "assets/evidence-yaml-examples.md",
+          "sha256": "dfea13bf9267c5ec224ba1e687f94c7bc23f6357e2d88c25a8f74a73bde3da67"
+        },
+        {
+          "path": "assets/quick-retro-template.md",
+          "sha256": "ccfb6bd926d927b252739818a050e2341a3843c99ea93877e73e73d5c61e8cb1"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "178f3d777b33f80d97858ef6ccf8b0d1de820d69c83ec46285313037763c37a3"
+        },
+        {
+          "path": "references/aggregation-confidence.md",
+          "sha256": "1cb3e03c4697788e65778c3d33ceac3c449bd06cedc91734dd85065a890e9416"
+        },
+        {
+          "path": "references/documentation-sources.md",
+          "sha256": "b4a97d2c37a83cf6a727f1966b36b9879d140092637bc92a9d37ad5d0d32ccc3"
+        },
+        {
+          "path": "references/lens-roster.md",
+          "sha256": "62a24226f5fba22a2c1fa9d96f0eeafe0516c042831005d7b3eb4e9f0f498151"
+        },
+        {
+          "path": "references/output-contract.md",
+          "sha256": "3b6f7a02450ad38c0612fa900f35b76be240c08032a02f43641375b69934cd19"
+        },
+        {
+          "path": "references/triangulation-protocol.md",
+          "sha256": "a88418c8acb4aed9c1b87d7631e769837a182cee676c9d40961569b1f943c3eb"
+        }
+      ],
+      "inputs": [
+        {
+          "name": "documentation_target",
+          "description": "Versioned documentation target for this catalog skill"
+        },
+        {
+          "name": "quality_profile",
+          "description": "Selected quality profile, rubric, or brief identity"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "skill_result",
+          "description": "Catalog skill result artifact or findings"
+        },
+        {
+          "name": "selection_rationale",
+          "description": "Catalog skill identity recorded for this run"
+        }
+      ],
+      "toolPolicy": {
+        "declared": [
+          "read",
+          "grep",
+          "find"
+        ],
+        "granted": [
+          "read",
+          "grep",
+          "find",
+          "ls"
+        ],
+        "withheld": [
+          "edit",
+          "write",
+          "bash"
+        ]
+      }
+    },
+    {
+      "id": "doc-context-analyzer",
+      "version": "0.1.0-docsfab-catalog.1",
+      "license": "Apache-2.0 AND CC-BY-4.0",
+      "provenanceStatus": "docsfab-local",
+      "source": {
+        "repository": "https://github.com/NVIDIA-AI-Blueprints/docsfab.git",
+        "revision": "c0314e689867fcbf17b5c23b9dece02790734aa5d34905e01681c817683ff216"
+      },
+      "sourcePath": "packages/skills/doc-context-analyzer/SKILL.md",
+      "skillRoot": "doc-context-analyzer",
+      "contentSha256": "89ba33c252c036ea4809077277f8ef1f1531d01ca4d77c224b7bf9aad8fb4647",
+      "bundleSha256": "4529dd0c51784d6beee65aefc15f20e79295e5ff8ed5c880f679e82bafc2c49d",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "sha256": "89ba33c252c036ea4809077277f8ef1f1531d01ca4d77c224b7bf9aad8fb4647"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "122a7e6349e268939ad86fff530a2bd6e5180ade1d96f09e0163fbf133dbb7c8"
+        }
+      ],
+      "inputs": [
+        {
+          "name": "documentation_target",
+          "description": "Versioned documentation target for this catalog skill"
+        },
+        {
+          "name": "quality_profile",
+          "description": "Selected quality profile, rubric, or brief identity"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "skill_result",
+          "description": "Catalog skill result artifact or findings"
+        },
+        {
+          "name": "selection_rationale",
+          "description": "Catalog skill identity recorded for this run"
+        }
+      ],
+      "toolPolicy": {
+        "declared": [
+          "read",
+          "grep",
+          "find"
+        ],
+        "granted": [
+          "read",
+          "grep",
+          "find",
+          "ls"
+        ],
+        "withheld": [
+          "edit",
+          "write",
+          "bash"
+        ]
+      }
+    },
+    {
+      "id": "evaluate-document-quality",
+      "version": "0.1.0-docsfab-catalog.1",
+      "license": "Apache-2.0 AND CC-BY-4.0",
+      "provenanceStatus": "docsfab-local",
+      "source": {
+        "repository": "https://github.com/NVIDIA-AI-Blueprints/docsfab.git",
+        "revision": "8d972ac3c45748b35177f08a20a82f0d5e76af9a66e345694a797ed03fc9537a"
+      },
+      "sourcePath": "packages/skills/evaluate-document-quality/SKILL.md",
+      "skillRoot": "evaluate-document-quality",
+      "contentSha256": "abf3dd60528e1efe936635789ac2959b8b2901dcd8995a306a0aff2e36255f96",
+      "bundleSha256": "eb8043b1dee88e67b273cad10b5516a34b36d143db5d4ee7c777722eb4cb8eaa",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "sha256": "abf3dd60528e1efe936635789ac2959b8b2901dcd8995a306a0aff2e36255f96"
+        },
+        {
+          "path": "assets/quality-report-template.md",
+          "sha256": "ce43b47322761af579724fb1fc3fcdb736138d1b4d7f97edef1722c666fc9347"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "d2c90dbb38f1488e111b561a79040f3f3411dbd07322eb655a2a759cafa3f168"
+        },
+        {
+          "path": "references/assurance-system-measures.md",
+          "sha256": "e6aab949f60d1cac131c54168c858cd48e41421bf607d217e28e06604364c1c3"
+        },
+        {
+          "path": "references/layered-evaluation.md",
+          "sha256": "14ea1219d8cf35d43aab332cb75326bd202d85a7c2e6ee3513360686e2737694"
+        },
+        {
+          "path": "references/scoring-policy.md",
+          "sha256": "2fc123521562652793dc70f9cf4ad1b75f31ecc36c0255b6b38b02735be8a73b"
+        },
+        {
+          "path": "scripts/validate_quality_report.py",
+          "sha256": "9ab558dc302fab541fadf94b811da09a1ab3fae045d462dc64661daa20393f06"
+        }
+      ],
+      "inputs": [
+        {
+          "name": "documentation_target",
+          "description": "Versioned documentation target for this catalog skill"
+        },
+        {
+          "name": "quality_profile",
+          "description": "Selected quality profile, rubric, or brief identity"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "skill_result",
+          "description": "Catalog skill result artifact or findings"
+        },
+        {
+          "name": "selection_rationale",
+          "description": "Catalog skill identity recorded for this run"
+        }
+      ],
+      "toolPolicy": {
+        "declared": [
+          "read",
+          "grep",
+          "find"
+        ],
+        "granted": [
+          "read",
+          "grep",
+          "find",
+          "ls"
+        ],
+        "withheld": [
+          "edit",
+          "write",
+          "bash"
+        ]
+      }
+    },
+    {
+      "id": "lint-documentation",
+      "version": "0.1.0-docsfab-catalog.1",
+      "license": "Apache-2.0 AND CC-BY-4.0",
+      "provenanceStatus": "docsfab-local",
+      "source": {
+        "repository": "https://github.com/NVIDIA-AI-Blueprints/docsfab.git",
+        "revision": "74fd4406d8c2c2c659d185ffb3db85e8a367eaee413f71c9b9642e15277d0342"
+      },
+      "sourcePath": "packages/skills/lint-documentation/SKILL.md",
+      "skillRoot": "lint-documentation",
+      "contentSha256": "eb00a56c4b0ab6ae26a33df61335d44978241b16931a292332e59749b6d19594",
+      "bundleSha256": "3c161b6567cdf50105134b9e23bcf1c2ec8e9d82846ec024318d1453efa9b65d",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "sha256": "eb00a56c4b0ab6ae26a33df61335d44978241b16931a292332e59749b6d19594"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "9c3570d3eada5e98dcbeb7d2c4c1b0e9f2d821b84b014b2d740eaf8911b033c5"
+        },
+        {
+          "path": "references/check-selection.md",
+          "sha256": "bb63b7f9318ebb755724d392e560f8112ca881f2dd428e0f68f51563798a7a52"
+        }
+      ],
+      "inputs": [
+        {
+          "name": "documentation_target",
+          "description": "Versioned documentation target for this catalog skill"
+        },
+        {
+          "name": "quality_profile",
+          "description": "Selected quality profile, rubric, or brief identity"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "skill_result",
+          "description": "Catalog skill result artifact or findings"
+        },
+        {
+          "name": "selection_rationale",
+          "description": "Catalog skill identity recorded for this run"
+        }
+      ],
+      "toolPolicy": {
+        "declared": [
+          "read",
+          "grep",
+          "find"
+        ],
+        "granted": [
+          "read",
+          "grep",
+          "find",
+          "ls"
+        ],
+        "withheld": [
+          "edit",
+          "write",
+          "bash"
+        ]
+      }
+    },
+    {
+      "id": "plan-documentation",
+      "version": "0.1.0-docsfab-catalog.1",
+      "license": "Apache-2.0 AND CC-BY-4.0",
+      "provenanceStatus": "docsfab-local",
+      "source": {
+        "repository": "https://github.com/NVIDIA-AI-Blueprints/docsfab.git",
+        "revision": "a2f48804b7a89d3dedc9c03953cfc6cf0cace9f498a7554b3933e848e3e1e25d"
+      },
+      "sourcePath": "packages/skills/plan-documentation/SKILL.md",
+      "skillRoot": "plan-documentation",
+      "contentSha256": "fce98da86c6064e45f95aa0f11640695ba9c267b76351dd4dc949409d62c3954",
+      "bundleSha256": "c23bd3286c6eb2e04e27228802848edf0a5a3ba2a68e96bfcef86789db3a7b0e",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "sha256": "fce98da86c6064e45f95aa0f11640695ba9c267b76351dd4dc949409d62c3954"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "46f103704b57ed39f8dda41b8881c520ebf8c950a65304bdb1df2411c92c2a48"
+        },
+        {
+          "path": "references/canonical-ia.md",
+          "sha256": "f2c1a5a9ab8ab0625d2e2279d9b2fb38e336ec0f55ec010cf6bb2d7974cf1217"
+        },
+        {
+          "path": "references/documentation-sources.md",
+          "sha256": "0927af81f025ea1d3182c447d05c9556905a6c9460d8ae76a82d5d416981ffd6"
+        },
+        {
+          "path": "references/minimal-interview.md",
+          "sha256": "6400771adfa55ac1e3f257eee1d04d594eb1c42f06d189897a6a572b19ec1c8c"
+        },
+        {
+          "path": "references/page-patterns.md",
+          "sha256": "5d5056cedd0351dd8ecbf55225c4242359201e7621ae2904ff7d2169ba72164b"
+        },
+        {
+          "path": "references/page-set.md",
+          "sha256": "daa43b96496f46a8204d02de5e19b472b9015962ad1da7bb0187488171f0f3fd"
+        }
+      ],
+      "inputs": [
+        {
+          "name": "documentation_target",
+          "description": "Versioned documentation target for this catalog skill"
+        },
+        {
+          "name": "quality_profile",
+          "description": "Selected quality profile, rubric, or brief identity"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "skill_result",
+          "description": "Catalog skill result artifact or findings"
+        },
+        {
+          "name": "selection_rationale",
+          "description": "Catalog skill identity recorded for this run"
+        }
+      ],
+      "toolPolicy": {
+        "declared": [
+          "read",
+          "grep",
+          "find"
+        ],
+        "granted": [
+          "read",
+          "grep",
+          "find",
+          "ls"
+        ],
+        "withheld": [
+          "edit",
+          "write",
+          "bash"
+        ]
+      }
+    },
+    {
+      "id": "reconcile-product-behavior",
+      "version": "0.1.0-docsfab-catalog.1",
+      "license": "Apache-2.0 AND CC-BY-4.0",
+      "provenanceStatus": "docsfab-local",
+      "source": {
+        "repository": "https://github.com/NVIDIA-AI-Blueprints/docsfab.git",
+        "revision": "89bbd886a12afa334b63e0f8fb28771b138200a9ef67512b3f0b8d74826c9613"
+      },
+      "sourcePath": "packages/knowledge/skills/reconcile-product-behavior/SKILL.md",
+      "skillRoot": "reconcile-product-behavior",
+      "contentSha256": "adcba50128103a518887747826d8c543017f92bd8a20319da5b9c4cd8d19a8ae",
+      "bundleSha256": "04ede031a68427ce6d8a36fd9cc9df6beb0356d629c6752b50692ea3992a154c",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "sha256": "adcba50128103a518887747826d8c543017f92bd8a20319da5b9c4cd8d19a8ae"
+        },
+        {
+          "path": "evals/evals.json",
+          "sha256": "ec17189ed76c2dbd4d4ac3a7b8b3861993f486804a18edcc33921cbb2cddc9d0"
+        },
+        {
+          "path": "references/comparison-contract.md",
+          "sha256": "81171b6974be77bd1f3697d2aa0f019c0f8434b655dcbd96e58558ca77b938bd"
+        }
+      ],
+      "inputs": [
+        {
+          "name": "approved_baseline",
+          "description": "Exact approved model generation, claims, canon and authority receipt"
+        },
+        {
+          "name": "source_evidence_chunk",
+          "description": "Exact before/after and attributed source evidence with declared coverage"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "skill_result",
+          "description": "Catalog skill result artifact or findings"
+        },
+        {
+          "name": "selection_rationale",
+          "description": "Catalog skill identity recorded for this run"
+        }
+      ],
+      "toolPolicy": {
+        "declared": [
+          "read",
+          "grep",
+          "find"
+        ],
+        "granted": [
+          "read",
+          "grep",
+          "find",
+          "ls"
+        ],
+        "withheld": [
+          "edit",
+          "write",
+          "bash"
+        ]
+      }
+    },
+    {
+      "id": "repo-bootstrap",
+      "version": "0.1.0-docsfab-catalog.1",
+      "license": "Apache-2.0 AND CC-BY-4.0",
+      "provenanceStatus": "docsfab-local",
+      "source": {
+        "repository": "https://github.com/NVIDIA-AI-Blueprints/docsfab.git",
+        "revision": "22131fe34960c7c4423b481fce4fe3b0ba30cca0b87c43bf990bf0cdc8728e59"
+      },
+      "sourcePath": "packages/skills/repo-bootstrap/SKILL.md",
+      "skillRoot": "repo-bootstrap",
+      "contentSha256": "59b89b6b959e4c3e64422754882e4966ccc96d9315d3e4f50f4215a04d8839f0",
+      "bundleSha256": "c4c173a41b0bdfb89e39a2adb18f2951825b3c540f50c4a9d9602244c506c8c7",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "sha256": "59b89b6b959e4c3e64422754882e4966ccc96d9315d3e4f50f4215a04d8839f0"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "613ce6d39f9619f5f6b8e567652161bae1831ba0f688c0bb3b61be5361224f4b"
+        }
+      ],
+      "inputs": [
+        {
+          "name": "documentation_target",
+          "description": "Versioned documentation target for this catalog skill"
+        },
+        {
+          "name": "quality_profile",
+          "description": "Selected quality profile, rubric, or brief identity"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "skill_result",
+          "description": "Catalog skill result artifact or findings"
+        },
+        {
+          "name": "selection_rationale",
+          "description": "Catalog skill identity recorded for this run"
+        }
+      ],
+      "toolPolicy": {
+        "declared": [
+          "read",
+          "grep",
+          "find",
+          "edit",
+          "write"
+        ],
+        "granted": [
+          "read",
+          "grep",
+          "find",
+          "ls",
+          "edit",
+          "write"
+        ],
+        "withheld": [
+          "bash"
+        ]
+      }
+    },
+    {
+      "id": "review-documentation",
+      "version": "0.1.0-docsfab-catalog.1",
+      "license": "Apache-2.0 AND CC-BY-4.0",
+      "provenanceStatus": "docsfab-local",
+      "source": {
+        "repository": "https://github.com/NVIDIA-AI-Blueprints/docsfab.git",
+        "revision": "07658a0a6f6a7b09db7655c97c0f632beae5a53b71d21f99a7cbbf9dbb872a65"
+      },
+      "sourcePath": "packages/skills/review-documentation/SKILL.md",
+      "skillRoot": "review-documentation",
+      "contentSha256": "ba739c91cfedaecce67d7d46dc53018e9dc09bafaafdbbac5988294be40ce60f",
+      "bundleSha256": "5f6d4bbfe4284ba3df3e5dbd50d9d600297dc3595a78138e5f11fa9dc091e933",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "sha256": "ba739c91cfedaecce67d7d46dc53018e9dc09bafaafdbbac5988294be40ce60f"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "3e26f111ada1c0a1bc68585a041dc1431b19414a6e5ac1be3c24779217f0b97d"
+        },
+        {
+          "path": "references/documentation-sources.md",
+          "sha256": "a420bcc0279407ba2800ae684b884e6500dac54dcd111a85700d8a572855b4a3"
+        },
+        {
+          "path": "references/reader-checks.md",
+          "sha256": "f97c9d0f2d2fd1f5899ec8720e4ae0c8fcee7d6e6f9055e9c117cfc94259e824"
+        },
+        {
+          "path": "references/review-methods.md",
+          "sha256": "b74286d6974716a00e54529f2c5c9370d6748d23df7bb45773c57de3acdf721a"
+        }
+      ],
+      "inputs": [
+        {
+          "name": "documentation_target",
+          "description": "Versioned documentation target for this catalog skill"
+        },
+        {
+          "name": "quality_profile",
+          "description": "Selected quality profile, rubric, or brief identity"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "skill_result",
+          "description": "Catalog skill result artifact or findings"
+        },
+        {
+          "name": "selection_rationale",
+          "description": "Catalog skill identity recorded for this run"
+        }
+      ],
+      "toolPolicy": {
+        "declared": [
+          "read",
+          "grep",
+          "find"
+        ],
+        "granted": [
+          "read",
+          "grep",
+          "find",
+          "ls"
+        ],
+        "withheld": [
+          "edit",
+          "write",
+          "bash"
+        ]
+      }
+    },
+    {
+      "id": "template-scaffold-site",
+      "version": "0.1.0-docsfab-catalog.1",
+      "license": "Apache-2.0 AND CC-BY-4.0",
+      "provenanceStatus": "docsfab-local",
+      "source": {
+        "repository": "https://github.com/NVIDIA-AI-Blueprints/docsfab.git",
+        "revision": "93122a16a5b2be94164031559db7aa7c105cfe753c546321c8855e7038a89ab1"
+      },
+      "sourcePath": "packages/skills/template-scaffold-site/SKILL.md",
+      "skillRoot": "template-scaffold-site",
+      "contentSha256": "affeb9083747feb4a2dda75788417befbfd37da6d1f0f49c284e2d9a9d00cc73",
+      "bundleSha256": "774fe1bc4dcf0249fa2df87aaab6a22be5532dcbba2385c39f9ac65a88c8e22c",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "sha256": "affeb9083747feb4a2dda75788417befbfd37da6d1f0f49c284e2d9a9d00cc73"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "3fa63ec2a67707afa8dac88c1300c868bee096b272afb6182fc343997622c221"
+        }
+      ],
+      "inputs": [
+        {
+          "name": "documentation_target",
+          "description": "Versioned documentation target for this catalog skill"
+        },
+        {
+          "name": "quality_profile",
+          "description": "Selected quality profile, rubric, or brief identity"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "skill_result",
+          "description": "Catalog skill result artifact or findings"
+        },
+        {
+          "name": "selection_rationale",
+          "description": "Catalog skill identity recorded for this run"
+        }
+      ],
+      "toolPolicy": {
+        "declared": [
+          "read",
+          "grep",
+          "find"
+        ],
+        "granted": [
+          "read",
+          "grep",
+          "find",
+          "ls"
+        ],
+        "withheld": [
+          "edit",
+          "write",
+          "bash"
+        ]
+      }
+    },
+    {
+      "id": "test-audience-understanding",
+      "version": "0.1.0-docsfab-catalog.1",
+      "license": "Apache-2.0 AND CC-BY-4.0",
+      "provenanceStatus": "docsfab-local",
+      "source": {
+        "repository": "https://github.com/NVIDIA-AI-Blueprints/docsfab.git",
+        "revision": "04ed21d0b96ea97d3d259dff4f8ef010bade40d2a65b4aabd960b5887ab93ecf"
+      },
+      "sourcePath": "packages/skills/test-audience-understanding/SKILL.md",
+      "skillRoot": "test-audience-understanding",
+      "contentSha256": "fc00aa6e2855d815087dcea574704ba378898c9d8c2fbd133d17c0bf1be5d976",
+      "bundleSha256": "234935fb4eeb661e50d8a1367ba7b8339131e50cb60f98c81aec935a2a502526",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "sha256": "fc00aa6e2855d815087dcea574704ba378898c9d8c2fbd133d17c0bf1be5d976"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "eb822649aa57e3dda28edde50056484c97a1e713fb0eec4bdce93f51daed274c"
+        },
+        {
+          "path": "references/evidence-contract.md",
+          "sha256": "91c944393d057ebd9327d602116d23719a629012a2429b9dbfff7a54a0cd7fb3"
+        },
+        {
+          "path": "references/experience-methods.md",
+          "sha256": "7e648acd455c819103b562135a53af8b5e26c8d0e907a4eef92aea21e778896b"
+        },
+        {
+          "path": "references/protocol.md",
+          "sha256": "d4fa4c8965252b3dd7f9d5490f80621ae27181ced8afb1c269f1d5565b3c90ac"
+        }
+      ],
+      "inputs": [
+        {
+          "name": "documentation_target",
+          "description": "Versioned documentation target for this catalog skill"
+        },
+        {
+          "name": "quality_profile",
+          "description": "Selected quality profile, rubric, or brief identity"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "skill_result",
+          "description": "Catalog skill result artifact or findings"
+        },
+        {
+          "name": "selection_rationale",
+          "description": "Catalog skill identity recorded for this run"
+        }
+      ],
+      "toolPolicy": {
+        "declared": [
+          "read",
+          "grep",
+          "find"
+        ],
+        "granted": [
+          "read",
+          "grep",
+          "find",
+          "ls"
+        ],
+        "withheld": [
+          "edit",
+          "write",
+          "bash"
+        ]
+      }
+    },
+    {
+      "id": "tpl-design-ia",
+      "version": "0.1.0-docsfab-catalog.1",
+      "license": "Apache-2.0 AND CC-BY-4.0",
+      "provenanceStatus": "docsfab-local",
+      "source": {
+        "repository": "https://github.com/NVIDIA-AI-Blueprints/docsfab.git",
+        "revision": "82143052a909cb59b89d4e05b7a7845eda9d1d330ad1431689b42cc5713224fc"
+      },
+      "sourcePath": "packages/skills/tpl-design-ia/SKILL.md",
+      "skillRoot": "tpl-design-ia",
+      "contentSha256": "d66ee86d7de3a021ff881f1f82cb12b0ed278386df69f521baccb2367778d12e",
+      "bundleSha256": "da3dfed557dcdd3b7314534b9c3f44012cb3ba747b7dc7f5ce663c610feafda8",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "sha256": "d66ee86d7de3a021ff881f1f82cb12b0ed278386df69f521baccb2367778d12e"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "f6c3b8391dbe1bcc49601619c51ae07e454b6ca068b9654b206ad13fc2d30d93"
+        },
+        {
+          "path": "references/submission-contract.md",
+          "sha256": "015badc404da2b326d60c1c3fffef8ebb558bef0dd553ec0b9b5240203d19005"
+        }
+      ],
+      "inputs": [
+        {
+          "name": "documentation_target",
+          "description": "Versioned documentation target for this catalog skill"
+        },
+        {
+          "name": "quality_profile",
+          "description": "Selected quality profile, rubric, or brief identity"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "skill_result",
+          "description": "Catalog skill result artifact or findings"
+        },
+        {
+          "name": "selection_rationale",
+          "description": "Catalog skill identity recorded for this run"
+        }
+      ],
+      "toolPolicy": {
+        "declared": [
+          "read",
+          "grep",
+          "find"
+        ],
+        "granted": [
+          "read",
+          "grep",
+          "find",
+          "ls"
+        ],
+        "withheld": [
+          "edit",
+          "write",
+          "bash"
+        ]
+      }
+    },
+    {
+      "id": "verify-technical-accuracy",
+      "version": "0.1.0-docsfab-catalog.1",
+      "license": "Apache-2.0 AND CC-BY-4.0",
+      "provenanceStatus": "docsfab-local",
+      "source": {
+        "repository": "https://github.com/NVIDIA-AI-Blueprints/docsfab.git",
+        "revision": "8c9e65b6cb1978de66acabc59798fea544f2b03e7e1496c807f20a0b70877dbf"
+      },
+      "sourcePath": "packages/skills/verify-technical-accuracy/SKILL.md",
+      "skillRoot": "verify-technical-accuracy",
+      "contentSha256": "8d5d89f35bb29823eb42356a252604e6b115899f02a2ce35b09c2d98b2212989",
+      "bundleSha256": "23dbf5e63a55585d260d2be672a12ec918889279fb2ba2587d2b50a82f5a9dc7",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "sha256": "8d5d89f35bb29823eb42356a252604e6b115899f02a2ce35b09c2d98b2212989"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "c45cbfc376d83e7dcb5f73ee9154172ef79366ae973ee6a462355cd92022e004"
+        },
+        {
+          "path": "references/documentation-sources.md",
+          "sha256": "e4b19cb052584eeb5f49f411eb4fabb68f607d920980733239cdfd8a2d3e5b06"
+        },
+        {
+          "path": "references/example-checks.md",
+          "sha256": "e2e6e023810e39b037bda52a83d1a86408a7b2dd33ff18e2e3511d83b6429d9a"
+        },
+        {
+          "path": "references/finding-categories.md",
+          "sha256": "17c6603b2e0cc871470c3fbccbd71e7aed1808a8ab752827738d07fbc1310564"
+        },
+        {
+          "path": "references/inventory-output-contract.md",
+          "sha256": "0e22d465fdceffadc47f98f31abcfc2d1d2560326a6aac12dfed1fc1bf4e84cc"
+        },
+        {
+          "path": "references/source-fact-method.md",
+          "sha256": "63310837ce94273a207f21146b0cb5b8cbd2ea0ddc7412b99b16ffff32744d2a"
+        },
+        {
+          "path": "references/verification-methods.md",
+          "sha256": "67b8da8407fe0ee645ab544389f5b2eddb01f1bee461f9a3b07846fc60c81c0e"
+        }
+      ],
+      "inputs": [
+        {
+          "name": "documentation_target",
+          "description": "Versioned documentation target for this catalog skill"
+        },
+        {
+          "name": "quality_profile",
+          "description": "Selected quality profile, rubric, or brief identity"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "skill_result",
+          "description": "Catalog skill result artifact or findings"
+        },
+        {
+          "name": "selection_rationale",
+          "description": "Catalog skill identity recorded for this run"
+        }
+      ],
+      "toolPolicy": {
+        "declared": [
+          "read",
+          "grep",
+          "find"
+        ],
+        "granted": [
+          "read",
+          "grep",
+          "find",
+          "ls"
+        ],
+        "withheld": [
+          "edit",
+          "write",
+          "bash"
+        ]
+      }
+    },
+    {
+      "id": "write-documentation",
+      "version": "0.1.0-docsfab-catalog.1",
+      "license": "Apache-2.0 AND CC-BY-4.0",
+      "provenanceStatus": "docsfab-local",
+      "source": {
+        "repository": "https://github.com/NVIDIA-AI-Blueprints/docsfab.git",
+        "revision": "7c543f7c200faae623a351d7e4a1d9c4cd1af58c9262091f98c18a2ddcd297c6"
+      },
+      "sourcePath": "packages/skills/write-documentation/SKILL.md",
+      "skillRoot": "write-documentation",
+      "contentSha256": "c9e95077375b95517b2e5550346ea6f7e5329dfa1622a429e5caebcbc26a704f",
+      "bundleSha256": "3d5096081651dfd439a7536031ca87766522d175fd8eda8ae60e9058bce5c7b4",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "sha256": "c9e95077375b95517b2e5550346ea6f7e5329dfa1622a429e5caebcbc26a704f"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "716c23f06542aa347c0db5a015174d818bb1d473141d6c62322fb2d81980288f"
+        },
+        {
+          "path": "references/authoring-patterns.md",
+          "sha256": "8bb2f56f5a8e135d97fd4cd32e1799edfab5959ed97381f04d42e7caff337bdc"
+        },
+        {
+          "path": "references/content-map.md",
+          "sha256": "af11810d1ca63b25b01f202919cfe1344969258b1757cd3ac78847692508c62c"
+        },
+        {
+          "path": "references/documentation-sources.md",
+          "sha256": "288a981fb7585b2d4836b9a6f4df6be15ccf11a83ee55678b88ae4272380ca76"
+        },
+        {
+          "path": "references/output-contract.md",
+          "sha256": "4f8ca0090e0d8a1822d43977825a89ceb33f75a6193bdf0c02887c99f3a8d9da"
+        }
+      ],
+      "inputs": [
+        {
+          "name": "documentation_target",
+          "description": "Versioned documentation target for this catalog skill"
+        },
+        {
+          "name": "quality_profile",
+          "description": "Selected quality profile, rubric, or brief identity"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "skill_result",
+          "description": "Catalog skill result artifact or findings"
+        },
+        {
+          "name": "selection_rationale",
+          "description": "Catalog skill identity recorded for this run"
+        }
+      ],
+      "toolPolicy": {
+        "declared": [
+          "read",
+          "grep",
+          "find",
+          "edit",
+          "write"
+        ],
+        "granted": [
+          "read",
+          "grep",
+          "find",
+          "ls",
+          "edit",
+          "write"
+        ],
+        "withheld": [
+          "bash"
+        ]
+      }
+    }
+  ]
+}

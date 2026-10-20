@@ -1,0 +1,463 @@
+# Model-output rules for the final quality evaluator's answer in
+# review-documentation when the route submits it through a host tool call.
+# The model calls `submit_quality_evaluation` with
+# `evaluation` and `qualityScore`; the host decodes the call's raw argument
+# text, as the serving stack forwarded it, when the turn settles. Once it
+# admits the submission, the host asks for the report in a tool-free turn and
+# assembles the same quality artifact candidate the text answer produces.
+# Canonical source; generated bindings are produced by
+# `npm run generate:model-output` from packages/runtime.
+#
+# The decoder and the report rules live in harness/quality-candidate-tool.ts;
+# the settlement admission is in harness/pi.ts. The admitted candidate goes
+# through the same member checks, quality validators, and staging as the text
+# answer, whose codes stay in quality-envelope.yaml.
+#
+# Retry mapping. No rule in retry-policy.yaml is added; tests pin these:
+# - every syntax and shape code here, quality-submission-missing, and every
+#   report code is a malformed-response refusal, retried as
+#   retried-contract-correction and ended as exhausted under retry.maxRetries;
+# - quality-submission-missing never uses the unframed-reply condition, whose
+#   rule asks for the JSON object as the whole reply;
+# - quality-submission-cut carries the cut-answer condition, so it is retried
+#   as retried-cut-answer within retry.maxCutAnswerRetries;
+# - a submission on the turn that reaches the hard tool-call ceiling is never
+#   decoded; the attempt records tool-call-ceiling and retries as
+#   retried-tool-call-ceiling.
+schemaVersion: 1
+kind: docsfab-output-rules
+family: quality-submission
+# The final evaluator is read-only: a retry re-asks from the same repository
+# and admitted evidence.
+replay: read-only
+hostText:
+  - id: quality-submission-tool-description
+    text: >-
+      Submit the final quality evaluation: the evaluation object and the
+      quality score. Call it once, when the evaluation is complete. The host
+      checks the arguments when this turn ends, then asks for the report.
+  - id: quality-submission-evaluation-description
+    text: >-
+      The evaluation JSON object itself, never a string that contains JSON. It
+      must follow the locked profile and evaluation schema the contract names.
+  - id: quality-submission-quality-score-description
+    text: >-
+      The quality score JSON object, or null when no single content-type rubric
+      is supported by evidence. Never a string.
+  - id: quality-submission-contract-call
+    text: >-
+      Submit the answer by calling submit_quality_evaluation exactly once, with
+      exactly two arguments: evaluation, the evaluation JSON object itself, and
+      qualityScore, the quality score JSON object or null. Do not write the
+      evaluation or the quality score as text in your reply; the host reads
+      only the tool call's arguments.
+  - id: quality-submission-contract-report
+    text: >-
+      After the host admits the submission, it asks for the report. Then write
+      the report as plain Markdown that starts with its heading line, with no
+      JSON object and no tool call.
+  - id: quality-submission-contract-validate
+    text: >-
+      Before you submit, call validate_quality_candidate with the same
+      evaluation and qualityScore arguments, correct every returned violation,
+      then call submit_quality_evaluation. The tool result is advisory; only
+      the final host validator can admit the artifact.
+  - id: quality-submission-contract-validate-scope
+    text: >-
+      That tool checks the arguments and the technical fact trace only. It does
+      not apply the schema or profile rules above, so a passed result does not
+      show that those rules are met.
+  - id: quality-submission-contract-unvalidated
+    text: >-
+      Call submit_quality_evaluation with the complete evaluation for mandatory
+      final host validation.
+  - id: quality-submission-contract-null-score
+    text: >-
+      Set qualityScore to null when no single content-type rubric is supported
+      by evidence.
+  - id: quality-submission-contract-report-not-proof
+    text: >-
+      The report Markdown is useful evaluator output, not proof that a
+      validator ran.
+  - id: quality-submission-advisory-tool-description
+    text: >-
+      Check draft submission arguments against the admitted technical fact
+      trace. The result is advisory and content-free; call
+      submit_quality_evaluation with the corrected arguments.
+  - id: quality-submission-advisory-prompt-snippet
+    text: Validate draft submission arguments before submitting them
+  - id: quality-submission-advisory-guideline-arguments
+    text: Pass the same evaluation and qualityScore arguments you will submit.
+  - id: quality-submission-advisory-guideline-correct
+    text: Correct every returned violation before calling submit_quality_evaluation.
+  - id: quality-submission-report-ask
+    text: >-
+      The host received and admitted your submit_quality_evaluation call. Now
+      write the report as plain Markdown that starts with its heading line, the
+      way the report template does. Do not call any tool, and do not repeat the
+      evaluation or the quality score as JSON. Omit the template's Validated
+      result summary section, including its JSON block; the host writes that
+      section after validation.
+  - id: quality-answer-record-report-ask
+    text: >-
+      The authorized answer-record ledger passed whole-artifact validation.
+      Return the final evaluator report as Markdown only. Do not submit more
+      records or return a JSON artifact envelope.
+  - id: quality-submission-report-ask-after-withheld-submission
+    text: >-
+      The host received and accepted your submit_quality_evaluation call, even
+      though its tool result said the call was not run. Do not submit again.
+      Now write the report as plain Markdown that starts with its heading line,
+      the way the report template does. Do not call any tool, and do not repeat
+      the evaluation or the quality score as JSON. Omit the template's
+      Validated result summary section, including its JSON block; the host
+      writes that section after validation.
+  - id: quality-submission-conclude-now-ask
+    text: >-
+      DocsFab withdrew the reading tools for the rest of this step attempt: the
+      previous attempt was stopped for re-reading unchanged content, and this
+      one has started re-reading again. Call submit_quality_evaluation now with
+      your evaluation from what you have read; the host will then ask for the
+      report. Do not request more work, permissions, retries, or other tool
+      calls.
+  - id: quality-submission-deadline-conclude-ask
+    text: >-
+      DocsFab withdrew the reading tools for the rest of this step attempt:
+      only the time to answer remains before the attempt deadline. Call
+      submit_quality_evaluation now with your evaluation from what you have
+      read; the host will then ask for the report. Do not request more work,
+      permissions, retries, or other tool calls.
+  - id: quality-submission-report-turn-refusal
+    text: >-
+      DocsFab did not run this tool call: the host already admitted your
+      submission, and tools are unavailable for the rest of this attempt. Write
+      the report as plain Markdown now.
+  - id: quality-submission-extra-call-refusal
+    text: >-
+      DocsFab did not run this tool call: the host reads only the first
+      submit_quality_evaluation call of a turn, and checks it when this turn
+      ends.
+  - id: quality-submission-acknowledgement
+    text: >-
+      Submission received. The host checks it when this turn ends, then asks
+      for the report.
+rules:
+  - code: quality-submission-json
+    locations:
+      - $
+      - $.evaluation
+      - $.qualityScore
+    kind: syntax
+    retry: model-correctable
+    reason: >-
+      The submission's arguments were not one strict JSON object; the
+      evaluator can submit the same content as strict JSON.
+    statement: >-
+      Call submit_quality_evaluation with arguments that are one strict JSON
+      object holding evaluation and qualityScore: no comments, trailing commas,
+      raw line breaks inside strings, or text after the object, and every brace
+      and bracket closed exactly once.
+    hint:
+      atLocation:
+        $.evaluation: >-
+          The submit_quality_evaluation arguments stopped being strict JSON in
+          or right after the evaluation object. Check every comma, bracket,
+          brace, and string quote in evaluation, and escape every line break
+          inside a string.
+        $.qualityScore: >-
+          The submit_quality_evaluation arguments stopped being strict JSON in
+          or right after qualityScore. Check every comma, bracket, brace, and
+          string quote in qualityScore, and close the arguments object right
+          after it.
+    operator:
+      kind: correct
+      meaning: >-
+        The final quality evaluator's submit_quality_evaluation arguments were
+        not strict JSON, and its bounded retries did not correct it.
+      next: >-
+        Inspect the saved run's evaluator attempts and the rejection location,
+        then start a new run. If the evaluator keeps breaking the arguments at
+        the same member, record it as model-compatibility evidence, and set
+        DOCSFAB_ANSWER_SUBMISSION=text-final when the route's tool-call parser
+        is the cause.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/quality-submission/json-raw-newline.json
+      - packages/runtime/test/fixtures/model-output/quality-submission/json-trailing-brace.json
+    docs: quality-submission-json
+
+  - code: quality-submission-duplicate-key
+    locations:
+      - $
+      - $.evaluation
+      - $.qualityScore
+    kind: syntax
+    retry: model-correctable
+    reason: >-
+      Strict JSON admits each key once per object; the evaluator can submit the
+      arguments with every key written once.
+    statement: >-
+      Write each key once in every JSON object of the submit_quality_evaluation
+      arguments: evaluation and qualityScore appear exactly once, and no object
+      inside them names a key twice.
+    hint:
+      atLocation:
+        $.evaluation: >-
+          A key is repeated in or right after the evaluation argument: either
+          evaluation appears twice, or an object inside evaluation names the
+          same key twice. Write evaluation once and each key inside it once.
+        $.qualityScore: >-
+          A key is repeated in or right after the qualityScore argument: either
+          qualityScore appears twice, or an object inside it names the same key
+          twice. Write qualityScore once and each key inside it once.
+    operator:
+      kind: correct
+      meaning: >-
+        The final quality evaluator's submit_quality_evaluation arguments
+        repeated a key in one JSON object, and its bounded retries did not
+        correct it.
+      next: >-
+        Inspect the saved run's evaluator attempts and the rejection location,
+        then start a new run. If the evaluator keeps repeating the same member,
+        record it as model-compatibility evidence for this model.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/quality-submission/duplicate-key-split.json
+    docs: quality-submission-duplicate-key
+
+  - code: quality-submission-shape
+    locations:
+      - $
+      - $.evaluation
+      - $.qualityScore
+    kind: shape
+    retry: model-correctable
+    reason: >-
+      The submission must carry exactly the members the tool declares, each of
+      its declared type; the evaluator can move its result into them.
+    statement: >-
+      Call submit_quality_evaluation with exactly two arguments, evaluation and
+      qualityScore, and no others. evaluation is the evaluation JSON object,
+      and qualityScore is a JSON object or null. Either may be sent as one JSON
+      string that holds that value's JSON, never as a string that itself holds
+      an encoded string.
+    hint:
+      atLocation:
+        $: >-
+          The submit_quality_evaluation arguments must be one JSON object whose
+          only keys are evaluation and qualityScore. Write the report only when
+          the host asks for it after the submission; never pass it, or any
+          other wrapper, as an argument.
+        $.evaluation: >-
+          evaluation must be the evaluation JSON object, not an array, a
+          number, or null. If evaluation was sent as a string that itself
+          contains an encoded string, send the value itself, or at most one
+          JSON string containing its JSON.
+        $.qualityScore: >-
+          qualityScore must be the quality score JSON object, or null when no
+          single content-type rubric is supported by evidence; never false, a
+          number, or an array. If qualityScore was sent as a string that itself
+          contains an encoded string, send the value itself, or at most one
+          JSON string containing its JSON.
+    operator:
+      kind: correct
+      meaning: >-
+        The final quality evaluator's submit_quality_evaluation arguments did
+        not carry the evaluation and the quality score with their declared
+        types, and its bounded retries did not correct it.
+      next: >-
+        Inspect the saved run's evaluator attempts and the rejection location,
+        then start a new run. If the evaluator keeps sending a string or extra
+        arguments, record it as model-compatibility evidence, and set
+        DOCSFAB_ANSWER_SUBMISSION=text-final when the route's tool-call parser
+        is the cause.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/quality-submission/shape-report-argument.json
+      - packages/runtime/test/fixtures/model-output/quality-submission/shape-double-encoded-evaluation.json
+      - packages/runtime/test/fixtures/model-output/quality-submission/shape-quality-score-false.json
+    docs: quality-submission-shape
+
+  - code: quality-submission-missing
+    locations:
+      - $
+    kind: shape
+    retry: model-correctable
+    reason: >-
+      On this route the host reads the evaluation only from the submission
+      tool call, so a reply without one carries no answer; the evaluator can
+      call the tool.
+    statement: >-
+      Submit the evaluation by calling submit_quality_evaluation with
+      evaluation and qualityScore before you write any report; a reply without
+      that call is not an answer.
+    operator:
+      kind: correct
+      meaning: >-
+        The final quality evaluator answered without calling
+        submit_quality_evaluation, and its bounded retries did not correct it.
+      next: >-
+        Inspect the saved run's evaluator attempts, then start a new run. If
+        the evaluator keeps answering in text, record it as model-compatibility
+        evidence, and set DOCSFAB_ANSWER_SUBMISSION=text-final for this route.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/quality-submission/missing-text-answer.json
+    docs: quality-submission-missing
+
+  - code: quality-submission-cut
+    locations:
+      - $
+    kind: size
+    retry: model-correctable
+    reason: >-
+      A submission cut at the output limit never reaches the host whole and is
+      never continued; a retry can ask for a complete submission well inside
+      the limit.
+    statement: >-
+      Keep the submit_quality_evaluation arguments well inside the output
+      limit: state each finding once and briefly, so the whole call finishes
+      before the limit.
+    operator:
+      kind: correct
+      meaning: >-
+        The final quality evaluator's submit_quality_evaluation call was cut at
+        the output limit, and its bounded retry did not fit.
+      next: >-
+        Inspect the saved run's evaluator attempts and their output allowance,
+        then start a new run with a narrower review scope, or raise the output
+        limit only where the provider honours it.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/quality-submission/cut-length-stop.json
+    docs: quality-submission-cut
+
+  - code: quality-submission-report
+    locations:
+      - $.reportMarkdown
+    kind: shape
+    retry: model-correctable
+    reason: >-
+      The host stores the reply to its report ask as the report, so it must
+      open as one; the evaluator can write the report's heading line first.
+    statement: >-
+      When the host asks for the report, write it as Markdown that starts with
+      its heading line, the way the report template does.
+    hint:
+      atLocation:
+        $.reportMarkdown: >-
+          The reply to the report ask was empty or did not start with a
+          Markdown heading line. Start the report with its heading line, such
+          as the report template's title, with no code fence, JSON, sentence,
+          or other text before it.
+    operator:
+      kind: correct
+      meaning: >-
+        The final quality evaluator's report, written after its admitted
+        submission, was missing or did not open with a heading line, and its
+        bounded retries did not correct it.
+      next: >-
+        Inspect the saved run's evaluator attempts, then start a new run. If
+        the evaluator keeps omitting the report or wrapping it, record it as
+        model-compatibility evidence for this model.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/quality-submission/report-no-heading.json
+      - packages/runtime/test/fixtures/model-output/quality-submission/report-json-continuation.json
+    docs: quality-submission-report
+
+  - code: quality-submission-report-fence
+    locations:
+      - $.reportMarkdown
+    kind: shape
+    retry: model-correctable
+    reason: >-
+      An unclosed or nested code block can hide a restarted answer inside the
+      stored report; the evaluator can end each code block where its content
+      ends.
+    statement: >-
+      End every code block in the report with its own closing fence line
+      before any report text that follows it, and never start a second code
+      block with the same fence characters inside one.
+    hint:
+      atLocation:
+        $.reportMarkdown: >-
+          A code block in the report was still open when more report text
+          followed it, or a fence line inside a code block started another
+          block with the same fence characters. End each code block with one
+          closing fence line right after its content, and remove any fence line
+          that does not open or close a block.
+    operator:
+      kind: correct
+      meaning: >-
+        The final quality evaluator's report left a code block open before more
+        text or nested a same-kind fence inside one, and its bounded retries did
+        not correct it.
+      next: >-
+        Inspect the saved run's evaluator attempts, then start a new run. If the
+        evaluator keeps leaving code blocks open, record it as
+        model-compatibility evidence for this model.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/quality-submission/report-fence-open.json
+    docs: quality-submission-report-fence
+
+  - code: quality-submission-report-member
+    locations:
+      - $.reportMarkdown
+    kind: shape
+    retry: model-correctable
+    reason: >-
+      An answer member in the report's text is answer JSON stored as the
+      report; the evaluator can keep that JSON in the submission only.
+    statement: >-
+      Keep evaluation and qualityScore in the submit_quality_evaluation call
+      only. The report's text never names an evaluation, qualityScore, or
+      reportMarkdown JSON member outside a fenced code block or inline code.
+    hint:
+      atLocation:
+        $.reportMarkdown: >-
+          The report's text names an evaluation, qualityScore, or
+          reportMarkdown JSON member outside a fenced code block or inline
+          code. Remove that JSON from the report; the submission already holds
+          the evaluation and the quality score. Omit the template's Validated
+          result summary section, including its JSON; the host writes that
+          section after validation.
+    operator:
+      kind: correct
+      meaning: >-
+        The final quality evaluator's report carried answer JSON members in its
+        text, and its bounded retries did not correct it.
+      next: >-
+        Inspect the saved run's evaluator attempts, then start a new run. If the
+        evaluator keeps writing JSON into its report, record it as
+        model-compatibility evidence for this model.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/quality-submission/report-member-in-text.json
+    docs: quality-submission-report-member
+
+  - code: quality-submission-report-envelope
+    locations:
+      - $.reportMarkdown
+    kind: shape
+    retry: model-correctable
+    reason: >-
+      A report holding a whole three-member envelope reads as a second answer
+      beside the submission, so which one the evaluator meant is a guess; the
+      evaluator can remove it.
+    statement: >-
+      The report never holds a JSON object with evaluation, qualityScore, and
+      reportMarkdown together, even inside a code block; the submission is the
+      only answer.
+    hint:
+      atLocation:
+        $.reportMarkdown: >-
+          The report holds a JSON object with evaluation, qualityScore, and
+          reportMarkdown together, so the reply reads as a second answer.
+          Remove that object from the report; the submit_quality_evaluation
+          call is the only answer.
+    operator:
+      kind: correct
+      meaning: >-
+        The final quality evaluator's report held a whole answer envelope beside
+        its submission, and its bounded retries did not correct it.
+      next: >-
+        Inspect the saved run's evaluator attempts, then start a new run. If the
+        evaluator keeps repeating its answer in the report, record it as
+        model-compatibility evidence for this model.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/quality-submission/report-envelope-in-report.json
+    docs: quality-submission-report-envelope

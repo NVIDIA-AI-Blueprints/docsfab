@@ -1,0 +1,4 @@
+interface:
+  display_name: "Interview Product Model"
+  short_description: "Elicit an attributed product-model snapshot"
+  default_prompt: "Use $interview-product-model to interview a product creator and preserve an attributed model snapshot."

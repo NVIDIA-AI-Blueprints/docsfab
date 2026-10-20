@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "name": "site-bootstrap",
+  "title": "Approved site bootstrap",
+  "outcome": "A reviewable site scaffold patch authorized by one current approved IA plan.",
+  "contextPolicy": {
+    "schemaVersion": 1,
+    "steps": [
+      {
+        "stepId": "apply-site-bootstrap",
+        "required": true,
+        "level": "corpus",
+        "query": "expand",
+        "allowReadOnlyDegraded": false
+      }
+    ]
+  },
+  "steps": [
+    {
+      "id": "apply-site-bootstrap",
+      "title": "Apply approved site bootstrap",
+      "kind": "host-operation",
+      "operation": "site-bootstrap",
+      "skill": "template-scaffold-site",
+      "mode": "write",
+      "prompt": "Apply only the exact current approved site-bootstrap plan."
+    }
+  ]
+}

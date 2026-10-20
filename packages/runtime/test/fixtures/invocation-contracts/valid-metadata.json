@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "skillId": "write-documentation",
+  "profiles": [
+    {
+      "id": "plain-guidance",
+      "operation": "load-guidance",
+      "contextPhase": "absent",
+      "acceptedCallerFields": [],
+      "requiredCallerFields": [],
+      "schemaReferences": [],
+      "immediateToolResultKind": "instructions-loaded",
+      "applicationResultKind": "none",
+      "participantContext": "not-applicable"
+    }
+  ]
+}

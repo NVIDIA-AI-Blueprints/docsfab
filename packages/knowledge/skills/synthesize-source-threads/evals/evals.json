@@ -1,0 +1,71 @@
+{
+  "skill_name": "synthesize-source-threads",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Three participant threads agree that a behavior is supported, but a test at the target release disproves it.",
+      "expected_output": "Preserve all participant claims as representation evidence, mark target behavior contradicted by the version-bound test, avoid majority resolution, and retain the discrepancy and affected documentation targets in the merge receipt.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Two source threads make contradictory deployment claims, but one applies to hosted deployments and one to self-managed deployments.",
+      "expected_output": "Rescope both claims, preserve them as valid variants, update the candidate model without declaring either source wrong, and record the exact scope delta.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "A document-derived proxy model conflicts with its author's later interview correction.",
+      "expected_output": "Keep the old document item and extraction inspectable, append the author correction in the person's source lineage, update representation state separately, and supersede or dispute only the affected candidate claims with a receipt.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "An unresolved terminology conflict affects a public About page, while source and tests fully support a CLI Reference page.",
+      "expected_output": "Block only the dependent About target, leave the bounded CLI Reference target able to advance, and record the terminology owner and unresolved variants without family-wide blocking.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "A participant initiates the key correction by saying, 'Use this model to reassess the docs.' The storage API accepts only question and answer events.",
+      "expected_output": "Preserve the event as participant-to-agent challenge or request with exact direction and content, record the schema gap, and stop before inventing an interviewer question.",
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "Two source threads disagree about the primary UI surface. The product authority has not yet adjudicated the difference.",
+      "expected_output": "Create a stable conflict ID in the required inconsistency report, preserve both source variants and their exact evidence, route the intent decision to the accountable product authority, leave adjudication open, carry both variants into the candidate model, and block only dependent UI documentation targets.",
+      "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "The product authority later resolves an existing source-thread conflict by accepting one variant and explicitly rejecting the other with rationale.",
+      "expected_output": "Create a new immutable model version rather than editing the prior one, retain the stable conflict ID, record the adjudicator and authority basis, disposition, rationale, decision evidence, and resulting claim IDs, preserve the rejected variant in history, and include the conflict state transition in the merge receipt.",
+      "files": []
+    },
+    {
+      "id": 8,
+      "prompt": "A bounded synthesis comparison finds no inconsistencies.",
+      "expected_output": "Still create the required inconsistency report, state that no inconsistencies were found within the exact comparison boundary, and do not imply that unexamined source items or model regions agree.",
+      "files": []
+    },
+    {
+      "id": 9,
+      "prompt": "A synthesis run finds three inconsistencies. Existing version-bound evidence resolves one scope/version difference, while two product-intent conflicts still require the user who owns product intent. The user asked only to run reconciliation.",
+      "expected_output": "Resolve and record the evidence-backed difference without asking the user to adjudicate it, preserve the two open conflicts, report their dependency order, and explicitly ask whether the user wants to go through the two open inconsistencies one by one and adjudicate them now.",
+      "files": []
+    },
+    {
+      "id": 10,
+      "prompt": "The user accepts the offer to adjudicate four open source-thread inconsistencies.",
+      "expected_output": "Start immediately with the first dependency-ordered conflict, present only that conflict in plain language with competing claims, consequence, authority, and a recommended disposition, then ask one bounded decision question. Track progress against the finite four-conflict queue and preserve each attributed decision before moving on.",
+      "files": []
+    },
+    {
+      "id": 11,
+      "prompt": "The final open conflict is adjudicated. The new model unblocks updates to two existing pages and provides enough evidence for a previously missing Reference target in the repository's configured information architecture.",
+      "expected_output": "Issue a new immutable model version and receipt, automatically regenerate the two affected pages, rescan every configured documentation family, generate the newly ready Reference target, use a non-author clean reviewer for agent-authored output, run applicable documentation checks, update readiness, and record the exact documentation and review delta without publishing or merging it.",
+      "files": []
+    }
+  ]
+}

@@ -1,0 +1,680 @@
+{
+  "schemaVersion": 2,
+  "bundleHashFormat": "sha256-lines-v1",
+  "source": {
+    "repository": "https://github.com/NVIDIA-AI-Blueprints/docsfab.git",
+    "revision": "4d5d3476d7461fb605e45d4ba9b86dd288a1126e6505073c77c8544276ae8ac0",
+    "path": "packages/quality"
+  },
+  "qualityRoot": ".",
+  "bars": [
+    {
+      "id": "check:collect-doc-quality-signals",
+      "kind": "check",
+      "assetPath": "checks/collect_doc_quality_signals.py"
+    },
+    {
+      "id": "check:derive-documentation-quality-evaluation",
+      "kind": "check",
+      "assetPath": "checks/derive_documentation_quality_evaluation.py"
+    },
+    {
+      "id": "check:quality-decision-policy",
+      "kind": "check",
+      "assetPath": "checks/quality_decision_policy.py"
+    },
+    {
+      "id": "check:validate-audience-understanding-evaluation",
+      "kind": "check",
+      "assetPath": "checks/validate_audience_understanding_evaluation.py"
+    },
+    {
+      "id": "check:validate-documentation-partial",
+      "kind": "check",
+      "assetPath": "checks/validate_documentation_partial.py"
+    },
+    {
+      "id": "check:validate-documentation-quality-evaluation",
+      "kind": "check",
+      "assetPath": "checks/validate_documentation_quality_evaluation.py"
+    },
+    {
+      "id": "check:validate-html",
+      "kind": "check",
+      "assetPath": "checks/validate_html.py"
+    },
+    {
+      "id": "check:validate-json-artifact",
+      "kind": "check",
+      "assetPath": "checks/validate_json_artifact.py"
+    },
+    {
+      "id": "check:validate-package",
+      "kind": "check",
+      "assetPath": "checks/validate_package.py"
+    },
+    {
+      "id": "check:validate-private-v1-campaign",
+      "kind": "check",
+      "assetPath": "checks/validate_private_v1_campaign.py"
+    },
+    {
+      "id": "check:validate-quality-report",
+      "kind": "check",
+      "assetPath": "checks/validate_quality_report.py"
+    },
+    {
+      "id": "check:validate-quality-score",
+      "kind": "check",
+      "assetPath": "checks/validate_quality_score.py"
+    },
+    {
+      "id": "profile:docsfab-documentation-quality",
+      "kind": "profile",
+      "assetPath": "profiles/docsfab-documentation-quality/profile.json"
+    },
+    {
+      "id": "profile:example-public-docs-v0.1",
+      "kind": "profile",
+      "assetPath": "profiles/example-public-docs/profile.yaml"
+    },
+    {
+      "id": "profile:nvidia-technical-documentation",
+      "kind": "profile",
+      "assetPath": "profiles/nvidia-technical-documentation/profile.json"
+    },
+    {
+      "id": "rubric:api-reference-v0.1",
+      "kind": "rubric",
+      "assetPath": "rubrics/api-reference.yaml"
+    },
+    {
+      "id": "rubric:concept-guide-v0.1",
+      "kind": "rubric",
+      "assetPath": "rubrics/concept-guide.yaml"
+    },
+    {
+      "id": "rubric:task-guide-v0.1",
+      "kind": "rubric",
+      "assetPath": "rubrics/task-guide.yaml"
+    }
+  ],
+  "productDefaults": {
+    "declarationPath": "profiles/product-default.json",
+    "layer": "product",
+    "style": {
+      "barId": "profile:nvidia-technical-documentation",
+      "profileId": "nvidia-technical-documentation",
+      "version": "2026-08-08.upstream-4f67851687853fed86fa8b4a329793279168ba68",
+      "assetPath": "profiles/nvidia-technical-documentation/profile.json",
+      "deliveredPaths": [
+        "profiles/nvidia-technical-documentation/style-guide.md",
+        "profiles/nvidia-technical-documentation/TERMINOLOGY.md"
+      ],
+      "sha256": "abb3cf92cdce81ae42c86faffb6453f59657b51594363e53aa70948efa9b59a6"
+    },
+    "evaluation": {
+      "barId": "profile:docsfab-documentation-quality",
+      "profileId": "docsfab-documentation-quality",
+      "version": "v0.1",
+      "assetPath": "profiles/docsfab-documentation-quality/profile.json",
+      "readerImpactBaselinePath": "profiles/docsfab-documentation-quality/reader-impact-baseline.md",
+      "sha256": "a551c6ddc77f973bda12b27e370032da4da485902532e787290a1c4a794658e7"
+    }
+  },
+  "bundleSha256": "ffc35c00f9daaf69be1303c069ac399e25cea53935db47a7f66f8caf4d45c787",
+  "files": [
+    {
+      "path": "checks/collect_doc_quality_signals.py",
+      "sha256": "8ef2f7bb8f827ab2a519b20c2be0eb41e1aa25b8afde08f67430286e181914bc"
+    },
+    {
+      "path": "checks/derive_documentation_quality_evaluation.py",
+      "sha256": "0512f992ccf451035de2d9e8d0ec3d21bffa161eaa57f260f797d4e91d14ce05"
+    },
+    {
+      "path": "checks/quality_decision_policy.py",
+      "sha256": "f6f9e9cd6daf4c7be87066403e76fc5e8a51cf69663637d78a4224a9f807ff04"
+    },
+    {
+      "path": "checks/score_harness_role_qualification.py.license",
+      "sha256": "39b67a3543de12fbe919327958818a53222b223688ef8ece33a12bc1e46d1f14"
+    },
+    {
+      "path": "checks/validate_audience_understanding_evaluation.py",
+      "sha256": "b794b06b67e176d849cfc22593b4fa576f7db76b527b281a9cae008aebd92765"
+    },
+    {
+      "path": "checks/validate_documentation_partial.py",
+      "sha256": "32fa662f2280219ba972a3091fd6edb6cfe790ea1199e72307377e89bc253141"
+    },
+    {
+      "path": "checks/validate_documentation_quality_evaluation.py",
+      "sha256": "144e4e06b16a2875b620de2bd858266c6be77b6bbb60893aa22648d1511f52f0"
+    },
+    {
+      "path": "checks/validate_html.py",
+      "sha256": "15668ba6c97650955dfe823527db81a75c5d2144379e2ea7400bc3ac89c59fb7"
+    },
+    {
+      "path": "checks/validate_json_artifact.py",
+      "sha256": "42d7fb44b4e23904db2e94343eae668af209922fb9c398cf26e99fb55869190d"
+    },
+    {
+      "path": "checks/validate_package.py",
+      "sha256": "44aa60a611db852f2b350f54fa6d01d5e68bc5eae0c8bd094e6cf5750ddc9c60"
+    },
+    {
+      "path": "checks/validate_private_v1_campaign.py",
+      "sha256": "05586f1b1c0a5e79359620a2508051372091e2e5a2054fcaa324fe9d7d7f1802"
+    },
+    {
+      "path": "checks/validate_quality_report.py",
+      "sha256": "97d7f21bdf63eb600385aa81ad9e6bd2891d06912877e852fb5c58b371036f12"
+    },
+    {
+      "path": "checks/validate_quality_score.py",
+      "sha256": "bf3c2d16124289b7beba7666e73ec135107e75e361f10ee6bc4215852e354485"
+    },
+    {
+      "path": "formats/html/api-reference.html",
+      "sha256": "5fdab798a08d6b3c48edd14bc538f5c482532b95a18863f96b876b650bb54a54"
+    },
+    {
+      "path": "formats/html/base.css",
+      "sha256": "061ca3d1a34f17c9b5e7887d39a54ae4765256e2a66f0ad9ee78c446a636711b"
+    },
+    {
+      "path": "formats/html/concept-guide.html",
+      "sha256": "dfbe714737c174581770e2db12fc021a73200ad8dc3eee4f28e00ae62f81bf13"
+    },
+    {
+      "path": "formats/html/task-guide.html",
+      "sha256": "922bcf9e1247e38865e7e75416157565e614166cfcc6345dfc3f89a2352be726"
+    },
+    {
+      "path": "formats/requirements-document-format.md",
+      "sha256": "12af02df5c9032b73b36d63214dc9e7e4fffc34b34a5eb5efeaccf06eff1a42d"
+    },
+    {
+      "path": "formats/template-set-v1/chains.yaml",
+      "sha256": "9bec6e73bf489e7de18059ec82997c9800d60e8bfb6589b006b2447a2e62f498"
+    },
+    {
+      "path": "formats/template-set-v1/LICENSE",
+      "sha256": "79a6a78693f4e02b1f43837ceb014aefda32d319e4298425c7314465c26abe23"
+    },
+    {
+      "path": "formats/template-set-v1/REGISTRY.json",
+      "sha256": "6a3b2e2108b450e594fc3e708641d970b8eb388f73870010b35d3031fba7009c"
+    },
+    {
+      "path": "formats/template-set-v1/resources/format-comparison.md",
+      "sha256": "9c6921992ac039e3dc08ecedc7e86cca52efca2856dba0787955596db22c74b8"
+    },
+    {
+      "path": "formats/template-set-v1/resources/template-application-workflow.md",
+      "sha256": "3e54ba2d9108999d06ae370a14c9d65d0fb59f5c04f9ed78a3ea6a30f47da441"
+    },
+    {
+      "path": "formats/template-set-v1/resources/template-catalog.md",
+      "sha256": "5586c57451c82cce2916b452d4d247f92b6eccc5b1e7b0c42f9611a12df02f93"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-lint/assets/schemas/about-feature.yaml",
+      "sha256": "39e76fc172387350b70bad5d6b434ed80134122707de5507b5251c213831b0dd"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-lint/assets/schemas/about-procedural-task.yaml",
+      "sha256": "8e449d5a9aef982318d49a5cceeda7d8941032c2356f7e8c1a8e25d5e35f32fc"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-lint/assets/schemas/architecture.yaml",
+      "sha256": "7deb623152cf0d78517b062b9f502e4245f8bd2ed4981aaa35e9c67abaa86c08"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-lint/assets/schemas/ecosystem.yaml",
+      "sha256": "394c2c51b0da45a6fe49210cfb57a61a04678491b47fe83e1259379d52ec182a"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-lint/assets/schemas/environment-variables.yaml",
+      "sha256": "7927608812a83e828e8589523cae547948daab81307667a325400dd1a7c03f91"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-lint/assets/schemas/features.yaml",
+      "sha256": "631367a1e06e8eca8f14cfa26cbcad5a6d43a3a7425c9fbf9712cdd3f8ac9aa6"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-lint/assets/schemas/glossary.yaml",
+      "sha256": "72ad7544053a039445c1b3e54d425308a0f65525f0abbe40c0187b0175cd8aae"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-lint/assets/schemas/helm-parameters.yaml",
+      "sha256": "0d8abcba7549b66bc758275efa51dc04c0992fda28ce3f9c205a715e2ff80b04"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-lint/assets/schemas/installation.yaml",
+      "sha256": "e407b84fea0616aeed103a503ef37c42621433a4cf228574b0a44b9ac1197319"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-lint/assets/schemas/prerequisites.yaml",
+      "sha256": "0e2016ea5c4f601b9614f6d5c58b2fc0cb0ef50240fcb05d1ebf9b1ea0908767"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-lint/assets/schemas/procedural.yaml",
+      "sha256": "2123cd848e87ff919ae512fb50030955a4687a00ec9dbe0ba55599825f9c6af7"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-lint/assets/schemas/quickstart.yaml",
+      "sha256": "4fef60d66588cc14bcebacef4711ce6fbb88839b865b2f85e9ddbba53cee3ab7"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-lint/assets/schemas/release-notes.yaml",
+      "sha256": "280faaa1a77be2138482bf1d450ff940bb57ae10f7f2cd4e1c5d13ff0d84e7f7"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-lint/assets/schemas/schema-spec.yaml",
+      "sha256": "ee190d712b6217a6d34253956f318bf371dcc4d41899094f46d045426d56c1bf"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-lint/assets/schemas/troubleshooting.yaml",
+      "sha256": "6e343bc932fcf3f9896baa0a18c196e830e39d0bbca7c807e41d420ef3b060ae"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-lint/assets/schemas/tutorial.yaml",
+      "sha256": "27d1f828a5031b09f19e3494920b27797ca32a78b0b334bcd3328dc13892b494"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-lint/references/schema-spec.md",
+      "sha256": "ee4c55a52fa8549a3e554d7cc2d65c4b522af56a3fff980e7837ee97909e5e05"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-lint/scripts/validate.py",
+      "sha256": "085f943bd7087e35bdc1f274d29e29bbd503cee7cffc376da9219de8eaff322c"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-lint/SKILL.md",
+      "sha256": "676e6d883641f3e9d910a88d1dc1cde68027a65700ed080173f99ef3c2626d36"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/about/about-feature-gfm.md",
+      "sha256": "45255fed4299fc6a7177b729debf0bcc635658d5a86acc7337b79219069ed19c"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/about/about-feature.md",
+      "sha256": "51439489710bc2ce3cbb298e3a5a303099cc42f2720c80fe33379881511f932f"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/about/about-procedural-task-gfm.md",
+      "sha256": "20c62187aa67a0bb34da08e2053a5dc7234c7b72d5c5609d1c64eb6163a01ae1"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/about/about-procedural-task.md",
+      "sha256": "dd3ba891015b53d3e48a5f62a0ab2bdfb9eeed68a9152881a6b0b7a954841616"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/about/architecture-overview-gfm.md",
+      "sha256": "3a5176c1c5f0f369820be3ab4aeb6054b83168e32b7e48b4189761dbec099a41"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/about/architecture-overview.md",
+      "sha256": "6339bfd13dce171e8e6e1456996b2f984b135f9a80d388e53a2157bebf2ae003"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/about/core-concepts-overview-gfm.md",
+      "sha256": "12e404845fa8fede79709538716b97ea51d921878d8a9313cfc13278489f5494"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/about/core-concepts-overview.md",
+      "sha256": "25c3904ce4e45fffb824f914e7d6afcf1dbb1490b829376128f3f8077870b293"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/about/ecosystem-gfm.md",
+      "sha256": "7ced753384ca57558eb6fa205680a5bb30ed39485e98b39f634895a343c106e3"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/about/ecosystem.md",
+      "sha256": "a0ffee7f1b5c2ea37b5c65d0cdc7034c4d0e7b1f2b5a64a66e526585b4806a18"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/about/key-features-gfm.md",
+      "sha256": "5e5c34e53c7c9303b783f0b6d7ae01dcb319761d71bce9306c21f4be8c07505b"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/about/key-features.md",
+      "sha256": "6b4f1793a6f6ea5152978e2f99c5765649fd7fddc67de0690d9d1304db16646a"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/about/overview-gfm.md",
+      "sha256": "e2ab0e5edf5bcc679dd114d0821e43daf0b1b8fbdc83771a21b3da64a0f6702b"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/about/overview.md",
+      "sha256": "44d9fc4383d28cda79e03eda3ec744171d958eee5f23c7534e176ff3fba6f0f8"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/conceptual/blended-conceptual-gfm.md",
+      "sha256": "ea087e8d4e58bb5ba8fa771577161589c91b00bedc143d1e67e0a587c41f8fed"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/conceptual/blended-conceptual.md",
+      "sha256": "dcb954e232cc3a0d9783c76f7b62233376e6b9110cab4c075195053ab3575b32"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/conceptual/conceptual-gfm.md",
+      "sha256": "11294cec2eb1ed8ac3d615bd7706d67e96abaee74a7f53f55556ba3668beebfb"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/conceptual/conceptual.md",
+      "sha256": "dd0483441b21754a444fb1347cb976c17b69382f7a775e4dd25c3215b28259e4"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/conceptual/overview-gfm.md",
+      "sha256": "d0f923b74d4509170bb2b2c8c0073f26878d46004c0edf44b13f9a8d83c899be"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/conceptual/overview.md",
+      "sha256": "89e6a002a96c4f7a41d553be702d690bea4217984039c7710e59d5aed272a4a9"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/get-started/beginner-tutorial-gfm.md",
+      "sha256": "1b9c595e3f499be1afbbd15229e59f031953d804edbc4043d231e0715636df25"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/get-started/beginner-tutorial.md",
+      "sha256": "d488697017239e2fa1a4b7d3371f56bf602529bd80bc5baf5c7c6435d6d34b0e"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/get-started/get-started-overview-gfm.md",
+      "sha256": "4020b17dbcb580d5ea2fecebb4a1581603936c267c3eefb133cd5817692cfba8"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/get-started/get-started-overview.md",
+      "sha256": "b3024ed963db97738c645aa89418f253f4903b55c78c6f166db357fd63aaac5e"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/get-started/installation-gfm.md",
+      "sha256": "1a35d0e75fff4e72da9eb70d7da3c9962e2fec84a30d48704aec7c626db3e7be"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/get-started/installation.md",
+      "sha256": "0900122d2e16a7aea10e3437911ec76001a4234955e214c68c9e283e121d51ba"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/get-started/prerequisites-gfm.md",
+      "sha256": "dc0441a331dfe112b6b94529e183d652f346a837c9e869633a8a6693c419830c"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/get-started/prerequisites.md",
+      "sha256": "2507f1b7e03ea165328d8020525ad87e5954925179f4ee78a8dc5543597e2ffc"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/get-started/quickstart-gfm.md",
+      "sha256": "b6d0ada9711dff72595a1ed53d1cc22e71dd8a5f0c7977a5ab26527feb1c62e1"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/get-started/quickstart.md",
+      "sha256": "9d24158a03283d8aceeef95bf889193aee0d282bdcd2e3be156d51e409cca78e"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/images/Peer Review Diagram.png",
+      "sha256": "5eb330c85a63272dcf74500d16b6c7240b473a5ee00efdbcdbd608855a044661"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/procedural/multiple-procedural-gfm.md",
+      "sha256": "8d8fb81461902a917e2c5b5b5f31c594a0a9cda99891a12e6811027b0f6d7cbf"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/procedural/multiple-procedural.md",
+      "sha256": "e322eae590659aa2d2b92c72b39c402bca590b29ccde67b2801cc08730e012c5"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/procedural/single-procedural-gfm.md",
+      "sha256": "a8153ae866eb58621cfe06a28582e31b4318eb3e321767b0c5bac4f66c0872b4"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/procedural/single-procedural.md",
+      "sha256": "785ffa792636d12784feb65aedd02067c16b3b7d760154b96815385c691f0a9c"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/reference/environment-variables/environment-variables-gfm.md",
+      "sha256": "5a1c834d57a28f92f9687ca34b740b3fc4a99a6e07138140bc5a5ed8f00dd327"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/reference/environment-variables/environment-variables.md",
+      "sha256": "d6b3e9c1e5fbeebf407d7b4096ddbec977a8f737431d4f1b54c6add21135a114"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/reference/helm-parameters/helm-parameters-gfm.md",
+      "sha256": "19bc34c81f63b23c06a3fab1027622a3744cd6a90281b58e4d0be7f42c225240"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/reference/helm-parameters/helm-parameters.md",
+      "sha256": "d3d598493cae61d40c55310d91cfca1fe8d8e909b8070be5138c6562b0bfced1"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/reference/observability/observability-metrics-gfm.md",
+      "sha256": "e83439a5e5d030bbcfca0ddc766f8be7bd63bd7841b5fe0416548be184c13c27"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/reference/observability/observability-metrics.md",
+      "sha256": "d334a978c26577ce02b29972a2d49d93c0cb33c223d8a740922616066f0ed7d0"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/reference/performance/performance-benchmarks-gfm.md",
+      "sha256": "0dddb1268b926c958c77cef3f845f7e5215b6e5dd5baf734be13aa8d0dc41e2c"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/reference/performance/performance-benchmarks.md",
+      "sha256": "04794ce49317fde537bd17b6b67430977d3073f5397809e7aef803c5a060e2b4"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/reference/reference-overview-gfm.md",
+      "sha256": "0610a01e92e41f3b0cff48c9e403c5ff20de1ddaf9b856bc7bdba43ddca75a32"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/reference/reference-overview.md",
+      "sha256": "c188fa656d62740369105b2891d6e9537dccba6590194376e170f965fba4b299"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/release-notes/release-notes-gfm.md",
+      "sha256": "fada3812ee0377734f50f23bdf6e43731104a1d50867cd24b3b6848db0a2d454"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/release-notes/release-notes.md",
+      "sha256": "0df082cd5a3581bbc0588ac8a55c6e8d5419b2b3ccc5c893f42dccc3a8b32df9"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/resources/glossary-gfm.md",
+      "sha256": "9786abbc88bd6475a708befe1b30c4ccce3c345c0a5215e169810a96013e6981"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/resources/glossary.md",
+      "sha256": "68a67d1540f7480963eb023cdd567b57b2a706191404b53a81e8adbb5560db4b"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/resources/resources-overview-gfm.md",
+      "sha256": "fef1a3e66fa0d3e05de5aaaf3b019229ea21045d9826c6b741393fa7c986e24c"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/resources/resources-overview.md",
+      "sha256": "8751088193a1ac3cb9871c631c732820d78e24a49256f1bb4290e483afed757f"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/resources/support-and-faqs-gfm.md",
+      "sha256": "b145a1ae66f20a13643a093f32b1caad6b09edb2cb31d6bf4ed71372c2779e10"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/resources/support-and-faqs.md",
+      "sha256": "271a8675da791bde85e9a65f4c14300e91adf1f13a3e6fe1e483e992fec40a60"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/troubleshooting/troubleshooting-gfm.md",
+      "sha256": "9ec7a6f15b274955bed6cf0ec8ed8922d61532cf83e7585534d9ba6b92ec9be8"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/assets/templates/troubleshooting/troubleshooting.md",
+      "sha256": "17509d7bdeab6145100083c5f6c6581d9206c2c579e4a19157af27660c794b6e"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/scripts/scaffold.py",
+      "sha256": "5e5c7f000ff20f710e6ebf1ebb08bea257d726899c6161fc83fa565e2e8f72e7"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-page/SKILL.md",
+      "sha256": "664cb07f5d7a22a1bf22cabc4c573f8da18f87331580210556e2ba1286d80222"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-site/assets/site-map.yaml",
+      "sha256": "7de1886dd4e8bd3a02ef900e9f9a8a252793e638b4fe6c9cbfc341662d359b68"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-site/references/ia-clustering.md",
+      "sha256": "14d221d34b2947e60f51dc6fac0a3635789f0879cd5ac5fad64c8a56f91ae94e"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-site/scripts/site-scaffold.py",
+      "sha256": "5d20d49e8ed893f957ccfeb4c423da91ee1089ae655d9fae6811f86e5780ee37"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-new-site/SKILL.md",
+      "sha256": "5bded4712c32c347688315068bfd44c1f8f8abd0b2b27704065b9114190e2d12"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-pick/references/template-catalog.md",
+      "sha256": "5586c57451c82cce2916b452d4d247f92b6eccc5b1e7b0c42f9611a12df02f93"
+    },
+    {
+      "path": "formats/template-set-v1/tpl-pick/SKILL.md",
+      "sha256": "5de9bde0ee75657efb1611597560709372d19ab3e83b3422f3fb8958dab2f818"
+    },
+    {
+      "path": "formats/template-structural-schemas/README.md",
+      "sha256": "2e55f2c56ddbcbb992dede16eed6cb6b58906954f8f1acd3d190a047c8d06fe9"
+    },
+    {
+      "path": "profiles/docsfab-documentation-quality/profile.json",
+      "sha256": "579023cebc031149d559c070e86dfc0c43f596c0dac8fa68eb2f8dd65ad555a1"
+    },
+    {
+      "path": "profiles/docsfab-documentation-quality/reader-impact-baseline.md",
+      "sha256": "f7f0942283a720e1aab1311de12dd9e985f629bbc682025492495956c84908b0"
+    },
+    {
+      "path": "profiles/example-public-docs/profile.yaml",
+      "sha256": "1cb29bd71a9c7a997a9cfa885fa1cff981a4ee7b6434169e5526bf39833e0f51"
+    },
+    {
+      "path": "profiles/example-public-docs/STYLE_GUIDE.md",
+      "sha256": "0931d41a705b9a2c0bc0808486c70a9d7b73ed8bfc1c053b9fc3988bd75e9181"
+    },
+    {
+      "path": "profiles/example-public-docs/TERMINOLOGY.md",
+      "sha256": "a6799223320f3e94c723e508ce9c12c6f09758d712f5efca34d51e6d2015aa11"
+    },
+    {
+      "path": "profiles/nvidia-technical-documentation/overlays/docsfab-fern.md",
+      "sha256": "49c9b7df0b36e6324cb1fc34dd4d951d3a5bcc8a0f162838edaf1b75fc43ed30"
+    },
+    {
+      "path": "profiles/nvidia-technical-documentation/profile.json",
+      "sha256": "ec3d9b08d465ba72a733f4167fff0ecf258951ad7cb472b1a7df4451d7e02e06"
+    },
+    {
+      "path": "profiles/nvidia-technical-documentation/style-guide.md",
+      "sha256": "4ff571ec647295c9d3308c2e52491d65cae06c28c71883466af12edd9e5a808b"
+    },
+    {
+      "path": "profiles/nvidia-technical-documentation/TERMINOLOGY.md",
+      "sha256": "df223b229efaee445c0598faae54f53760b24605609f779470f6f6d26ff2387f"
+    },
+    {
+      "path": "profiles/product-default.json",
+      "sha256": "337b0e25dd87cbfce1a450b688cf0b170664dfdbb7f488453272880fea7d6ed1"
+    },
+    {
+      "path": "rubrics/api-reference.yaml",
+      "sha256": "aceb4f05a9a12e0951b318c0b6a91b276882db5cc4e7aa7d0bebe0798fc27d12"
+    },
+    {
+      "path": "rubrics/concept-guide.yaml",
+      "sha256": "b07dd80df8be2f23cab32d44362159b0d67a1b08466c25a7cd7e26473129ff00"
+    },
+    {
+      "path": "rubrics/task-guide.yaml",
+      "sha256": "36eeb2f55162909b1fa37809dc481f4a5740bcee4e272bada1769c156ea4a59e"
+    },
+    {
+      "path": "schemas/assurance-system-measurement.schema.json",
+      "sha256": "b7efafd02bdc27e9c2f2193837af54abe02aad7784a2e521186e4e5e14d4659a"
+    },
+    {
+      "path": "schemas/audience-understanding-evaluation.schema.json",
+      "sha256": "74ada3aad03dc9d88ea92b765188cfece6ec2e97b24a8d8dcc45eff34ee5a065"
+    },
+    {
+      "path": "schemas/doc-quality-signals.schema.json",
+      "sha256": "f0f96e7abff5e59f9dea3cf4bd92fc163155f4aa14931bc8b56042132bfcd98c"
+    },
+    {
+      "path": "schemas/documentation-brief.schema.json",
+      "sha256": "7127c5cb87782407a3e3f74f0cd23ec8f5e9f7049edc6f9fd2025b1a5aa17503"
+    },
+    {
+      "path": "schemas/documentation-partial-result.schema.json",
+      "sha256": "dc9afa646fb5efbbd1bdcc1bd4eef3ec8290a092b5625086da9c54df35388e75"
+    },
+    {
+      "path": "schemas/documentation-quality-evaluation.schema.json",
+      "sha256": "0ce93f12becbf452c967f2567e633e7de89c20798d64e4495d4f451fa0700ab5"
+    },
+    {
+      "path": "schemas/documentation-request.schema.json",
+      "sha256": "0f3119ddb8726f83dfcfb71485e4489bc900382c67f75905c217f765feaa51f9"
+    },
+    {
+      "path": "schemas/model-role-qualification-record.schema.json",
+      "sha256": "27dfc2c702c0401256071430a76aa305ca287e06318846c9feb7c9fa979bd5f2"
+    },
+    {
+      "path": "schemas/private-v1-campaign.schema.json",
+      "sha256": "42344c20356537ce24b5955b8c3b458b38bb8a2c25037acccfed4bcc31e67a39"
+    },
+    {
+      "path": "schemas/quality-report-projection.schema.json",
+      "sha256": "da9cb594d9571783c34cefd12761cc9f7fc295bae1015daa4a814c07cd73522a"
+    },
+    {
+      "path": "schemas/quality-report.schema.json",
+      "sha256": "a567021f6e01e32a263a745ca77ea186e39bd15de4bb0c888bc15eeaa5fabd6a"
+    },
+    {
+      "path": "schemas/quality-score.schema.json",
+      "sha256": "f4ddc20fc3a8526e77b22d388db5786502065b7bd775debc799dc6a4d83efb9d"
+    },
+    {
+      "path": "schemas/reader-context.schema.json",
+      "sha256": "fc810e98c2f207ad468924009eccd1ef0455f77a4c984d50f219b2000acd5f89"
+    },
+    {
+      "path": "schemas/review-result.schema.json",
+      "sha256": "0f40775e03e9c3f4e29dd03751f9812ac0cd285d52055809710b1b39b4433b7b"
+    },
+    {
+      "path": "schemas/run-manifest.schema.json",
+      "sha256": "a74ba11265b2a72275e84419ae645a8d522ef5a7d56dc70a71770d398b660255"
+    },
+    {
+      "path": "schemas/skill-invocation.schema.json",
+      "sha256": "035dbd2ea02aaaa344f4fbac92e3d9a575a7792107ab3727c26925ca1bea9d8c"
+    },
+    {
+      "path": "schemas/validation-result.schema.json",
+      "sha256": "95e127ff410b02c682cf29f02092cb351fe56b00bdf0def8c672c2d59bcde0ed"
+    },
+    {
+      "path": "schemas/writer-result.schema.json",
+      "sha256": "c06be44c9cbd6237fd183e9cf7cfd04649fe886ec3271a57461080e6e8820cac"
+    }
+  ]
+}

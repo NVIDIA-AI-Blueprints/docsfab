@@ -1,0 +1,7 @@
+.git
+.docsfab
+node_modules
+dist
+coverage
+.env
+*.log

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "kind": "docsfab-historical-evidence-public-view",
+  "sourceFileSha256": "3fd40a0c11a6491a1a0cb250adae88420e8f356c72d1620e102ba3fd6a29b556",
+  "projectedFileSha256": "1d37fa812ad91d0170d26f4133d24f9124bdbca14692b4876335668bcc48ac32",
+  "sourceRepositoryRedacted": true,
+  "neutralSourceKey": "archived-tpl-design-ia",
+  "preserved": [
+    "skill-content-digest",
+    "bundle-digest",
+    "recorded-version",
+    "historical-license-status",
+    "source-revision",
+    "inputs",
+    "outputs",
+    "tool-policy"
+  ]
+}

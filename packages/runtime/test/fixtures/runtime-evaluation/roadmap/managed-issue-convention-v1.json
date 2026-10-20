@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "titlePrefixes": {
+    "saga": "[DocsFab][Saga]",
+    "epic": "[DocsFab][Epic]",
+    "task": "[DocsFab][Task]",
+    "investigation": "[DocsFab][Investigation]"
+  },
+  "requiredLabels": {
+    "managed": "docsfab-roadmap::managed",
+    "gate": ["g0", "g1", "g2", "g3", "g4", "g5"],
+    "workflow": [
+      "release-documentation",
+      "documentation-health",
+      "content-repair",
+      "information-architecture",
+      "investigation"
+    ],
+    "priority": ["p0", "p1", "p2"],
+    "lifecycle": [
+      "filed",
+      "ready",
+      "selected",
+      "in-progress",
+      "in-review",
+      "verified",
+      "closed",
+      "blocked",
+      "duplicate",
+      "superseded",
+      "manually-detached"
+    ]
+  },
+  "templateSections": [
+    "Evidence",
+    "Tested revision",
+    "Rationale",
+    "Audience impact",
+    "Path scope",
+    "Workflow",
+    "Acceptance",
+    "Verification",
+    "Dependencies",
+    "Required human input"
+  ],
+  "humanOwnedFields": [
+    "title",
+    "descriptive-prose",
+    "assignees",
+    "milestone",
+    "due-date",
+    "weight",
+    "confidentiality",
+    "human-labels"
+  ],
+  "findingIdentity": {
+    "contract": "docsfab-managed-finding-identity-v1",
+    "included": ["source", "category", "affectedPaths", "semanticEvidenceKeys"],
+    "excluded": ["boundary", "revision", "evidenceDigest", "rank", "severity", "humanWording"],
+    "semanticEvidenceKey": "sha256(domain-separated-canonical-candidate-id-record)"
+  },
+  "priorStateDisposition": "migration-required-without-patch-or-next-state-authority",
+  "mutationMaterial": {
+    "create": "exact-issue-lifecycle-create-material-from-canonical-draft",
+    "update": "exact-issue-lifecycle-label-delta-from-reconciled-patch"
+  },
+  "reconciliationDispositions": [
+    "create",
+    "reuse",
+    "migration",
+    "duplicate",
+    "superseded",
+    "manually-detached",
+    "conflict"
+  ],
+  "nativeEpicRequired": false
+}

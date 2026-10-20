@@ -1,0 +1,39 @@
+# DocsFab operational limits owned by the `toolOutput` name prefix.
+# Registered in config/limits.yaml; every limit here is named `toolOutput.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: toolOutput.archiveCeilingBytes
+    value: 33554432
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_TOOL_OUTPUT_ARCHIVE_CEILING_BYTES
+    min: 1
+    max: 33554432
+    refusal: tool-output-archive-ceiling-bytes-bound
+    remediation: Narrow the tool request (offset and limit, path, pattern, or glob) so its result fits the per-call cap, or raise toolOutput.archiveCeilingBytes in config/limits/toolOutput.yaml.
+    rationale: Technical capacity. Bytes of original oversized tool results that one confined tool set holds for exact recall (#1043). The archive lives only as long as that tool set, which is one step attempt. The supported step workload fits. compositionExecution.maxToolCallsPerStep is 400 calls, and Pi truncates each read, grep, find, or ls result to 51,200 bytes, so the total is 20,480,000 bytes. The 32 MiB value leaves room for Pi notices and the quality tool. Identical results share one entry. A result that would pass the ceiling is refused by this name, and no older entry is evicted. The model then receives the capped excerpt without a handle. Override may only lower it.
+
+  - name: toolOutput.recallPageBytes
+    value: 32768
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_TOOL_OUTPUT_RECALL_PAGE_BYTES
+    min: 4
+    max: 32768
+    refusal: tool-output-recall-page-bytes-bound
+    remediation: Request a smaller byteLength and page through the archived result with byteOffset, or raise toolOutput.recallPageBytes in config/limits/toolOutput.yaml.
+    rationale: Presentation. The most bytes one docsfab_recall_tool_result call returns. It equals the default per-call output cap in harness/tool-output-cap.ts, so one recalled page costs no more context than one capped read. A larger byteLength is refused, not clamped. A page or request that cannot return one whole UTF-8 code point within that declared maximum is refused rather than returning more bytes than the maximum. Catalog min is 4, the longest UTF-8 code point, so every supported page setting can hold one code point. Override may only lower it.
+
+  - name: toolOutput.excerptTailBytes
+    value: 4096
+    unit: bytes
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_TOOL_OUTPUT_EXCERPT_TAIL_BYTES
+    min: 1
+    max: 4096
+    refusal: tool-output-excerpt-tail-bytes-bound
+    remediation: Set DOCSFAB_TOOL_OUTPUT_EXCERPT_TAIL_BYTES to an integer from 1 through 4096.
+    rationale: Presentation and an implementation choice. The most bytes of an archived result's tail shown after the capped head. It is one eighth of the default 32 KiB cap, so the head keeps most of the per-call budget, and it never takes more than half of that budget. The marker names the exact byte ranges returned, and the omitted middle is recallable by handle. Override may only lower it.

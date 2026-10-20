@@ -1,0 +1,84 @@
+schema_version: "1.0"
+library_version: "1.0.0"
+name: installation
+description: "Comprehensive installation guide with multiple methods"
+source_template: "templates/get-started/installation.md"
+
+structure:
+  headings:
+    h1:
+      required:
+        - pattern: "Install(ation)?( Guide)?"
+          description: "Main title"
+      max_count: 1
+    h2:
+      required:
+        - pattern: "Prerequisites"
+          description: "Prerequisites section"
+        - pattern: "Install(ation)? Methods?"
+          description: "Installation methods section"
+        - pattern: "(Install(ation)? )?Verification"
+          description: "Verification section"
+      optional:
+        - pattern: "Package Extras"
+          description: "Optional package extras"
+        - pattern: "Additional Setup"
+          description: "Post-installation setup"
+        - pattern: "Troubleshooting"
+          description: "Common issues and solutions"
+        - pattern: "Next Steps?"
+          description: "What to do after installation"
+    h3:
+      optional:
+        - pattern: "Quick Requirements"
+          description: "Quick requirements summary"
+        - pattern: "Development vs Production"
+          description: "Use case comparison"
+        - pattern: "Basic Import Test"
+          description: "Import verification"
+        - pattern: "GPU Availability Check"
+          description: "GPU verification"
+
+  elements:
+    - type: list-table
+      context: "within Prerequisites section"
+      required: false
+    - type: tab-set
+      context: "within Installation Methods section"
+      required: true
+    - type: dropdown
+      context: "within Troubleshooting section"
+      required: false
+    - type: grid
+      context: "within Next Steps section"
+      required: false
+
+  section_order:
+    - "Prerequisites"
+    - "Installation Methods"
+    - "Package Extras"
+    - "Additional Setup"
+    - "Installation Verification"
+    - "Troubleshooting"
+    - "Next Steps"
+
+severity:
+  missing_required_section: error
+  missing_optional_section: info
+  wrong_section_order: warning
+  missing_element: warning
+  duplicate_h1: error
+
+content:
+  installation_methods:
+    min_methods: 2
+    recommended_methods:
+      - "PyPI"
+      - "Source"
+      - "Container"
+  verification:
+    include_import_test: true
+    include_version_check: true
+
+
+

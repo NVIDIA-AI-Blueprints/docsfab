@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "kind": "docsfab-output-rule-fixture",
+  "code": "documentation-plan-source-write-target",
+  "location": "$.planBinding.sourceBindings[].sources[]",
+  "input": {
+    "workflow": "create-documentation",
+    "repositoryRevision": "c5fd828e37646da8d0488eb2e1b7fb5d231da788"
+  },
+  "reply": "{\"summary\":\"Write the routing task guide over the existing stub.\",\"planBinding\":{\"mode\":\"create\",\"pages\":[{\"path\":\"docs/routing/guide.md\",\"disposition\":\"create\"}],\"sourceBindings\":[{\"pagePath\":\"docs/routing/guide.md\",\"sources\":[\"docs/routing/guide.md@c5fd828e37646da8d0488eb2e1b7fb5d231da788\"]}]}}"
+}

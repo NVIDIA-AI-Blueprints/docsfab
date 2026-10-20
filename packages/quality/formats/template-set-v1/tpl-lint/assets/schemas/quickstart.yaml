@@ -1,0 +1,71 @@
+schema_version: "1.0"
+library_version: "1.0.0"
+name: quickstart
+description: "Fast-track getting started experience"
+source_template: "templates/get-started/quickstart.md"
+
+structure:
+  headings:
+    h1:
+      required:
+        - pattern: "Quickstart|Quick Start|Quick-Start"
+          description: "Main title"
+      max_count: 1
+    h2:
+      required:
+        - pattern: "Prerequisites"
+          description: "Prerequisites section"
+        - pattern: "(Quickstart )?Steps"
+          description: "Main steps section"
+        - pattern: "(What'?s )?Next( Steps)?\\??"
+          description: "Next steps section"
+      optional:
+        - pattern: "Minimal Code Example"
+          description: "Code example section"
+        - pattern: "Troubleshooting"
+          description: "Troubleshooting section"
+
+  elements:
+    - type: admonition
+      context: "within Prerequisites section"
+      required: false
+      attributes:
+        class: tip
+    - type: tab-set
+      context: "within Steps section"
+      required: true
+    - type: grid
+      context: "within What's Next section"
+      required: true
+      attributes:
+        min_items: 2
+        max_items: 6
+
+  section_order:
+    - "Prerequisites"
+    - "Quickstart Steps"
+    - "Minimal Code Example"
+    - "What's Next"
+
+severity:
+  missing_required_section: error
+  missing_optional_section: info
+  wrong_section_order: warning
+  missing_element: warning
+  duplicate_h1: error
+
+content:
+  intro:
+    max_sentences: 2
+    must_include:
+      - "time commitment"
+      - "outcome"
+  prerequisites:
+    format: "bullet list"
+    max_items: 5
+  steps:
+    format: "tab-set with numbered steps"
+    include_verification: true
+
+
+

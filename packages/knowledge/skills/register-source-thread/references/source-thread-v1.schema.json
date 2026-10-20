@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://docsfab.nvidia.internal/schemas/knowledge/source-thread-v1.schema.json",
+  "title": "DocsFab knowledge source thread v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "thread_id",
+    "origin",
+    "created_at",
+    "access",
+    "item_ids",
+    "relations",
+    "event_log",
+    "head_event_ids"
+  ],
+  "properties": {
+    "schema_version": {"const": "docsfab.knowledge.source-thread/v1"},
+    "thread_id": {"type": "string", "minLength": 1},
+    "origin": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "identity", "identity_state"],
+      "properties": {
+        "kind": {
+          "enum": [
+            "person",
+            "persona",
+            "organization",
+            "repository",
+            "runtime",
+            "artifact",
+            "observation-set",
+            "unknown"
+          ]
+        },
+        "identity": {"type": ["string", "null"]},
+        "identity_state": {
+          "enum": ["verified", "user-confirmed", "provisional", "disputed", "unknown"]
+        }
+      }
+    },
+    "created_at": {"type": "string", "format": "date-time"},
+    "access": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["classification"],
+      "properties": {
+        "classification": {"type": "string", "minLength": 1}
+      }
+    },
+    "item_ids": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "relations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kind", "target_thread_id"],
+        "properties": {
+          "kind": {"type": "string", "minLength": 1},
+          "target_thread_id": {"type": "string", "minLength": 1},
+          "notes": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "event_log": {"type": "string", "const": "events.jsonl"},
+    "head_event_ids": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "minItems": 1,
+      "uniqueItems": true
+    }
+  }
+}

@@ -1,0 +1,340 @@
+# Retry and replay policy for model output. Canonical source; generated
+# bindings are produced by `npm run generate:model-output` from
+# packages/runtime.
+#
+# #1130 lands the format and the one replay-mode statement its pilot family
+# uses. #1291 migrates step retry (config/retry-policy.ts), the replay-mode
+# categories and admitted steps (records/inference-replay.ts), provider-turn
+# replay (model/provider-turn-retry.ts), and the workflow capabilities that
+# decide replay decoding (cli/run/editorial-replay.ts). Numbers stay in
+# config/limits.yaml; this file names limits and formulas only.
+schemaVersion: 1
+kind: docsfab-retry-policy
+replayModes:
+  - id: read-only
+  - id: disabled-write-step
+  - id: reset-write-step
+    # Closes every retry hint of a family that declares this replay mode.
+    statement: >-
+      Before this retry the host restored every planned page to candidate 0,
+      so make the whole revision again from that content, then return
+      accounting that describes it.
+# Retry rules: every decision a step makes about an attempt. The decider is
+# `projectRetryRules` (packages/runtime/src/records/inference-retry-rule.ts);
+# it applies its own documented order, which this list does not encode. The writer records the rule's `id` on the attempt as
+# `retryRule`; every record validator re-derives it, and the operator surface
+# prints it as the attempt's retry-decision token. `budget` names the
+# config/limits.yaml count the rule spends or reports, or `none`. A re-ask
+# rule's `statement` is the host feedback the retry prompt carries. A
+# `concludeNow` rule also withdraws the tools on its retry once the read
+# evidence shows the model re-reading what it already has.
+retryRules:
+  - id: not-applicable
+    decision: not-applicable
+    budget: none
+    summary: there was no retryable condition to decide about
+    reason: >-
+      The attempt succeeded, or ended in a condition no retry addresses: an
+      exhausted context, a provider refusal or invalid request, or a
+      cancellation.
+    next: >-
+      Read the attempt's outcome and its failure classification; a retry
+      would not change it.
+  - id: declined-write-step
+    decision: declined
+    budget: none
+    summary: no safe replay applies to this write attempt
+    reason: >-
+      A write-capable step never replays a contract correction. A transport
+      retry also needs its separate budget and attempt-wide evidence that no
+      write executed; this attempt did not meet its replay requirements.
+    next: >-
+      Inspect the retry rule and its evidence. For a transport failure, if
+      either the separate budget or no-write proof is missing, resolve the
+      provider condition and start a new run.
+  - id: declined-reset-write-step
+    decision: declined
+    budget: none
+    summary: >-
+      the reset writer did not have an applicable retry category or budget
+    reason: >-
+      The host restores the revision writer's workspace before a retry. The
+      step replays malformed replies and transport failures covered by the
+      separate transport budget; this condition has no applicable allowance.
+    next: >-
+      Start a new run once the condition is resolved.
+  - id: declined-terminal-policy
+    decision: declined
+    budget: none
+    summary: this run's retry policy does not list that condition
+    reason: >-
+      DOCSFAB_RETRYABLE_CATEGORIES omits the condition, so the policy never
+      opened a retry window for it.
+    next: >-
+      Add the condition to DOCSFAB_RETRYABLE_CATEGORIES if it should be
+      retried, then start a new run.
+  - id: declined-host-refusal
+    decision: declined
+    budget: none
+    summary: the harness reported the occurrence as not retryable
+    reason: >-
+      The raising site classified the refusal terminal: a security,
+      authority, or host refusal, named by the attempt's rejection code when
+      it has one.
+    next: >-
+      Read the attempt's rejection code; a terminal refusal needs its cause
+      fixed, not a retry.
+  - id: declined-no-transport-allowance
+    decision: declined
+    budget: retry.maxTransportRetries
+    summary: this run allows no transport retry
+    reason: >-
+      The applied transport budget is 0, so a throttled or transport-failed
+      attempt stops the step on its first occurrence.
+    next: >-
+      Wait for the provider's rate limit or availability to recover, then
+      run the step again; DOCSFAB_READ_ONLY_MAX_TRANSPORT_RETRIES may raise
+      the budget.
+  - id: retried-transport
+    decision: retried
+    budget: retry.maxTransportRetries
+    summary: the provider throttled or failed in transport, so the step retried from its transport budget
+    reason: >-
+      A throttle or transport fault gave the contract no answer to judge, so
+      it does not spend the contract-correction count. A non-reset writer
+      needs attempt-wide no-write proof, and a reset writer restores its
+      workspace before replay.
+    next: >-
+      None while the step continues.
+  - id: exhausted-transport-count
+    decision: exhausted
+    budget: retry.maxTransportRetries
+    summary: the step's transport retries were already spent
+    reason: >-
+      Every transport retry the step allows had been scheduled.
+    next: >-
+      Wait for the provider's rate limit or availability to recover, then
+      run the step again.
+  - id: exhausted-transport-elapsed
+    decision: exhausted
+    budget: retry.transportMaxElapsedMs
+    summary: the step's transport wall clock was already spent
+    reason: >-
+      Another transport retry would pass the wall clock the step may spend in
+      transport-failed attempts and their waits.
+    next: >-
+      Wait for the provider's rate limit or availability to recover, then
+      run the step again.
+  - id: declined-no-allowance
+    decision: declined
+    budget: retry.maxRetries
+    summary: this run allowed no retries at all
+    reason: >-
+      DOCSFAB_READ_ONLY_MAX_RETRIES is 0, so no retry window opened.
+    next: >-
+      Raise DOCSFAB_READ_ONLY_MAX_RETRIES to let the step correct itself,
+      then start a new run.
+  - id: declined-no-timeout-allowance
+    decision: declined
+    budget: retry.maxTimeoutRetries
+    summary: this run allows no retry of a timed-out attempt
+    reason: >-
+      The applied timeout budget is 0, so a timed-out attempt is not
+      retried even though the read-only retry count has room.
+    next: >-
+      Raise DOCSFAB_READ_ONLY_MAX_TIMEOUT_RETRIES within the read-only retry
+      count, then start a new run.
+  - id: declined-no-cut-answer-allowance
+    decision: declined
+    budget: retry.maxCutAnswerRetries
+    summary: this run allows no retry of an answer cut at the output limit
+    reason: >-
+      The applied cut-answer budget is 0, so a cut or refused continued answer
+      is not retried even though the read-only retry count has room.
+    next: >-
+      Raise DOCSFAB_READ_ONLY_MAX_CUT_ANSWER_RETRIES within the read-only
+      retry count, or raise the model's output limit, then start a new run.
+  - id: exhausted-timeout-budget
+    decision: exhausted
+    budget: retry.maxTimeoutRetries
+    summary: the step's timeout retries were already spent
+    reason: >-
+      Every timeout retry the step allows had been scheduled, so another
+      timed-out attempt is not retried.
+    next: >-
+      Inspect the attempt's turns for a stall or a reading loop, then start a
+      new run; DOCSFAB_READ_ONLY_MAX_TIMEOUT_RETRIES may raise the budget
+      within the read-only retry count.
+  - id: declined-no-progress-allowance
+    decision: declined
+    budget: retry.maxNoProgressRetries
+    summary: this run allows no retry of an attempt stopped without progress
+    reason: >-
+      The applied no-progress budget is 0, so an attempt the host stopped for
+      re-reading unchanged content, or at the step's tool-call ceiling, is not
+      retried even though the read-only retry count has room.
+    next: >-
+      Raise DOCSFAB_READ_ONLY_MAX_NO_PROGRESS_RETRIES within the read-only
+      retry count, then start a new run.
+  - id: exhausted-no-progress-budget
+    decision: exhausted
+    budget: retry.maxNoProgressRetries
+    summary: the step's no-progress retries were already spent
+    reason: >-
+      Every no-progress retry the step allows had been scheduled, so another
+      attempt stopped for re-reading unchanged content, or at the step's
+      tool-call ceiling, is not retried.
+    next: >-
+      Record the model's read loop or ceiling stop as compatibility evidence,
+      then start a new run.
+  - id: exhausted-cut-answer-budget
+    decision: exhausted
+    budget: retry.maxCutAnswerRetries
+    summary: the step's cut-answer retries were already spent
+    reason: >-
+      Every cut-answer retry the step allows had been scheduled, so another
+      cut or refused continued answer is not retried.
+    next: >-
+      Record the model's runaway answers as compatibility evidence, or raise
+      its output limit, then start a new run.
+  - id: exhausted
+    decision: exhausted
+    budget: retry.maxRetries
+    summary: the retry allowance was already spent
+    reason: >-
+      Every retry the read-only retry count allows had been scheduled.
+    next: >-
+      Inspect the saved run's attempts, then start a new run.
+  - id: retried-contract-correction
+    decision: retried
+    budget: retry.maxRetries
+    summary: the reply broke a correctable contract rule, so the step re-asked with that rule
+    reason: >-
+      A model-correctable refusal is repaired by a bounded retry told the
+      rule; every check still applies to every attempt.
+    next: >-
+      None while the step continues.
+  - id: retried-unframed-reply
+    decision: retried
+    budget: retry.maxRetries
+    summary: the reply was not the JSON object the contract requires, so the step re-asked for only the object
+    reason: >-
+      A prose or array reply to a JSON contract is the model narrating instead
+      of answering; a retry told so can return the object, and the contract
+      still decides it.
+    statement: >-
+      Your previous reply was not the JSON object this step's contract
+      requires; it was prose, or it did not begin with that object. Return
+      only the JSON object as the whole reply, with no text before or after
+      it.
+    next: >-
+      None while the step continues.
+  - id: retried-blank-reply
+    decision: retried
+    budget: retry.maxRetries
+    summary: the reply was blank, so the step asked again
+    reason: >-
+      An empty reply carries no answer to correct; a fresh attempt is the
+      remedy.
+    next: >-
+      None while the step continues.
+  - id: retried-cut-answer
+    decision: retried
+    budget: retry.maxCutAnswerRetries
+    summary: the answer ran past the output limit, so the step re-asked for a shorter complete answer
+    reason: >-
+      A runaway answer is a degenerate sample, and a fresh one told to stay
+      inside the limit can succeed; the cut-answer budget bounds what each
+      re-paid output allowance costs.
+    statement: >-
+      Your previous answer ran past the output limit before it was complete,
+      or it was refused after the host completed it by continuation. Return
+      the complete answer again, well inside the output limit: keep every
+      required field, and shorten reasons and optional prose.
+    next: >-
+      None while the step continues.
+  - id: retried-attempt-deadline
+    decision: retried
+    budget: retry.maxTimeoutRetries
+    summary: the attempt reached its host time limit, so the step retried once
+    reason: >-
+      The host attempt timer fired before an answer; a retry told so can read
+      less and answer, and a stalled provider turn gets a fresh request.
+    statement: >-
+      Your previous attempt at this step reached its time limit before it
+      returned an answer. Read only what the answer needs, then return the
+      complete answer.
+    next: >-
+      None while the step continues.
+  - id: retried-no-progress
+    decision: retried
+    budget: retry.maxNoProgressRetries
+    concludeNow: true
+    summary: the attempt kept re-reading unchanged content, so the step retried once and asks for the answer at the first withheld re-read
+    reason: >-
+      A read loop repeats unless something changes. The retry withdraws the
+      tools at the first re-read the host withholds and asks for the answer
+      from what the model already read; the contract still decides the answer.
+    statement: >-
+      Your previous attempt at this step kept re-reading content it already
+      had and was stopped. Read only what the answer still needs. If you
+      re-read unchanged content again, the host withdraws the tools and asks
+      for the final answer from what you have already read.
+    next: >-
+      None while the step continues.
+  - id: retried-tool-call-ceiling
+    decision: retried
+    budget: retry.maxNoProgressRetries
+    concludeNow: true
+    summary: the attempt used the step's whole tool-call ceiling without answering, so the step retried once and asks for the answer at the first withheld re-read
+    reason: >-
+      An attempt that spends every tool call the step allows without
+      answering is a no-progress stop, recorded at the ceiling it reached. It
+      shares the no-progress retry: the retry withdraws the tools at the
+      first re-read the host withholds and asks for the answer from what the
+      model already read; the contract still decides the answer.
+    statement: >-
+      Your previous attempt at this step used every tool call the step allows
+      without answering and was stopped. Read only what the answer still
+      needs, and answer well before that limit. If you re-read unchanged
+      content, the host withdraws the tools and asks for the final answer
+      from what you have already read.
+    next: >-
+      None while the step continues.
+  - id: retried-provider-timeout
+    decision: retried
+    budget: retry.maxTimeoutRetries
+    summary: the provider request timed out, so the step retried once
+    reason: >-
+      A provider-side timeout is not the model's answer; a fresh request is
+      the remedy, within the timeout budget.
+    next: >-
+      None while the step continues.
+# Append-only: every retry-rule id ever recorded on an attempt. A rule can be
+# retired from `retryRules` only while its id stays here.
+recordedRetryRules:
+  - not-applicable
+  - declined-write-step
+  - declined-reset-write-step
+  - declined-terminal-policy
+  - declined-host-refusal
+  - declined-no-transport-allowance
+  - retried-transport
+  - exhausted-transport-count
+  - exhausted-transport-elapsed
+  - declined-no-allowance
+  - declined-no-timeout-allowance
+  - declined-no-cut-answer-allowance
+  - exhausted-timeout-budget
+  - exhausted-cut-answer-budget
+  - exhausted
+  - retried-contract-correction
+  - retried-unframed-reply
+  - retried-blank-reply
+  - retried-cut-answer
+  - retried-attempt-deadline
+  - retried-provider-timeout
+  - declined-no-progress-allowance
+  - exhausted-no-progress-budget
+  - retried-no-progress
+  - retried-tool-call-ceiling

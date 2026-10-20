@@ -1,0 +1,21 @@
+{
+  "schema_version": "docsfab.knowledge.source-thread/v1",
+  "thread_id": "SRC-EXAMPLE-A",
+  "origin": {
+    "kind": "artifact",
+    "identity": "synthetic example",
+    "identity_state": "verified"
+  },
+  "created_at": "2026-08-18T00:00:00Z",
+  "access": {
+    "classification": "test"
+  },
+  "item_ids": [
+    "ITEM-EXAMPLE-A-001"
+  ],
+  "relations": [],
+  "event_log": "events.jsonl",
+  "head_event_ids": [
+    "EVT-EXAMPLE-A-002"
+  ]
+}

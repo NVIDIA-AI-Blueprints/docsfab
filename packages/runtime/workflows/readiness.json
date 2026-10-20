@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "name": "readiness",
+  "title": "Agent-ready documentation check",
+  "outcome": "A prioritized assessment of whether agents can reliably use the repository as input.",
+  "contextPolicy": {
+    "schemaVersion": 1,
+    "steps": [
+      {
+        "stepId": "assess-readiness",
+        "required": true,
+        "level": "corpus",
+        "query": "expand",
+        "allowReadOnlyDegraded": true
+      }
+    ]
+  },
+  "steps": [
+    {
+      "id": "assess-readiness",
+      "title": "Assess repository readiness",
+      "kind": "inference",
+      "skill": "assess-documentation-readiness",
+      "mode": "read-only",
+      "prompt": "Analyze the repository as input to future documentation work. Answer the declared source-readiness questions using supplied governed search evidence when configured; never infer missing host evidence. Return its documentation state, discoverable sources and validation, information gaps, prioritized recommendations, and confidence with file evidence. Do not broaden this into public release-documentation readiness, do not claim absence beyond a validated bounded-search disposition, and do not modify files.",
+      "searchMode": "observe",
+      "searchPlan": "source-readiness"
+    }
+  ]
+}

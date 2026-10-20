@@ -1,0 +1,174 @@
+# DocsFab operational limits owned by the `requestIntent` name prefix.
+# Registered in config/limits.yaml; every limit here is named `requestIntent.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+#
+# Every proposal value also passes the shared contract-kit decode bounds
+# (`runtime.contract.*`), because the decoder walks it in strict mode first.
+limits:
+  - name: requestIntent.maxTargets
+    value: 32
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 32
+    refusal: request-intent-max-targets-bound
+    remediation: The interpretation proposed more targets than one request may name and is re-asked for fewer; split the request into smaller requests if the operator really means more pages.
+    rationale: Targets one request-intent proposal may name, across write and companion roles. The largest pilot shape (restructure-sdk-reference) splits one reference page into about four task pages plus its navigation file, five targets; thirty-two leaves more than six times that headroom for a section restructure while keeping per-target admission and the list shown back to the operator small.
+
+  - name: requestIntent.maxQuotes
+    value: 64
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 64
+    refusal: request-intent-max-quotes-bound
+    remediation: The interpretation quoted more passages than one request may carry and is re-asked for fewer; shorten or split the request if it really holds more clauses.
+    rationale: Quotes in one proposal, counted over every quote-bearing field together (targets, sources, preserve, exclusions, constraints, and the authority preference). Each quote is grounded against the whole instruction, so this caps grounding work at this count times the instruction length. The longest pilot request has about ten clauses; sixty-four is six times that.
+
+  - name: requestIntent.maxQuoteChars
+    value: 2000
+    unit: characters
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 2000
+    refusal: request-intent-max-quote-chars-bound
+    remediation: The interpretation quoted a passage longer than the bound and is re-asked for a shorter quote of the clause it relies on.
+    rationale: Length of one proposal quote in UTF-16 code units before normalization. A quote is a slice of the operator's instruction, and the pilot requests run from 172 to 326 characters; two thousand admits a quote of a whole multi-paragraph request with six times headroom over the longest one seen.
+
+  - name: requestIntent.maxQuestionChars
+    value: 1000
+    unit: characters
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 1000
+    refusal: request-intent-max-question-chars-bound
+    remediation: The interpretation wrote a question or consequence longer than the bound and is re-asked for a shorter one.
+    rationale: Length of the model's question text, and separately of its stated consequence, in UTF-16 code units. One decision question is read whole in a chat message; this matches projectDecision.fieldMaxChars, the precedent for one rendered decision field, so the full question with its options fits one message.
+
+  - name: requestIntent.maxQuestionOptions
+    value: 9
+    unit: options
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 9
+    refusal: request-intent-max-question-options-bound
+    remediation: The interpretation offered more options than one question may carry and is re-asked for fewer.
+    rationale: Options one question offers. Matches projectDecision.optionsMax, the precedent for a decision question a person answers with one ordinal; a single-digit ordinal keeps the reply one unambiguous token.
+
+  - name: requestIntent.maxOptionChars
+    value: 400
+    unit: characters
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 400
+    refusal: request-intent-max-option-chars-bound
+    remediation: The interpretation wrote an option longer than the bound and is re-asked for a shorter one.
+    rationale: Length of one question option in UTF-16 code units. Matches projectDecision.optionMaxChars, the precedent for a one-paragraph option a person reads on a phone.
+
+  - name: requestIntent.maxInventoryEntries
+    value: 20000
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 20000
+    refusal: request-intent-max-inventory-entries-bound
+    remediation: The host passed a larger repository inventory than request-intent admission accepts; reduce the tracked tree, or raise requestIntent.maxInventoryEntries together with repository.inventoryMaxEntries.
+    rationale: Inventory paths the host passes to admission so an inventory-chosen target can be checked by exact membership. The inventory comes from the tracked-tree inventory, so this equals repository.inventoryMaxEntries; a smaller value would refuse a repository the inventory already admits.
+
+  - name: requestIntent.maxNavigationEntries
+    value: 20000
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 20000
+    refusal: request-intent-max-navigation-entries-bound
+    remediation: The host passed more navigation and index files than request-intent admission accepts; reduce the tracked tree, or raise requestIntent.maxNavigationEntries together with requestIntent.maxInventoryEntries and repository.inventoryMaxEntries.
+    rationale: Existing navigation and index files the host passes so a companion target can be checked by exact membership. Every entry is a tracked file, so the set is never larger than the tracked-tree inventory; this equals requestIntent.maxInventoryEntries, and a smaller value would refuse a repository the inventory already admits.
+
+  - name: requestIntent.maxWriteScopeEntries
+    value: 64
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 64
+    refusal: request-intent-max-write-scope-entries-bound
+    remediation: The host passed more write-scope entries than request-intent admission accepts; pass fewer, broader documentation roots, or raise requestIntent.maxWriteScopeEntries.
+    rationale: Entries in the write scope the host passes, roots and single files together. The shipped producer passes the run's resolved documentation roots, at most thirty-two because .docsfab.json admits no more, plus one file entry for each target the roots do not govern (an update target chosen from the inventory, or a restructure target), at most requestIntent.maxTargets. Sixty-four is that sum, which a test pins, and caps the per-target scope comparison at that count.
+
+  - name: requestIntent.maxDocsRootEntries
+    value: 64
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 64
+    refusal: request-intent-max-docs-root-entries-bound
+    remediation: The host passed more documentation roots than request-intent admission accepts; pass fewer, broader roots, or raise requestIntent.maxDocsRootEntries.
+    rationale: Documentation roots the host passes, under which a create target must sit. The shipped producer passes the run's resolved documentation roots, at most thirty-two because .docsfab.json admits no more; the same sixty-four as requestIntent.maxWriteScopeEntries keeps the two lists interchangeable and caps the per-target root comparison at that count.
+
+  - name: requestIntent.maxPromptInventoryEntries
+    value: 2000
+    unit: count
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_REQUEST_INTENT_MAX_PROMPT_INVENTORY_ENTRIES
+    min: 1
+    max: 20000
+    refusal: request-intent-max-prompt-inventory-entries-bound
+    remediation: The repository holds more tracked documentation pages under the documentation roots than one interpretation prompt lists. Raise requestIntent.maxPromptInventoryEntries with DOCSFAB_REQUEST_INTENT_MAX_PROMPT_INVENTORY_ENTRIES or the host limits file, up to its maximum, or narrow documentationRoots in .docsfab.json. The larger prompt must still fit the bound model profile's input window, or the run stops with request-intent-model-input-budget before any model call.
+    rationale: Tracked Markdown and MDX pages under the documentation roots that one interpretation prompt lists, each with its path and title, so the model can choose an existing page instead of inventing one. Measured 2026-10-06, a FastMCP checkout holds 598 such pages under docs/ and a Kueue checkout 1014 under site/content; the DocsFab repository held 115 (2026-10-05). Two thousand is more than three times FastMCP and about twice Kueue. A measured FastMCP prompt costs about 23 estimated tokens per page, and a test pins that two thousand pages with 80-character paths and titles, under every root admission accepts, fit the smallest shipped model profile's input window. With every path and title at their bounds a page costs about 133 tokens, so near nine hundred such pages the prompt passes the smallest window; the interpretation then stops with request-intent-model-input-budget before any call instead of listing a subset, because a page left off the list would read as absent. The maximum equals requestIntent.maxInventoryEntries, since the prompt lists a subset of the tracked inventory; an operator may raise this limit up to it for a profile with a larger window.
+
+  - name: requestIntent.maxInventoryTitleChars
+    value: 120
+    unit: characters
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 120
+    refusal: request-intent-max-inventory-title-chars-bound
+    remediation: A page title longer than the bound is shown to the model cut with an ellipsis; the run record and the INTENT section count every cut title. Shorten the page title if the cut hides what the page is.
+    rationale: Characters of one page title or navigation label in the interpretation prompt inventory, in UTF-16 code units. A title identifies the page; the DocsFab documentation titles run under 80 characters. The interpretation cuts a longer title with an ellipsis and counts the cut on the run record instead of refusing, because the path, not the title, is what the model names and admission matches.
+
+  - name: requestIntent.maxInventoryPathChars
+    value: 256
+    unit: characters
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 256
+    refusal: request-intent-max-inventory-path-chars-bound
+    remediation: A tracked documentation page path is longer than the interpretation prompt lists; rename or move the page to a shorter path.
+    rationale: Characters of one page path in the interpretation prompt inventory, in UTF-16 code units. A path is what the model names and admission matches exactly, so it is never cut; the interpretation refuses a longer one. Measured 2026-10-05 the longest DocsFab documentation page path is 80 characters; 256 is three times that and bounds the prompt budget together with requestIntent.maxPromptInventoryEntries.
+
+  - name: requestIntent.interpretationTimeoutMs
+    value: 300000
+    unit: milliseconds
+    scope: per-run
+    warnAt: 0.8
+    override: DOCSFAB_REQUEST_INTENT_INTERPRETATION_TIMEOUT_MS
+    min: 1
+    max: 300000
+    refusal: request-intent-interpretation-timeout-ms-bound
+    remediation: The request interpretation did not finish before its deadline and the run stopped with request-intent-model-deadline before any step; retry once the provider responds, or check the provider with docsfab doctor --live.
+    rationale: Wall-clock deadline for the whole request interpretation, every model call and re-ask included, before the first workflow step. The effective deadline is the smaller of this and the bound composition's timeoutMs. One interpretation is one bounded prompt and at most retry.maxRetries re-asks; five minutes leaves each of the four calls more than a minute for a prompt near the smallest shipped input window. Override may only lower it.

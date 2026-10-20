@@ -1,0 +1,370 @@
+# Model-output rules for the derive-source-obligations ledger proposal
+# (step 2) that name the exact violated key or status pairing.
+# Canonical source; generated bindings are produced by
+# `npm run generate:model-output` from packages/runtime.
+#
+# The decoder is packages/runtime/src/workflow-execution/source-obligation.ts
+# (`decodeSourceObligationResponse`); the catalog owns the facts about each
+# rule, not its predicate. The step-2 response contract renders these
+# statements, so the contract sentence and the retry hint are one
+# declaration. The family's older codes (`unexpected-key-set`,
+# `invalid-locator`, and the rest) keep their hand-written rows until the
+# source-obligation and technical-review families migrate together, which may
+# fold them in here without renaming a recorded code.
+schemaVersion: 1
+kind: docsfab-output-rules
+family: source-obligation
+# Step 2 is read-only: a retry re-asks from the same repository.
+replay: read-only
+rules:
+  # Each location is the missing key's own path, so the recorded rejection
+  # names the key; the key sets come from
+  # packages/runtime/src/execution/response-contract-keys.js, which a test
+  # holds equal to these locations.
+  - code: ledger-key-missing
+    locations:
+      - $.completeness
+      - $.dimensions
+      - $.limitations
+      - $.dimensions[].dimension
+      - $.dimensions[].status
+      - $.dimensions[].reason
+      - $.dimensions[].sourceLocators
+      - $.dimensions[].obligations
+      - $.dimensions[].obligations[].dimension
+      - $.dimensions[].obligations[].sourceLocators
+      - $.dimensions[].obligations[].statement
+      - $.dimensions[].obligations[].evidenceClass
+      - $.dimensions[].obligations[].uncertainty
+    kind: shape
+    retry: model-correctable
+    reason: >-
+      The proposal left out a key its object requires; the model can write the
+      key, with an empty list where it has nothing to list.
+    statement: >-
+      Write exactly the keys the contract lists for each object, whatever a
+      dimension's status: the proposal has exactly completeness, dimensions,
+      and limitations; every dimensions entry has exactly its five keys
+      dimension, status, reason, sourceLocators, and obligations; every
+      obligation has dimension, sourceLocators, statement, evidenceClass, and
+      uncertainty. Write an empty list as [] rather than leaving its key out.
+    hint:
+      atLocation:
+        $.dimensions[].obligations: >-
+          A dimensions entry left out its obligations key. Every dimensions
+          entry has exactly dimension, status, reason, sourceLocators, and
+          obligations, whatever its status: an unverified or not-applicable
+          dimension still writes "obligations": [].
+        $.dimensions[].sourceLocators: >-
+          A dimensions entry left out its sourceLocators key. Every dimensions
+          entry has exactly dimension, status, reason, sourceLocators, and
+          obligations, whatever its status: an applicable or unverified
+          dimension still writes "sourceLocators": [].
+        $.limitations: >-
+          The proposal left out its limitations key. Write "limitations": []
+          when there is no limitation to state.
+    operator:
+      kind: correct
+      meaning: >-
+        The source-obligation step's proposal left out a required key, and
+        its bounded retries did not supply it.
+      next: >-
+        Inspect the saved run's attempts, then start a new run. If the model
+        keeps leaving the key out, record it as model-compatibility evidence.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/source-obligation/dimension-obligations-missing.json
+      - packages/runtime/test/fixtures/model-output/source-obligation/obligation-uncertainty-missing.json
+    docs: ledger-key-missing
+
+  - code: dimension-applicable-without-obligations
+    locations:
+      - $.dimensions[].obligations
+    kind: content
+    retry: model-correctable
+    reason: >-
+      A dimension marked applicable carried no obligation; the model can cite
+      one or mark the dimension unverified.
+    statement: >-
+      An "applicable" dimension needs at least one obligation in obligations.
+      When no source establishes an obligation for it, set its status to
+      "unverified", set obligations to [], and repeat its reason verbatim in
+      limitations.
+    operator:
+      kind: correct
+      meaning: >-
+        The source-obligation step marked a dimension applicable without any
+        obligation, and its bounded retries did not correct it.
+      next: >-
+        Inspect the saved run's attempts, then start a new run. If the model
+        keeps doing this, record it as model-compatibility evidence.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/source-obligation/applicable-without-obligations.json
+    docs: dimension-applicable-without-obligations
+
+  - code: dimension-applicable-with-locators
+    locations:
+      - $.dimensions[].sourceLocators
+    kind: content
+    retry: model-correctable
+    reason: >-
+      A dimension marked applicable cited sources on itself rather than on its
+      obligations; the model can move them.
+    statement: >-
+      An "applicable" dimension sets its own sourceLocators to []. Cite the
+      establishing source locators on each obligation instead.
+    operator:
+      kind: correct
+      meaning: >-
+        The source-obligation step cited sources on an applicable dimension
+        instead of on its obligations, and its bounded retries did not correct
+        it.
+      next: >-
+        Inspect the saved run's attempts, then start a new run. If the model
+        keeps doing this, record it as model-compatibility evidence.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/source-obligation/applicable-with-locators.json
+    docs: dimension-applicable-with-locators
+
+  - code: dimension-not-applicable-with-obligations
+    locations:
+      - $.dimensions[].obligations
+    kind: content
+    retry: model-correctable
+    reason: >-
+      A dimension marked not-applicable carried obligations; the model can mark
+      it applicable or drop the obligations.
+    statement: >-
+      A "not-applicable" dimension sets obligations to []. If the source does
+      establish obligations for it, set its status to "applicable" and its own
+      sourceLocators to [] instead.
+    operator:
+      kind: correct
+      meaning: >-
+        The source-obligation step listed obligations on a dimension it marked
+        not-applicable, and its bounded retries did not correct it.
+      next: >-
+        Inspect the saved run's attempts, then start a new run. If the model
+        keeps doing this, record it as model-compatibility evidence.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/source-obligation/not-applicable-with-obligations.json
+    docs: dimension-not-applicable-with-obligations
+
+  - code: dimension-unverified-with-obligations
+    locations:
+      - $.dimensions[].obligations
+    kind: content
+    retry: model-correctable
+    reason: >-
+      A dimension marked unverified carried obligations; the model can mark it
+      applicable or drop the obligations.
+    statement: >-
+      An "unverified" dimension sets obligations to []. If the source does
+      establish obligations for it, set its status to "applicable" and its own
+      sourceLocators to [] instead.
+    operator:
+      kind: correct
+      meaning: >-
+        The source-obligation step listed obligations on a dimension it marked
+        unverified, and its bounded retries did not correct it.
+      next: >-
+        Inspect the saved run's attempts, then start a new run. If the model
+        keeps doing this, record it as model-compatibility evidence.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/source-obligation/unverified-with-obligations.json
+    docs: dimension-unverified-with-obligations
+
+  - code: dimension-not-applicable-unsourced
+    locations:
+      - $.dimensions[].sourceLocators
+    kind: content
+    retry: model-correctable
+    reason: >-
+      A dimension marked not-applicable cited no source showing it does not
+      apply; the model can cite one or mark the dimension unverified.
+    statement: >-
+      A "not-applicable" dimension cites at least one specific source locator
+      in its own sourceLocators that shows why the dimension does not apply.
+      When no source shows that, set its status to "unverified" and repeat its
+      reason verbatim in limitations.
+    operator:
+      kind: correct
+      meaning: >-
+        The source-obligation step marked a dimension not-applicable without
+        citing a source that shows it, and its bounded retries did not correct
+        it.
+      next: >-
+        Inspect the saved run's attempts, then start a new run. If the model
+        keeps doing this, record it as model-compatibility evidence.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/source-obligation/not-applicable-unsourced.json
+    docs: dimension-not-applicable-unsourced
+
+  - code: dimension-unverified-reason-unlisted
+    locations:
+      - $.dimensions[].reason
+    kind: content
+    retry: model-correctable
+    reason: >-
+      An unverified dimension's reason was not one of the limitations; the
+      model can copy it there.
+    statement: >-
+      An "unverified" dimension's reason must exactly equal one entry of the
+      top-level limitations array, character for character. Add the reason to
+      limitations verbatim, or copy an existing limitation into reason.
+    operator:
+      kind: correct
+      meaning: >-
+        The source-obligation step left an unverified dimension's reason out
+        of its limitations, and its bounded retries did not correct it.
+      next: >-
+        Inspect the saved run's attempts, then start a new run. If the model
+        keeps doing this, record it as model-compatibility evidence.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/source-obligation/unverified-reason-unlisted.json
+    docs: dimension-unverified-reason-unlisted
+
+  # A bare path (or a path whose only suffix is this run's revision) names a
+  # whole file but no lines. While retries remain the reply is re-asked with
+  # this rule; on the final attempt the host removes the locator instead and
+  # says so in the dimension's limitation, so the run continues labeled.
+  - code: source-locator-span-missing
+    locations:
+      - $.dimensions[].sourceLocators[]
+      - $.dimensions[].obligations[].sourceLocators[]
+    kind: content
+    retry: model-correctable
+    reason: >-
+      The locator named a path but no lines; the model can cite the lines
+      that establish the claim, or cite another source.
+    statement: >-
+      Cite each source as path:start-end, where start and end are the first
+      and last [source-line N] numbers the read tool showed for the lines that
+      establish the claim, or as path:line for one line. A bare path names no
+      lines and is not a locator. To cite a whole short file, give its full
+      range: start is its first line and end is the last [source-line N]
+      number the read tool showed for it.
+    operator:
+      kind: correct
+      meaning: >-
+        The source-obligation step cited a path without a line range, and its
+        bounded retries did not add one; the host removed the locator on the
+        final attempt and labeled the dimension.
+      next: >-
+        Inspect the saved run's derive-source-obligations attempts and the
+        ledger's limitations. If the model keeps citing whole files, record it
+        as model-compatibility evidence.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/source-obligation/locator-span-missing.json
+    docs: source-locator-span-missing
+
+  # A page the run writes is never its own original source, in either CREATE
+  # path: the plan admission rule documentation-plan-source-write-target, and
+  # this rule at step 2. Every other path outside the bound sources stays the
+  # pinned authority refusal unauthorized-source.
+  - code: write-target-source
+    locations:
+      - $.dimensions[].sourceLocators[]
+      - $.dimensions[].obligations[].sourceLocators[]
+    kind: content
+    retry: model-correctable
+    reason: >-
+      The locator named a page the run writes, which is the update's base and
+      not evidence for it; the model can cite the bound sources instead.
+    statement: >-
+      Never cite a page this run writes, including a page that already exists
+      and is being updated: its current content is the base the update keeps,
+      not a source. Cite only the bound sources.
+    operator:
+      kind: correct
+      meaning: >-
+        The source-obligation step cited a page the run writes as source
+        evidence, and its bounded retries did not stop citing it.
+      next: >-
+        Inspect the saved run's derive-source-obligations attempts; the
+        attempt's rejectionSubject names the page. If the model keeps citing
+        the page it updates, record it as model-compatibility evidence.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/source-obligation/write-target-source.json
+    docs: write-target-source
+
+  - code: source-locator-unobservable
+    locations:
+      - $.dimensions[].sourceLocators[]
+      - $.dimensions[].obligations[].sourceLocators[]
+    kind: content
+    retry: model-correctable
+    reason: >-
+      An UPDATE citation names a file the host cannot read as source evidence;
+      the model can cite a readable tracked regular file instead.
+    statement: >-
+      In update-documentation, cite only tracked regular repository files
+      readable within the host's source-file bound. Use the repository read
+      tool to verify each cited file before submitting. An absent, untracked,
+      symbolic-link, or oversized file cannot establish an obligation.
+      Correct the citation or explicitly mark unsupported dimensions unverified
+      with their reasons in limitations; do not present unreadable sources as evidence.
+    operator:
+      kind: correct
+      meaning: >-
+        The update's source-obligation proposal cited a file the host cannot
+        read, and its bounded retries did not correct the citation.
+      next: >-
+        Inspect the saved derive-source-obligations attempts and rejection
+        location. A host-known path is recorded in rejectionSubject; other
+        paths are withheld. Check cited files with the repository read tool
+        before starting a new run.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/source-obligation/locator-unobservable.json
+    docs: source-locator-unobservable
+
+  - code: source-proposal-required
+    locations:
+      - $.dimensions[].sourceLocators[]
+      - $.dimensions[].obligations[].sourceLocators[]
+    kind: content
+    retry: model-correctable
+    reason: >-
+      A CREATE citation named a tracked path outside the plan-bound sources
+      without declaring it for host admission.
+    statement: >-
+      For CREATE, a source outside the plan-bound set may be used only after
+      the host admits a sourceProposals entry naming its repository-relative
+      path and a short reason. Declare the proposal, and keep the citation
+      only if the host admits it; a model declaration alone grants no source
+      authority.
+    operator:
+      kind: correct
+      meaning: >-
+        The source-obligation step cited a source outside the plan without
+        requesting host admission, and its bounded retries did not correct it.
+      next: >-
+        Inspect the saved run's derive-source-obligations attempts. The
+        attempt rejectionSubject names the proposed source path.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/source-obligation/source-proposal-required.json
+    docs: source-proposal-required
+
+  - code: source-proposal-refused
+    locations:
+      - $.sourceProposals[].path
+    kind: content
+    retry: model-correctable
+    reason: >-
+      The host refused a CREATE source proposal because it was not eligible
+      for admission under the run's tracked-file, write-target, or count rules.
+    statement: >-
+      The host checks every source proposal against the run's tracked regular
+      files, write targets, and configured unique-addition limit. Remove a
+      refused proposal or replace it with an eligible tracked regular file;
+      do not cite or claim authority for a refused path.
+    operator:
+      kind: correct
+      meaning: >-
+        The host refused at least one CREATE source proposal, and its bounded
+        retries did not provide an eligible replacement.
+      next: >-
+        Inspect the saved run's source-proposal admissions for the host
+        refusal code, then start a new run if the tracked workspace changed.
+    fixtures:
+      - packages/runtime/test/fixtures/model-output/source-obligation/source-proposal-refused.json
+    docs: source-proposal-refused

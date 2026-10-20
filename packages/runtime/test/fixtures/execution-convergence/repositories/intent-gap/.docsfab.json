@@ -1,0 +1,14 @@
+{
+  "documentationRoots": ["docs"],
+  "gitlab": {
+    "defaultBranch": "main",
+    "remote": "origin"
+  },
+  "provider": {
+    "configuration": "host"
+  },
+  "schemaVersion": 1,
+  "storage": {
+    "scope": "user-private"
+  }
+}

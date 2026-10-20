@@ -1,0 +1,57 @@
+{
+  "description": "Divergent merged_at and updated_at values for the reported 2026-09-14 Los Angeles day. Selection reads merged_at only.",
+  "window": {
+    "timeZone": "America/Los_Angeles",
+    "startDate": "2026-09-14",
+    "endDate": "2026-09-14"
+  },
+  "targetBranch": "main",
+  "pages": [
+    {
+      "page": 1,
+      "nextPage": null,
+      "truncated": false,
+      "items": [
+        {
+          "iid": 6501,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/6501",
+          "title": "Merged inside the window and edited a week later",
+          "description": "Selected: merged_at is inside, updated_at is outside.",
+          "state": "merged",
+          "mergedAt": "2026-09-14T11:00:00.000Z",
+          "updatedAt": "2026-09-21T09:00:00.000Z",
+          "targetBranch": "main",
+          "sourceBranch": "feature/edited-later",
+          "mergeCommitSha": "65a1c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        },
+        {
+          "iid": 6502,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/6502",
+          "title": "Merged days earlier and relabelled inside the window",
+          "description": "Excluded: updated_at is inside, merged_at is not.",
+          "state": "merged",
+          "mergedAt": "2026-09-10T11:00:00.000Z",
+          "updatedAt": "2026-09-14T12:00:00.000Z",
+          "targetBranch": "main",
+          "sourceBranch": "feature/relabelled-later",
+          "mergeCommitSha": "65a2c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        },
+        {
+          "iid": 6503,
+          "url": "https://gitlab.example.test/team/project/-/merge_requests/6503",
+          "title": "Report a merged state with no merged_at at all",
+          "description": "Unusable: updated_at sits inside the window but is never a fallback.",
+          "state": "merged",
+          "mergedAt": null,
+          "updatedAt": "2026-09-14T12:00:00.000Z",
+          "targetBranch": "main",
+          "sourceBranch": "feature/missing-merged-at",
+          "mergeCommitSha": "65a3c3d4e5b6978899aabbccddeeff0011223344",
+          "squashCommitSha": null
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1165 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`model profile inspection > isolates policy and judge slots before network I/O > judge 1`] = `
+{
+  "context": {
+    "state": "known",
+    "value": 8192,
+  },
+  "disposition": "review-required",
+  "input": {
+    "reason": "no-proposal",
+    "state": "unknown",
+  },
+  "purpose": "judge",
+  "reasons": [
+    "complementary-source-selected",
+    "exact-qualified-model-alias",
+    "fallback-metadata-unknown",
+    "legacy-config-is-not-approval",
+    "runtime-boundary-selected",
+    "source-observations-retained",
+    "unknown-capability-preserved",
+    "unknown-pricing-preserved",
+    "verified-approval-unavailable",
+  ],
+  "remediation": [
+    "Do not treat unknown or stale metadata as an 8192-token DocsFab ceiling. Unique composition matches use installed windows; unmatched selections leave the provider as the ceiling.",
+    "Resolve field-level catalog disagreement before preparing an approval artifact.",
+    "Complete the governed proposal and approval chain; legacy environment configuration is not approval.",
+  ],
+  "runtime": {
+    "configuredApprovalClaim": "absent",
+    "configuredClaim": {
+      "approvedSourceSha256": null,
+      "effectiveDate": null,
+      "freshness": "unknown",
+      "reviewAfter": null,
+      "verification": "not-performed",
+    },
+    "effectiveLimitReason": "metadata-unknown",
+    "fallbackApplied": true,
+    "profileEvidence": {
+      "apiFormat": "chat_completions",
+      "compatibility": {
+        "apiFormats": [
+          "chat_completions",
+        ],
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+      },
+      "configuredContextWindow": 128000,
+      "configuredMaxInputTokens": 128000,
+      "configuredMaxOutputTokens": 16384,
+      "costPerMillionTokens": {
+        "cacheRead": null,
+        "cacheWrite": null,
+        "input": null,
+        "output": null,
+      },
+      "effectiveContextWindow": 8192,
+      "effectiveLimitReason": "metadata-unknown",
+      "effectiveMaxInputTokens": 8192,
+      "effectiveMaxOutputTokens": 4096,
+      "input": [
+        "text",
+      ],
+      "pricing": "unknown",
+      "reasoning": false,
+      "requestPolicy": {
+        "minimumOutputTokens": 16,
+        "reservedContextTokens": 4096,
+      },
+      "schemaVersion": 2,
+      "sha256": "f895f70cd6400a3073004a6c32588da1c87208d2342a7b255a5f529f10da4895",
+      "status": "unknown",
+    },
+    "profileStatus": "unknown",
+    "verifiedApproval": "unknown",
+  },
+  "sources": [
+    {
+      "code": null,
+      "source": "inference",
+      "status": "observed",
+    },
+    {
+      "code": null,
+      "source": "metadata",
+      "status": "observed",
+    },
+  ],
+}
+`;
+
+exports[`model profile inspection > keeps stale configuration conservative and unapproved > stale 1`] = `
+{
+  "context": {
+    "state": "known",
+    "value": 8192,
+  },
+  "disposition": null,
+  "input": {
+    "reason": "no-proposal",
+    "state": "unknown",
+  },
+  "purpose": "policy",
+  "reasons": [
+    "catalog-not-requested",
+    "fallback-metadata-stale",
+    "legacy-config-is-not-approval",
+    "verified-approval-unavailable",
+  ],
+  "remediation": [
+    "Run \`docsfab profile inspect --catalog\` for explicit read-only provider discovery.",
+    "Do not treat unknown or stale metadata as an 8192-token DocsFab ceiling. Unique composition matches use installed windows; unmatched selections leave the provider as the ceiling.",
+    "Complete the governed proposal and approval chain; legacy environment configuration is not approval.",
+  ],
+  "runtime": {
+    "configuredApprovalClaim": "present",
+    "configuredClaim": {
+      "approvedSourceSha256": "95e91b1b8546acd1afb8c433fd0eef36537c923b9f4e041ffbb4ec5d5dddbe5d",
+      "effectiveDate": "2020-01-01",
+      "freshness": "stale",
+      "reviewAfter": "2020-02-01",
+      "verification": "not-performed",
+    },
+    "effectiveLimitReason": "metadata-stale",
+    "fallbackApplied": true,
+    "profileEvidence": {
+      "apiFormat": "chat_completions",
+      "approvedSourceSha256": "95e91b1b8546acd1afb8c433fd0eef36537c923b9f4e041ffbb4ec5d5dddbe5d",
+      "compatibility": {
+        "apiFormats": [
+          "chat_completions",
+        ],
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+      },
+      "configuredContextWindow": 128000,
+      "configuredMaxInputTokens": 128000,
+      "configuredMaxOutputTokens": 16384,
+      "costPerMillionTokens": {
+        "cacheRead": null,
+        "cacheWrite": null,
+        "input": null,
+        "output": null,
+      },
+      "effectiveContextWindow": 8192,
+      "effectiveDate": "2020-01-01",
+      "effectiveLimitReason": "metadata-stale",
+      "effectiveMaxInputTokens": 8192,
+      "effectiveMaxOutputTokens": 4096,
+      "input": [
+        "text",
+      ],
+      "pricing": "unknown",
+      "reasoning": false,
+      "requestPolicy": {
+        "minimumOutputTokens": 16,
+        "reservedContextTokens": 4096,
+      },
+      "reviewAfter": "2020-02-01",
+      "schemaVersion": 2,
+      "sha256": "414cb099dfb5b4c619d3fcf172a0788fb561da39556dcd23c457376cf625fa07",
+      "status": "stale",
+    },
+    "profileStatus": "stale",
+    "verifiedApproval": "unknown",
+  },
+  "sources": [
+    {
+      "code": null,
+      "source": "inference",
+      "status": "not-requested",
+    },
+    {
+      "code": null,
+      "source": "metadata",
+      "status": "not-requested",
+    },
+  ],
+}
+`;
+
+exports[`model profile inspection > keeps unknown configuration conservative and unapproved > unknown 1`] = `
+{
+  "context": {
+    "state": "known",
+    "value": 8192,
+  },
+  "disposition": null,
+  "input": {
+    "reason": "no-proposal",
+    "state": "unknown",
+  },
+  "purpose": "policy",
+  "reasons": [
+    "catalog-not-requested",
+    "fallback-metadata-unknown",
+    "legacy-config-is-not-approval",
+    "verified-approval-unavailable",
+  ],
+  "remediation": [
+    "Run \`docsfab profile inspect --catalog\` for explicit read-only provider discovery.",
+    "Do not treat unknown or stale metadata as an 8192-token DocsFab ceiling. Unique composition matches use installed windows; unmatched selections leave the provider as the ceiling.",
+    "Complete the governed proposal and approval chain; legacy environment configuration is not approval.",
+  ],
+  "runtime": {
+    "configuredApprovalClaim": "absent",
+    "configuredClaim": {
+      "approvedSourceSha256": null,
+      "effectiveDate": null,
+      "freshness": "unknown",
+      "reviewAfter": null,
+      "verification": "not-performed",
+    },
+    "effectiveLimitReason": "metadata-unknown",
+    "fallbackApplied": true,
+    "profileEvidence": {
+      "apiFormat": "chat_completions",
+      "compatibility": {
+        "apiFormats": [
+          "chat_completions",
+        ],
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+      },
+      "configuredContextWindow": 128000,
+      "configuredMaxInputTokens": 128000,
+      "configuredMaxOutputTokens": 16384,
+      "costPerMillionTokens": {
+        "cacheRead": null,
+        "cacheWrite": null,
+        "input": null,
+        "output": null,
+      },
+      "effectiveContextWindow": 8192,
+      "effectiveLimitReason": "metadata-unknown",
+      "effectiveMaxInputTokens": 8192,
+      "effectiveMaxOutputTokens": 4096,
+      "input": [
+        "text",
+      ],
+      "pricing": "unknown",
+      "reasoning": false,
+      "requestPolicy": {
+        "minimumOutputTokens": 16,
+        "reservedContextTokens": 4096,
+      },
+      "schemaVersion": 2,
+      "sha256": "e353804bc7e9af9563ee6f386e875c2eade25cf3f9a9ee376a64f43d8b72817d",
+      "status": "unknown",
+    },
+    "profileStatus": "unknown",
+    "verifiedApproval": "unknown",
+  },
+  "sources": [
+    {
+      "code": null,
+      "source": "inference",
+      "status": "not-requested",
+    },
+    {
+      "code": null,
+      "source": "metadata",
+      "status": "not-requested",
+    },
+  ],
+}
+`;
+
+exports[`model profile inspection > produces deterministic human and canonical JSON snapshots for current configuration 2`] = `
+"{
+  "catalog": {
+    "reconciliation": null,
+    "requested": false,
+    "sources": [
+      {
+        "code": null,
+        "evidence": null,
+        "source": "inference",
+        "status": "not-requested"
+      },
+      {
+        "code": null,
+        "evidence": null,
+        "source": "metadata",
+        "status": "not-requested"
+      }
+    ]
+  },
+  "fields": [
+    {
+      "approved": {
+        "reason": "no-verified-approval-evidence",
+        "state": "unknown"
+      },
+      "configured": {
+        "reason": "not-configured",
+        "state": "unknown"
+      },
+      "drift": {
+        "reasons": [
+          "no-authoritative-value",
+          "approval-unverified"
+        ],
+        "status": "unknown"
+      },
+      "effective": {
+        "reason": "not-configured",
+        "state": "unknown"
+      },
+      "field": "activity",
+      "observed": [],
+      "proposed": {
+        "reason": "no-proposal",
+        "state": "unknown"
+      }
+    },
+    {
+      "approved": {
+        "reason": "no-verified-approval-evidence",
+        "state": "unknown"
+      },
+      "configured": {
+        "state": "known",
+        "value": [
+          "chat_completions"
+        ]
+      },
+      "drift": {
+        "reasons": [
+          "approval-unverified"
+        ],
+        "status": "aligned"
+      },
+      "effective": {
+        "state": "known",
+        "value": [
+          "chat_completions"
+        ]
+      },
+      "field": "apiFormats",
+      "observed": [],
+      "proposed": {
+        "reason": "no-proposal",
+        "state": "unknown"
+      }
+    },
+    {
+      "approved": {
+        "reason": "no-verified-approval-evidence",
+        "state": "unknown"
+      },
+      "configured": {
+        "reason": "not-configured",
+        "state": "unknown"
+      },
+      "drift": {
+        "reasons": [
+          "no-authoritative-value",
+          "approval-unverified"
+        ],
+        "status": "unknown"
+      },
+      "effective": {
+        "reason": "not-configured",
+        "state": "unknown"
+      },
+      "field": "billingInterpretation",
+      "observed": [],
+      "proposed": {
+        "reason": "no-proposal",
+        "state": "unknown"
+      }
+    },
+    {
+      "approved": {
+        "reason": "no-verified-approval-evidence",
+        "state": "unknown"
+      },
+      "configured": {
+        "state": "known",
+        "value": {
+          "amountMicrounits": 500000,
+          "currency": "USD",
+          "unit": "per-million-tokens"
+        }
+      },
+      "drift": {
+        "reasons": [
+          "approval-unverified"
+        ],
+        "status": "aligned"
+      },
+      "effective": {
+        "state": "known",
+        "value": {
+          "amountMicrounits": 500000,
+          "currency": "USD",
+          "unit": "per-million-tokens"
+        }
+      },
+      "field": "cacheReadPrice",
+      "observed": [],
+      "proposed": {
+        "reason": "no-proposal",
+        "state": "unknown"
+      }
+    },
+    {
+      "approved": {
+        "reason": "no-verified-approval-evidence",
+        "state": "unknown"
+      },
+      "configured": {
+        "reason": "not-configured",
+        "state": "unknown"
+      },
+      "drift": {
+        "reasons": [
+          "no-authoritative-value",
+          "approval-unverified"
+        ],
+        "status": "unknown"
+      },
+      "effective": {
+        "reason": "not-configured",
+        "state": "unknown"
+      },
+      "field": "cacheWritePrice",
+      "observed": [],
+      "proposed": {
+        "reason": "no-proposal",
+        "state": "unknown"
+      }
+    },
+    {
+      "approved": {
+        "reason": "no-verified-approval-evidence",
+        "state": "unknown"
+      },
+      "configured": {
+        "state": "known",
+        "value": 128000
+      },
+      "drift": {
+        "reasons": [
+          "approval-unverified"
+        ],
+        "status": "aligned"
+      },
+      "effective": {
+        "state": "known",
+        "value": 128000
+      },
+      "field": "contextWindow",
+      "observed": [],
+      "proposed": {
+        "reason": "no-proposal",
+        "state": "unknown"
+      }
+    },
+    {
+      "approved": {
+        "reason": "no-verified-approval-evidence",
+        "state": "unknown"
+      },
+      "configured": {
+        "state": "known",
+        "value": [
+          "image",
+          "text"
+        ]
+      },
+      "drift": {
+        "reasons": [
+          "approval-unverified"
+        ],
+        "status": "aligned"
+      },
+      "effective": {
+        "state": "known",
+        "value": [
+          "image",
+          "text"
+        ]
+      },
+      "field": "inputModalities",
+      "observed": [],
+      "proposed": {
+        "reason": "no-proposal",
+        "state": "unknown"
+      }
+    },
+    {
+      "approved": {
+        "reason": "no-verified-approval-evidence",
+        "state": "unknown"
+      },
+      "configured": {
+        "state": "known",
+        "value": {
+          "amountMicrounits": 1250000,
+          "currency": "USD",
+          "unit": "per-million-tokens"
+        }
+      },
+      "drift": {
+        "reasons": [
+          "approval-unverified"
+        ],
+        "status": "aligned"
+      },
+      "effective": {
+        "state": "known",
+        "value": {
+          "amountMicrounits": 1250000,
+          "currency": "USD",
+          "unit": "per-million-tokens"
+        }
+      },
+      "field": "inputPrice",
+      "observed": [],
+      "proposed": {
+        "reason": "no-proposal",
+        "state": "unknown"
+      }
+    },
+    {
+      "approved": {
+        "reason": "no-verified-approval-evidence",
+        "state": "unknown"
+      },
+      "configured": {
+        "reason": "not-configured",
+        "state": "unknown"
+      },
+      "drift": {
+        "reasons": [
+          "no-authoritative-value",
+          "approval-unverified"
+        ],
+        "status": "unknown"
+      },
+      "effective": {
+        "reason": "not-configured",
+        "state": "unknown"
+      },
+      "field": "limitSemantics",
+      "observed": [],
+      "proposed": {
+        "reason": "no-proposal",
+        "state": "unknown"
+      }
+    },
+    {
+      "approved": {
+        "reason": "no-verified-approval-evidence",
+        "state": "unknown"
+      },
+      "configured": {
+        "state": "known",
+        "value": 128000
+      },
+      "drift": {
+        "reasons": [
+          "approval-unverified"
+        ],
+        "status": "aligned"
+      },
+      "effective": {
+        "state": "known",
+        "value": 128000
+      },
+      "field": "maxInputTokens",
+      "observed": [],
+      "proposed": {
+        "reason": "no-proposal",
+        "state": "unknown"
+      }
+    },
+    {
+      "approved": {
+        "reason": "no-verified-approval-evidence",
+        "state": "unknown"
+      },
+      "configured": {
+        "state": "known",
+        "value": 16384
+      },
+      "drift": {
+        "reasons": [
+          "approval-unverified"
+        ],
+        "status": "aligned"
+      },
+      "effective": {
+        "state": "known",
+        "value": 16384
+      },
+      "field": "maxOutputTokens",
+      "observed": [],
+      "proposed": {
+        "reason": "no-proposal",
+        "state": "unknown"
+      }
+    },
+    {
+      "approved": {
+        "reason": "no-verified-approval-evidence",
+        "state": "unknown"
+      },
+      "configured": {
+        "state": "known",
+        "value": "example/model"
+      },
+      "drift": {
+        "reasons": [
+          "approval-unverified"
+        ],
+        "status": "aligned"
+      },
+      "effective": {
+        "state": "known",
+        "value": "example/model"
+      },
+      "field": "modelId",
+      "observed": [],
+      "proposed": {
+        "reason": "no-proposal",
+        "state": "unknown"
+      }
+    },
+    {
+      "approved": {
+        "reason": "no-verified-approval-evidence",
+        "state": "unknown"
+      },
+      "configured": {
+        "reason": "sensitive-boundary-redacted",
+        "state": "redacted"
+      },
+      "drift": {
+        "reasons": [
+          "no-authoritative-value",
+          "approval-unverified"
+        ],
+        "status": "unknown"
+      },
+      "effective": {
+        "reason": "sensitive-boundary-redacted",
+        "state": "redacted"
+      },
+      "field": "origin",
+      "observed": [],
+      "proposed": {
+        "reason": "sensitive-boundary-redacted",
+        "state": "redacted"
+      }
+    },
+    {
+      "approved": {
+        "reason": "no-verified-approval-evidence",
+        "state": "unknown"
+      },
+      "configured": {
+        "state": "known",
+        "value": {
+          "amountMicrounits": 10000000,
+          "currency": "USD",
+          "unit": "per-million-tokens"
+        }
+      },
+      "drift": {
+        "reasons": [
+          "approval-unverified"
+        ],
+        "status": "aligned"
+      },
+      "effective": {
+        "state": "known",
+        "value": {
+          "amountMicrounits": 10000000,
+          "currency": "USD",
+          "unit": "per-million-tokens"
+        }
+      },
+      "field": "outputPrice",
+      "observed": [],
+      "proposed": {
+        "reason": "no-proposal",
+        "state": "unknown"
+      }
+    },
+    {
+      "approved": {
+        "reason": "no-verified-approval-evidence",
+        "state": "unknown"
+      },
+      "configured": {
+        "reason": "not-configured",
+        "state": "unknown"
+      },
+      "drift": {
+        "reasons": [
+          "no-authoritative-value",
+          "approval-unverified"
+        ],
+        "status": "unknown"
+      },
+      "effective": {
+        "reason": "not-configured",
+        "state": "unknown"
+      },
+      "field": "providerCreatedAt",
+      "observed": [],
+      "proposed": {
+        "reason": "no-proposal",
+        "state": "unknown"
+      }
+    },
+    {
+      "approved": {
+        "reason": "no-verified-approval-evidence",
+        "state": "unknown"
+      },
+      "configured": {
+        "state": "known",
+        "value": "test-provider"
+      },
+      "drift": {
+        "reasons": [
+          "approval-unverified"
+        ],
+        "status": "aligned"
+      },
+      "effective": {
+        "state": "known",
+        "value": "test-provider"
+      },
+      "field": "providerId",
+      "observed": [],
+      "proposed": {
+        "reason": "no-proposal",
+        "state": "unknown"
+      }
+    },
+    {
+      "approved": {
+        "reason": "no-verified-approval-evidence",
+        "state": "unknown"
+      },
+      "configured": {
+        "reason": "not-configured",
+        "state": "unknown"
+      },
+      "drift": {
+        "reasons": [
+          "no-authoritative-value",
+          "approval-unverified"
+        ],
+        "status": "unknown"
+      },
+      "effective": {
+        "reason": "not-configured",
+        "state": "unknown"
+      },
+      "field": "providerUpdatedAt",
+      "observed": [],
+      "proposed": {
+        "reason": "no-proposal",
+        "state": "unknown"
+      }
+    },
+    {
+      "approved": {
+        "reason": "no-verified-approval-evidence",
+        "state": "unknown"
+      },
+      "configured": {
+        "state": "known",
+        "value": true
+      },
+      "drift": {
+        "reasons": [
+          "approval-unverified"
+        ],
+        "status": "aligned"
+      },
+      "effective": {
+        "state": "known",
+        "value": true
+      },
+      "field": "reasoning",
+      "observed": [],
+      "proposed": {
+        "reason": "no-proposal",
+        "state": "unknown"
+      }
+    },
+    {
+      "approved": {
+        "reason": "no-verified-approval-evidence",
+        "state": "unknown"
+      },
+      "configured": {
+        "state": "known",
+        "value": true
+      },
+      "drift": {
+        "reasons": [
+          "approval-unverified"
+        ],
+        "status": "aligned"
+      },
+      "effective": {
+        "state": "known",
+        "value": true
+      },
+      "field": "supportsDeveloperRole",
+      "observed": [],
+      "proposed": {
+        "reason": "no-proposal",
+        "state": "unknown"
+      }
+    },
+    {
+      "approved": {
+        "reason": "no-verified-approval-evidence",
+        "state": "unknown"
+      },
+      "configured": {
+        "state": "known",
+        "value": true
+      },
+      "drift": {
+        "reasons": [
+          "approval-unverified"
+        ],
+        "status": "aligned"
+      },
+      "effective": {
+        "state": "known",
+        "value": true
+      },
+      "field": "supportsReasoningEffort",
+      "observed": [],
+      "proposed": {
+        "reason": "no-proposal",
+        "state": "unknown"
+      }
+    },
+    {
+      "approved": {
+        "reason": "no-verified-approval-evidence",
+        "state": "unknown"
+      },
+      "configured": {
+        "reason": "not-configured",
+        "state": "unknown"
+      },
+      "drift": {
+        "reasons": [
+          "no-authoritative-value",
+          "approval-unverified"
+        ],
+        "status": "unknown"
+      },
+      "effective": {
+        "reason": "not-configured",
+        "state": "unknown"
+      },
+      "field": "supportsSystemRole",
+      "observed": [],
+      "proposed": {
+        "reason": "no-proposal",
+        "state": "unknown"
+      }
+    },
+    {
+      "approved": {
+        "reason": "no-verified-approval-evidence",
+        "state": "unknown"
+      },
+      "configured": {
+        "reason": "not-configured",
+        "state": "unknown"
+      },
+      "drift": {
+        "reasons": [
+          "no-authoritative-value",
+          "approval-unverified"
+        ],
+        "status": "unknown"
+      },
+      "effective": {
+        "reason": "not-configured",
+        "state": "unknown"
+      },
+      "field": "toolUse",
+      "observed": [],
+      "proposed": {
+        "reason": "no-proposal",
+        "state": "unknown"
+      }
+    }
+  ],
+  "generatedAt": "2026-08-04T12:34:56.789Z",
+  "kind": "docsfab-model-profile-inspection",
+  "purpose": "policy",
+  "reasons": [
+    "catalog-not-requested",
+    "legacy-config-is-not-approval",
+    "verified-approval-unavailable"
+  ],
+  "remediation": [
+    "Run \`docsfab profile inspect --catalog\` for explicit read-only provider discovery.",
+    "Complete the governed proposal and approval chain; legacy environment configuration is not approval."
+  ],
+  "runtime": {
+    "configuredApprovalClaim": "present",
+    "configuredClaim": {
+      "approvedSourceSha256": "7596b67ed554ce5ed75d0064a0f68191d02d09c6a03569942d37ca45a098a25b",
+      "effectiveDate": "2020-01-01",
+      "freshness": "current",
+      "reviewAfter": "2099-12-31",
+      "verification": "not-performed"
+    },
+    "effectiveLimitReason": "none",
+    "fallbackApplied": false,
+    "profileEvidence": {
+      "apiFormat": "chat_completions",
+      "approvedSourceSha256": "7596b67ed554ce5ed75d0064a0f68191d02d09c6a03569942d37ca45a098a25b",
+      "compatibility": {
+        "apiFormats": [
+          "chat_completions"
+        ],
+        "supportsDeveloperRole": true,
+        "supportsReasoningEffort": true
+      },
+      "configuredContextWindow": 128000,
+      "configuredMaxInputTokens": 128000,
+      "configuredMaxOutputTokens": 16384,
+      "costPerMillionTokens": {
+        "cacheRead": 0.5,
+        "cacheWrite": null,
+        "input": 1.25,
+        "output": 10
+      },
+      "effectiveContextWindow": 128000,
+      "effectiveDate": "2020-01-01",
+      "effectiveLimitReason": "none",
+      "effectiveMaxInputTokens": 128000,
+      "effectiveMaxOutputTokens": 16384,
+      "input": [
+        "image",
+        "text"
+      ],
+      "pricing": "unknown",
+      "reasoning": true,
+      "requestPolicy": {
+        "minimumOutputTokens": 16,
+        "reservedContextTokens": 4096
+      },
+      "reviewAfter": "2099-12-31",
+      "schemaVersion": 2,
+      "sha256": "d4cf6abccc76873a81bd12be2a14b286d61606e025619ce8bb81069bdf90c09a",
+      "status": "current"
+    },
+    "profileStatus": "current",
+    "verifiedApproval": "unknown"
+  },
+  "schemaVersion": 1,
+  "sha256": "23247ecb01c1bcfdbcfbf0bb20869aed4dc9c0b897ae590027e68913f949eecf",
+  "subject": {
+    "apiDisposition": "supported",
+    "apiFormat": "chat_completions",
+    "model": "example/model",
+    "provider": "test-provider"
+  }
+}
+"
+`;
+
+exports[`model profile inspection > reports independent source outages without provider details > unavailable 1`] = `
+{
+  "context": {
+    "state": "known",
+    "value": 8192,
+  },
+  "disposition": null,
+  "input": {
+    "reason": "no-proposal",
+    "state": "unknown",
+  },
+  "purpose": "policy",
+  "reasons": [
+    "fallback-metadata-unknown",
+    "inference-catalog-network-failure",
+    "legacy-config-is-not-approval",
+    "metadata-catalog-metadata-configuration-invalid",
+    "verified-approval-unavailable",
+  ],
+  "remediation": [
+    "Do not treat unknown or stale metadata as an 8192-token DocsFab ceiling. Unique composition matches use installed windows; unmatched selections leave the provider as the ceiling.",
+    "Complete the governed proposal and approval chain; legacy environment configuration is not approval.",
+  ],
+  "runtime": {
+    "configuredApprovalClaim": "absent",
+    "configuredClaim": {
+      "approvedSourceSha256": null,
+      "effectiveDate": null,
+      "freshness": "unknown",
+      "reviewAfter": null,
+      "verification": "not-performed",
+    },
+    "effectiveLimitReason": "metadata-unknown",
+    "fallbackApplied": true,
+    "profileEvidence": {
+      "apiFormat": "chat_completions",
+      "compatibility": {
+        "apiFormats": [
+          "chat_completions",
+        ],
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+      },
+      "configuredContextWindow": 128000,
+      "configuredMaxInputTokens": 128000,
+      "configuredMaxOutputTokens": 16384,
+      "costPerMillionTokens": {
+        "cacheRead": null,
+        "cacheWrite": null,
+        "input": null,
+        "output": null,
+      },
+      "effectiveContextWindow": 8192,
+      "effectiveLimitReason": "metadata-unknown",
+      "effectiveMaxInputTokens": 8192,
+      "effectiveMaxOutputTokens": 4096,
+      "input": [
+        "text",
+      ],
+      "pricing": "unknown",
+      "reasoning": false,
+      "requestPolicy": {
+        "minimumOutputTokens": 16,
+        "reservedContextTokens": 4096,
+      },
+      "schemaVersion": 2,
+      "sha256": "f895f70cd6400a3073004a6c32588da1c87208d2342a7b255a5f529f10da4895",
+      "status": "unknown",
+    },
+    "profileStatus": "unknown",
+    "verifiedApproval": "unknown",
+  },
+  "sources": [
+    {
+      "code": "network-failure",
+      "source": "inference",
+      "status": "unavailable",
+    },
+    {
+      "code": "metadata-configuration-invalid",
+      "source": "metadata",
+      "status": "unavailable",
+    },
+  ],
+}
+`;
+
+exports[`model profile inspection > retains successful two-source conflicts and the selected proposal value > conflicting 1`] = `
+{
+  "context": {
+    "state": "known",
+    "value": 8192,
+  },
+  "disposition": "review-required",
+  "input": {
+    "candidates": [],
+    "selected": 96000,
+    "state": "conflicting",
+  },
+  "purpose": "policy",
+  "reasons": [
+    "combined-context-clamp",
+    "complementary-source-selected",
+    "conservative-conflict-value",
+    "exact-qualified-model-alias",
+    "fallback-metadata-unknown",
+    "legacy-config-is-not-approval",
+    "runtime-boundary-selected",
+    "source-observations-retained",
+    "unknown-pricing-preserved",
+    "verified-approval-unavailable",
+  ],
+  "remediation": [
+    "Do not treat unknown or stale metadata as an 8192-token DocsFab ceiling. Unique composition matches use installed windows; unmatched selections leave the provider as the ceiling.",
+    "Resolve field-level catalog disagreement before preparing an approval artifact.",
+    "Complete the governed proposal and approval chain; legacy environment configuration is not approval.",
+  ],
+  "runtime": {
+    "configuredApprovalClaim": "absent",
+    "configuredClaim": {
+      "approvedSourceSha256": null,
+      "effectiveDate": null,
+      "freshness": "unknown",
+      "reviewAfter": null,
+      "verification": "not-performed",
+    },
+    "effectiveLimitReason": "metadata-unknown",
+    "fallbackApplied": true,
+    "profileEvidence": {
+      "apiFormat": "chat_completions",
+      "compatibility": {
+        "apiFormats": [
+          "chat_completions",
+        ],
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+      },
+      "configuredContextWindow": 128000,
+      "configuredMaxInputTokens": 128000,
+      "configuredMaxOutputTokens": 16384,
+      "costPerMillionTokens": {
+        "cacheRead": null,
+        "cacheWrite": null,
+        "input": null,
+        "output": null,
+      },
+      "effectiveContextWindow": 8192,
+      "effectiveLimitReason": "metadata-unknown",
+      "effectiveMaxInputTokens": 8192,
+      "effectiveMaxOutputTokens": 4096,
+      "input": [
+        "text",
+      ],
+      "pricing": "unknown",
+      "reasoning": false,
+      "requestPolicy": {
+        "minimumOutputTokens": 16,
+        "reservedContextTokens": 4096,
+      },
+      "schemaVersion": 2,
+      "sha256": "f895f70cd6400a3073004a6c32588da1c87208d2342a7b255a5f529f10da4895",
+      "status": "unknown",
+    },
+    "profileStatus": "unknown",
+    "verifiedApproval": "unknown",
+  },
+  "sources": [
+    {
+      "code": null,
+      "source": "inference",
+      "status": "observed",
+    },
+    {
+      "code": null,
+      "source": "metadata",
+      "status": "observed",
+    },
+  ],
+}
+`;

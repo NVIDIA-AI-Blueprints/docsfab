@@ -1,0 +1,213 @@
+{
+  "schemaVersion": 1,
+  "provenance": "Sanitized serving-route exchange for the endpoint compatibility probe. Provider messages (410 end of life, 404 function not found, in-stream 503) are the text recorded from the hosted NVIDIA API Catalog session of 2026-09-30 (evidence report on MR !1390), which retained no raw captures; stream framing follows that route's OpenAI-compatible chunk shape. Account, function, call, and completion identifiers are replaced with [redacted-...] placeholders. Responses are returned in request order and the last one repeats.",
+  "description": "Nemotron 3 Ultra returns a well-formed native tool call and one JSON document.",
+  "route": "nvidia-api-catalog",
+  "model": "nvidia/nemotron-3-ultra-550b-a55b",
+  "responses": [
+    {
+      "status": 200,
+      "contentType": "text/event-stream; charset=utf-8",
+      "events": [
+        {
+          "id": "chatcmpl-[redacted-completion-id]",
+          "object": "chat.completion.chunk",
+          "created": 1790755200,
+          "model": "nvidia/nemotron-3-ultra-550b-a55b",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": null
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-[redacted-completion-id]",
+          "object": "chat.completion.chunk",
+          "created": 1790755200,
+          "model": "nvidia/nemotron-3-ultra-550b-a55b",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "tool_calls": [
+                  {
+                    "index": 0,
+                    "id": "chatcmpl-tool-[redacted-call-id]",
+                    "type": "function",
+                    "function": {
+                      "name": "record_probe_result",
+                      "arguments": ""
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-[redacted-completion-id]",
+          "object": "chat.completion.chunk",
+          "created": 1790755200,
+          "model": "nvidia/nemotron-3-ultra-550b-a55b",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "tool_calls": [
+                  {
+                    "index": 0,
+                    "function": {
+                      "arguments": "{\"result\": "
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-[redacted-completion-id]",
+          "object": "chat.completion.chunk",
+          "created": 1790755200,
+          "model": "nvidia/nemotron-3-ultra-550b-a55b",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "tool_calls": [
+                  {
+                    "index": 0,
+                    "function": {
+                      "arguments": "\"ok\"}"
+                    }
+                  }
+                ]
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-[redacted-completion-id]",
+          "object": "chat.completion.chunk",
+          "created": 1790755200,
+          "model": "nvidia/nemotron-3-ultra-550b-a55b",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "tool_calls"
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-[redacted-completion-id]",
+          "object": "chat.completion.chunk",
+          "created": 1790755200,
+          "model": "nvidia/nemotron-3-ultra-550b-a55b",
+          "choices": [],
+          "usage": {
+            "prompt_tokens": 318,
+            "completion_tokens": 22,
+            "total_tokens": 340
+          }
+        },
+        "[DONE]"
+      ]
+    },
+    {
+      "status": 200,
+      "contentType": "text/event-stream; charset=utf-8",
+      "events": [
+        {
+          "id": "chatcmpl-[redacted-completion-id]",
+          "object": "chat.completion.chunk",
+          "created": 1790755200,
+          "model": "nvidia/nemotron-3-ultra-550b-a55b",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": ""
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-[redacted-completion-id]",
+          "object": "chat.completion.chunk",
+          "created": 1790755200,
+          "model": "nvidia/nemotron-3-ultra-550b-a55b",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": "{\"result\":\"ok\","
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-[redacted-completion-id]",
+          "object": "chat.completion.chunk",
+          "created": 1790755200,
+          "model": "nvidia/nemotron-3-ultra-550b-a55b",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "content": "\"checks\":[\"tool-calls\",\"structured-output\"]}"
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-[redacted-completion-id]",
+          "object": "chat.completion.chunk",
+          "created": 1790755200,
+          "model": "nvidia/nemotron-3-ultra-550b-a55b",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "stop"
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-[redacted-completion-id]",
+          "object": "chat.completion.chunk",
+          "created": 1790755200,
+          "model": "nvidia/nemotron-3-ultra-550b-a55b",
+          "choices": [],
+          "usage": {
+            "prompt_tokens": 296,
+            "completion_tokens": 17,
+            "total_tokens": 313
+          }
+        },
+        "[DONE]"
+      ]
+    }
+  ]
+}

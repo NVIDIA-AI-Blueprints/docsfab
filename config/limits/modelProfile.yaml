@@ -1,0 +1,42 @@
+# DocsFab operational limits owned by the `modelProfile` name prefix.
+# Registered in config/limits.yaml; every limit here is named `modelProfile.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: modelProfile.nvidiaNemotron3SuperHostedMaxOutputTokens
+    value: 32768
+    unit: tokens
+    scope: per-run
+    warnAt: 0.8
+    override: null
+    min: 32768
+    max: 32768
+    refusal: nemotron-3-super-hosted-output-tokens-bound
+    remediation: Set MODEL_MAX_OUTPUT_TOKENS to 32768 or less for experimental discovery on the NVIDIA Nemotron 3 Super hosted API Catalog endpoint.
+    rationale: The NVIDIA Nemotron 3 Super hosted API Catalog Chat Completions endpoint documents max_tokens up to 32768 (https://docs.api.nvidia.com/nim/reference/nvidia-nemotron-3-super-120b-a12b-infer). This is the endpoint's documented request allowance, not evidence that a DocsFab workflow needs or reliably uses that many output tokens. The scope vocabulary has no per-request value, so per-run is the closest catalog scope; runtime applies this as a cap on each provider request's configured output allowance. Applied only by explicit experimental answer-record discovery for this exact installed composition and route; the sealed composition remains unchanged.
+    docSummary: Documented output-token request ceiling for explicitly selected Nemotron 3 Super hosted-endpoint discovery.
+
+  - name: modelProfile.conservativeFallbackMaxOutputTokens
+    value: 16384
+    unit: tokens
+    scope: per-host
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 131072
+    refusal: model-profile-conservative-fallback-max-output-tokens-bound
+    remediation: Set maxOutputTokens in the model profile YAML to the output limit your endpoint serves, or change modelProfile.conservativeFallbackMaxOutputTokens in config/limits/modelProfile.yaml and regenerate the mirrors.
+    rationale: Output allowance `docsfab setup` writes for an endpoint that matches no installed composition, and so the per-turn max_tokens an unmatched endpoint receives until the operator edits the profile. It must hold the longest single DocsFab answer without a cut. On September 30, 2026, a hosted Nemotron 3 Super review-documentation run with reasoning off produced a 32,254-character quality evaluation answer of 7,750 output tokens; the former 4,096 cut it, and the one continuation dropped characters at the seam. 16,384 holds twice that answer. It is a request allowance, not a context ceiling; the provider still enforces its own window.
+    docSummary: Output tokens per turn that setup writes for an endpoint that matches no installed composition.
+
+  - name: modelProfile.conservativeFallbackContextWindow
+    value: 32768
+    unit: tokens
+    scope: per-host
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 1048576
+    refusal: model-profile-conservative-fallback-context-window-bound
+    remediation: Set contextWindow and maxInputTokens in the model profile YAML to the window your endpoint serves, or change modelProfile.conservativeFallbackContextWindow in config/limits/modelProfile.yaml and regenerate the mirrors.
+    rationale: Context and input window `docsfab setup` writes for an endpoint that matches no installed composition. An unmatched, unattested profile skips DocsFab context admission, so this value is not an executable ceiling; a profile's output allowance must not exceed its window, so it is twice modelProfile.conservativeFallbackMaxOutputTokens, which also leaves room for the context reserve if the operator later attests the profile.
+    docSummary: Context window that setup writes for an endpoint that matches no installed composition.

@@ -1,0 +1,158 @@
+{
+  "schemaVersion": 1,
+  "provenance": "Sanitized serving-route exchange for the endpoint compatibility probe. Provider messages (410 end of life, 404 function not found, in-stream 503) are the text recorded from the hosted NVIDIA API Catalog session of 2026-09-30 (evidence report on MR !1390), which retained no raw captures; stream framing follows that route's OpenAI-compatible chunk shape. Account, function, call, and completion identifiers are replaced with [redacted-...] placeholders. Responses are returned in request order and the last one repeats.",
+  "description": "Nemotron 3.5 Lightning spends max_tokens 1,024 on reasoning and stops with finish_reason length before a tool call.",
+  "route": "nvidia-api-catalog",
+  "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+  "maxOutputTokens": 1024,
+  "responses": [
+    {
+      "status": 200,
+      "contentType": "text/event-stream; charset=utf-8",
+      "events": [
+        {
+          "id": "chatcmpl-[redacted-completion-id]",
+          "object": "chat.completion.chunk",
+          "created": 1790755200,
+          "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": null
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-[redacted-completion-id]",
+          "object": "chat.completion.chunk",
+          "created": 1790755200,
+          "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning_content": "The user wants me to call the record_probe_result tool. "
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-[redacted-completion-id]",
+          "object": "chat.completion.chunk",
+          "created": 1790755200,
+          "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning_content": "Let me consider which arguments the schema allows before calling it."
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-[redacted-completion-id]",
+          "object": "chat.completion.chunk",
+          "created": 1790755200,
+          "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "length"
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-[redacted-completion-id]",
+          "object": "chat.completion.chunk",
+          "created": 1790755200,
+          "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+          "choices": [],
+          "usage": {
+            "prompt_tokens": 318,
+            "completion_tokens": 1024,
+            "total_tokens": 1342
+          }
+        },
+        "[DONE]"
+      ]
+    },
+    {
+      "status": 200,
+      "contentType": "text/event-stream; charset=utf-8",
+      "events": [
+        {
+          "id": "chatcmpl-[redacted-completion-id]",
+          "object": "chat.completion.chunk",
+          "created": 1790755200,
+          "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "role": "assistant",
+                "content": null
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-[redacted-completion-id]",
+          "object": "chat.completion.chunk",
+          "created": 1790755200,
+          "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {
+                "reasoning_content": "I need to reply with only the JSON object. "
+              },
+              "logprobs": null,
+              "finish_reason": null
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-[redacted-completion-id]",
+          "object": "chat.completion.chunk",
+          "created": 1790755200,
+          "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+          "choices": [
+            {
+              "index": 0,
+              "delta": {},
+              "logprobs": null,
+              "finish_reason": "length"
+            }
+          ]
+        },
+        {
+          "id": "chatcmpl-[redacted-completion-id]",
+          "object": "chat.completion.chunk",
+          "created": 1790755200,
+          "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+          "choices": [],
+          "usage": {
+            "prompt_tokens": 296,
+            "completion_tokens": 1024,
+            "total_tokens": 1320
+          }
+        },
+        "[DONE]"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+site_name: Example Docs
+docs_dir: docs/site
+use_directory_urls: true
+nav:
+  - Home: index.md
+  - User Guide:
+      - Setup: guide/setup.md
+      - Advanced: guide/advanced.md
+  - Features: features.md
+  - Reference: reference/index.md

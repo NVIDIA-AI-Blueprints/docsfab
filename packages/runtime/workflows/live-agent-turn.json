@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "name": "live-agent-turn",
+  "title": "Answer one governed documentation question",
+  "outcome": "One read-only, revision-bound answer about the approved documentation pages, cited to repository paths at the frozen revision, with no repository change and no authority claim.",
+  "contextPolicy": {
+    "schemaVersion": 1,
+    "steps": [
+      {
+        "stepId": "answer-question",
+        "required": true,
+        "level": "local",
+        "query": "locate",
+        "allowReadOnlyDegraded": true
+      }
+    ]
+  },
+  "steps": [
+    {
+      "id": "answer-question",
+      "title": "Answer the requester question about the approved pages",
+      "kind": "evaluate",
+      "skill": "review-documentation",
+      "mode": "read-only",
+      "prompt": "Answer the requester question about the approved pages named in this step's authoritative scope, and answer nothing else. Read whatever evidence a claim depends on, but make every factual claim about repository content traceable to an approved page at the frozen revision and name that path in the answer. Say plainly when the approved pages do not settle the question instead of inferring an answer; \"the approved pages do not say\" is a correct answer. Reply as continuous prose for a chat reader, not as a findings table, and keep it short enough to read in a message. Do not edit files, do not run repository commands, do not claim a review, a quality score, or release readiness, and never treat earlier conversation text as canonical repository evidence."
+    }
+  ]
+}

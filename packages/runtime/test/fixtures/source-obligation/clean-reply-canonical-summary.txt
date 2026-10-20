@@ -1,0 +1,69 @@
+{
+  "completeness": "bounded-not-proven",
+  "dimensions": [
+    {
+      "dimension": "input-representations",
+      "obligations": [
+        {
+          "dimension": "input-representations",
+          "evidenceClass": "source-observation",
+          "id": "OBL-IGNORED",
+          "sourceLocators": [
+            "README.md:1"
+          ],
+          "statement": "The command input requires a flag defined by the option parser.",
+          "uncertainty": "The focused source fixture defines the required flag."
+        }
+      ],
+      "reason": "The focused source establishes one input-representations obligation.",
+      "sourceLocators": [],
+      "status": "applicable"
+    },
+    {
+      "dimension": "defaults-and-overrides",
+      "obligations": [],
+      "reason": "The focused source establishes no defaults-and-overrides obligation.",
+      "sourceLocators": [
+        "README.md:1"
+      ],
+      "status": "not-applicable"
+    },
+    {
+      "dimension": "mutable-state",
+      "obligations": [],
+      "reason": "The focused source establishes no mutable-state obligation.",
+      "sourceLocators": [
+        "README.md:1"
+      ],
+      "status": "not-applicable"
+    },
+    {
+      "dimension": "destination-and-trust",
+      "obligations": [],
+      "reason": "The focused source establishes no destination-and-trust obligation.",
+      "sourceLocators": [
+        "README.md:1"
+      ],
+      "status": "not-applicable"
+    },
+    {
+      "dimension": "error-status-retry",
+      "obligations": [],
+      "reason": "The focused source establishes no error-status-retry obligation.",
+      "sourceLocators": [
+        "README.md:1"
+      ],
+      "status": "not-applicable"
+    },
+    {
+      "dimension": "environment-prerequisite",
+      "obligations": [],
+      "reason": "The focused source establishes no environment-prerequisite obligation.",
+      "sourceLocators": [
+        "README.md:1"
+      ],
+      "status": "not-applicable"
+    }
+  ],
+  "limitations": []
+}

@@ -1,0 +1,81 @@
+# DocsFab operational limits owned by the `projectDecision` name prefix.
+# Registered in config/limits.yaml; every limit here is named `projectDecision.*`.
+# Change this file and run `npm run generate:limits` from packages/runtime.
+limits:
+  - name: projectDecision.optionsMax
+    value: 9
+    unit: options
+    scope: per-project
+    warnAt: 0.8
+    override: DOCSFAB_PROJECT_DECISION_OPTIONS_MAX
+    min: 2
+    max: 9
+    refusal: project-decision-options-max-bound
+    remediation: Reduce the numbered options on the tracker issue to the configured allowance, or split the decision into separate issues.
+    rationale: Numbered options a project-decision question offers a Maintainer in one Slack message. The reply names a single ordinal, so a single-digit ordinal keeps the answer one unambiguous token and keeps the offered set and the replied set comparable without a parser. Two is the floor because a question with one option is not a decision. Nine is the ceiling because a tenth option needs a second digit and because an unbounded list is not a bounded human question; a longer list belongs in the issue body the question cites.
+  - name: projectDecision.optionMaxChars
+    value: 400
+    unit: characters
+    scope: per-project
+    warnAt: 0.8
+    override: DOCSFAB_PROJECT_DECISION_OPTION_MAX_CHARS
+    min: 40
+    max: 1000
+    refusal: project-decision-option-max-chars-bound
+    remediation: Shorten the numbered option on the tracker issue to a one-paragraph summary and keep the detail in the issue body.
+    rationale: One numbered option, and the issue title the question cites, rendered into the question message and into the recorded decision card. An option is a one-paragraph summary a Maintainer reads on a phone; the supporting detail stays in the issue the question cites and is never copied into the channel. Forty characters is the floor because a shorter option cannot carry a distinguishable choice. A thousand characters is the ceiling because the whole question, with its options and its reply grammar, must still fit one Slack message.
+  - name: projectDecision.questionMaxChars
+    value: 2800
+    unit: characters
+    scope: per-project
+    warnAt: 0.8
+    override: DOCSFAB_PROJECT_DECISION_QUESTION_MAX_CHARS
+    min: 200
+    max: 2800
+    refusal: project-decision-question-max-chars-bound
+    remediation: Shorten the decision title or its numbered options on the tracker issue so the rendered question fits one message.
+    rationale: The whole rendered decision question, posted as exactly one message. A Slack client renders about three thousand characters before it collapses the message behind a show-more control, and a decision question that a Maintainer cannot read whole is a question they answer partly informed. This question is never split into parts, unlike a merge-reconciliation offer, because an ordinal reply must be bound to one visible option list. Two hundred characters is the floor because the reply grammar and the authority sentence alone need that much.
+  - name: projectDecision.fieldMaxChars
+    value: 1000
+    unit: characters
+    scope: per-project
+    warnAt: 0.8
+    override: DOCSFAB_PROJECT_DECISION_FIELD_MAX_CHARS
+    min: 1
+    max: 4000
+    refusal: project-decision-field-max-chars-bound
+    remediation: Shorten the Rationale or Reversibility line in the reply and keep the long form in the tracker issue.
+    rationale: One structured reply field, the rationale or the reversibility sentence a Maintainer types. Both become fields of the decision card that is pasted onto the tracker issue, where they have to stay readable next to the chosen option rather than becoming a document. One character is the floor so a deployment may demand only that the field be present and non-empty. Four thousand is the ceiling; it stays inside the full-message allowance the structured Slack answer intake already applies to the whole reply, so a field bound can never admit text the intake refuses.
+  - name: projectDecision.questionTtlMs
+    value: 604800000
+    unit: milliseconds
+    scope: per-project
+    warnAt: 0.8
+    override: DOCSFAB_PROJECT_DECISION_QUESTION_TTL_MS
+    min: 3600000
+    max: 2592000000
+    refusal: project-decision-question-ttl-ms-bound
+    remediation: Restore the configured decision-question lifetime; re-ask the decision after it expires rather than extending a question nobody answered.
+    rationale: How long a posted decision question stays answerable before a reply is refused as expired. A project decision waits on a human calendar, not on a stalled merge, so the lifetime is a week rather than the day a merge-conflict question gets, because the named authority may be away and re-asking is cheap while an answer bound to a stale option list is not. One hour is the floor so a test clock and a same-day decision are both expressible. Thirty days is the ceiling because a question open longer than a month is evidence that nobody owns the decision, and the issue it cites will have moved underneath it.
+  - name: projectDecision.openQuestionsMax
+    value: 1
+    unit: questions
+    scope: per-project
+    warnAt: 0.8
+    override: DOCSFAB_PROJECT_DECISION_OPEN_QUESTIONS_MAX
+    min: 1
+    max: 8
+    refusal: project-decision-open-questions-max-bound
+    remediation: Answer or let the open decision question expire before asking another, or raise the configured allowance for concurrent decisions.
+    rationale: Decision questions one project may have open in its channel at once. Every open question is an unanswered interruption addressed to the same small group of Maintainers in the same thread-bearing channel, and two of them race for the same attention while making it ambiguous which thread a bare ordinal answers. One is the default because a project that cannot finish one decision does not benefit from a second. Eight is the ceiling, because beyond that the channel is a queue and a queue needs its own surface rather than a larger allowance.
+  - name: projectDecision.issueDocumentMaxBytes
+    value: 2097152
+    unit: bytes
+    scope: per-project
+    warnAt: 0.8
+    override: DOCSFAB_PROJECT_DECISION_ISSUE_DOCUMENT_MAX_BYTES
+    min: 65536
+    max: 2097152
+    refusal: project-decision-issue-document-max-bytes-bound
+    remediation: Shorten the tracker issue description, or raise the configured document allowance only if the forge's own description ceiling has risen.
+    rationale: Largest single tracker-issue document the decision reader parses for its labels and its numbered options. The forge caps an issue description at 1,048,576 characters and the JSON envelope that carries it roughly doubles that, so this is the provider's own ceiling expressed in bytes rather than a tuning choice; a larger body is refused before parsing rather than during it. Sixty-four kibibytes is the floor because a real decision issue with its options and its template card already approaches it.

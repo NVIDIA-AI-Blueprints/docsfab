@@ -268,10 +268,11 @@ const digest = value => createHash("sha256").update(serializeCanonical(value) + 
 const slotName = sequence => String(sequence).padStart(6, "0") + ".json";
 const privateFile = (stat, nlink) => stat.isFile() && !stat.isSymbolicLink() && stat.uid === expectedRoot.uid && (stat.mode & 0o7777) === 0o600 && stat.nlink === nlink;
 ${STABLE_PUBLICATION_READ_WORKER_SOURCE}
+let selectedDialect = request.dialect;
 const validateEnvelope = (value, sequence, previous) => {
-  const expectedKind = request.dialect === "review" ? "docsfab-review-delivery-receipt-slot" : "docsfab-scm-delivery-receipt-slot";
-  const expectedRecordKind = request.dialect === "review" ? "docsfab-review-delivery-record" : "docsfab-scm-delivery-record";
-  if (!value || value.schemaVersion !== 1 || value.kind !== expectedKind || value.sequence !== sequence || value.previousRecordSha256 !== previous || !value.record || (request.dialect === "review" && value.record.kind !== expectedRecordKind) || value.record.idempotencyKey !== request.idempotencyKey || !safeSha(value.record.sha256) || !safeSha(value.sha256)) throw new Error("invalid");
+  const expectedKind = selectedDialect === "review" ? "docsfab-review-delivery-receipt-slot" : "docsfab-scm-delivery-receipt-slot";
+  const expectedRecordKind = selectedDialect === "review" ? "docsfab-review-delivery-record" : "docsfab-scm-delivery-record";
+  if (!value || value.schemaVersion !== 1 || value.kind !== expectedKind || value.sequence !== sequence || value.previousRecordSha256 !== previous || !value.record || value.record.kind !== expectedRecordKind || value.record.idempotencyKey !== request.idempotencyKey || !safeSha(value.record.sha256) || !safeSha(value.sha256)) throw new Error("invalid");
   const { sha256: recordDigest, ...recordBody } = value.record;
   if (recordDigest !== digest(recordBody)) throw new Error("invalid");
   const { sha256: envelopeDigest, ...envelopeBody } = value;
@@ -283,6 +284,13 @@ const readJournal = allowEmpty => {
   if (names.some(name => !/^\d{6}\.json$/u.test(name) && !/^\.\d{6}\.json\.[A-Za-z0-9-]+\.tmp$/u.test(name))) throw new Error("invalid");
   const slots = names.filter(name => /^\d{6}\.json$/u.test(name)).sort();
   if (slots.length === 0) { if (allowEmpty) return null; throw new Error("missing"); }
+  if (request.dialect === "auto") {
+    if (request.operation !== "load") throw new Error("invalid");
+    const first = JSON.parse(readStablePrivateFile(slotName(0)).toString("utf8"));
+    if (first?.kind === "docsfab-review-delivery-receipt-slot") selectedDialect = "review";
+    else if (first?.kind === "docsfab-scm-delivery-receipt-slot") selectedDialect = undefined;
+    else throw new Error("invalid");
+  }
   let previous = null;
   let latest = null;
   for (let index = 0; index < slots.length; index += 1) {

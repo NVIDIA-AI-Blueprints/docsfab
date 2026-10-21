@@ -21,6 +21,8 @@ export const SOURCE_EXTRACTION_MAX_SPANS_LIMIT = "sources.extractionMaxSpans" as
 export const SOURCE_EXTRACTION_MAX_SPAN_BYTES_LIMIT = "sources.extractionMaxSpanBytes" as const;
 export const SOURCE_EXTRACTION_MAX_MS_LIMIT = "sources.extractionMaxMs" as const;
 export const SOURCE_PDF_MAX_PAGES_LIMIT = "sources.pdfMaxPages" as const;
+/** Sealed page default and maximum for model-visible source inventories. */
+export const SOURCE_LIST_MAX_ENTRIES_LIMIT = "sources.listMaxEntries" as const;
 /** Sealed: the longest repository-relative path sealed source evidence keeps. */
 export const SOURCE_AUTHORITY_MEMBER_PATH_MAX_CHARS_LIMIT =
   "sources.authorityMemberPathMaxChars" as const;

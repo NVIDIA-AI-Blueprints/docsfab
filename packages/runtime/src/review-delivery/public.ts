@@ -5,6 +5,9 @@
 import { dirname, resolve } from "node:path";
 import { DurableArtifactStore } from "../artifacts/store.js";
 import { FileRunStore } from "../records/file-store.js";
+import { FileScmDeliveryReceiptStore } from "../delivery/receipt-store.js";
+import { resolveDocsFabPublicationRoots } from "../config/host-paths.js";
+import { inspectSavedReviewInventory as inspectFromStores } from "./inspection-intent.js";
 import { planRetainedReviewDelivery as planFromStores } from "./retained-plan.js";
 import { prepareRetainedReviewFeedback as prepareFromStores } from "./retained-plan.js";
 
@@ -37,5 +40,21 @@ export async function prepareRetainedReviewFeedback(
     delivery: input.delivery,
     policy: input.policy,
     readOnly: true,
+  });
+}
+
+/** Open the complete original inventory from the installed private stores. */
+export async function inspectSavedReviewInventory(input: {
+  readonly stateDirectory: string;
+  readonly runId: string;
+  readonly intentObjectSha256: string;
+}): ReturnType<typeof inspectFromStores> {
+  const roots = resolveDocsFabPublicationRoots(process.env, input.stateDirectory);
+  return inspectFromStores({
+    runStore: new FileRunStore(roots.stateDirectory),
+    artifacts: new DurableArtifactStore(resolve(dirname(roots.stateDirectory), "artifacts")),
+    receiptStore: new FileScmDeliveryReceiptStore(roots.receiptRoot),
+    runId: input.runId,
+    intentObjectSha256: input.intentObjectSha256,
   });
 }

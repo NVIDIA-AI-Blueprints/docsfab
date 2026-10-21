@@ -42,6 +42,7 @@ import {
 import { TOOL_RESULT_RECALL_TOOL_NAME } from "./tool-output-cap.js";
 import { HISTORY_TOOL_NAMES } from "./history-tools.js";
 import { READ_LOOP_LIMITS } from "../config/execution-limit-stops.js";
+import { REVIEW_CHANGE_READ_TOOL_NAME } from "./confined-tools/review-change-side.js";
 
 export const READ_LOOP_REPEAT_STREAK_LIMIT = READ_LOOP_LIMITS.repeatStreak;
 export const READ_LOOP_WITHHELD_READS_LIMIT = READ_LOOP_LIMITS.withheldReads;
@@ -56,6 +57,7 @@ export const READ_EVIDENCE_TOOL_NAMES: ReadonlySet<string> = new Set([
   ...SOURCE_SEARCH_TOOL_NAMES,
   ...OBSERVATION_TOOL_NAMES,
   ...HISTORY_TOOL_NAMES,
+  REVIEW_CHANGE_READ_TOOL_NAME,
 ]);
 
 /**

@@ -52,7 +52,7 @@ export async function runInteractiveSetup(
 ): Promise<SetupBootstrapResult> {
   const environment = input.environment ?? process.env;
   if (
-    (input.provider || input.modelId || input.baseUrl || input.api) &&
+    (input.provider || input.modelId || (input.baseUrl && !input.profile) || input.api) &&
     (input.migrate || input.preset || input.profile)
   ) {
     throw new Error("Provider options cannot be combined with --profile, --preset, or --migrate.");
@@ -73,7 +73,7 @@ export async function runInteractiveSetup(
   const requestedProfile = resolveSetupExecutionProfile(input.profile);
   if (requestedProfile) {
     environment.MODEL_API_KEY = await readRequiredApiKey(input.prompter);
-    return runSetupBootstrap({ profile: requestedProfile, environment });
+    return runSetupBootstrap({ profile: requestedProfile, baseUrl: input.baseUrl, environment });
   }
 
   const requestedPreset = resolveSetupPreset(input.preset);

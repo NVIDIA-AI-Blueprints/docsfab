@@ -3,6 +3,7 @@
 
 /** Native, caller-authenticated github.com review effects. No credential source lives here. */
 import { canonicalJson, sha256 } from "../../content-ir/canonical.js";
+import { limit } from "../../config/limits.js";
 import type { ChangeSourceV1 } from "../../inputs/change-source.js";
 import { GITHUB_API_VERSION } from "../../inputs/change-source/github-transport.js";
 import type { ReviewTargetV2 } from "../../review/contracts.js";
@@ -16,6 +17,7 @@ import type {
 import type {
   ReviewDeliveryEffectContextV1,
   ReviewDeliveryNativeEvidence,
+  ReviewDeliveryOverviewPresentation,
   ReviewDeliveryPreparation,
   ReviewDeliveryPreparedEffect,
   ReviewDeliveryPublishOutcome,
@@ -33,6 +35,7 @@ import {
 import { reviewDeliverySnapshotDigest } from "../plan.js";
 import type { ReviewDeliveryCommittedEffectV1 } from "../receipt.js";
 import {
+  renderGithubCompactOverviewBody,
   renderGithubInlineBody,
   renderGithubOverviewBody,
   renderGithubReviewBody,
@@ -527,6 +530,7 @@ export function createGithubReviewAdapter(input: GithubReviewAdapterInput): Gith
       bodyText: string,
       selectedStage: "github-pending-review-create" | "github-comment-submit",
       reviewId?: number,
+      overviewPresentation?: ReviewDeliveryOverviewPresentation,
     ): ReviewDeliveryPreparedEffect => {
       const effectId = reviewDeliveryEffectId(context, selectedStage, ids);
       const requestValue = {
@@ -566,10 +570,26 @@ export function createGithubReviewAdapter(input: GithubReviewAdapterInput): Gith
           kind: "github-review-commit",
           commitId: plan.result.reviewedHeadSha,
         },
+        ...(overviewPresentation === undefined ? {} : { overviewPresentation }),
       };
     };
+    const inventory = overviewInventory(plan);
+    const fullPresentation: ReviewDeliveryOverviewPresentation = { kind: "full", ...inventory };
+    const compactPresentation: ReviewDeliveryOverviewPresentation = {
+      kind: "compact-partial",
+      ...inventory,
+    };
+    const legacyPresentation: ReviewDeliveryOverviewPresentation = {
+      kind: "historical-legacy",
+      ...inventory,
+    };
     const legacyBody = renderGithubReviewBody(plan, summary, createMarker);
-    const legacyCreate = makeCandidate(legacyBody, "github-pending-review-create");
+    const legacyCreate = makeCandidate(
+      legacyBody,
+      "github-pending-review-create",
+      undefined,
+      legacyPresentation,
+    );
     let richBody: string | null = null;
     try {
       richBody = renderGithubOverviewBody(plan, summary, createMarker);
@@ -577,8 +597,30 @@ export function createGithubReviewAdapter(input: GithubReviewAdapterInput): Gith
       // A historical default descriptor can remain recoverable without rich rendering.
     }
     const richCreate =
-      richBody === null ? null : makeCandidate(richBody, "github-pending-review-create");
-    return { actions, ids, legacyBody, legacyCreate, richBody, richCreate, makeCandidate };
+      richBody === null
+        ? null
+        : makeCandidate(richBody, "github-pending-review-create", undefined, fullPresentation);
+    const compactBody = renderGithubCompactOverviewBody(plan, createMarker, compactPresentation);
+    const compactCreate = makeCandidate(
+      compactBody,
+      "github-pending-review-create",
+      undefined,
+      compactPresentation,
+    );
+    return {
+      actions,
+      ids,
+      legacyBody,
+      legacyCreate,
+      richBody,
+      richCreate,
+      compactBody,
+      compactCreate,
+      fullPresentation,
+      compactPresentation,
+      legacyPresentation,
+      makeCandidate,
+    };
   }
 
   async function makeEffect(
@@ -644,7 +686,18 @@ export function createGithubReviewAdapter(input: GithubReviewAdapterInput): Gith
     }
     const projected = projectCreateCandidates(context);
     if (projected === null) return blocked(ids[0]!, "provider-failure", "retry");
-    const { legacyBody, legacyCreate, richBody, richCreate, makeCandidate } = projected;
+    const {
+      legacyBody,
+      legacyCreate,
+      richBody,
+      richCreate,
+      compactBody,
+      compactCreate,
+      fullPresentation,
+      compactPresentation,
+      legacyPresentation,
+      makeCandidate,
+    } = projected;
     const committedCreate = context.committedEffects.filter(
       (item) => item.stage === "github-pending-review-create",
     );
@@ -657,27 +710,70 @@ export function createGithubReviewAdapter(input: GithubReviewAdapterInput): Gith
       (committedCreate.length === 0 && committedSubmit.length > 0)
     )
       return blocked(ids[0]!, "provider-failure", "retry");
-    if (richBody === null && (committedCreate.length === 0 || plan.requestedActions !== undefined))
-      return blocked(ids[0]!, "provider-failure", "retry");
     let selectedBody: string;
+    let selectedPresentation: ReviewDeliveryOverviewPresentation;
     if (committedCreate.length > 0) {
       const sealed = committedCreate[0]!;
-      if (richCreate && sameDescriptor(richCreate, sealed)) selectedBody = richBody!;
-      else if (plan.requestedActions === undefined && sameDescriptor(legacyCreate, sealed))
+      if (richCreate && sameDescriptor(richCreate, sealed)) {
+        selectedBody = richBody!;
+        selectedPresentation = fullPresentation;
+      } else if (
+        plan.requestedActions === undefined &&
+        actions.some((action) => action.kind === "publish-summary") &&
+        sameDescriptor(compactCreate, sealed)
+      ) {
+        selectedBody = compactBody;
+        selectedPresentation = compactPresentation;
+      } else if (plan.requestedActions === undefined && sameDescriptor(legacyCreate, sealed)) {
         selectedBody = legacyBody;
-      else return blocked(ids[0]!, "provider-failure", "retry");
+        selectedPresentation = legacyPresentation;
+      } else return blocked(ids[0]!, "provider-failure", "retry");
     } else {
       if (
         plan.requestedActions !== undefined ||
         actions.some((action) => action.kind === "publish-summary")
       ) {
         if (richBody === null) return blocked(ids[0]!, "provider-failure", "retry");
-        selectedBody = richBody;
-      } else selectedBody = legacyBody;
+        const effectiveBytes = limit("githubReview.bodyMaxBytes").value;
+        const richBytes = Buffer.byteLength(richBody, "utf8");
+        if (richBytes <= effectiveBytes) {
+          selectedBody = richBody;
+          selectedPresentation = fullPresentation;
+        } else if (plan.requestedActions !== undefined) {
+          return {
+            kind: "capacity-stop",
+            code: "github-review-body-bytes-bound",
+            limitName: "githubReview.bodyMaxBytes",
+            observedBytes: richBytes,
+            effectiveBytes,
+            scope: "github-pending-review-create.body",
+            remaining: fullPresentation.remaining,
+            retained: fullPresentation.retained,
+          };
+        } else {
+          const compactBytes = Buffer.byteLength(compactBody, "utf8");
+          if (compactBytes > effectiveBytes)
+            return {
+              kind: "capacity-stop",
+              code: "github-review-body-bytes-bound",
+              limitName: "githubReview.bodyMaxBytes",
+              observedBytes: compactBytes,
+              effectiveBytes,
+              scope: "github-pending-review-create.body",
+              remaining: compactPresentation.remaining,
+              retained: compactPresentation.retained,
+            };
+          selectedBody = compactBody;
+          selectedPresentation = compactPresentation;
+        }
+      } else {
+        selectedBody = legacyBody;
+        selectedPresentation = legacyPresentation;
+      }
     }
     if (stage === "github-comment-submit" && reviewId === undefined)
       return blocked(ids[0]!, "provider-failure", "retry");
-    const selected = makeCandidate(selectedBody, stage, reviewId);
+    const selected = makeCandidate(selectedBody, stage, reviewId, selectedPresentation);
     if (
       committedSubmit.length > 0 &&
       stage === "github-comment-submit" &&
@@ -1001,9 +1097,13 @@ export function createGithubReviewAdapter(input: GithubReviewAdapterInput): Gith
         candidates.richCreate && sameDescriptor(candidates.richCreate, create[0]!)
           ? "full"
           : plan.requestedActions === undefined &&
-              sameDescriptor(candidates.legacyCreate, create[0]!)
-            ? "historical-legacy"
-            : null;
+              plan.actions.some((action) => action.kind === "publish-summary") &&
+              sameDescriptor(candidates.compactCreate, create[0]!)
+            ? "compact-partial"
+            : plan.requestedActions === undefined &&
+                sameDescriptor(candidates.legacyCreate, create[0]!)
+              ? "historical-legacy"
+              : null;
       return kind === null
         ? { kind: "unavailable" }
         : { kind: "presentation", presentation: { kind, ...overviewInventory(plan) } };

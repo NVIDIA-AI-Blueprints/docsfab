@@ -68,6 +68,7 @@ import {
   SAVED_RUN_WORKFLOWS,
 } from "../../records/saved-run-record.js";
 import { handleRunsDeleteCommand } from "./runs-delete.js";
+import { inspectSavedReviewInventory } from "../../review-delivery/public.js";
 import {
   admitPlannerDiagnostic,
   isPlannerMissingGovernedInputCode,
@@ -89,6 +90,7 @@ export interface RunsShowArguments {
   readonly canonSnapshotPath?: string;
   readonly acceptCandidateSnapshot: boolean;
   readonly authorityId?: string;
+  readonly reviewDeliveryInventory?: string;
 }
 
 export interface RunsListArguments {
@@ -158,6 +160,16 @@ export async function handleRunsCommand(args: string[]): Promise<void> {
     } else {
       for (const line of formatRunList(runs, parsed.stateDirectory)) console.log(line);
     }
+    return;
+  }
+  if (parsed.reviewDeliveryInventory !== undefined) {
+    const inventory = await inspectSavedReviewInventory({
+      stateDirectory: parsed.stateDirectory,
+      runId: parsed.runId,
+      intentObjectSha256: parsed.reviewDeliveryInventory,
+    });
+    console.log(canonicalizeJsonEvidence(inventory as unknown as JsonEvidenceValue).trimEnd());
+    if (inventory.kind === "inspection-unavailable") process.exitCode = 1;
     return;
   }
   const recordPath = defaultRunRecordPath(parsed.stateDirectory, parsed.runId);
@@ -377,6 +389,7 @@ export function parseRunsArguments(args: string[]): RunsArguments {
   const stateDirectories: string[] = [];
   const canonSnapshotPaths: string[] = [];
   const authorityIds: string[] = [];
+  const reviewDeliveryInventories: string[] = [];
   for (let index = 0; index < withoutFlags.length; index += 1) {
     const argument = withoutFlags[index]!;
     if (argument === "--state-dir") {
@@ -412,6 +425,21 @@ export function parseRunsArguments(args: string[]): RunsArguments {
       index += 1;
       continue;
     }
+    if (argument === "--review-delivery-inventory") {
+      const value = withoutFlags[index + 1];
+      if (!value || value.startsWith("--")) {
+        throw new RunsOperatorError(
+          "review-delivery-inventory-missing",
+          "The --review-delivery-inventory option requires an object SHA-256 value.",
+          "Provide the digest from the saved review-delivery-intent output reference.",
+        );
+      }
+      consumed.add(index);
+      consumed.add(index + 1);
+      reviewDeliveryInventories.push(value);
+      index += 1;
+      continue;
+    }
     if (argument.startsWith("--")) {
       throw new Error(`Unknown docsfab runs show option "${argument}" is not supported.`);
     }
@@ -424,6 +452,35 @@ export function parseRunsArguments(args: string[]): RunsArguments {
   }
   if (authorityIds.length > 1) {
     throw new Error("The --authority-id option must not be duplicated on docsfab runs show.");
+  }
+  if (reviewDeliveryInventories.length > 1) {
+    throw new RunsOperatorError(
+      "review-delivery-inventory-duplicate",
+      "The --review-delivery-inventory option must not be duplicated on docsfab runs show.",
+      "Specify one saved review-delivery-intent object digest.",
+    );
+  }
+  const reviewDeliveryInventory = reviewDeliveryInventories[0];
+  if (reviewDeliveryInventory !== undefined && !/^[a-f0-9]{64}$/u.test(reviewDeliveryInventory)) {
+    throw new RunsOperatorError(
+      "review-delivery-inventory-invalid",
+      "The --review-delivery-inventory value must be an object SHA-256 digest.",
+      "Copy the exact digest from the saved review-delivery-intent output reference.",
+    );
+  }
+  if (
+    reviewDeliveryInventory !== undefined &&
+    (jsonCount !== 1 ||
+      showScanCount !== 0 ||
+      canonSnapshotPaths.length !== 0 ||
+      acceptCandidateCount !== 0 ||
+      authorityIds.length !== 0)
+  ) {
+    throw new RunsOperatorError(
+      "review-delivery-inventory-option-conflict",
+      "The --review-delivery-inventory option requires --json and cannot be combined with other show projections.",
+      "Run the inspection as a separate docsfab runs show command with --json.",
+    );
   }
   const canonSnapshotPath = canonSnapshotPaths[0];
   const authorityId = authorityIds[0];
@@ -472,6 +529,7 @@ export function parseRunsArguments(args: string[]): RunsArguments {
     ...(canonSnapshotPath ? { canonSnapshotPath: resolve(canonSnapshotPath) } : {}),
     acceptCandidateSnapshot,
     ...(authorityId ? { authorityId } : {}),
+    ...(reviewDeliveryInventory ? { reviewDeliveryInventory } : {}),
   };
 }
 

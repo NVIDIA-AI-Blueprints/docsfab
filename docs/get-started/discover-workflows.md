@@ -86,7 +86,7 @@ change for your request.
 To run a model-backed task, configure your model through
 [Install DocsFab](installation.md#set-up-docsfab), then continue with a quickstart:
 
-- [Runner Quickstart](runner-quickstart.md): run `create-documentation` with a
+- [Workflow Quickstart](runner-quickstart.md): run `create-documentation` with a
   concrete instruction and `--patch-only` to retain a local patch for review.
 - [Live Agent Quickstart](live-agent-quickstart.md): describe your outcome in a
   conversation and let DocsFab select the appropriate skills or workflow.

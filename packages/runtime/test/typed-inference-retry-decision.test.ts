@@ -145,7 +145,7 @@ describe("step retry decided by the typed provider error (#1253)", () => {
       // The decided error is composed from closed facts; no provider text survives.
       const error = execution.status === "failed" ? execution.error : undefined;
       expect(error?.message).toBe(
-        `Model request failed [${category}; retryable=false]: the sent provider request ended with a ${cls} error.`,
+        `Model request failed [${category}; retryable=false]: the sent provider request ended with ${/^[aeiou]/u.test(cls) ? "an" : "a"} ${cls} error.`,
       );
       expect(JSON.stringify(execution.evidence)).not.toContain("policy violation");
     },

@@ -30,6 +30,30 @@ Select the target repository and optional revision:
 docsfab run review-documentation --repo <path> --revision <revision>
 ```
 
+To review a public GitHub pull request, select its URL instead of a local
+repository and revision:
+
+```bash
+docsfab run review-documentation --pr https://github.com/OWNER/REPO/pull/N
+```
+
+Add `--source docs/reference.md` to include a tracked file from H. DocsFab
+binds the selected file and pull request evidence to the same review run.
+
+DocsFab verifies the pull request's merge base (M), target base (B), and fork
+head (H). It reviews a private export of H and keeps B target context distinct
+from M. The run records its selected pages and any uncertain impact. Deleted
+pages retain M-before change evidence. A read-only review step can cite an
+exact source span it read; a finding without a matching citation remains
+uncited in the saved evidence. The local Markdown and JSON results include
+the basis, scope, findings, and limitations.
+
+This route inventories native documentation checks but does not execute
+repository scripts. Required checks appear as unavailable with the command
+and reason; they do not count as passing. `--dry-run` shows the unresolved
+selection without opening a source or calling a model. The route does not
+grant checkout writes, publication, or GitHub posting.
+
 The fixed step sequence is:
 
 1. `audit-documentation` in the declared scope (the Review Scope section below

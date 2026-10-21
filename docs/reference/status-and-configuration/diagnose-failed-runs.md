@@ -119,6 +119,7 @@ reads it from.
 | `provider-model-retired` | `operator-configuration` | HTTP status 410: the provider no longer serves the configured model. Switch the model or composition. |
 | `provider-auth-refused` | `operator-configuration` | HTTP status 401 or 403, or the `auth` provider error class. |
 | `provider-request-refused` | `operator-configuration` | Another HTTP 4xx status, or the `invalid-request` provider error class. |
+| `provider-endpoint-unreachable` | `operator-configuration` | The `unreachable` provider error class: the connection to the configured endpoint was refused, its host name did not resolve, or no route reached it. The next command is `docsfab doctor --live`. |
 | `request-not-sent` | `operator-configuration` | A provider outcome with no model, finish reason, or output allowance recorded. |
 | `context-window-exhausted` | `operator-configuration` | A `context-exhausted` outcome. |
 | `operator-input-refused` | `operator-configuration` | A recorded `operator-input` or `planning-refusal` failure class. |

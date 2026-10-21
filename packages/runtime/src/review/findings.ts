@@ -49,6 +49,7 @@ import {
   object,
   parseCanonicalJson,
   parseLocation,
+  truncate,
 } from "./findings/projection-primitives.js";
 import {
   normalizeRepositoryLocator,
@@ -395,6 +396,13 @@ function projectReviewFindings(
         invalidCount += 1;
         recordFactProjectionOmission(finding, step.id, 1, "invalid", limitations);
         continue;
+      }
+      if (step.skill === "evaluate-document-quality") {
+        const folded = foldEvaluatorRestatement(findings, normalized);
+        if (folded !== null) {
+          findings.splice(0, findings.length, ...folded);
+          continue;
+        }
       }
       if (findingIds.has(normalized.id)) {
         limitations.add(`review-findings-duplicate:${normalized.id}`);
@@ -749,7 +757,14 @@ export async function projectReviewFindingsFromRetainedRun(
     if (invalidCount > 0) {
       retainedLimitations.add(`review-findings-invalid:evaluate-document-quality:${invalidCount}`);
     }
-    const merged = mergeFindings(summaryFindings, normalizedRecovered, retainedLimitations);
+    let upstreamFindings: readonly ReviewFindingV1[] = summaryFindings;
+    const evaluatorFindings: ReviewFindingV1[] = [];
+    for (const finding of normalizedRecovered) {
+      const folded = foldEvaluatorRestatement(upstreamFindings, finding);
+      if (folded === null) evaluatorFindings.push(finding);
+      else upstreamFindings = folded;
+    }
+    const merged = mergeFindings(upstreamFindings, evaluatorFindings, retainedLimitations);
     return freezeProjection(
       merged,
       retainedLimitations,
@@ -1069,6 +1084,70 @@ function normalizeFinding(value: ReviewFindingV1): ReviewFindingV1 | null {
   } catch {
     return null;
   }
+}
+
+const ORIGINATING_FINDING_ID =
+  /^finding:(?<skill>lint-documentation|verify-technical-accuracy|review-documentation):(?<issue>[A-Z]+-[0-9]{3}):[0-9]+(?::fact:[0-9]+)?$/u;
+const ORIGINATING_ISSUE_REFERENCE = /\b[A-Z]+-[0-9]{3}\b/gu;
+const SEVERITY_RANK: Readonly<Record<ReviewFindingV1["severity"], number>> = {
+  info: 0,
+  warning: 1,
+  error: 2,
+};
+
+/**
+ * The quality evaluator retains each originating technical or editorial issue
+ * as its own finding and names the originating ID. Fold that restatement into
+ * the originating finding so one issue is listed once: the originating
+ * wording and recommendation stay, the stronger severity wins, and the
+ * evaluator ID and evidence are appended so both producers stay traceable.
+ * Returns null, leaving the evaluator finding listed on its own, unless every
+ * named ID resolves to findings from one producer step on the evaluator's
+ * path and each target keeps room for the evaluator ID. Folding the same
+ * evaluator finding twice appends its trace once.
+ */
+function foldEvaluatorRestatement(
+  findings: readonly ReviewFindingV1[],
+  restatement: ReviewFindingV1,
+): ReviewFindingV1[] | null {
+  const named = new Set(restatement.summary.match(ORIGINATING_ISSUE_REFERENCE) ?? []);
+  if (named.size === 0) return null;
+  const targets = findings.flatMap((finding, index) => {
+    const groups = ORIGINATING_FINDING_ID.exec(finding.id)?.groups;
+    return groups?.issue !== undefined && named.has(groups.issue)
+      ? [{ index, skill: groups.skill, issue: groups.issue }]
+      : [];
+  });
+  if (
+    [...named].some((issueId) => !targets.some((target) => target.issue === issueId)) ||
+    new Set(targets.map((target) => target.skill)).size !== 1 ||
+    (restatement.path !== null &&
+      targets.some((target) => findings[target.index]!.path !== restatement.path))
+  ) {
+    return null;
+  }
+  const traceId = `evaluate-document-quality ${restatement.id}`;
+  const traces = [
+    `${traceId}: ${restatement.evidence ?? "no evidence"}`,
+    `${traceId}: evidence retained in the evaluation artifact`,
+  ];
+  const targetIndexes = new Set(targets.map((target) => target.index));
+  const folded = findings.map((finding, index) => {
+    if (!targetIndexes.has(index)) return finding;
+    const severity =
+      SEVERITY_RANK[restatement.severity] > SEVERITY_RANK[finding.severity]
+        ? restatement.severity
+        : finding.severity;
+    if (finding.evidence?.includes(`${traceId}: `)) return { ...finding, severity };
+    const evidence = traces
+      .map((trace) => (finding.evidence ? `${finding.evidence}; ${trace}` : trace))
+      .find((candidate) => truncate(candidate) === candidate);
+    return evidence === undefined ? null : normalizeFinding({ ...finding, severity, evidence });
+  });
+  if (folded.some((finding) => finding === null)) return null;
+  return Buffer.byteLength(JSON.stringify(folded), "utf8") > MAX_REVIEW_FINDINGS_BYTES
+    ? null
+    : (folded as ReviewFindingV1[]);
 }
 
 function mergeFindings(

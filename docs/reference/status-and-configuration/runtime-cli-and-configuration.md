@@ -66,6 +66,30 @@ command, run `docsfab help <command>` or `docsfab <command> --help`. For
 example, `docsfab runs --help` shows how to import and query saved run records
 to diagnose failures.
 
+## Public GitHub Pull Request Review
+
+Use this command for a public GitHub pull request:
+
+```bash
+docsfab run review-documentation --pr https://github.com/OWNER/REPO/pull/N
+```
+
+You can add `--source docs/reference.md` to bind a tracked file from the fork
+head to the same review. The file must exist at H; the current checkout cannot
+supply its bytes.
+
+The selected URL supplies a private, immutable fork-head workspace. Do not pass
+`--repo`, `--revision`, `--remote`, `--draft-mr`, or `--comment-mr` with this
+route. `--dry-run` prints an unresolved selection and performs no acquisition.
+
+The normal run records the merge base, target base, and fork head separately.
+Its JSON result and local Markdown report name reviewed pages, exact source
+span citations, uncertain coverage, and checks that were inventoried but not
+run. A not-run repository check is unavailable, not passed. The run does not
+write to the target repository or post to GitHub. Refer to
+[Review Documentation Workflow in DocsFab](../workflow-contracts/review-documentation.md#run-the-workflow)
+for the fixed step contract.
+
 ## Authoritative Sources
 
 This page is based on the following sources:
@@ -79,7 +103,7 @@ This page is based on the following sources:
 ## Related Topics
 
 - [Install DocsFab](../../get-started/installation.md)
-- [Runner Quickstart](../../get-started/runner-quickstart.md)
+- [Workflow Quickstart](../../get-started/runner-quickstart.md)
 - [DocsFab Operator Error Envelope](operator-error-envelope.md)
 - [Model-Profile Approval in DocsFab](model-profile-approval.md)
 - [DocsFab Implementation Status](implementation-status.md)

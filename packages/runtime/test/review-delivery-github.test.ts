@@ -52,6 +52,7 @@ const roots: string[] = [];
 const fixtures = new URL("./fixtures/review-delivery/github/", import.meta.url);
 
 afterEach(async () => {
+  vi.unstubAllEnvs();
   await Promise.all(roots.splice(0).map((root) => rm(root, { recursive: true, force: true })));
 });
 
@@ -73,6 +74,8 @@ function planFixture(
     requestedActions?: "overview" | "summary-only";
     zeroFindings?: boolean;
     overviewContent?: boolean;
+    largeQuestions?: boolean;
+    questionCharacter?: "x" | "é";
   } = {},
 ): {
   plan: ReviewDeliveryPlan<ChangeSourceV1>;
@@ -191,9 +194,28 @@ function planFixture(
     checks: options.overviewContent
       ? [{ id: "check:source", name: "@reviewer <script> source check", status: "passed" }]
       : [],
-    unresolvedQuestions: options.overviewContent
-      ? [{ id: "question:current", summary: "Is [the example](https://evil.test) current?" }]
-      : [],
+    unresolvedQuestions: options.largeQuestions
+      ? Array.from(
+          {
+            length:
+              Math.ceil(
+                LIMIT_DEFINITION_BY_NAME["githubReview.bodyMaxBytes"]!.value /
+                  LIMIT_DEFINITION_BY_NAME["reviewFindings.resultSummaryMaxChars"]!.value,
+              ) + 1,
+          },
+          (_, index) => ({
+            id: `question:${String(index).padStart(4, "0")}`,
+            summary: `Question ${index}: ${(options.questionCharacter ?? "x").repeat(LIMIT_DEFINITION_BY_NAME["reviewFindings.resultSummaryMaxChars"]!.value - String(index).length - 11)}`,
+          }),
+        )
+      : options.overviewContent
+        ? [
+            {
+              id: "question:current",
+              summary: `Is [the example](https://evil.test) current?${options.questionCharacter === "é" ? " é" : ""}`,
+            },
+          ]
+        : [],
     affectedPaths: ["docs/guide.md"],
     ...(options.overviewContent
       ? {
@@ -354,6 +376,14 @@ function legacyCreateEffect(
   return {
     ...prepared,
     request,
+    ...(prepared.overviewPresentation === undefined
+      ? {}
+      : {
+          overviewPresentation: {
+            ...prepared.overviewPresentation,
+            kind: "historical-legacy" as const,
+          },
+        }),
     outboundBytesSha256: reviewDeliveryOutboundBytesSha256(request),
     expectedBodySha256: reviewDeliveryBodySha256(terseBody),
     actionPayloads: prepared.actionPayloads.map((payload) =>
@@ -698,6 +728,272 @@ describe("native GitHub review adapter", () => {
       expect(fake.state).toBe("COMMENTED");
     },
   );
+
+  it("keeps a complete inline batch while an oversized default overview becomes submitted partial", async () => {
+    const { plan, snapshot } = planFixture({ overviewContent: true, largeQuestions: true });
+    const fake = new FakeGithub();
+    const adapter = createGithubReviewAdapter({
+      plan,
+      snapshot,
+      fetch: fake.fetch,
+      authorization: () => "Bearer synthetic",
+    });
+    const context: ReviewDeliveryEffectContextV1 = {
+      kind: "docsfab-review-delivery-effect-context",
+      schemaVersion: 1,
+      logicalDeliveryId: "large-default-mixed",
+      correlationSeed: randomBytes(32).toString("base64url"),
+      committedEffects: [],
+    };
+    vi.stubEnv("DOCSFAB_GITHUB_REVIEW_BODY_MAX_BYTES", "131072");
+    const full = await adapter.prepareNextEffect({ plan, priorObservations: [], context });
+    expect(full.kind).toBe("effect");
+    if (full.kind !== "effect") return;
+    const fullRequest = JSON.parse(Buffer.from(full.request.bodyBytes).toString("utf8")) as {
+      body: string;
+      comments: unknown[];
+    };
+    expect(Buffer.byteLength(fullRequest.body, "utf8")).toBeGreaterThan(
+      LIMIT_DEFINITION_BY_NAME["githubReview.bodyMaxBytes"]!.value,
+    );
+    expect(fullRequest.comments).toHaveLength(2);
+    vi.stubEnv("DOCSFAB_GITHUB_REVIEW_BODY_MAX_BYTES", "65000");
+    const compact = await adapter.prepareNextEffect({ plan, priorObservations: [], context });
+    expect(compact.kind).toBe("effect");
+    if (compact.kind !== "effect") return;
+    const compactRequest = JSON.parse(Buffer.from(compact.request.bodyBytes).toString("utf8")) as {
+      body: string;
+      comments: unknown[];
+    };
+    expect(compactRequest.comments).toEqual(fullRequest.comments);
+    expect(compactRequest.body).toContain("Overview presentation: partial");
+    expect(compactRequest.body).toContain(
+      `unanswered questions ${plan.unresolvedQuestions.length}`,
+    );
+    expect(compactRequest.body).not.toContain(plan.unresolvedQuestions[0]!.summary);
+    expect(compact.overviewPresentation?.kind).toBe("compact-partial");
+    expect(fake.posts).toBe(0);
+
+    const root = await mkdtemp(join(tmpdir(), "github-capacity-store-"));
+    roots.push(root);
+    const { store, admission } = await retainedOrigin(root, plan, snapshot);
+    const result = await executeReviewDelivery({
+      plan,
+      store,
+      originAdmission: admission,
+      grantsByActionId: grants(plan),
+      effects: adapter,
+      recovery: adapter,
+    });
+    expect(result).toMatchObject({
+      kind: "partial",
+      publication: "submitted",
+      overview: "partial",
+      remaining: { unansweredQuestions: plan.unresolvedQuestions.length, nativeInlineFindings: 2 },
+    });
+    expect(fake.posts).toBe(2);
+    expect(fake.state).toBe("COMMENTED");
+    expect(fake.comments).toHaveLength(2);
+    const repeated = await executeReviewDelivery({
+      plan,
+      store,
+      originAdmission: admission,
+      grantsByActionId: grants(plan),
+      effects: adapter,
+      recovery: adapter,
+    });
+    expect(repeated).toMatchObject({
+      kind: "partial",
+      publication: "submitted",
+      overview: "partial",
+    });
+    expect(fake.posts).toBe(2);
+  });
+
+  it.each(["overview", "summary-only"] as const)(
+    "stops oversized explicit %s before a GitHub POST without compact fallback",
+    async (requestedActions) => {
+      const { plan, snapshot } = planFixture({
+        overviewContent: true,
+        largeQuestions: true,
+        requestedActions,
+      });
+      const fake = new FakeGithub();
+      const adapter = createGithubReviewAdapter({
+        plan,
+        snapshot,
+        fetch: fake.fetch,
+        authorization: () => "Bearer synthetic",
+      });
+      const root = await mkdtemp(join(tmpdir(), "github-capacity-stop-"));
+      roots.push(root);
+      const { store, admission } = await retainedOrigin(root, plan, snapshot, requestedActions);
+      const result = await executeReviewDelivery({
+        plan,
+        store,
+        originAdmission: admission,
+        grantsByActionId: grants(plan),
+        effects: adapter,
+        recovery: adapter,
+      });
+      expect(fake.posts).toBe(0);
+      expect(result).toMatchObject({
+        kind: "stopped",
+        reason: "capacity",
+        capacity: {
+          code: "github-review-body-bytes-bound",
+          limitName: "githubReview.bodyMaxBytes",
+          effectiveBytes: LIMIT_DEFINITION_BY_NAME["githubReview.bodyMaxBytes"]!.value,
+          scope: "github-pending-review-create.body",
+        },
+      });
+    },
+  );
+
+  it("refuses before POST when even the fixed compact body exceeds a valid host policy", async () => {
+    const { plan, snapshot } = planFixture({ overviewContent: true, largeQuestions: true });
+    vi.stubEnv("DOCSFAB_GITHUB_REVIEW_BODY_MAX_BYTES", "256");
+    const fake = new FakeGithub();
+    const adapter = createGithubReviewAdapter({
+      plan,
+      snapshot,
+      fetch: fake.fetch,
+      authorization: () => "Bearer synthetic",
+    });
+    const context: ReviewDeliveryEffectContextV1 = {
+      kind: "docsfab-review-delivery-effect-context",
+      schemaVersion: 1,
+      logicalDeliveryId: "compact-too-large",
+      correlationSeed: randomBytes(32).toString("base64url"),
+      committedEffects: [],
+    };
+    const prepared = await adapter.prepareNextEffect({ plan, priorObservations: [], context });
+    expect(prepared).toMatchObject({
+      kind: "capacity-stop",
+      code: "github-review-body-bytes-bound",
+      effectiveBytes: 256,
+    });
+    expect(fake.posts).toBe(0);
+  });
+
+  it("uses UTF-8 bytes at the exact rich-body boundary and keeps default all-inline legacy bytes", async () => {
+    const { plan, snapshot } = planFixture({ overviewContent: true, questionCharacter: "é" });
+    const fake = new FakeGithub();
+    const adapter = createGithubReviewAdapter({
+      plan,
+      snapshot,
+      fetch: fake.fetch,
+      authorization: () => "Bearer synthetic",
+    });
+    const context: ReviewDeliveryEffectContextV1 = {
+      kind: "docsfab-review-delivery-effect-context",
+      schemaVersion: 1,
+      logicalDeliveryId: "utf8-boundary",
+      correlationSeed: randomBytes(32).toString("base64url"),
+      committedEffects: [],
+    };
+    const initial = await adapter.prepareNextEffect({ plan, priorObservations: [], context });
+    expect(initial.kind).toBe("effect");
+    if (initial.kind !== "effect") return;
+    const richBody = (
+      JSON.parse(Buffer.from(initial.request.bodyBytes).toString("utf8")) as {
+        body: string;
+      }
+    ).body;
+    expect(richBody).toContain("selected rubric unavailable");
+    const bytes = Buffer.byteLength(richBody, "utf8");
+    expect(bytes).toBeGreaterThan(richBody.length);
+    vi.stubEnv("DOCSFAB_GITHUB_REVIEW_BODY_MAX_BYTES", String(bytes));
+    const exact = await adapter.prepareNextEffect({ plan, priorObservations: [], context });
+    expect(exact.kind).toBe("effect");
+    if (exact.kind !== "effect") return;
+    expect(exact.expectedBodySha256).toBe(initial.expectedBodySha256);
+    expect(exact.overviewPresentation?.kind).toBe("full");
+    vi.stubEnv("DOCSFAB_GITHUB_REVIEW_BODY_MAX_BYTES", String(bytes - 1));
+    const over = await adapter.prepareNextEffect({ plan, priorObservations: [], context });
+    expect(over.kind).toBe("effect");
+    if (over.kind !== "effect") return;
+    expect(over.overviewPresentation?.kind).toBe("compact-partial");
+    expect(over.expectedBodySha256).not.toBe(initial.expectedBodySha256);
+
+    const allInline = planFixture({ summary: false });
+    const allInlineAdapter = createGithubReviewAdapter({
+      plan: allInline.plan,
+      snapshot: allInline.snapshot,
+      fetch: new FakeGithub().fetch,
+      authorization: () => "Bearer synthetic",
+    });
+    vi.stubEnv("DOCSFAB_GITHUB_REVIEW_BODY_MAX_BYTES", "256");
+    const legacy = await allInlineAdapter.prepareNextEffect({
+      plan: allInline.plan,
+      priorObservations: [],
+      context,
+    });
+    expect(legacy.kind).toBe("effect");
+    if (legacy.kind !== "effect") return;
+    const legacyBody = (
+      JSON.parse(Buffer.from(legacy.request.bodyBytes).toString("utf8")) as {
+        body: string;
+      }
+    ).body;
+    expect(legacyBody).toBe(renderGithubReviewBody(allInline.plan, undefined, legacy.marker));
+  });
+
+  it("classifies committed full or compact descriptors without HTTP and resumes with authenticated reads", async () => {
+    const { plan, snapshot } = planFixture({ overviewContent: true, largeQuestions: true });
+    const fake = new FakeGithub();
+    const adapter = createGithubReviewAdapter({
+      plan,
+      snapshot,
+      fetch: fake.fetch,
+      authorization: () => "Bearer synthetic",
+    });
+    const context: ReviewDeliveryEffectContextV1 = {
+      kind: "docsfab-review-delivery-effect-context",
+      schemaVersion: 1,
+      logicalDeliveryId: "committed-variant-policy",
+      correlationSeed: randomBytes(32).toString("base64url"),
+      committedEffects: [],
+    };
+    vi.stubEnv("DOCSFAB_GITHUB_REVIEW_BODY_MAX_BYTES", "131072");
+    const full = await adapter.prepareNextEffect({ plan, priorObservations: [], context });
+    expect(full.kind).toBe("effect");
+    if (full.kind !== "effect") return;
+    vi.stubEnv("DOCSFAB_GITHUB_REVIEW_BODY_MAX_BYTES", "65000");
+    const compact = await adapter.prepareNextEffect({ plan, priorObservations: [], context });
+    expect(compact.kind).toBe("effect");
+    if (compact.kind !== "effect") return;
+    for (const [effect, currentPolicy, kind] of [
+      [full, "256", "full"],
+      [compact, "131072", "compact-partial"],
+    ] as const) {
+      vi.stubEnv("DOCSFAB_GITHUB_REVIEW_BODY_MAX_BYTES", currentPolicy);
+      const committedContext = { ...context, committedEffects: [committed(effect)] };
+      const callsBeforeClassification = fake.calls.length;
+      expect(
+        adapter.classifyCommittedOverviewPresentation({ plan, context: committedContext }),
+      ).toMatchObject({ kind: "presentation", presentation: { kind } });
+      expect(fake.calls).toHaveLength(callsBeforeClassification);
+      const resumed = await adapter.prepareNextEffect({
+        plan,
+        priorObservations: [],
+        context: committedContext,
+      });
+      expect(resumed).toEqual(effect);
+    }
+    const callsBeforeRejectedClassification = fake.calls.length;
+    expect(
+      adapter.classifyCommittedOverviewPresentation({
+        plan,
+        context: {
+          ...context,
+          committedEffects: [{ ...committed(compact), expectedBodySha256: HASH }],
+        },
+      }),
+    ).toEqual({ kind: "unavailable" });
+    expect(fake.calls).toHaveLength(callsBeforeRejectedClassification);
+    expect(fake.posts).toBe(0);
+  });
 
   it("rejects a committed terse default body under a same-manifest explicit overview", async () => {
     const prior = planFixture({ overviewContent: true });

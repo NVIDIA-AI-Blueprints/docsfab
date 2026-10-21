@@ -85,7 +85,7 @@ integration, as the following table distinguishes.
 
 | Interface | Purpose | State and Guide |
 | --- | --- | --- |
-| Local CLI | Submit a named workflow or a natural-language request. | Current product; follow the [Runner Quickstart](../get-started/runner-quickstart.md). |
+| Local CLI | Submit a named workflow or a natural-language request. | Current product; follow the [Workflow Quickstart](../get-started/runner-quickstart.md). |
 | Local live agent | Work in a persistent conversation over a local repository. | Current product; follow the [Live Agent Quickstart](../get-started/live-agent-quickstart.md). |
 | Hosted CI proposals | Intended: start revision-bound documentation work from a repository event. | Integration pending; refer to [Automatic CI Proposals](../workflows/automatic-ci-proposals.md). |
 

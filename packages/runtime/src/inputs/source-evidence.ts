@@ -1433,8 +1433,13 @@ export interface SourceRequestContextV4 extends SourceRequestContextV3 {
   readerEvidenceRequest: unknown;
 }
 
+/** Adds the host-projected immutable public PR basis without changing V1–V4 bytes. */
+export interface SourceRequestContextV5 extends SourceRequestContextV4 {
+  prReviewBasis: unknown;
+}
+
 /** Lowest first. */
-export const SOURCE_REQUEST_PROJECTION_VERSIONS = [1, 2, 3, 4] as const;
+export const SOURCE_REQUEST_PROJECTION_VERSIONS = [1, 2, 3, 4, 5] as const;
 export type SourceRequestProjectionVersion = (typeof SOURCE_REQUEST_PROJECTION_VERSIONS)[number];
 
 /**
@@ -1481,6 +1486,7 @@ export const SOURCE_REQUEST_FIELD_CLASSES = Object.freeze({
   firstPassChoices: "resolved",
   instructionContext: 4,
   readerEvidenceRequest: 4,
+  prReviewBasis: 5,
   knowledgeContinuationAcceptanceSha256: "continuation-pending",
   knowledgeContinuationRecoveryAuthorization: "continuation-pending",
   knowledgeContinuationReceipt: "continuation-pending",
@@ -1544,6 +1550,14 @@ export const SOURCE_REQUEST_PROJECTED_FIELDS_V4_ADDITIONS = fieldsOfClass(4);
 export const SOURCE_REQUEST_PROJECTED_FIELDS_V4 = Object.freeze([
   ...SOURCE_REQUEST_PROJECTED_FIELDS_V3,
   ...SOURCE_REQUEST_PROJECTED_FIELDS_V4_ADDITIONS,
+]);
+
+/** In projection order. */
+export const SOURCE_REQUEST_PROJECTED_FIELDS_V5_ADDITIONS = fieldsOfClass(5);
+
+export const SOURCE_REQUEST_PROJECTED_FIELDS_V5 = Object.freeze([
+  ...SOURCE_REQUEST_PROJECTED_FIELDS_V4,
+  ...SOURCE_REQUEST_PROJECTED_FIELDS_V5_ADDITIONS,
 ]);
 
 /**
@@ -1677,6 +1691,41 @@ export function computeSourceRequestSha256V4(context: SourceRequestContextV4): s
   });
 }
 
+/** V5 commits the complete host-projected PR basis while old projection digests remain frozen. */
+export function computeSourceRequestSha256V5(context: SourceRequestContextV5): string {
+  assertInert(context);
+  rejectCredentials(context);
+  const root = object(context);
+  exact(root, [
+    "runId",
+    "workflow",
+    "repository",
+    "workspaceIdentitySha256",
+    ...SOURCE_REQUEST_PROJECTED_FIELDS_V5,
+  ]);
+  const basis = object(root.prReviewBasis);
+  if (
+    basis.schemaVersion !== 1 ||
+    basis.kind !== "docsfab-pr-review-basis-binding" ||
+    hash(basis.basisSha256) !==
+      canonicalDigest(
+        Object.fromEntries(Object.entries(basis).filter(([key]) => key !== "basisSha256")),
+      )
+  )
+    failSourceEvidence("invalid-value");
+  return canonicalDigest({
+    schemaVersion: SOURCE_EVIDENCE_SCHEMA_VERSION,
+    kind: SOURCE_REQUEST_CONTEXT_KIND,
+    projectionVersion: 5 as const,
+    ...sourceRequestIdentityBody(root),
+    ...sourceRequestVersion2Additions(root),
+    requestIntent: root.requestIntent ?? null,
+    instructionContext: root.instructionContext ?? null,
+    readerEvidenceRequest: root.readerEvidenceRequest ?? null,
+    prReviewBasis: basis,
+  });
+}
+
 /**
  * The lowest projection version that represents every key on the request. It
  * derives from the request alone so the CLI producer and runner verifier agree.
@@ -1786,10 +1835,15 @@ export function projectSourceRequestContext(
     requestIntent: root.requestIntent ?? null,
   };
   if (version === 3) return computeSourceRequestSha256V3(versionThree);
-  return computeSourceRequestSha256V4({
+  const versionFour: SourceRequestContextV4 = {
     ...versionThree,
     instructionContext: (root.instructionContext as string | undefined) ?? null,
     readerEvidenceRequest: root.readerEvidenceRequest ?? null,
+  };
+  if (version === 4) return computeSourceRequestSha256V4(versionFour);
+  return computeSourceRequestSha256V5({
+    ...versionFour,
+    prReviewBasis: root.prReviewBasis,
   });
 }
 

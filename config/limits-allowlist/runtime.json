@@ -549,13 +549,6 @@
     {
       "path": "packages/runtime/src/harness/source-tools.ts",
       "kind": "max-assign",
-      "lexeme": "SOURCE_LIST_MAX_ENTRIES = 2",
-      "count": 1,
-      "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."
-    },
-    {
-      "path": "packages/runtime/src/harness/source-tools.ts",
-      "kind": "max-assign",
       "lexeme": "SOURCE_READ_MAX_SPANS_PER_CALL = 3",
       "count": 1,
       "rationale": "Hand-declared bound newly visible after the #1027 identifier-rule expansion. Remaining catalog migration, not a second source of truth."

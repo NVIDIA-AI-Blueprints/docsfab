@@ -39,6 +39,8 @@ function classReason(error: ProviderErrorTelemetryV1): string | undefined {
       return `The model provider did not answer in time${status}. Retry; if it persists, check connectivity to the endpoint.`;
     case "network":
       return "DocsFab could not reach the model endpoint. Check the network, VPN, or proxy, and the endpoint shown by docsfab setup, then retry.";
+    case "unreachable":
+      return "DocsFab could not connect to the model endpoint: the connection was refused, the host name did not resolve, or no route reached it. Check the endpoint URL shown by docsfab setup and the network, then run docsfab doctor --live.";
     case "stream-incomplete":
       return "The model's response stream closed before the answer finished. Retry.";
     case "content-filter":

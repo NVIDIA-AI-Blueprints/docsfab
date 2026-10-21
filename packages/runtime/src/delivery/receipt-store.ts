@@ -194,6 +194,8 @@ export interface ScmDeliveryReviewReceiptClaim {
 }
 
 export interface FileScmDeliveryReceiptStoreOptions {
+  /** Adversarial test seam after an import observes the live receipt-root gate owner. */
+  afterReviewImportGateContention?: () => void | Promise<void>;
   /** Adversarial test seam after the helper holds the journal cwd. */
   beforeJournalOperation?: (
     operation: JournalWorkerRequest["operation"],
@@ -274,6 +276,38 @@ export class FileScmDeliveryReceiptStore implements ScmDeliveryReceiptStore {
       await assertDirectory(root);
       await assertJournalPath(root, idempotencyKey, result.journal);
       return result.envelope ? validateEnvelope(result.envelope).record : undefined;
+    } finally {
+      await root.handle.close().catch(() => undefined);
+    }
+  }
+
+  /** Read an existing journal's pinned dialect; never reinterpret a failed chain. */
+  public async loadEither(
+    idempotencyKey: string,
+  ): Promise<
+    | { readonly kind: "scm"; readonly record: ScmDeliveryRecord }
+    | { readonly kind: "review"; readonly record: ReviewDeliveryRecordV1 }
+    | undefined
+  > {
+    key(idempotencyKey);
+    const root = await privateDirectory(this.root, false, false);
+    try {
+      const result = await runJournalWorker(
+        root,
+        { operation: "load", idempotencyKey, dialect: "auto" },
+        this.options.beforeJournalOperation,
+        undefined,
+        this.options.afterHelperSpawn,
+      );
+      await assertDirectory(root);
+      await assertJournalPath(root, idempotencyKey, result.journal);
+      if (result.envelope === null) return undefined;
+      if (!isRecord(result.envelope)) fail("receipt-invalid");
+      if (result.envelope.kind === "docsfab-scm-delivery-receipt-slot")
+        return { kind: "scm", record: validateEnvelope(result.envelope).record };
+      if (result.envelope.kind === "docsfab-review-delivery-receipt-slot")
+        return { kind: "review", record: validateReviewEnvelope(result.envelope).record };
+      return fail("receipt-invalid");
     } finally {
       await root.handle.close().catch(() => undefined);
     }
@@ -535,33 +569,37 @@ export class FileScmDeliveryReceiptStore implements ScmDeliveryReceiptStore {
     await assertAuthorized();
     const root = await privateDirectory(this.root, true, true);
     await root.handle.close();
-    return withRunMaintenanceGate(this.root, async () => {
-      await assertAuthorized();
-      const held = await privateDirectory(this.root, true, true);
-      try {
-        const result = await runJournalWorker(
-          held,
-          {
-            operation: "claim",
-            idempotencyKey: record.idempotencyKey,
-            dialect: "review",
-            envelope: makeReviewEnvelope(0, null, record),
-          },
-          this.options.beforeJournalOperation,
-          assertAuthorized,
-          this.options.afterHelperSpawn,
-        );
-        await assertDirectory(held);
-        await assertJournalPath(held, record.idempotencyKey, result.journal);
-        if (result.code === "receipt-conflict") fail("receipt-conflict");
-        if (!result.envelope) fail("receipt-missing");
-        const winner = validateReviewEnvelope(result.envelope).record;
-        if (winner.sha256 !== record.sha256) fail("receipt-conflict");
-        return { record: winner, created: result.created === true };
-      } finally {
-        await held.handle.close().catch(() => undefined);
-      }
-    });
+    return withRunMaintenanceGate(
+      this.root,
+      async () => {
+        await assertAuthorized();
+        const held = await privateDirectory(this.root, true, true);
+        try {
+          const result = await runJournalWorker(
+            held,
+            {
+              operation: "claim",
+              idempotencyKey: record.idempotencyKey,
+              dialect: "review",
+              envelope: makeReviewEnvelope(0, null, record),
+            },
+            this.options.beforeJournalOperation,
+            assertAuthorized,
+            this.options.afterHelperSpawn,
+          );
+          await assertDirectory(held);
+          await assertJournalPath(held, record.idempotencyKey, result.journal);
+          if (result.code === "receipt-conflict") fail("receipt-conflict");
+          if (!result.envelope) fail("receipt-missing");
+          const winner = validateReviewEnvelope(result.envelope).record;
+          if (winner.sha256 !== record.sha256) fail("receipt-conflict");
+          return { record: winner, created: result.created === true };
+        } finally {
+          await held.handle.close().catch(() => undefined);
+        }
+      },
+      this.options.afterReviewImportGateContention,
+    );
   }
 
   public async compareAndSwapReview(
@@ -665,7 +703,7 @@ interface JournalWorkerRequest {
   expectedSha256?: string;
   expectedJournal?: { dev: number; ino: number };
   envelope?: ReceiptEnvelope | ReviewReceiptEnvelope;
-  dialect?: "review";
+  dialect?: "review" | "auto";
 }
 
 interface JournalWorkerResult {
@@ -1258,6 +1296,16 @@ interface PrivateDirectory {
   uid: number;
   stat: Stats;
   handle: FileHandle;
+}
+
+/** Apply-only preparation for the default receipt-root gate; never chmod an existing root. */
+export async function preparePrivateReceiptRootForDeletion(path: string): Promise<string> {
+  const directory = await privateDirectory(path, true, false);
+  try {
+    return directory.path;
+  } finally {
+    await directory.handle.close();
+  }
 }
 
 async function privateDirectory(

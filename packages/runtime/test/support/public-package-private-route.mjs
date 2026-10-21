@@ -6,14 +6,90 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { mkdirSync, mkdtempSync, readFileSync, realpathSync, writeFileSync } from "node:fs";
-import { findPackageJSON, syncBuiltinESMExports } from "node:module";
+import { findPackageJSON } from "node:module";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 const script = fileURLToPath(import.meta.url);
+const offlineGuard = join(dirname(script), "public-package-offline-guard.mjs");
 const PROFILE = "nvidia-inference-gpt-6-sol-pi";
 const COMPOSITION_SHA256 = "57058a1095d955a7e20e3fc1a759b94cf81b228188b2e964e408a8551a7ee44a";
 const DEPLOYMENT_SHA256 = "0918664a7485ec0cac594e00ee03ddff80ae340213d859135e348ae3119369f9";
+
+function qualifySetup(packageDirectory, endpoint, scratch, environment) {
+  const installedInstructions = readFileSync(
+    join(packageDirectory, "docs/get-started/installation-reference.md"),
+    "utf8",
+  );
+  assert(
+    installedInstructions.includes("--endpoint") &&
+      installedInstructions.includes("active.writing.settings.baseUrl"),
+    "The installed package must document persistent profile endpoint configuration",
+  );
+  const invoke = (args, extraEnvironment = {}) => {
+    const result = spawnSync(
+      process.execPath,
+      [
+        "--import",
+        offlineGuard,
+        join(packageDirectory, "bin/docsfab.mjs"),
+        "setup",
+        ...args,
+        "--json",
+      ],
+      {
+        cwd: scratch,
+        encoding: "utf8",
+        env: {
+          ...environment,
+          DOCSFAB_CONFIG_ROOT: join(scratch, "configuration"),
+          PI_OFFLINE: "1",
+          ...extraEnvironment,
+        },
+      },
+    );
+    // The missing-endpoint case intentionally exits 1, so exit status alone
+    // cannot distinguish it from an attempted request caught by the product.
+    assert.doesNotMatch(result.stderr ?? "", /Offline package qualification observed:/u);
+    return result;
+  };
+  const missing = invoke(["--profile", PROFILE], { MODEL_API_KEY: `nvapi-${"Q".repeat(24)}` });
+  assert.equal(missing.status, 1, missing.stderr || missing.stdout);
+  const missingResult = JSON.parse(missing.stdout);
+  assert.equal(missingResult.status, "blocked-missing-endpoint");
+  assert(missingResult.nextCommand.includes("--endpoint"));
+  // All remaining processes have no ambient endpoint or key. The actual
+  // installed executable must persist and then reload both from saved files.
+  for (const args of [["--profile", PROFILE, "--endpoint", endpoint], [], ["--profile", PROFILE]]) {
+    const result = invoke(args);
+    assert.equal(result.status, 0, result.stderr || result.stdout);
+    const configured = JSON.parse(result.stdout);
+    assert.equal(configured.status, "ready");
+    assert.equal(configured.activeExecutionProfile, PROFILE);
+    assert.equal(configured.profile.endpointUrl, endpoint);
+    assert.equal(configured.profile.modelId, "azure/openai/gpt-6-sol");
+  }
+  const hostPath = join(scratch, "configuration", "host.yaml");
+  const secretsPath = join(scratch, "configuration", "secrets.env");
+  const beforeHost = readFileSync(hostPath, "utf8");
+  const beforeSecrets = readFileSync(secretsPath, "utf8");
+  for (const delimiter of ["?", "#"]) {
+    const refused = invoke(["--profile", PROFILE, "--endpoint", `${endpoint}${delimiter}`]);
+    assert.equal(refused.status, 1, refused.stderr || refused.stdout);
+    assert.equal(readFileSync(hostPath, "utf8"), beforeHost);
+    assert.equal(readFileSync(secretsPath, "utf8"), beforeSecrets);
+  }
+  return {
+    status: "PASS",
+    entrypoint: "installed-bin-subprocesses",
+    phases: ["missing-endpoint", "save-endpoint", "reload", "reselect"],
+    noAmbientEndpointOrCredentialOnReload: true,
+    malformedEndpointPreservesConfiguration: true,
+    networkProcessAndWorkerEntryPointsDenied: true,
+    positiveControls: true,
+    outboundAttempts: [],
+  };
+}
 
 async function probe(packageDirectory, endpoint, scratch) {
   assert.equal(process.env.DOCSFAB_TEST_PRIVATE_ROUTE_BASE_URL, undefined);
@@ -25,37 +101,7 @@ async function probe(packageDirectory, endpoint, scratch) {
   } catch {
     // Older supported Node releases still have the transport observers below.
   }
-  const attempts = [];
-  const deny = (name) => () => {
-    attempts.push(name);
-    throw new Error(`Offline package qualification denied ${name}`);
-  };
-  globalThis.fetch = deny("fetch");
-  for (const [name, methods] of [
-    ["http", ["request", "get"]],
-    ["https", ["request", "get"]],
-    ["http2", ["connect"]],
-    ["net", ["connect", "createConnection"]],
-    ["tls", ["connect"]],
-  ]) {
-    const module = (await import(`node:${name}`)).default;
-    for (const method of methods) module[method] = deny(`${name}.${method}`);
-  }
-  const net = (await import("node:net")).default;
-  net.Socket.prototype.connect = deny("net.Socket.connect");
-  (await import("node:dgram")).default.Socket.prototype.send = deny("dgram.Socket.send");
-  (await import("node:dns")).default.lookup = deny("dns.lookup");
-  syncBuiltinESMExports();
-  assert.throws(
-    () => globalThis.fetch("https://network-control.invalid"),
-    /Offline package qualification denied/u,
-  );
-  assert.throws(
-    () => net.connect({ host: "network-control.invalid" }),
-    /Offline package qualification denied/u,
-  );
-  assert.deepEqual(attempts, ["fetch", "net.connect"]);
-  attempts.length = 0;
+  const { outboundAttempts: attempts } = await import(pathToFileURL(offlineGuard).href);
 
   const load = (path) => import(pathToFileURL(join(packageDirectory, "dist", path)).href);
   const routes = await load("config/executable-route-urls.js");
@@ -65,7 +111,6 @@ async function probe(packageDirectory, endpoint, scratch) {
     routes.isExecutableRouteOrigin("nvidia-inference-api", "https://elsewhere.example.test"),
     false,
   );
-  const { defaultExecutionHostConfig } = await load("config/profile-projection.js");
   const { loadConfig } = await load("config/runtime-loader.js");
   const { resolveOperatorExecutionBinding } = await load("model/operator-execution-binding.js");
   const { loadInstalledModelCompositionAuthority, assertInstalledDeploymentBaseUrl } = await load(
@@ -96,22 +141,13 @@ async function probe(packageDirectory, endpoint, scratch) {
   const agentDir = join(scratch, "agent");
   for (const directory of [configurationRoot, repositoryPath, sessionDirectory, agentDir])
     mkdirSync(directory, { recursive: true, mode: 0o700 });
-  const host = defaultExecutionHostConfig(PROFILE);
-  writeFileSync(
-    join(configurationRoot, "host.yaml"),
-    JSON.stringify({
-      ...host,
-      active: {
-        ...host.active,
-        writing: { ...host.active.writing, settings: { baseUrl: endpoint } },
-      },
-    }),
-  );
   const environment = {
     DOCSFAB_CONFIG_ROOT: configurationRoot,
     MODEL_API_KEY: `nvapi-${"Q".repeat(24)}`,
   };
-  const config = loadConfig({ ...environment });
+  // Reload in a fresh restricted process from configuration produced by the
+  // real installed setup executable; no fixture constructs host.yaml here.
+  const config = loadConfig({ DOCSFAB_CONFIG_ROOT: configurationRoot });
   const binding = await resolveOperatorExecutionBinding({ model: config.model, environment });
   assert.equal(binding.match, "installed-composition");
   assert.equal(binding.bound.composition.compositionId, PROFILE);
@@ -290,6 +326,21 @@ if (process.argv[2] === "--probe") {
     mkdirSync(directory, { recursive: true, mode: 0o700 });
   const serviceEnvironment = join(scratch, "service.env");
   writeFileSync(serviceEnvironment, "");
+  const environment = {
+    PATH: dirname(process.execPath),
+    HOME: join(scratch, "home"),
+    TMPDIR: join(scratch, "tmp"),
+    DOCSFAB_SERVICE_ENV_FILE: serviceEnvironment,
+  };
+  // Setup needs atomic owner-private writes (fchmod). Node's --permission
+  // disables that API, so run guarded CLI processes first and retain the
+  // strict permission model for the read/bind/provider/session probe below.
+  const setup = qualifySetup(
+    packageDirectory,
+    argumentsByName.get("--endpoint"),
+    scratch,
+    environment,
+  );
   const child = spawnSync(
     process.execPath,
     [
@@ -297,6 +348,7 @@ if (process.argv[2] === "--probe") {
       `--allow-fs-read=${dirname(dirname(packageDirectory))}`,
       `--allow-fs-read=${dependencyRoot}`,
       `--allow-fs-read=${script}`,
+      `--allow-fs-read=${offlineGuard}`,
       `--allow-fs-read=${scratch}`,
       `--allow-fs-write=${scratch}`,
       script,
@@ -308,14 +360,17 @@ if (process.argv[2] === "--probe") {
     {
       cwd: scratch,
       encoding: "utf8",
-      env: {
-        PATH: dirname(process.execPath),
-        HOME: join(scratch, "home"),
-        TMPDIR: join(scratch, "tmp"),
-        DOCSFAB_SERVICE_ENV_FILE: serviceEnvironment,
-      },
+      env: environment,
     },
   );
   assert.equal(child.status, 0, child.stderr || child.stdout);
-  console.log(child.stdout.trim());
+  console.log(
+    JSON.stringify({
+      ...JSON.parse(child.stdout),
+      setup,
+      installedEndpointSetup: true,
+      installedEndpointInstructions: true,
+      missingEndpointDiagnostic: true,
+    }),
+  );
 }

@@ -11,6 +11,8 @@ import { decodeFirstPassChoice } from "./first-pass-choice.js";
 import { decodeFirstPassReplay } from "./first-pass-replay.js";
 import { canonicalDigest } from "../content-ir/canonical.js";
 import { decodeRunRecordInstructionContext } from "./instruction-context.js";
+import { decodePrReviewBasisBinding } from "../inputs/pr-review-basis-binding.js";
+import { decodePrReviewSourceCitations } from "./pr-review-source-citations.js";
 
 /**
  * Workflow and status values admitted by the saved-run boundary.
@@ -51,6 +53,8 @@ export function decodeSavedRunRecord(value: JsonEvidenceValue, expectedId: strin
     throw new Error("The saved run record is malformed and cannot be shown.");
   }
   const root = value as { [key: string]: JsonEvidenceValue };
+  const prReviewBasis =
+    root.prReviewBasis !== undefined ? decodePrReviewBasisBinding(root.prReviewBasis) : undefined;
   if (root.schemaVersion !== 2) {
     throw new Error("The saved run record schemaVersion is not a supported run record.");
   }
@@ -64,6 +68,12 @@ export function decodeSavedRunRecord(value: JsonEvidenceValue, expectedId: strin
   const repo = repository as { [key: string]: JsonEvidenceValue };
   if (typeof repo.sourcePath !== "string" || typeof repo.revision !== "string") {
     throw new Error("The saved run record is malformed and cannot be shown.");
+  }
+  if (
+    prReviewBasis &&
+    (repo.revision !== prReviewBasis.H || root.workflow !== "review-documentation")
+  ) {
+    throw new Error("The saved PR review basis differs from the reviewed H revision or workflow.");
   }
   if (
     typeof root.workflow !== "string" ||
@@ -184,5 +194,9 @@ export function decodeSavedRunRecord(value: JsonEvidenceValue, expectedId: strin
       );
     }
   }
-  return value as unknown as RunRecord;
+  const decoded = value as unknown as RunRecord;
+  if (root.prReviewSourceCitations !== undefined) {
+    decodePrReviewSourceCitations(root.prReviewSourceCitations, decoded);
+  }
+  return decoded;
 }

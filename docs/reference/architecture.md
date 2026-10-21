@@ -129,7 +129,7 @@ contracts. Hosted proposals remain an intended integration.
 
 | Pattern | How You Work | Execution and Delivery Boundary | Start Here |
 | --- | --- | --- | --- |
-| Local CLI | Submit a named workflow or classify a natural-language request. | Workflow model steps use a disposable workspace. A write result can remain a local patch or proceed to separately checked draft-MR delivery. | [Runner Quickstart](../get-started/runner-quickstart.md) |
+| Local CLI | Submit a named workflow or classify a natural-language request. | Workflow model steps use a disposable workspace. A write result can remain a local patch or proceed to separately checked draft-MR delivery. | [Workflow Quickstart](../get-started/runner-quickstart.md) |
 | Local live agent | Continue a conversation over a local repository. | Direct documentation edits are enabled by default. `--read-only` removes edit, write, and host-command tools. Invoked workflows retain their own boundaries. | [Live Agent Quickstart](../get-started/live-agent-quickstart.md) |
 | Hosted CI proposals | Intended: start revision-bound work from a repository event. | Integration is pending. A proposal does not approve, merge, or publish its own output. | [Automatic CI Proposals](../workflows/automatic-ci-proposals.md) |
 

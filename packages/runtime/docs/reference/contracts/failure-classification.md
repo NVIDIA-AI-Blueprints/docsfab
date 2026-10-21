@@ -71,9 +71,9 @@ return an unsaved record.
     `server`, and `timeout` (408, 429, 5xx) are `flake`, because HTTP marks
     them repeatable; the code is `provider-http-<class>`, for example
     `provider-http-auth`. With no status, the request left the host and no
-    failing status came back, so `network`, `timeout`, and
-    `stream-incomplete` (a 2xx stream that closed before it finished, #1696)
-    are `infrastructure`, and `auth` and `rate-limit` keep their classes; the
+    failing status came back, so `network`, `unreachable` (a request that
+    never connected), `timeout`, and `stream-incomplete` (a 2xx stream that
+    closed before it finished, #1696) are `infrastructure`, and `auth` and `rate-limit` keep their classes; the
     code is `provider-<class>`, for example `provider-network` or
     `provider-stream-incomplete`. An
     `invalid-request` (any other 4xx, such as a 400 or 404), a

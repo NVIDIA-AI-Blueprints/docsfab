@@ -77,7 +77,7 @@ navigation:
         path: ../docs/get-started/live-agent-quickstart.md
         slug: live-agent-quickstart
         availability: in-development
-      - page: Runner Quickstart
+      - page: Workflow Quickstart
         path: ../docs/get-started/runner-quickstart.md
         slug: runner-quickstart
         availability: in-development

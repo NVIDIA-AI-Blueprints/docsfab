@@ -27,6 +27,7 @@ export const REQUIRED_CHECK_NOT_RUN_CAUSES = Object.freeze([
   "credential-scan-bound",
   "tree-changed",
   "cancelled",
+  "pr-review-not-admitted",
 ] as const);
 
 export type RequiredCheckNotRunCause = (typeof REQUIRED_CHECK_NOT_RUN_CAUSES)[number];
@@ -42,6 +43,7 @@ const REASONS: Readonly<Record<RequiredCheckNotRunCause, string>> = Object.freez
   "credential-scan-bound": "the checkout exceeds the check credential scan limit",
   "tree-changed": "the checked tree changed while checks ran",
   cancelled: "the checks were cancelled",
+  "pr-review-not-admitted": "public PR review did not admit repository script execution",
 });
 
 /** Every recorded limitation line starts with this text. */

@@ -3,6 +3,8 @@
 
 import { resolvePlanOperatorInput } from "./plan-operator-naming.js";
 import { createHash, randomUUID } from "node:crypto";
+import { projectSourceRequestContext } from "../../inputs/source-evidence.js";
+import { createPrReviewCitationAdmission } from "../../workflow-execution/pr-review-citation-admission.js";
 import { dirname, resolve } from "node:path";
 import type { RunRecord } from "../../records/contracts.js";
 import {
@@ -46,6 +48,8 @@ import {
   CLI_SOURCE_READ_SCOPE,
   cliSourceExtractionLimits,
   createWorkspaceTrackedSourceReader,
+  resolveCliPrReviewSourceEvidence,
+  workspaceIdentityDigest,
   type CliChangeRequestSourceEvidence,
 } from "./source-acquisition.js";
 import { GitPatchEvidenceCollector } from "../../repository/evidence.js";
@@ -138,6 +142,7 @@ import {
   type FreshGitLabReviewBinding,
 } from "../review-delivery.js";
 import { ReviewDeliveryCliOperatorError } from "../review-delivery-error.js";
+import { failCliPrCustody } from "./pr-h-source.js";
 
 export interface ExecutedCliRun {
   readonly record: RunRecord;
@@ -234,7 +239,10 @@ export async function withLocalPreservationSourceWorkspace<T>(
     evidenceInputFormatPolicy: EvidenceInputFormatPolicyV1,
   ) => Promise<T>,
 ): Promise<T> {
-  const policy = resolvePreservationDeliveryPolicy({ workflow, environment: process.env });
+  const policy = resolvePreservationDeliveryPolicy({
+    workflow,
+    environment: process.env,
+  });
   const evidenceInputFormatPolicy = resolveEvidenceInputFormatPolicy(process.env);
   const sourceWorkspace =
     policy.preservationBaseDelivery === "stage-specific"
@@ -367,7 +375,11 @@ async function executeWorkflowRunBound(
     // reader task context, so they read the diffs only through the source
     // binding minted below. `undefined` unless the instruction names a
     // merged-MR date window.
-    mergedMrAssembly = await assembleMergedMrUpdate({ request, workspace, options });
+    mergedMrAssembly = await assembleMergedMrUpdate({
+      request,
+      workspace,
+      options,
+    });
   }
   const editorialAdmissionAssembly = await assembleEditorialAdmissionControlV1({
     artifactRoot: resolve(dirname(config.stateDirectory), "artifacts"),
@@ -391,12 +403,14 @@ async function executeWorkflowRunBound(
   let reviewInventory: Awaited<ReturnType<typeof buildRepositoryDiscoveryInventory>> | undefined;
   if (request.workflow === "review-documentation") {
     reviewInventory = await buildRepositoryDiscoveryInventory({ workspace });
-    const reviewScope = resolveLocalReviewScope({
-      instruction: request.instruction,
-      sourcePath: request.contextTarget?.sourcePath,
-      boundPaths: request.reviewTargetPaths,
-      inventory: reviewInventory,
-    });
+    const reviewScope =
+      invocation.githubPrScope?.scope ??
+      resolveLocalReviewScope({
+        instruction: request.instruction,
+        sourcePath: request.contextTarget?.sourcePath,
+        boundPaths: request.reviewTargetPaths,
+        inventory: reviewInventory,
+      });
     await selectDocumentationQualityProfile({
       workflow: preflight.workflow,
       workspace,
@@ -502,6 +516,7 @@ async function executeWorkflowRunBound(
     request.runId ??
     (invocation.compositionRuntime ||
     sourceRequested ||
+    invocation.githubPrBasis !== undefined ||
     mergedMrSourceRequested ||
     changeRequestSelector !== undefined ||
     changeSource !== undefined
@@ -602,10 +617,14 @@ async function executeWorkflowRunBound(
               : {}),
             ...(request.contextTarget ? { contextTarget: request.contextTarget } : {}),
             ...(request.docImprovementCampaignPath
-              ? { docImprovementCampaignPath: request.docImprovementCampaignPath }
+              ? {
+                  docImprovementCampaignPath: request.docImprovementCampaignPath,
+                }
               : {}),
             ...(request.docImprovementReviewerPolicyPath
-              ? { docImprovementReviewerPolicyPath: request.docImprovementReviewerPolicyPath }
+              ? {
+                  docImprovementReviewerPolicyPath: request.docImprovementReviewerPolicyPath,
+                }
               : {}),
             ...(request.canonSnapshotPath ? { canonSnapshotPath: request.canonSnapshotPath } : {}),
             ...(request.acceptCandidateSnapshot ? { acceptCandidateSnapshot: true } : {}),
@@ -627,6 +646,7 @@ async function executeWorkflowRunBound(
     ...(request.instructionContext ? { instructionContext: request.instructionContext } : {}),
     ...(readerEvidenceRequest ? { readerEvidenceRequest } : {}),
     ...(request.contextTarget ? { contextTarget: request.contextTarget } : {}),
+    ...(invocation.githubPrBasisBinding ? { prReviewBasis: invocation.githubPrBasisBinding } : {}),
     ...(readerTaskContextInput
       ? {
           readerContextInput: readerTaskContextInput.readerContextInput,
@@ -634,7 +654,9 @@ async function executeWorkflowRunBound(
         }
       : {}),
     ...(editorialAdmissionAssembly?.editorialEvidenceRefs
-      ? { editorialEvidenceRefs: editorialAdmissionAssembly.editorialEvidenceRefs }
+      ? {
+          editorialEvidenceRefs: editorialAdmissionAssembly.editorialEvidenceRefs,
+        }
       : {}),
     ...(hostAssembly.task ? { task: hostAssembly.task } : {}),
     allowWrite: request.allowWrite,
@@ -658,7 +680,9 @@ async function executeWorkflowRunBound(
         }
       : {}),
     ...(request.knowledgeContinuationSnapshotSha256
-      ? { knowledgeContinuationSnapshotSha256: request.knowledgeContinuationSnapshotSha256 }
+      ? {
+          knowledgeContinuationSnapshotSha256: request.knowledgeContinuationSnapshotSha256,
+        }
       : {}),
     ...(request.knowledgeContinuationAcceptanceSha256
       ? {
@@ -669,7 +693,9 @@ async function executeWorkflowRunBound(
       ? { answerRecordContinuation: invocation.answerRecordContinuation }
       : {}),
     ...(request.answerRecordContinuationReceipt
-      ? { answerRecordContinuationReceipt: request.answerRecordContinuationReceipt }
+      ? {
+          answerRecordContinuationReceipt: request.answerRecordContinuationReceipt,
+        }
       : {}),
   } satisfies RunRequest;
   const dependencyAssembly = await createLocalWorkflowApplicationServices({
@@ -677,6 +703,7 @@ async function executeWorkflowRunBound(
     runNotes,
     request: applicationRequest,
     ...(request.reviewTargetPaths ? { reviewTargetPaths: request.reviewTargetPaths } : {}),
+    ...(invocation.githubPrScope ? { prReviewScope: invocation.githubPrScope.scope } : {}),
     workflow: preflight.workflow,
     workspace,
     ...(preservationSourceWorkspace ? { preservationSourceWorkspace } : {}),
@@ -717,7 +744,9 @@ async function executeWorkflowRunBound(
         })()
       : {}),
     ...(invocation.claimAnswerRecordContinuation
-      ? { claimAnswerRecordContinuation: invocation.claimAnswerRecordContinuation }
+      ? {
+          claimAnswerRecordContinuation: invocation.claimAnswerRecordContinuation,
+        }
       : {}),
     ...(modelInputTokens !== undefined ? { modelInputTokens } : {}),
     skillResolver:
@@ -767,240 +796,309 @@ async function executeWorkflowRunBound(
   const textSelector = changeSource
     ? changeRecord && mergeRequestTextSelector(changeRecord.changeSource)
     : changeRequestSelector;
-  // `--change` selects the basis, and `--source` files join the same binding.
-  const changeSourceEvidence =
-    changeSource && textSelector === undefined
-      ? await resolveCliChangeSourceEvidence({
+  const prCustody = invocation.githubPrBasis
+    ? await resolveCliPrReviewSourceEvidence({
+        basis: invocation.githubPrBasis,
+        workspace,
+        sourcePaths: request.sourcePaths ?? [],
+        targetPaths: invocation.githubPrScope?.scope.targetPaths ?? [],
+        admittedRequest: admittedRequest as unknown as Record<string, unknown>,
+        runId: runId!,
+        readBudget: sourceReadBudget,
+      })
+    : undefined;
+  if (prCustody && (!prCustody.sourceReference || !prCustody.sourceEvidence)) {
+    prCustody.dispose();
+    failCliPrCustody("github-pr-source-binding-unavailable");
+  }
+  try {
+    // `--change` selects the basis, and `--source` files join the same binding.
+    const changeSourceEvidence =
+      changeSource && textSelector === undefined
+        ? await resolveCliChangeSourceEvidence({
+            workspace,
+            resolved: changeSource,
+            admittedRequest: admittedRequest as unknown as Record<string, unknown>,
+            runId: runId!,
+            ...(sourceRequested ? { sourcePaths: request.sourcePaths! } : {}),
+            ...(invocation.options.hostTrackedSourceReader
+              ? {
+                  hostTrackedSourceReader: invocation.options.hostTrackedSourceReader,
+                }
+              : {}),
+            readBudget: sourceReadBudget,
+          })
+        : undefined;
+    // `--pr` selects the basis, and `--source` may add tracked files beside it;
+    // one binding carries every producer's observations.
+    const changeRequestEvidence = textSelector
+      ? await resolveCliChangeRequestEvidenceFromSelector({
           workspace,
-          resolved: changeSource,
+          selector: textSelector,
+          ...(changeRecord ? { changeSource: changeRecord } : {}),
           admittedRequest: admittedRequest as unknown as Record<string, unknown>,
           runId: runId!,
           ...(sourceRequested ? { sourcePaths: request.sourcePaths! } : {}),
           ...(invocation.options.hostTrackedSourceReader
-            ? { hostTrackedSourceReader: invocation.options.hostTrackedSourceReader }
+            ? {
+                hostTrackedSourceReader: invocation.options.hostTrackedSourceReader,
+              }
             : {}),
+          checkout: async () => {
+            // The checkout's own remote: the exported workspace has no git metadata.
+            const project = await resolveGitLabMergedMrProject({
+              repositoryPath: workspace.sourcePath,
+            });
+            if (typeof project.projectPath !== "string" || project.projectPath.length === 0) {
+              // Coded, not a bare Error, so callers can branch on it and the
+              // remediation contract test covers its wording.
+              failChangeRequestSelector("checkout-project-unavailable");
+            }
+            return { host: project.host, projectPath: project.projectPath };
+          },
+          commands: options.changeRequestCommands ?? new ExecInitCommandRunner(),
+          environment: options.changeRequestEnvironment ?? process.env,
           readBudget: sourceReadBudget,
         })
       : undefined;
-  // `--pr` selects the basis, and `--source` may add tracked files beside it;
-  // one binding carries every producer's observations.
-  const changeRequestEvidence = textSelector
-    ? await resolveCliChangeRequestEvidenceFromSelector({
-        workspace,
-        selector: textSelector,
-        ...(changeRecord ? { changeSource: changeRecord } : {}),
-        admittedRequest: admittedRequest as unknown as Record<string, unknown>,
-        runId: runId!,
-        ...(sourceRequested ? { sourcePaths: request.sourcePaths! } : {}),
-        ...(invocation.options.hostTrackedSourceReader
-          ? { hostTrackedSourceReader: invocation.options.hostTrackedSourceReader }
-          : {}),
-        checkout: async () => {
-          // The checkout's own remote: the exported workspace has no git metadata.
-          const project = await resolveGitLabMergedMrProject({
-            repositoryPath: workspace.sourcePath,
-          });
-          if (typeof project.projectPath !== "string" || project.projectPath.length === 0) {
-            // Coded, not a bare Error, so callers can branch on it and the
-            // remediation contract test covers its wording.
-            failChangeRequestSelector("checkout-project-unavailable");
+    const sourceEvidence =
+      (prCustody
+        ? {
+            reference: prCustody.sourceReference!,
+            runnerBinding: prCustody.sourceEvidence!,
           }
-          return { host: project.host, projectPath: project.projectPath };
-        },
-        commands: options.changeRequestCommands ?? new ExecInitCommandRunner(),
-        environment: options.changeRequestEnvironment ?? process.env,
-        readBudget: sourceReadBudget,
-      })
-    : undefined;
-  const sourceEvidence =
-    changeRequestEvidence ??
-    (changeSourceEvidence !== undefined || sourceRequested
-      ? (changeSourceEvidence ??
-        (await resolveCliSourceEvidence({
-          workspace,
-          sourcePaths: request.sourcePaths!,
-          ...(invocation.options.hostTrackedSourceReader
-            ? { hostTrackedSourceReader: invocation.options.hostTrackedSourceReader }
-            : {}),
-          admittedRequest: admittedRequest as unknown as Record<string, unknown>,
-          runId: runId!,
-          readBudget: sourceReadBudget,
-        })))
-      : mergedMrSourceRequested && mergedMrAssembly
-        ? await issueMergedMrCliSourceEvidence({
+        : undefined) ??
+      changeRequestEvidence ??
+      (changeSourceEvidence !== undefined || sourceRequested
+        ? (changeSourceEvidence ??
+          (await resolveCliSourceEvidence({
             workspace,
+            sourcePaths: request.sourcePaths!,
+            ...(invocation.options.hostTrackedSourceReader
+              ? {
+                  hostTrackedSourceReader: invocation.options.hostTrackedSourceReader,
+                }
+              : {}),
             admittedRequest: admittedRequest as unknown as Record<string, unknown>,
             runId: runId!,
-            assembly: mergedMrAssembly,
             readBudget: sourceReadBudget,
-          })
-        : undefined);
-  // Derived before the runner, so a change the host resolved but did not
-  // acquire refuses instead of reaching a record that cannot cite it. A merged
-  // merge request acquires its change beside its text; every other change
-  // acquires it alone.
-  const acquiredChange = changeSourceEvidence?.acquired ?? changeRequestEvidence?.change;
-  const changeSources = runChangeSourcesForRun(changeSource, acquiredChange);
-  const changeSourceRelease = runChangeSourceReleaseForRun(acquiredChange);
-  if (request.reviewDelivery !== undefined && request.reviewDelivery !== "preview") {
-    throw new ReviewDeliveryCliOperatorError("publish-unsupported");
-  }
-  const freshDelivery =
-    request.reviewDelivery === "preview"
-      ? await (async () => {
-          if (
-            request.workflow !== "review-documentation" ||
-            !request.reviewDeliveryTarget ||
-            !changeRecord ||
-            !acquiredChange ||
-            isAcquiredReleaseRange(acquiredChange) ||
-            !sourceEvidence ||
-            !reviewLocatorArtifacts ||
-            options.reviewResultRetention
-          ) {
-            throw new ReviewDeliveryCliOperatorError("acquired-change-required");
-          }
-          const runSourceBinding = sourceEvidence.acquired.binding;
-          assertFreshGitLabSourceBinding({
-            binding: runSourceBinding,
-            referenceDigest: sourceEvidence.reference.digest,
-            repository: repositoryBinding,
-            reviewedHead: changeRecord.changeSource.revision.head,
-          });
-          return prepareFreshGitLabReviewDelivery({
-            targetUrl: request.reviewDeliveryTarget,
-            sourcePath: workspace.sourcePath,
-            runId: runId!,
-            resolved: changeRecord,
-            acquired: acquiredChange,
-            runSourceBinding,
-            artifacts: reviewLocatorArtifacts,
-            commands: options.changeRequestCommands ?? new ExecInitCommandRunner(),
-            ...(options.signal ? { signal: options.signal } : {}),
-            limits: { environment: process.env, cwd: workspace.sourcePath },
-          });
-        })()
-      : undefined;
-  const boundRequest: RunRequest = {
-    ...admittedRequest,
-    ...(sourceEvidence ? { sourceBinding: sourceEvidence.reference } : {}),
-  };
-  // Pinned after acquisition and before the queued save: an InputAsk
-  // continuation whose evidence differs from the stopped run's refuses here,
-  // so no record is saved for it and the stopped run stays open.
-  const retainedEvidenceBindings = await retainedEvidenceBindingsForRun({
-    workspace,
-    sourcePaths: sourceRequested ? request.sourcePaths! : [],
-    ...(invocation.options.hostTrackedSourceReader
-      ? { hostTrackedSourceReader: invocation.options.hostTrackedSourceReader }
-      : {}),
-    changeRequestEvidence,
-  });
-  if (request.operatorInputResume !== undefined) {
-    assertContinuedEvidenceMatches(request.operatorInputResume, {
-      ...(retainedEvidenceBindings ? { retainedEvidenceBindings } : {}),
-      ...(changeSources ? { changeSources } : {}),
-    });
-  }
-  const operatorInput = await resolvePlanOperatorInput(request, config.stateDirectory);
-  const run = () =>
-    executeWorkflowApplication({
-      services: {
-        ...dependencyAssembly.services,
-        ...(reviewLocatorArtifacts ? { reviewLocatorArtifacts } : {}),
-        ...((freshDelivery?.retention ?? invocation.options.reviewResultRetention)
-          ? {
-              reviewResultRetention:
-                freshDelivery?.retention ?? invocation.options.reviewResultRetention,
+          })))
+        : mergedMrSourceRequested && mergedMrAssembly
+          ? await issueMergedMrCliSourceEvidence({
+              workspace,
+              admittedRequest: admittedRequest as unknown as Record<string, unknown>,
+              runId: runId!,
+              assembly: mergedMrAssembly,
+              readBudget: sourceReadBudget,
+            })
+          : undefined);
+    // Derived before the runner, so a change the host resolved but did not
+    // acquire refuses instead of reaching a record that cannot cite it. A merged
+    // merge request acquires its change beside its text; every other change
+    // acquires it alone.
+    const acquiredChange = changeSourceEvidence?.acquired ?? changeRequestEvidence?.change;
+    const changeSources = runChangeSourcesForRun(changeSource, acquiredChange);
+    const changeSourceRelease = runChangeSourceReleaseForRun(acquiredChange);
+    if (request.reviewDelivery !== undefined && request.reviewDelivery !== "preview") {
+      throw new ReviewDeliveryCliOperatorError("publish-unsupported");
+    }
+    const freshDelivery =
+      request.reviewDelivery === "preview"
+        ? await (async () => {
+            if (
+              request.workflow !== "review-documentation" ||
+              !request.reviewDeliveryTarget ||
+              !changeRecord ||
+              !acquiredChange ||
+              isAcquiredReleaseRange(acquiredChange) ||
+              !sourceEvidence ||
+              !("acquired" in sourceEvidence) ||
+              !reviewLocatorArtifacts ||
+              options.reviewResultRetention ||
+              prCustody
+            ) {
+              throw new ReviewDeliveryCliOperatorError("acquired-change-required");
             }
-          : {}),
-        ...(invocation.options.outcomeProjector
-          ? { outcomeProjector: invocation.options.outcomeProjector }
-          : {}),
-        ...(invocation.firstPassNotices?.length
-          ? { firstPassNotices: invocation.firstPassNotices }
-          : {}),
-        ...(retainedEvidenceBindings ? { retainedEvidenceBindings } : {}),
-        // Preserve the operator's inputs, before assembly's model-derived
-        // contextTarget. This private record metadata grants no source reads.
-        operatorTargetPaths: operatorInput?.explicitPaths ?? [],
-        ...(editorialAdmissionAssembly?.workflowBranchEvidence
-          ? { workflowBranchEvidence: editorialAdmissionAssembly.workflowBranchEvidence }
-          : {}),
-        ...(editorialAdmissionAssembly?.editorialAdmission
-          ? { editorialAdmission: editorialAdmissionAssembly.editorialAdmission }
-          : {}),
-        ...(sourceEvidence ? { sourceEvidence: sourceEvidence.runnerBinding } : {}),
-        ...(changeSources ? { changeSources } : {}),
-        ...(changeSourceRelease ? { changeSourceRelease } : {}),
-        ...(invocation.planWriteScope ? { planWriteScope: invocation.planWriteScope } : {}),
-        ...(invocation.planWriteScope?.rstUpdatePaths?.length
-          ? { rstRepositoryWorkspace: workspace, rstCaptureBinding: {} }
-          : {}),
-        ...(hostAssembly.templateSet ? { templateSet: hostAssembly.templateSet } : {}),
-      },
-      request: boundRequest,
-      ...(invocation.firstPassTargetControl
-        ? { firstPassTargetControl: invocation.firstPassTargetControl }
+            const runSourceBinding = sourceEvidence.acquired.binding;
+            assertFreshGitLabSourceBinding({
+              binding: runSourceBinding,
+              referenceDigest: sourceEvidence.reference.digest,
+              repository: repositoryBinding,
+              reviewedHead: changeRecord.changeSource.revision.head,
+            });
+            return prepareFreshGitLabReviewDelivery({
+              targetUrl: request.reviewDeliveryTarget,
+              sourcePath: workspace.sourcePath,
+              runId: runId!,
+              resolved: changeRecord,
+              acquired: acquiredChange,
+              runSourceBinding,
+              artifacts: reviewLocatorArtifacts,
+              commands: options.changeRequestCommands ?? new ExecInitCommandRunner(),
+              ...(options.signal ? { signal: options.signal } : {}),
+              limits: { environment: process.env, cwd: workspace.sourcePath },
+            });
+          })()
+        : undefined;
+    const boundRequest: RunRequest = {
+      ...admittedRequest,
+      ...(sourceEvidence ? { sourceBinding: sourceEvidence.reference } : {}),
+    };
+    const prReviewCitationAdmission =
+      prCustody && invocation.githubPrBasisBinding
+        ? createPrReviewCitationAdmission({
+            basis: invocation.githubPrBasis!,
+            basisBinding: invocation.githubPrBasisBinding,
+            runId: runId!,
+            requestSha256: projectSourceRequestContext(
+              admittedRequest as unknown as Record<string, unknown>,
+              {
+                runId: runId!,
+                workspaceIdentitySha256: workspaceIdentityDigest(workspace),
+                repository: {
+                  identitySha256: createHash("sha256").update(workspace.sourcePath).digest("hex"),
+                  revision: workspace.revision,
+                },
+              },
+            ),
+            sourceBindingSha256: prCustody.binding!.bindingSha256,
+            policySha256: prCustody.sourceEvidence!.policy.policySha256,
+          })
+        : undefined;
+    // Pinned after acquisition and before the queued save: an InputAsk
+    // continuation whose evidence differs from the stopped run's refuses here,
+    // so no record is saved for it and the stopped run stays open.
+    const retainedEvidenceBindings = await retainedEvidenceBindingsForRun({
+      workspace,
+      sourcePaths: sourceRequested ? request.sourcePaths! : [],
+      ...(invocation.options.hostTrackedSourceReader
+        ? {
+            hostTrackedSourceReader: invocation.options.hostTrackedSourceReader,
+          }
         : {}),
+      changeRequestEvidence,
     });
-  const record: RunRecord =
-    hostAssembly.task?.kind === "create-documentation" ||
-    hostAssembly.task?.kind === "update-documentation"
-      ? await runWithHostBoundCanon(hostAssembly.task.canonSha256, run)
-      : await run();
-  const editorialHost = editorialAdmissionAssembly?.workflowBranchEvidence;
-  const hasSecurityEvidence =
-    record.securityScan !== undefined ||
-    record.securityScanAuthorization !== undefined ||
-    record.securityScanEffectiveDisposition !== undefined;
-  const editorialDecodeOptions: WorkflowOutcomeDecodeOptionsV1 | undefined =
-    editorialHost || hasSecurityEvidence
-      ? {
-          ...(hasSecurityEvidence
-            ? { authorizeSecurityScan, resolveSecurityScanEffectiveDisposition }
+    if (request.operatorInputResume !== undefined) {
+      assertContinuedEvidenceMatches(request.operatorInputResume, {
+        ...(retainedEvidenceBindings ? { retainedEvidenceBindings } : {}),
+        ...(changeSources ? { changeSources } : {}),
+      });
+    }
+    const operatorInput = await resolvePlanOperatorInput(request, config.stateDirectory);
+    const run = () =>
+      executeWorkflowApplication({
+        services: {
+          ...dependencyAssembly.services,
+          ...(reviewLocatorArtifacts ? { reviewLocatorArtifacts } : {}),
+          ...(freshDelivery?.reviewChangeSource
+            ? { reviewChangeSource: freshDelivery.reviewChangeSource }
             : {}),
-          ...(editorialHost
+          ...((freshDelivery?.retention ?? invocation.options.reviewResultRetention)
             ? {
-                decodeEditorialDecision: (reference, stepId) =>
-                  editorialHost.decodeEditorialDecision(reference, stepId),
-                decodeWorkflowBranchCoverage: (value, candidateRecord) =>
-                  decodeWorkflowBranchCoverageV1(
-                    value,
-                    workflowBranchCoverageDecodeOptionsV1({
-                      workflow: preflight.workflow,
-                      record: candidateRecord,
-                      requireComplete: candidateRecord.status === "succeeded",
-                    }),
-                  ),
+                reviewResultRetention:
+                  freshDelivery?.retention ?? invocation.options.reviewResultRetention,
               }
             : {}),
-        }
-      : undefined;
-  const limitOverflowEvidence = mergeRunLimitOverflowEvidence(
-    reviewInventory && inventoryHasLimitOverflow(reviewInventory)
-      ? { inventory: reviewInventory }
-      : undefined,
-    {
-      sourceRepresentations: overflowSourceRepresentationsFromAcquired(sourceEvidence?.acquired),
-    },
-  );
-  return {
-    record,
-    ...(freshDelivery ? { reviewDeliveryBinding: freshDelivery.binding } : {}),
-    exitCode:
-      record.status === "needs-input"
-        ? 2
-        : workflowOutcomeExitCode(
-            record,
-            request.releaseGate
-              ? releaseGateWorkflowOutcomePolicy()
-              : interactiveWorkflowOutcomePolicy(),
-            editorialDecodeOptions,
-          ),
-    ...(editorialDecodeOptions ? { editorialDecodeOptions } : {}),
-    ...(limitOverflowEvidence ? { limitOverflowEvidence } : {}),
-  };
+          ...(invocation.options.outcomeProjector
+            ? { outcomeProjector: invocation.options.outcomeProjector }
+            : {}),
+          ...(invocation.firstPassNotices?.length
+            ? { firstPassNotices: invocation.firstPassNotices }
+            : {}),
+          ...(retainedEvidenceBindings ? { retainedEvidenceBindings } : {}),
+          // Preserve the operator's inputs, before assembly's model-derived
+          // contextTarget. This private record metadata grants no source reads.
+          operatorTargetPaths: operatorInput?.explicitPaths ?? [],
+          ...(editorialAdmissionAssembly?.workflowBranchEvidence
+            ? {
+                workflowBranchEvidence: editorialAdmissionAssembly.workflowBranchEvidence,
+              }
+            : {}),
+          ...(editorialAdmissionAssembly?.editorialAdmission
+            ? {
+                editorialAdmission: editorialAdmissionAssembly.editorialAdmission,
+              }
+            : {}),
+          ...(sourceEvidence ? { sourceEvidence: sourceEvidence.runnerBinding } : {}),
+          ...(prReviewCitationAdmission ? { prReviewCitationAdmission } : {}),
+          ...(changeSources ? { changeSources } : {}),
+          ...(changeSourceRelease ? { changeSourceRelease } : {}),
+          ...(invocation.planWriteScope ? { planWriteScope: invocation.planWriteScope } : {}),
+          ...(invocation.planWriteScope?.rstUpdatePaths?.length
+            ? { rstRepositoryWorkspace: workspace, rstCaptureBinding: {} }
+            : {}),
+          ...(hostAssembly.templateSet ? { templateSet: hostAssembly.templateSet } : {}),
+        },
+        request: boundRequest,
+        ...(invocation.firstPassTargetControl
+          ? { firstPassTargetControl: invocation.firstPassTargetControl }
+          : {}),
+      });
+    const record: RunRecord =
+      hostAssembly.task?.kind === "create-documentation" ||
+      hostAssembly.task?.kind === "update-documentation"
+        ? await runWithHostBoundCanon(hostAssembly.task.canonSha256, run)
+        : await run();
+    const editorialHost = editorialAdmissionAssembly?.workflowBranchEvidence;
+    const hasSecurityEvidence =
+      record.securityScan !== undefined ||
+      record.securityScanAuthorization !== undefined ||
+      record.securityScanEffectiveDisposition !== undefined;
+    const editorialDecodeOptions: WorkflowOutcomeDecodeOptionsV1 | undefined =
+      editorialHost || hasSecurityEvidence
+        ? {
+            ...(hasSecurityEvidence
+              ? {
+                  authorizeSecurityScan,
+                  resolveSecurityScanEffectiveDisposition,
+                }
+              : {}),
+            ...(editorialHost
+              ? {
+                  decodeEditorialDecision: (reference, stepId) =>
+                    editorialHost.decodeEditorialDecision(reference, stepId),
+                  decodeWorkflowBranchCoverage: (value, candidateRecord) =>
+                    decodeWorkflowBranchCoverageV1(
+                      value,
+                      workflowBranchCoverageDecodeOptionsV1({
+                        workflow: preflight.workflow,
+                        record: candidateRecord,
+                        requireComplete: candidateRecord.status === "succeeded",
+                      }),
+                    ),
+                }
+              : {}),
+          }
+        : undefined;
+    const limitOverflowEvidence = mergeRunLimitOverflowEvidence(
+      reviewInventory && inventoryHasLimitOverflow(reviewInventory)
+        ? { inventory: reviewInventory }
+        : undefined,
+      {
+        sourceRepresentations: overflowSourceRepresentationsFromAcquired(
+          sourceEvidence && "acquired" in sourceEvidence ? sourceEvidence.acquired : undefined,
+        ),
+      },
+    );
+    return {
+      record,
+      ...(freshDelivery ? { reviewDeliveryBinding: freshDelivery.binding } : {}),
+      exitCode:
+        record.status === "needs-input"
+          ? 2
+          : workflowOutcomeExitCode(
+              record,
+              request.releaseGate
+                ? releaseGateWorkflowOutcomePolicy()
+                : interactiveWorkflowOutcomePolicy(),
+              editorialDecodeOptions,
+            ),
+      ...(editorialDecodeOptions ? { editorialDecodeOptions } : {}),
+      ...(limitOverflowEvidence ? { limitOverflowEvidence } : {}),
+    };
+  } finally {
+    prCustody?.dispose();
+  }
 }
 
 /**
@@ -1101,7 +1199,10 @@ async function retainedEvidenceBindingsForRun(input: {
       : [];
   for (const path of paths) {
     const bytes = await reader.readTrackedBytes(path, maxOriginalBytes);
-    sources.push({ path, sha256: createHash("sha256").update(bytes).digest("hex") });
+    sources.push({
+      path,
+      sha256: createHash("sha256").update(bytes).digest("hex"),
+    });
   }
   const text = input.changeRequestEvidence?.acquired;
   const entry = text?.acquired[0];
@@ -1120,5 +1221,8 @@ async function retainedEvidenceBindingsForRun(input: {
           textSha256: entry.observation.original.sha256,
         }
       : undefined;
-  return retainedEvidenceBindings({ sources, ...(changeRequest ? { changeRequest } : {}) });
+  return retainedEvidenceBindings({
+    sources,
+    ...(changeRequest ? { changeRequest } : {}),
+  });
 }

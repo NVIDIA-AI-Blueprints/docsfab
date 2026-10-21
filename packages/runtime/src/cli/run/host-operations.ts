@@ -36,6 +36,7 @@ import type { RepositoryWorkspace } from "../../repository/workspace/contracts.j
 import type { CliRunInvocation } from "./request.js";
 import type { RunPreflight } from "./preflight.js";
 import { WorkflowChecksHostOperation } from "../../workflow-execution/workflow-checks.js";
+import { createPrReviewCheckAdmission } from "../../workflow-execution/pr-review-check-admission.js";
 
 export interface HostOperationAssembly {
   readonly task?: WorkflowTaskInput;
@@ -64,11 +65,12 @@ export async function assembleHostOperations(
     templateSet = await authoringTemplateSet(config.projectRoot);
   }
   if (["review-documentation", ...AUTHORING_WORKFLOWS].includes(request.workflow)) {
-    hostOperations = new WorkflowChecksHostOperation(
-      workspace,
-      "lint-documentation",
-      templateSet ? { templates: templateSet } : {},
-    );
+    hostOperations = new WorkflowChecksHostOperation(workspace, "lint-documentation", {
+      ...(templateSet ? { templates: templateSet } : {}),
+      ...(invocation.githubPrBasis
+        ? { prReviewAdmission: createPrReviewCheckAdmission(invocation.githubPrBasis) }
+        : {}),
+    });
   }
   if (request.canonSnapshotPath) {
     if (

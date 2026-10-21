@@ -42,7 +42,7 @@ examples, or recovery.
   <Card title="Get Started" href="/get-started/installation">
     [Install DocsFab](../get-started/installation.md), then follow the
     [Live Agent Quickstart](../get-started/live-agent-quickstart.md) or
-    [Runner Quickstart](../get-started/runner-quickstart.md).
+    [Workflow Quickstart](../get-started/runner-quickstart.md).
   </Card>
   <Card title="Examples" href="/workflows/run-a-documentation-workflow">
     Choose a named job and inspect command examples in
@@ -67,7 +67,7 @@ the participating roles and catalog jobs for these goals.
 
     Turn product evidence into a new page or short documentation set. Gather
     missing product knowledge before drafting, then inspect the result with
-    the [Runner Quickstart](../get-started/runner-quickstart.md).
+    the [Workflow Quickstart](../get-started/runner-quickstart.md).
   </Card>
   <Card title="Keep Documentation Current" href="/workflows/update-documentation-beside-a-change">
     <span id="keep-documentation-current"></span>

@@ -48,6 +48,12 @@ export interface ProviderExchangeObservation {
   readonly streamClosedBeforeDone?: true;
   /** A byte of the 2xx response body arrived, so the provider had started answering. */
   readonly bodyReceived?: true;
+  /**
+   * The request never connected: the endpoint refused it, its host name did
+   * not resolve, or no route reached it (`endpoint-connect-failure.ts`). Set
+   * only on a send with no response.
+   */
+  readonly connectFailed?: true;
 }
 
 /**
@@ -113,14 +119,16 @@ function failingStatusClass(status: number | undefined): ProviderErrorClass | un
  * Content-filter is checked first because several front doors send it as an
  * ordinary 400. Otherwise a transport error status decides, then a structured
  * in-stream error event's declared status or server-fault type, then a 2xx
- * stream that closed before it finished (`streamIncomplete`), and the message
- * is read only when none does (a stream cut, a DNS failure). Message text never
- * leaves this function.
+ * stream that closed before it finished (`streamIncomplete`), then a send that
+ * never connected (`connectFailed`), and the message is read only when none
+ * does (a stream cut, a reset). Message text never leaves this function.
  */
 export function classifyProviderError(input: {
   readonly httpStatus?: number;
   readonly streamError?: ProviderStreamErrorObservation;
   readonly streamIncomplete?: boolean;
+  /** The transport saw a definitive connect failure and no response. */
+  readonly connectFailed?: boolean;
   readonly message?: string;
   readonly finishReason?: ModelFinishReason;
 }): ProviderErrorClass {
@@ -134,6 +142,9 @@ export function classifyProviderError(input: {
   if (input.streamError?.serverFault) return "server";
   if (input.streamIncomplete && input.httpStatus === undefined && !input.streamError) {
     return "stream-incomplete";
+  }
+  if (input.connectFailed && input.httpStatus === undefined && !input.streamError) {
+    return "unreachable";
   }
   if (RATE_LIMIT_TEXT.test(message)) return "rate-limit";
   if (AUTH_TEXT.test(message)) return "auth";
@@ -191,6 +202,7 @@ export function observeLandedProviderTurn(
         httpStatus,
         ...(streamError === undefined ? {} : { streamError }),
         streamIncomplete,
+        connectFailed: exchange.connectFailed === true,
         message: errorMessage,
         finishReason,
       }),

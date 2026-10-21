@@ -12,6 +12,15 @@
  * read.
  */
 import { createHash } from "node:crypto";
+import {
+  assertGithubPrReviewBasis,
+  type GithubPrReviewBasis,
+} from "../../inputs/adapters/github-pr-provider.js";
+import {
+  createGithubPrCustody,
+  type GithubPrCustody,
+} from "../../inputs/local/github-pr-custody.js";
+import { acquireCliPrHSourceObservations, failCliPrCustody } from "./pr-h-source.js";
 import { currentTaskActivity } from "../../activity/observer.js";
 
 import { openExternalInputAccessCapture, recordExternalInputAccess } from "../../inputs/access.js";
@@ -147,6 +156,69 @@ export const CLI_SOURCE_READ_SCOPE: readonly string[] = Object.freeze(["."]);
  * also cite spans that `plan-documentation` read.
  */
 export const CLI_SOURCE_CITE_SKILLS: readonly string[] = Object.freeze(["write-documentation"]);
+
+/** A distinct host policy for the two installed read-only review finding steps. */
+export const PR_REVIEW_SOURCE_CITE_SKILLS: readonly string[] = Object.freeze([
+  "review-documentation",
+  "verify-technical-accuracy",
+]);
+
+/** One callback-scoped PR source binding; the caller disposes it before basis settlement. */
+export async function resolveCliPrReviewSourceEvidence(input: {
+  readonly basis: GithubPrReviewBasis;
+  readonly workspace: RepositoryWorkspace;
+  readonly sourcePaths: readonly string[];
+  readonly targetPaths: readonly string[];
+  readonly admittedRequest: Record<string, unknown>;
+  readonly runId: string;
+  readonly readBudget?: SourceReadBudgetV1;
+  readonly now?: () => Date;
+}): Promise<GithubPrCustody> {
+  assertGithubPrReviewBasis(input.basis);
+  if (input.workspace !== input.basis.headWorkspace) {
+    failCliPrCustody("github-pr-source-head-substituted");
+  }
+  const repository: SourceRepositoryBindingV1 = {
+    identitySha256: createHash("sha256").update(input.workspace.sourcePath).digest("hex"),
+    revision: input.workspace.revision,
+  };
+  const workspaceIdentitySha256 = workspaceIdentityDigest(input.workspace);
+  const requestSha256 = projectSourceRequestContext(input.admittedRequest, {
+    runId: input.runId,
+    workspaceIdentitySha256,
+    repository,
+  });
+  const policy = createSourceStepPolicy({
+    sourceReadSkills: CLI_SOURCE_READ_SKILLS,
+    sourceCiteSkills: PR_REVIEW_SOURCE_CITE_SKILLS,
+    ...(input.readBudget ? { perStepBudgetBytes: input.readBudget.budgetBytes } : {}),
+  });
+  const selection = [...new Set([...input.targetPaths, ...input.sourcePaths])].sort();
+  return createGithubPrCustody(
+    input.basis.acquisition,
+    {
+      runId: input.runId,
+      requestSha256,
+      repository,
+      workspaceIdentitySha256,
+      repositoryContentDigest: await workspaceTreeDigest(input.workspace),
+      policy,
+      observedAt: (input.now ?? (() => new Date()))().toISOString(),
+    },
+    selection.length > 0
+      ? {
+          basis: input.basis,
+          acquireHSourceObservations: (host) =>
+            acquireCliPrHSourceObservations({
+              host,
+              selection,
+              reader: createWorkspaceTrackedSourceReader(host.headWorkspace),
+              readScope: CLI_SOURCE_READ_SCOPE,
+            }),
+        }
+      : undefined,
+  );
+}
 
 /** Trusted reader over the exact Git revision export, never a working tree. */
 export function createWorkspaceTrackedSourceReader(
@@ -410,7 +482,10 @@ export async function resolveCliSourceEvidence(
   });
   const runIdSha256 = createHash("sha256").update(input.runId, "utf8").digest("hex");
   const now = input.now ?? (() => new Date());
-  const externalInputs = openExternalInputAccessCapture({ runIdSha256, repository });
+  const externalInputs = openExternalInputAccessCapture({
+    runIdSha256,
+    repository,
+  });
 
   const limits: SourceExtractionLimitsV1 = {
     ...cliSourceExtractionLimits(),
@@ -472,7 +547,10 @@ async function issueCliSourceEvidenceService(input: {
   readonly externalInputs: ReturnType<typeof openExternalInputAccessCapture>;
   readonly binding: SourceBindingV1;
   readonly entries: readonly AcquiredSourceEntry[];
-  readonly producerScopes: ReadonlyArray<{ producerId: string; scopeSha256: string }>;
+  readonly producerScopes: ReadonlyArray<{
+    producerId: string;
+    scopeSha256: string;
+  }>;
   readonly now: () => Date;
   readonly readBudget?: SourceReadBudgetV1;
 }): Promise<Omit<CliSourceEvidence, "acquired">> {
@@ -675,7 +753,10 @@ export async function resolveCliChangeRequestSourceEvidence(
   });
   const runIdSha256 = createHash("sha256").update(input.runId, "utf8").digest("hex");
   const now = input.now ?? (() => new Date());
-  const externalInputs = openExternalInputAccessCapture({ runIdSha256, repository });
+  const externalInputs = openExternalInputAccessCapture({
+    runIdSha256,
+    repository,
+  });
   const scope = assertGitLabAcquisitionScope(input.scope);
   const sourcePaths = input.sourcePaths ?? [];
   const limits: SourceExtractionLimitsV1 = {
@@ -819,7 +900,10 @@ export async function resolveCliGitLabMrSourceEvidence(
   });
   const runIdSha256 = createHash("sha256").update(input.runId, "utf8").digest("hex");
   const now = input.now ?? (() => new Date());
-  const externalInputs = openExternalInputAccessCapture({ runIdSha256, repository });
+  const externalInputs = openExternalInputAccessCapture({
+    runIdSha256,
+    repository,
+  });
 
   // Re-checked rather than trusted from the type: the proof is membership of a
   // module-private set, so a serialized, cloned, or rebuilt scope is refused
@@ -872,7 +956,10 @@ export async function resolveCliChangeRequestEvidenceFromSelector(input: {
   readonly sourcePaths?: readonly string[];
   readonly hostTrackedSourceReader?: TrackedSourceReaderV1;
   /** Checkout host and project, for the bare-number form. */
-  readonly checkout: () => Promise<{ readonly host: string; readonly projectPath: string }>;
+  readonly checkout: () => Promise<{
+    readonly host: string;
+    readonly projectPath: string;
+  }>;
   readonly commands: CommandRunner;
   readonly environment: NodeJS.ProcessEnv;
   readonly now?: () => Date;
@@ -882,7 +969,10 @@ export async function resolveCliChangeRequestEvidenceFromSelector(input: {
 }): Promise<CliChangeRequestSourceEvidence> {
   const named = changeRequestSelectorUsesCheckout(input.selector)
     ? await input.checkout()
-    : { host: input.selector.host as string, projectPath: input.selector.projectPath as string };
+    : {
+        host: input.selector.host as string,
+        projectPath: input.selector.projectPath as string,
+      };
   const transport = {
     repositoryPath: input.workspace.path,
     commands: input.commands,
@@ -1124,7 +1214,10 @@ export async function resolveCliChangeSourceEvidence(input: {
   });
   const runIdSha256 = createHash("sha256").update(input.runId, "utf8").digest("hex");
   const now = input.now ?? (() => new Date());
-  const externalInputs = openExternalInputAccessCapture({ runIdSha256, repository });
+  const externalInputs = openExternalInputAccessCapture({
+    runIdSha256,
+    repository,
+  });
   const limits: SourceExtractionLimitsV1 = {
     ...cliSourceExtractionLimits(),
     ...(input.limits ?? {}),
@@ -1161,8 +1254,14 @@ export async function resolveCliChangeSourceEvidence(input: {
     ...(input.producerIds ? { producerIds: input.producerIds } : {}),
   };
   const change = isResolvedReleaseRange(input.resolved)
-    ? await acquireReleaseRangeObservations({ ...context, resolved: input.resolved })
-    : await acquireChangeSourceObservations({ ...context, resolved: input.resolved });
+    ? await acquireReleaseRangeObservations({
+        ...context,
+        resolved: input.resolved,
+      })
+    : await acquireChangeSourceObservations({
+        ...context,
+        resolved: input.resolved,
+      });
   const entries = [...change.acquired, ...(tracked?.acquired ?? [])];
   const producerScopes = Object.freeze([
     ...change.producerScopes,

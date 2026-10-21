@@ -41,6 +41,7 @@ import {
   type HostedQualityReportMetadataV1,
 } from "../../evaluation-report/hosted-report.js";
 import { type ProjectedReviewFindingsV1 } from "../../review/index.js";
+import { projectPrReviewFindingCitations } from "../../records/pr-review-source-citations.js";
 import type { EgressValueRefusalCode } from "../../security/egress.js";
 import { formatSecurityScanCliMessages } from "../../security/scan-cli.js";
 import { formatIaPlanContinuation } from "../ia-format.js";
@@ -211,6 +212,27 @@ export async function deliverCliRunResult(
         )
       : undefined;
   let reviewFindingsProjection = projectHumanReviewFindings(record, reviewPresentation?.findings);
+  if (reviewFindingsProjection && record.prReviewBasis) {
+    reviewFindingsProjection = projectPrReviewFindingCitations(record, reviewFindingsProjection);
+    reviewFindingsProjection = {
+      ...reviewFindingsProjection,
+      limitations: [
+        ...reviewFindingsProjection.limitations,
+        `pr-review-basis:M=${record.prReviewBasis.M}:B=${record.prReviewBasis.B}:H=${record.prReviewBasis.H}`,
+        ...(record.reviewScope
+          ? [
+              `pr-review-scope:${record.reviewScope.targetPaths.join(",")}`,
+              ...(record.reviewScope.reason === "scan-unavailable"
+                ? [
+                    "pr-review-scope-uncertain:documentation impact outside observed pages remains unknown",
+                  ]
+                : []),
+            ]
+          : ["pr-review-scope-unavailable"]),
+        ...prReviewCheckLimitations(record),
+      ],
+    };
+  }
   let reportWithheld: HostedReportEgressRefusal | undefined;
   const htmlReport =
     record.workflow === "review-documentation"
@@ -426,6 +448,40 @@ export async function deliverCliRunResult(
   return record;
 }
 
+/** Exact host check inventory only: no unavailable row is a passed check. */
+function prReviewCheckLimitations(record: RunRecord): string[] {
+  const step = record.steps.find((entry) => entry.id === "lint-documentation");
+  if (!step?.summary) return ["pr-review-check-inventory-unavailable"];
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(step.summary);
+  } catch {
+    return ["pr-review-check-inventory-unavailable"];
+  }
+  if (
+    !parsed ||
+    typeof parsed !== "object" ||
+    !Array.isArray((parsed as { checks?: unknown }).checks)
+  ) {
+    return ["pr-review-check-inventory-unavailable"];
+  }
+  const rows = (parsed as { checks: unknown[] }).checks;
+  const notRun = rows.flatMap((value) => {
+    if (!value || typeof value !== "object" || Array.isArray(value)) return [];
+    const row = value as Record<string, unknown>;
+    if (
+      row.status !== "unavailable" ||
+      row.cause !== "pr-review-not-admitted" ||
+      typeof row.command !== "string"
+    )
+      return [];
+    return [
+      `pr-review-check-not-run:${row.command}:${typeof row.directory === "string" ? row.directory : "."}`,
+    ];
+  });
+  return notRun.length > 0 ? notRun : ["pr-review-checks-none-admitted-for-execution"];
+}
+
 /** Whether the run verified that no documentation change is needed. */
 function verifiesNoChange(
   record: RunRecord,
@@ -561,7 +617,21 @@ async function persistReviewHtmlReport(
     stateDirectory,
     runId: record.id,
     quality,
-    markdown: evaluatorSummary,
+    markdown: record.prReviewBasis
+      ? `${evaluatorSummary.trimEnd()}\n\n## Public PR review evidence\n\n${JSON.stringify(
+          {
+            basis: record.prReviewBasis,
+            scope: record.reviewScope ?? null,
+            findings: review.findings,
+            limitations: review.limitations,
+          },
+          null,
+          2,
+        )
+          .split("\n")
+          .map((line) => `    ${line}`)
+          .join("\n")}\n`
+      : evaluatorSummary,
     reviewFindings: review.findings.map((finding) => ({
       id: finding.id,
       severity: finding.severity,

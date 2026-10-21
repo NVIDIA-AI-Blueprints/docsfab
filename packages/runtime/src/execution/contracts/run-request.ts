@@ -183,6 +183,8 @@ export interface RunRequest {
    */
   readerEvidenceRequest?: import("../../records/reader-evidence-request.js").RunRecordReaderEvidenceRequestV1;
   reviewScope?: RunReviewScope;
+  /** Host-projected public PR basis committed before source custody seals a binding. */
+  prReviewBasis?: import("../../inputs/pr-review-basis-binding.js").PrReviewBasisBindingV1;
   /**
    * The request interpretation's outcome, copied onto the queued record.
    * Recorded evidence only: no admission reads it yet, so the source request

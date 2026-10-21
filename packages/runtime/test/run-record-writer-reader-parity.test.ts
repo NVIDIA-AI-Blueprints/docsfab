@@ -72,6 +72,9 @@ const PUBLICATION_READ_ONLY_FIELDS = Object.fromEntries(
  */
 const PUBLICATION_FAILED_RUN_FIELDS = RUN_RECORD_FAILED_RUN_FIELDS;
 
+/** PR custody and finding citations require a real, matching review run. */
+const PR_REVIEW_ONLY_FIELDS = ["prReviewBasis", "prReviewSourceCitations"] as const;
+
 /** Every strict reader that derives its key list from a field policy. */
 const STRICT_READERS: readonly RunRecordReader[] = [
   RELEASE_READINESS_RUN_READER,
@@ -190,6 +193,7 @@ function everyWriterField(): Record<string, unknown> {
   for (const field of RUN_RECORD_FIELDS) {
     if (field === "answerRecordDiscovery") continue;
     if (RUN_RECORD_FIRST_PASS_ONLY_FIELDS.includes(field)) continue;
+    if (PR_REVIEW_ONLY_FIELDS.includes(field as (typeof PR_REVIEW_ONLY_FIELDS)[number])) continue;
     if (field === "checkoutPersistence") {
       record.checkoutPersistence = {
         schemaVersion: 1,
@@ -334,9 +338,19 @@ describe("run-record writer/reader field parity (#1233)", () => {
     expect(Object.keys(decoded).sort()).toEqual(
       RUN_RECORD_FIELDS.filter(
         (field) =>
-          field !== "answerRecordDiscovery" && !RUN_RECORD_FIRST_PASS_ONLY_FIELDS.includes(field),
+          field !== "answerRecordDiscovery" &&
+          !RUN_RECORD_FIRST_PASS_ONLY_FIELDS.includes(field) &&
+          !PR_REVIEW_ONLY_FIELDS.includes(field as (typeof PR_REVIEW_ONLY_FIELDS)[number]),
       ).sort(),
     );
+  });
+
+  it("keeps PR-only fields bound to the read-only review producer", () => {
+    for (const field of PR_REVIEW_ONLY_FIELDS) {
+      expect(RUN_RECORD_FIELDS).toContain(field);
+      expect(RUN_RECORD_FIELD_PRODUCERS[field]).toEqual(["review-documentation"]);
+      expect(PUBLICATION_RUN_RECORD_KEYS).not.toContain(field);
+    }
   });
 
   it("shows a saved review run with its mutually exclusive discovery marker", () => {

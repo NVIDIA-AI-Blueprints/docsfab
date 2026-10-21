@@ -95,6 +95,7 @@ const PROVIDER_OUTCOMES: ReadonlySet<string> = new Set([
 // that got past planning must not be sent back to readiness checks.
 const PROFILE_INSPECT = "docsfab profile inspect";
 const CONFIG_INSPECT = "docsfab config inspect";
+const DOCTOR_LIVE = "docsfab doctor --live";
 
 // These closed codes describe a host-bound finalization check after the steps
 // succeeded. New producer codes need an explicit diagnosis decision.
@@ -778,6 +779,15 @@ function classifyUnansweredProviderError(row: RunIndexRowV1): CauseReading {
       nextAction:
         "This is a transient provider truncation, and DocsFab retries it within the step's retry budget. If it recurs across runs, use another model or composition, or report it to the provider.",
       nextCommand: null,
+      signature,
+    });
+  }
+  if (errorClass === "unreachable") {
+    return reading("provider-endpoint-unreachable", {
+      why: "DocsFab could not connect to the configured model endpoint: the connection was refused, the host name did not resolve, or no route reached it.",
+      nextAction:
+        "Check the endpoint URL shown by docsfab setup and the network, then confirm the endpoint answers with docsfab doctor --live before rerunning.",
+      nextCommand: DOCTOR_LIVE,
       signature,
     });
   }

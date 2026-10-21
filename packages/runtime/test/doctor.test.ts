@@ -10,6 +10,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { type DocsFabConfig } from "../src/config/runtime-loader.js";
 import { parseModelEndpoint, type ModelEndpointConfig } from "../src/model/configuration.js";
 import {
+  answerSubmissionProbeTarget,
   checkLiveModel,
   diagnose,
   formatDoctorFailure,
@@ -336,6 +337,106 @@ describe("doctor endpoint compatibility", () => {
     expect(rendered).toContain("Live inference: ready (12 ms)");
     expect(rendered).toContain("Endpoint compatibility: compatible (max output tokens 8192)");
     expect(rendered).toContain("  tool-calls: pass (native-tool-call).");
+  });
+});
+
+describe("doctor endpoint compatibility on the Responses transport", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  // What `docsfab setup --provider openai` writes: the Responses transport,
+  // with `apiFormat` still reading `chat_completions`.
+  const RESPONSES: ModelEndpointConfig = {
+    ...validModelConfig,
+    providerId: "openai-api",
+    baseUrl: "https://api.openai.com/v1",
+    modelId: "gpt-6-sol",
+    apiFormat: "chat_completions",
+    transport: "openai-responses",
+    credentialEnv: "OPENAI_API_KEY",
+  };
+
+  /** Answers a Responses request with `DOCSFAB_OK`, refuses any other path, and records each path. */
+  function responsesReplay() {
+    const paths: string[] = [];
+    const fetch = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
+      const url = new URL(input instanceof Request ? input.url : String(input));
+      paths.push(url.pathname);
+      if (!url.pathname.endsWith("/responses")) {
+        return new Response(JSON.stringify({ error: { message: "use /v1/responses" } }), {
+          status: 400,
+          headers: { "content-type": "application/json" },
+        });
+      }
+      const body = JSON.parse(String(init?.body)) as { model: string };
+      const item = {
+        type: "message",
+        id: "msg_ok",
+        role: "assistant",
+        status: "completed",
+        content: [{ type: "output_text", text: "DOCSFAB_OK", annotations: [] }],
+      };
+      const events = [
+        {
+          type: "response.created",
+          response: { id: "resp_ok", model: body.model, status: "in_progress", output: [] },
+        },
+        { type: "response.output_item.added", output_index: 0, item: { ...item, content: [] } },
+        {
+          type: "response.output_text.delta",
+          output_index: 0,
+          content_index: 0,
+          item_id: "msg_ok",
+          delta: "DOCSFAB_OK",
+        },
+        { type: "response.output_item.done", output_index: 0, item },
+        {
+          type: "response.completed",
+          response: {
+            id: "resp_ok",
+            model: body.model,
+            status: "completed",
+            output: [item],
+            usage: { input_tokens: 10, output_tokens: 2, total_tokens: 12 },
+          },
+        },
+      ];
+      return new Response(
+        events.map((event) => `event: ${event.type}\ndata: ${JSON.stringify(event)}\n\n`).join(""),
+        { status: 200, headers: { "content-type": "text/event-stream" } },
+      );
+    };
+    return { paths, fetch };
+  }
+
+  it("does not probe chat completions for a Responses profile", async () => {
+    const replay = responsesReplay();
+    vi.stubGlobal("fetch", replay.fetch);
+    const report = await probeConfiguredEndpointCompatibility(RESPONSES);
+    expect(replay.paths).toEqual([]);
+    expect(report.verdict).toBe("not-checked");
+    for (const check of report.checks) {
+      expect(check.status).toBe("not-checked");
+      expect(check.detail).toContain("openai-responses");
+    }
+  });
+
+  it("passes the live check over the Responses transport", async () => {
+    const replay = responsesReplay();
+    vi.stubGlobal("fetch", replay.fetch);
+    const result = await checkLiveModel({ ...config, model: RESPONSES });
+    expect(result.compatibility?.verdict).toBe("not-checked");
+    expect(replay.paths).toEqual(["/v1/responses"]);
+  });
+
+  it("does not send the answer-submission probe to chat completions", async () => {
+    const replay = responsesReplay();
+    vi.stubGlobal("fetch", replay.fetch);
+    await expect(answerSubmissionProbeTarget(RESPONSES)).resolves.toMatchObject({
+      decision: "not-checked",
+    });
+    expect(replay.paths).toEqual([]);
   });
 });
 

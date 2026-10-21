@@ -121,6 +121,18 @@ export async function assemblePiStepTools({
     reviewReadMaxObjectBytes !== undefined
       ? { reviewReadMaxObjectBytes }
       : {}),
+    ...(input.workflow.name === "review-documentation" &&
+    input.step.id === "verify-technical-accuracy" &&
+    input.step.skill === "verify-technical-accuracy" &&
+    input.step.mode === "read-only" &&
+    input.reviewChangeSource &&
+    reviewReadMaxObjectBytes !== undefined
+      ? {
+          reviewChangeSource: input.reviewChangeSource,
+          reviewChangeRunId: input.runId,
+          reviewChangeStepId: input.step.id,
+        }
+      : {}),
     ...(input.evidenceIdentity?.repositoryRevision
       ? { repositoryRevision: input.evidenceIdentity.repositoryRevision }
       : {}),

@@ -324,8 +324,9 @@ export async function clearArtifactDeletionMarker(root: string, digest: string):
 export async function withRunMaintenanceGate<T>(
   directory: string,
   action: () => Promise<T>,
+  onContention?: () => void | Promise<void>,
 ): Promise<T> {
-  return withNamedRunGate(directory, ".docsfab-run-maintenance.lock", action);
+  return withNamedRunGate(directory, ".docsfab-run-maintenance.lock", action, onContention);
 }
 
 /** One long-lived publication/run exclusion, keyed without persisting a raw run ID. */
@@ -348,6 +349,7 @@ async function withNamedRunGate<T>(
   directory: string,
   name: string,
   action: () => Promise<T>,
+  onContention?: () => void | Promise<void>,
 ): Promise<T> {
   const root = await realpath(directory);
   const rootStat = await lstat(root);
@@ -375,6 +377,15 @@ async function withNamedRunGate<T>(
     } catch (error) {
       if (nodeCode(error) !== "EEXIST") throw error;
       const observed = await observeRunGateOwner(gate, owner, rootStat.uid);
+      if (
+        onContention &&
+        observed !== null &&
+        typeof observed === "object" &&
+        !runGateOwnerIsDead(observed.pid)
+      ) {
+        await onContention();
+        onContention = undefined;
+      }
       if (
         observed === undefined ||
         (typeof observed === "object" && observed !== null && runGateOwnerIsDead(observed.pid))

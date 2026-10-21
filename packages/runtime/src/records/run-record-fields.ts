@@ -67,6 +67,7 @@ const RUN_RECORD_FIELD_SET = {
   changes: true,
   impactPostflight: true,
   reviewScope: true,
+  prReviewBasis: true,
   requestIntent: true,
   firstPassContradiction: true,
   firstPassContradictionAdmission: true,
@@ -75,6 +76,7 @@ const RUN_RECORD_FIELD_SET = {
   liveAgentTurn: true,
   liveAgentTurnFailure: true,
   sourceCitations: true,
+  prReviewSourceCitations: true,
   changeSources: true,
   reviewDeliverySnapshot: true,
   changeSourceRelease: true,
@@ -102,6 +104,8 @@ export const RUN_RECORD_FIELD_PRODUCERS: Readonly<
     "update-documentation",
   ],
   reviewScope: ["review-documentation"],
+  prReviewBasis: ["review-documentation"],
+  prReviewSourceCitations: ["review-documentation"],
   reviewDeliverySnapshot: ["review-documentation"],
   // The publication boundary admits this read-only marker after validating its
   // closed shape and run binding; it is not a generic read-only exclusion.

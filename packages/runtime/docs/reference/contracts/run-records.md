@@ -475,9 +475,13 @@ closed values and integers only:
 - `providerError`: present only when the last landed turn was an error and its
   last request actually left the host. `class` is one of `rate-limit`, `auth`,
   `server`, `timeout`, `content-filter`, `network`, `stream-incomplete`,
-  `invalid-request`, or `unknown`. `stream-incomplete` (#1696) is a 2xx OpenAI
-  Chat Completions stream whose body ended cleanly with no finish reason, no
-  `[DONE]` event, and no structured error event. `httpStatus` is the status of a non-2xx response that the host
+  `unreachable`, `invalid-request`, or `unknown`. `stream-incomplete` (#1696)
+  is a 2xx OpenAI Chat Completions stream whose body ended cleanly with no
+  finish reason, no `[DONE]` event, and no structured error event.
+  `unreachable` is a request whose fetch failed with no response and a
+  definitive connect code (`ECONNREFUSED`, `ENOTFOUND`, `EHOSTUNREACH`, or
+  `ENETUNREACH`) on the error or its `cause` chain; it is never read from
+  error text. `httpStatus` is the status of a non-2xx response that the host
   received, and `retryAfterMs` is its `Retry-After` in milliseconds.
   `streamErrorStatus` is the failing status (400-599) that a structured error
   event inside a 2xx stream declared in its integer `error.code`, such as
@@ -502,7 +506,10 @@ retryable `throttled`. `content-filter` and a `rate-limit` with no `httpStatus`,
 including one with only a `streamErrorStatus` of 429, are terminal
 `provider-terminal`, and `auth` and `invalid-request` are terminal
 `invalid-request`. None of these is ever retried, whatever words the provider's
-error text shares with a transport fault or a malformed response. An `unknown`
+error text shares with a transport fault or a malformed response.
+`unreachable` is terminal `provider-terminal` too: the endpoint gives the same
+answer to an immediate replay, so neither the in-turn replay nor the transport
+budget repeats it. An `unknown`
 class, and an attempt with no `providerError`, keep the text classifier's
 verdict, so records and attempts without the telemetry behave as before.
 

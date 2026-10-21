@@ -246,9 +246,10 @@ the full report. Refer to
 
 When an HTTP proxy carries the live check and the proxy fails the request,
 doctor reports the proxy's own code in the `provider` area instead of
-`endpoint-incompatible` or `provider-live-unavailable`. This holds on both API
-formats: the endpoint probe runs first for `chat_completions`, and the
-connectivity turn alone runs for `messages`. The following table lists the proxy codes.
+`endpoint-incompatible` or `provider-live-unavailable`. This holds on every
+transport: the endpoint probe runs first for `openai-chat-completions`, and
+the connectivity turn alone runs for `openai-responses` and
+`anthropic-messages`. The following table lists the proxy codes.
 
 The following table lists each code and its meaning.
 

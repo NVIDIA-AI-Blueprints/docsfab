@@ -25,6 +25,24 @@ Read-only is the default for review. Create, update, and restructure
 write and open one draft merge request unless you pass `--patch-only`
 or `--dry-run`. Do not retry a blocked job with broader authority.
 
+For a public GitHub pull request review, run the following command. This
+selection uses the authenticated fork head rather than your current checkout:
+
+```bash
+docsfab run review-documentation --pr https://github.com/OWNER/REPO/pull/N
+```
+
+Add `--source docs/reference.md` when you need another tracked file at the
+fork head as review evidence. DocsFab binds it with the pull request sources in
+one run.
+
+Use `--dry-run` to preview the unresolved selection without network or model
+work. The normal read-only run saves a private run record and a local Markdown
+report; `--json` prints structured result and report locators. Check the
+reported M/B/H basis, reviewed pages, deferred or uncertain impact, source
+citations, and unavailable repository checks before interpreting the quality
+verdict. This route does not execute repository scripts or post to GitHub.
+
 ## Choose a Job
 
 Select the fixed catalog job that matches your intended outcome. Request
@@ -47,7 +65,7 @@ before choosing a job for an RST-only site.
 | --- | --- | --- | --- | --- |
 | Prepare repository guidance | `bootstrap` | Local patch only, with `--allow-write`; no draft MR | Reviewable patch and run record | This hub |
 | Evaluate an existing documentation set | `review-documentation` | Read-only | Findings and quality evidence | [Review Merge Request Impact in DocsFab](review-merge-request-impact.md) or [Baseline Documentation Health in DocsFab](baseline-documentation-health.md) |
-| Create a bounded documentation target | `create-documentation` | Writes and opens a draft MR by default | Reviewable patch, run record, and draft MR | [Runner Quickstart](../get-started/runner-quickstart.md) |
+| Create a bounded documentation target | `create-documentation` | Writes and opens a draft MR by default | Reviewable patch, run record, and draft MR | [Workflow Quickstart](../get-started/runner-quickstart.md) |
 | Apply a bounded update to existing documentation | `update-documentation` | Writes and opens a draft MR by default | Reviewable patch, run record, and draft MR | [Update Documentation Beside a Change in DocsFab](update-documentation-beside-a-change.md) |
 | Assess repository input for agents | `readiness` | Read-only | Source evidence and prioritized gaps | [Assess Documentation Readiness](assess-readiness.md#assess-documentation-readiness) |
 | Assess public release documentation | `release-documentation-readiness` | Read-only | Governed disposition, decisions, and work plan | [Assess Documentation Readiness](assess-readiness.md#assess-documentation-readiness) |
@@ -273,7 +291,7 @@ Verified help for the bound write jobs:
 </Tabs>
 
 For create examples and delivery choices, refer to
-[Runner Quickstart](../get-started/runner-quickstart.md). For update
+[Workflow Quickstart](../get-started/runner-quickstart.md). For update
 beside a change, including `--reader-source`, refer to
 [Update Documentation Beside a Change in DocsFab](update-documentation-beside-a-change.md).
 
@@ -282,7 +300,7 @@ beside a change, including `--reader-source`, refer to
 the granted steps a host reader for them. DocsFab accepts these tracked source extensions: `.diff`, `.docx`, `.htm`, `.html`, `.ipynb`, `.js`, `.json`, `.markdown`, `.md`, `.mdx`, `.patch`, `.pdf`, `.toml`, `.ts`, `.txt`, `.xhtml`, `.yaml`, and `.yml`. `review-documentation` and `restructure-documentation` refuse
 the flag, and the refusal names the workflows that accept it. `--dry-run`
 parses the selection and stops before the host opens any source body. Refer to
-[Bind Tracked Source Files to an Update](../get-started/runner-quickstart.md#bind-tracked-source-files-to-an-update).
+[Select Source Evidence](select-sources.md).
 
 Adding `--composition <id>` selects that installed composition as the run's
 preset and does not grant delivery authority. Composition-execution writes stay
@@ -350,7 +368,7 @@ Confirm the following conditions:
   not release eligible, even when execution succeeds.
 
 For the complete CLI output contract, refer to
-[Runner Quickstart](../get-started/runner-quickstart.md).
+[Human Output and JSON in DocsFab](../reference/status-and-configuration/human-output-and-json.md).
 
 ## Next Steps
 

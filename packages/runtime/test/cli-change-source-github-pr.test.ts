@@ -18,11 +18,7 @@ import { parseDoArguments } from "../src/cli/commands/do-parse.js";
 import { parseLiveAgentArguments } from "../src/cli/commands/live-agent.js";
 import { handleSourcesCommand } from "../src/cli/commands/sources.js";
 import { executeRunRequest } from "../src/cli/run-request.js";
-import {
-  parseRunArguments,
-  SOURCE_AWARE_WORKFLOWS,
-  unsupportedSourceWorkflowRefusal,
-} from "../src/cli/run-arguments.js";
+import { parseRunArguments } from "../src/cli/run-arguments.js";
 import type { CommandRunner } from "../src/init/types.js";
 import {
   ChangeRequestSelectorError,
@@ -119,9 +115,10 @@ describe("run --pr / --mr with a github.com pull request URL (row 9, D3)", () =>
     }
   });
 
-  it("keeps the workflow and resume gates for the GitHub value, with the GitLab texts", () => {
-    const workflow = thrown(() => parseRunArguments(["review-documentation", "--pr", PULL]));
-    expect(workflow.message).toBe(unsupportedSourceWorkflowRefusal(SOURCE_AWARE_WORKFLOWS, "--pr"));
+  it("admits GitHub PR review while keeping the resume gate shared with GitLab", () => {
+    const review = parseRunArguments(["review-documentation", "--pr", PULL]);
+    expect(review.githubPrReview).toMatchObject({ selector: pullSelector });
+    expect(review.changeSource).toBeUndefined();
     const resume = (value: string) =>
       thrown(() =>
         parseRunArguments([

@@ -1143,6 +1143,7 @@ export const CORPUS_LIVE_RUN_READER = defineRunRecordReader({
     changes: "decoded",
     impactPostflight: "admitted",
     reviewScope: "producer-not-admitted",
+    prReviewBasis: "producer-not-admitted",
     requestIntent: "decoded",
     // Written only on a needs-input run, which this reader never admits.
     firstPassContradiction: CORPUS_LIVE_UNVERIFIED,
@@ -1153,6 +1154,7 @@ export const CORPUS_LIVE_RUN_READER = defineRunRecordReader({
     liveAgentTurnFailure: "producer-not-admitted",
     // Optional per-run citation evidence.
     sourceCitations: "admitted",
+    prReviewSourceCitations: "producer-not-admitted",
     // Content-free findings (#1807): locations and rule ids only.
     credentialFindings: "admitted",
     evidenceWarnings: "admitted",

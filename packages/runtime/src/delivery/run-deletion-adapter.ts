@@ -8,8 +8,11 @@ import { lstat, mkdir, open, readFile, readdir, realpath, rmdir, unlink } from "
 import { dirname, isAbsolute, join, resolve } from "node:path";
 
 import { resolveDocsFabPublicationRoots } from "../config/host-paths.js";
+import { limit, refuseLimit } from "../config/limits.js";
 import type { JsonEvidenceValue } from "../json-evidence.js";
 import { FileRunStore } from "../records/file-store.js";
+import { DurableArtifactStore } from "../artifacts/store.js";
+import { inspectReviewIntentForDeletion } from "../review-delivery/inspection-intent.js";
 import { decodeSavedRunRecord } from "../records/saved-run-record.js";
 import { runRecordMaxBytes } from "../records/run-record-limit.js";
 import {
@@ -48,8 +51,26 @@ export interface RunDeliveryEntryIdentity {
   readonly sha256?: string;
 }
 
+/** Negative ownership evidence for one complete, strictly inspected review journal. */
+export interface UnrelatedReviewReceiptIdentity {
+  readonly root: string;
+  readonly idempotencyKey: string;
+  readonly rootEntry: RunDeliveryEntryIdentity;
+  readonly entries: readonly RunDeliveryEntryIdentity[];
+}
+
 /** Apply only identities that appeared in the approved inventory. The coordinator owns the outer run gate. */
 export async function applyRunDeliveryDeletion(
+  inventory: RunDeliveryDeletionInventory,
+  hooks: RunDeliveryDeletionHooks = {},
+): Promise<RunDeliveryDeletionResult> {
+  return withDeliveryRootGates(inventory.receiptRoots, () =>
+    applyRunDeliveryDeletionUnderGate(inventory, hooks),
+  );
+}
+
+/** Only the confirmed run-deletion coordinator may call this while holding every receipt root. */
+export async function applyRunDeliveryDeletionUnderGate(
   inventory: RunDeliveryDeletionInventory,
   hooks: RunDeliveryDeletionHooks = {},
 ): Promise<RunDeliveryDeletionResult> {
@@ -106,7 +127,7 @@ export async function applyRunDeliveryDeletion(
       );
     }
   }
-  return withDeliveryRootGates(inventory.receiptRoots, async () => {
+  {
     // Precheck all existing leaves before the first irreversible index rebuild.
     for (const entry of [
       ...inventory.receipts.flatMap((receipt) => receipt.entries),
@@ -187,7 +208,7 @@ export async function applyRunDeliveryDeletion(
       unresolved,
       ...(unresolved.length ? { nextAction: unresolved.join(" ") } : {}),
     };
-  });
+  }
 }
 
 async function retainedReceiptReferencesPlan(
@@ -198,8 +219,13 @@ async function retainedReceiptReferencesPlan(
   const store = new FileScmDeliveryReceiptStore(root);
   for (const name of await readdir(root)) {
     if (!SHA256.test(name)) continue;
-    const record = await store.load(name);
-    if (record && record.run.id !== targetRunId && record.planSha256 === planSha256) return true;
+    const loaded = await store.loadEither(name);
+    if (
+      loaded?.kind === "scm" &&
+      loaded.record.run.id !== targetRunId &&
+      loaded.record.planSha256 === planSha256
+    )
+      return true;
   }
   return false;
 }
@@ -260,6 +286,8 @@ export interface RunDeliveryDeletionInventory {
     planSha256: string;
     entries: readonly RunDeliveryEntryIdentity[];
   }[];
+  /** Absent in older private deletion journals, which retain strict resume behavior. */
+  readonly unrelatedReviewReceipts?: readonly UnrelatedReviewReceiptIdentity[];
   readonly plans: readonly {
     root: string;
     planSha256: string;
@@ -298,12 +326,22 @@ export async function countRemainingRunDeliveryTargets(
   inventory: RunDeliveryDeletionInventory,
   clearedWorktrees: readonly RunDeliveryWorktreeCleanupEvidence[] = [],
 ): Promise<RemainingRunDeliveryTargets> {
+  return withDeliveryRootGates(inventory.receiptRoots, () =>
+    countRemainingRunDeliveryTargetsUnderGate(inventory, clearedWorktrees),
+  );
+}
+
+/** Internal held-root count; public callers acquire the gates themselves. */
+export async function countRemainingRunDeliveryTargetsUnderGate(
+  inventory: RunDeliveryDeletionInventory,
+  clearedWorktrees: readonly RunDeliveryWorktreeCleanupEvidence[] = [],
+): Promise<RemainingRunDeliveryTargets> {
   const { digest: approvedDigest, ...body } = inventory;
   if (approvedDigest !== runDeliveryInventoryDigest(body))
     throw new Error(
       "The approved delivery inventory changed after preview; inspect it and preview again.",
     );
-  return withDeliveryRootGates(inventory.receiptRoots, async () => {
+  {
     let remaining = 0;
     const unresolved = [...inventory.unresolved];
     for (const entry of [
@@ -372,7 +410,7 @@ export async function countRemainingRunDeliveryTargets(
       }
     }
     return { remaining, maintenanceIncomplete, unresolved };
-  });
+  }
 }
 
 export interface RunDeliveryDeletionHooks {
@@ -790,8 +828,80 @@ async function tree(path: string): Promise<RunDeliveryEntryIdentity[]> {
   return entries;
 }
 
+function orderedEntries(entries: RunDeliveryEntryIdentity[]): RunDeliveryEntryIdentity[] {
+  return entries.sort((left, right) =>
+    left.path < right.path ? -1 : left.path > right.path ? 1 : 0,
+  );
+}
+
+function sameUnrelatedReviewReceipt(
+  left: UnrelatedReviewReceiptIdentity,
+  right: UnrelatedReviewReceiptIdentity,
+): boolean {
+  return JSON.stringify(left) === JSON.stringify(right);
+}
+
+/** Validate private journal evidence before it can exclude any receipt on resume. */
+export function validUnrelatedReviewReceipts(inventory: RunDeliveryDeletionInventory): boolean {
+  const certificates = inventory.unrelatedReviewReceipts;
+  if (certificates === undefined) return true; // Older journals remain strict.
+  if (!Array.isArray(certificates)) return false;
+  const keys = new Set<string>();
+  const certificateBound = limit("runs.deletionInventoryMaxEntries");
+  let certificateEntries = 0;
+  for (const certificate of certificates) {
+    if (!certificate || typeof certificate !== "object") return false;
+    const { root, idempotencyKey, rootEntry, entries } = certificate;
+    if (
+      typeof root !== "string" ||
+      !inventory.receiptRoots.includes(root) ||
+      !isAbsolute(root) ||
+      resolve(root) !== root ||
+      typeof idempotencyKey !== "string" ||
+      !SHA256.test(idempotencyKey) ||
+      !rootEntry ||
+      rootEntry.kind !== "directory" ||
+      rootEntry.path !== root ||
+      !Number.isSafeInteger(rootEntry.dev) ||
+      !Number.isSafeInteger(rootEntry.ino) ||
+      !Array.isArray(entries) ||
+      entries.length === 0
+    )
+      return false;
+    const key = `${root}\0${idempotencyKey}`;
+    if (keys.has(key)) return false;
+    keys.add(key);
+    certificateEntries += entries.length + 1;
+    if (certificateEntries > certificateBound.value) return false;
+    const journalPath = join(root, idempotencyKey);
+    if (entries[0]?.path !== journalPath || entries[0].kind !== "directory") return false;
+    const paths = new Set<string>();
+    for (const entry of entries) {
+      if (
+        !entry ||
+        typeof entry.path !== "string" ||
+        (entry.path !== journalPath && !entry.path.startsWith(`${journalPath}/`)) ||
+        resolve(entry.path) !== entry.path ||
+        (entry.kind !== "file" && entry.kind !== "directory") ||
+        !Number.isSafeInteger(entry.dev) ||
+        !Number.isSafeInteger(entry.ino) ||
+        !Number.isFinite(entry.size) ||
+        !Number.isFinite(entry.mtimeMs) ||
+        (entry.kind === "file" &&
+          (typeof entry.sha256 !== "string" || !SHA256.test(entry.sha256))) ||
+        paths.has(entry.path)
+      )
+        return false;
+      paths.add(entry.path);
+    }
+    if (entries.some((entry, index) => index > 0 && entry.path <= entries[index - 1]!.path))
+      return false;
+  }
+  return true;
+}
+
 /** Preview exact local receipt, plan, attempt and derived-index identities. */
-export async function inventoryRunDelivery(input: {
+interface RunDeliveryInventoryInput {
   stateDirectory: string;
   runId: string;
   recordSha256: string;
@@ -799,7 +909,31 @@ export async function inventoryRunDelivery(input: {
   deliveryRoots?: readonly string[];
   /** Observational snapshots mint no deletion authority or maintenance lock. */
   readOnly?: true;
-}): Promise<RunDeliveryDeletionInventory> {
+  /** Strictly discovered run-owned intent object addresses from the artifact scanner. */
+  reviewIntents?: readonly { readonly digest: string; readonly artifactRoot: string }[];
+  /** Only the validated prior journal and tombstone may supply this under held receipt gates. */
+  approvedUnrelatedReviewReceipts?: readonly UnrelatedReviewReceiptIdentity[];
+}
+
+export async function inventoryRunDelivery(
+  input: RunDeliveryInventoryInput,
+): Promise<RunDeliveryDeletionInventory> {
+  if (input.approvedUnrelatedReviewReceipts !== undefined)
+    throw new Error("Prior review receipt evidence requires the confirmed deletion receipt gate.");
+  return inventoryRunDeliveryCore(input, false);
+}
+
+/** Internal inventory when the run-deletion coordinator continuously holds receipt gates. */
+export async function inventoryRunDeliveryUnderGate(
+  input: RunDeliveryInventoryInput,
+): Promise<RunDeliveryDeletionInventory> {
+  return inventoryRunDeliveryCore(input, true);
+}
+
+async function inventoryRunDeliveryCore(
+  input: RunDeliveryInventoryInput,
+  gateHeld: boolean,
+): Promise<RunDeliveryDeletionInventory> {
   if (!SHA256.test(input.recordSha256))
     throw new Error(
       "The saved run record digest is invalid; inspect the record and preview again.",
@@ -822,6 +956,9 @@ export async function inventoryRunDelivery(input: {
   const indexRoot = defaults.receiptRoot;
   const readInventory = async () => {
     const receipts: RunDeliveryDeletionInventory["receipts"][number][] = [];
+    const unrelatedReviewReceipts: UnrelatedReviewReceiptIdentity[] = [];
+    const certificateBound = limit("runs.deletionInventoryMaxEntries");
+    let certificateEntries = 0;
     const plans: RunDeliveryDeletionInventory["plans"][number][] = [];
     const attempts: RunDeliveryDeletionInventory["attempts"][number][] = [];
     const unresolved: string[] = [];
@@ -852,11 +989,108 @@ export async function inventoryRunDelivery(input: {
           unresolved.push(`Inspect unsafe receipt journal ${path}.`);
           continue;
         }
-        const record = await store.load(name);
-        if (!record) {
+        // Preview has no receipt gate. Bracket the strict read so the later
+        // certificate describes the bytes that were actually classified.
+        const beforeRootEntry = await identity(root, "directory");
+        const beforeEntries = orderedEntries(await tree(path));
+        const loaded = await store.loadEither(name);
+        if (!loaded) {
           unresolved.push(`Inspect empty receipt journal ${path}.`);
           continue;
         }
+        if (loaded.kind === "review") {
+          const certificate: UnrelatedReviewReceiptIdentity = {
+            root,
+            idempotencyKey: name,
+            rootEntry: beforeRootEntry,
+            entries: beforeEntries,
+          };
+          if (
+            JSON.stringify(beforeRootEntry) !== JSON.stringify(await identity(root, "directory")) ||
+            JSON.stringify(beforeEntries) !== JSON.stringify(orderedEntries(await tree(path)))
+          ) {
+            unresolved.push(
+              `Review receipt ${path} changed during inspection; inspect custody and preview again.`,
+            );
+            continue;
+          }
+          const approvedCertificate = input.approvedUnrelatedReviewReceipts?.find(
+            (item) => item.root === root && item.idempotencyKey === name,
+          );
+          if (approvedCertificate) {
+            if (!sameUnrelatedReviewReceipt(approvedCertificate, certificate)) {
+              unresolved.push(
+                `Review receipt ${path} changed since approved deletion; inspect its custody and retry.`,
+              );
+              continue;
+            }
+            certificateEntries += certificate.entries.length + 1;
+            if (certificateEntries > certificateBound.value)
+              refuseLimit(certificateBound, certificateEntries);
+            unrelatedReviewReceipts.push(certificate);
+            continue;
+          }
+          let associated = false;
+          let ambiguous = false;
+          for (const candidate of input.reviewIntents ?? []) {
+            try {
+              const intent = await inspectReviewIntentForDeletion({
+                runStore: new FileRunStore(stateDirectory),
+                artifacts: new DurableArtifactStore(candidate.artifactRoot),
+                runId: input.runId,
+                intentObjectSha256: candidate.digest,
+              });
+              const overlaps =
+                intent.idempotencyKey === name ||
+                intent.resultSha256 === loaded.record.manifest.originalResultSha256 ||
+                intent.sourceSha256 === loaded.record.manifest.sourceSha256 ||
+                intent.snapshotSha256 === loaded.record.manifest.snapshotSha256;
+              if (!overlaps) continue;
+              if (intent.idempotencyKey !== name) {
+                ambiguous = true;
+                continue;
+              }
+              await inspectReviewIntentForDeletion({
+                runStore: new FileRunStore(stateDirectory),
+                artifacts: new DurableArtifactStore(candidate.artifactRoot),
+                runId: input.runId,
+                intentObjectSha256: candidate.digest,
+                receipt: loaded.record,
+              });
+              associated = true;
+            } catch {
+              ambiguous = true;
+            }
+          }
+          if (!associated && !ambiguous) {
+            try {
+              const saved = await new FileRunStore(stateDirectory).getWithDigest(input.runId, {
+                readOnly: true,
+              });
+              const run = decodeSavedRunRecord(saved.record as JsonEvidenceValue, input.runId);
+              ambiguous =
+                run.reviewDeliverySnapshot?.snapshotSha256 ===
+                  loaded.record.manifest.snapshotSha256 ||
+                (run.changeSources ?? []).some(
+                  (source) => source.changeSourceSha256 === loaded.record.manifest.sourceSha256,
+                );
+            } catch {
+              ambiguous = true;
+            }
+          }
+          if (associated || ambiguous)
+            unresolved.push(
+              `Review receipt ${path} remains recovery authority for this saved review or has ambiguous ownership; inspect its custody and retained intent before retrying deletion.`,
+            );
+          else {
+            certificateEntries += certificate.entries.length + 1;
+            if (certificateEntries > certificateBound.value)
+              refuseLimit(certificateBound, certificateEntries);
+            unrelatedReviewReceipts.push(certificate);
+          }
+          continue;
+        }
+        const record = loaded.record;
         owners.push({ key: name, runId: record.run.id, planSha256: record.planSha256 });
         if (record.run.id !== input.runId) continue;
         if (record.run.recordSha256 !== input.recordSha256) {
@@ -961,6 +1195,11 @@ export async function inventoryRunDelivery(input: {
       receiptRoots,
       deliveryRoots,
       receipts,
+      unrelatedReviewReceipts: unrelatedReviewReceipts.sort((left, right) => {
+        const leftKey = `${left.root}\0${left.idempotencyKey}`;
+        const rightKey = `${right.root}\0${right.idempotencyKey}`;
+        return leftKey < rightKey ? -1 : leftKey > rightKey ? 1 : 0;
+      }),
       plans,
       attempts,
       metadata,
@@ -970,7 +1209,9 @@ export async function inventoryRunDelivery(input: {
     };
     return { ...body, digest: runDeliveryInventoryDigest(body) };
   };
-  return input.readOnly ? readInventory() : withDeliveryRootGates(receiptRoots, readInventory);
+  return gateHeld || input.readOnly
+    ? readInventory()
+    : withDeliveryRootGates(receiptRoots, readInventory);
 }
 
 /** No deletion authority: only decide whether this run has resources to inspect. */
@@ -997,8 +1238,10 @@ async function hasUnlocatedRunRetention(input: {
     const store = new FileScmDeliveryReceiptStore(root);
     for (const name of await readdir(root)) {
       if (!SHA256.test(name)) continue;
-      const receipt = await store.load(name);
-      if (!receipt) return true;
+      const loaded = await store.loadEither(name);
+      if (!loaded) return true;
+      if (loaded.kind === "review") continue;
+      const receipt = loaded.record;
       if (receipt.run.id !== input.runId) continue;
       if (receipt.disposition === "failed" || receipt.disposition === "active") return true;
       if (attemptPaths.length === 0) continue;

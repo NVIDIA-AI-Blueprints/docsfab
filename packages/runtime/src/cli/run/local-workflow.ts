@@ -25,6 +25,9 @@ import { assertLegacyPolicyProfileReady } from "../../setup/profile-readiness.js
 import { bootstrapMissingProjectConfigIntoWorkspace } from "../../init/first-run-bootstrap.js";
 import { GitPatchEvidenceCollector } from "../../repository/evidence.js";
 import { withRepositoryWorkspace } from "../../repository/workspace/materialize.js";
+import { withSelectedRunWorkspace } from "./pr-workspace.js";
+import { projectPrReviewScope } from "../../workflow-execution/pr-review-scope.js";
+import { bindPrReviewBasis } from "../../inputs/pr-review-basis-binding.js";
 import {
   admitAuthorizedTrackedWrites,
   listTrackedRepositoryFileSnapshotMetadata,
@@ -242,10 +245,19 @@ export async function withLocalWorkflowRun<T>(
   )
     throw new KnowledgeContinuationError("delivery-recovery-required"); // hygiene: ok -- stable typed code; the constructor supplies the operator-safe message.
   const workspaceRevision = runRequest.gitlabTargetAtRunStart?.revision ?? runRequest.revision;
-  return await withRepositoryWorkspace(
-    runRequest.repositoryPath,
+  return await withSelectedRunWorkspace({
+    request: runRequest,
     workspaceRevision,
-    async (workspace) => {
+    workspaceRoot: (config ?? legacyConfig)?.projectRoot ?? process.cwd(),
+    options,
+    consume: async ({ workspace, basis }) => {
+      if (basis) {
+        runRequest = {
+          ...runRequest,
+          repositoryPath: workspace.sourcePath,
+          revision: workspace.revision,
+        };
+      }
       assertWorkflowActive(options.signal);
       const compositionRuntime = compositionPath
         ? await loadCompositionRunRuntime(runRequest, config)
@@ -370,6 +382,17 @@ export async function withLocalWorkflowRun<T>(
             }
           : {}),
         ...(changeSource ? { changeSource } : {}),
+        ...(basis ? { githubPrBasis: basis } : {}),
+        ...(basis
+          ? {
+              githubPrScope: projectPrReviewScope({
+                manifest: basis.acquisition.manifest,
+                headInventory: basis.headInventory,
+                baseDocumentation: basis.baseDocumentation,
+              }),
+              githubPrBasisBinding: bindPrReviewBasis(basis),
+            }
+          : {}),
       };
       const prepared = await prepareRunPreflight(invocation, workspace);
       assertWorkflowActive(options.signal);
@@ -487,22 +510,24 @@ export async function withLocalWorkflowRun<T>(
         ? { kind: "continue" as const, recorded: loadedFirstPassChoice.requestIntent }
         : loadedAnswerRecordContinuation
           ? { kind: "continue" as const, recorded: loadedAnswerRecordContinuation.requestIntent }
-          : await runRequestInterpretation({
-              request: executionRequest,
-              loadedContinuation: loadedContinuation !== undefined,
-              workflow: preflight.workflow,
-              workspace,
-              config: effectiveConfig,
-              documentationRoots: preflight.documentationRoots,
-              documentationRootPolicy,
-              ...(preflight.documentationRootFiles
-                ? { documentationRootFiles: preflight.documentationRootFiles }
-                : {}),
-              ...(preflight.rstUpdatePaths ? { rstUpdatePaths: preflight.rstUpdatePaths } : {}),
-              ...(compositionRuntime ? { compositionRuntime } : {}),
-              ...(options.requestInterpreter ? { port: options.requestInterpreter } : {}),
-              ...(options.signal ? { signal: options.signal } : {}),
-            });
+          : basis
+            ? { kind: "continue" as const, recorded: undefined }
+            : await runRequestInterpretation({
+                request: executionRequest,
+                loadedContinuation: loadedContinuation !== undefined,
+                workflow: preflight.workflow,
+                workspace,
+                config: effectiveConfig,
+                documentationRoots: preflight.documentationRoots,
+                documentationRootPolicy,
+                ...(preflight.documentationRootFiles
+                  ? { documentationRootFiles: preflight.documentationRootFiles }
+                  : {}),
+                ...(preflight.rstUpdatePaths ? { rstUpdatePaths: preflight.rstUpdatePaths } : {}),
+                ...(compositionRuntime ? { compositionRuntime } : {}),
+                ...(options.requestInterpreter ? { port: options.requestInterpreter } : {}),
+                ...(options.signal ? { signal: options.signal } : {}),
+              });
       // The interpretation is the second publication-prohibition signal: a
       // reading that forbids publishing stops a run that would publish.
       const nonPublication = interpretedNonPublication(interpretation);
@@ -916,7 +941,7 @@ export async function withLocalWorkflowRun<T>(
         await evidence.dispose();
       }
     },
-  );
+  });
 }
 
 /** The registered structural audit has no model slot or inference bootstrap. */

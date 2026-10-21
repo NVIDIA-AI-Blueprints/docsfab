@@ -18,7 +18,7 @@ reviewable patch. It does not grant publication, deployment, or merge
 authority.
 
 To create the first page or a short set for a new product or feature, start
-with the [Runner Quickstart](../get-started/runner-quickstart.md).
+with the [Workflow Quickstart](../get-started/runner-quickstart.md).
 
 ## Choose a Workflow
 

@@ -8,6 +8,7 @@
  * request leaves the host.
  */
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { createServer } from "node:net";
 import { tmpdir } from "node:os";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -30,7 +31,12 @@ import {
   normalizeModelFinishReason,
   observeLandedProviderTurn,
 } from "../src/model/attempt-telemetry.js";
+import { parseRetryPolicy } from "../src/config/retry-policy.js";
+import { isDefinitiveConnectFailure } from "../src/model/endpoint-connect-failure.js";
 import { createModelConnection, createProviderConnectionFactory } from "../src/model/provider.js";
+import { providerErrorDisposition } from "../src/model/sent-provider-failure.js";
+import { providerFailureReason } from "../src/live-agent/provider-failure.js";
+import { buildRunHumanNextCommand } from "../src/operator/run-next-action.js";
 import { formatRunFailureDiagnosticLines } from "../src/operator/run-summary.js";
 import type { InferenceAttemptEvidence, RunRecord } from "../src/records/contracts.js";
 import {
@@ -122,6 +128,9 @@ describe("classifyProviderError (#1185)", () => {
     // No status reached the host: the message picks the class.
     [{ message: "Connection error." }, "network"],
     [{ message: "connect ECONNREFUSED 127.0.0.1:443" }, "network"],
+    // The transport saw a definitive connect failure; the text would say network.
+    [{ connectFailed: true, message: "Connection error." }, "unreachable"],
+    [{ httpStatus: 503, connectFailed: true }, "server"],
     [{ message: "Request timed out." }, "timeout"],
     [{ message: "Rate limit reached for requests" }, "rate-limit"],
     [{ message: "Invalid API key provided" }, "auth"],
@@ -147,6 +156,7 @@ describe("classifyProviderError (#1185)", () => {
         { finishReason: "content-filter" as const },
         { message: "Connection error." },
         { streamIncomplete: true },
+        { connectFailed: true },
         { httpStatus: 400 },
         {},
       ].map((input) => classifyProviderError(input)),
@@ -729,6 +739,126 @@ describe("provider connection exchange observation (#1185, !1116 review)", () =>
   );
 });
 
+/** A loopback port nothing listens on: bound, then released. */
+async function closedLoopbackPort(): Promise<number> {
+  const server = createServer();
+  await new Promise<void>((settle) => server.listen(0, "127.0.0.1", settle));
+  const { port } = server.address() as { port: number };
+  await new Promise<void>((settle) => server.close(() => settle()));
+  return port;
+}
+
+/** The error Node's own fetch raises for a refused loopback connection. */
+async function refusedFetchError(): Promise<unknown> {
+  const port = await closedLoopbackPort();
+  try {
+    await realFetch(`http://127.0.0.1:${port}/v1/chat/completions`, { method: "POST" });
+  } catch (error) {
+    return error;
+  }
+  throw new Error("Expected the closed loopback port to refuse the connection.");
+}
+
+const realFetch = globalThis.fetch;
+
+describe("unreachable model endpoint", () => {
+  it("recognizes a refused loopback connection and a failed lookup by errno code", async () => {
+    expect(isDefinitiveConnectFailure(await refusedFetchError())).toBe(true);
+    const coded = (code: string) =>
+      Object.assign(new TypeError("fetch failed"), {
+        cause: Object.assign(new Error(`getaddrinfo ${code} model.invalid`), { code }),
+      });
+    expect(isDefinitiveConnectFailure(coded("ENOTFOUND"))).toBe(true);
+    expect(isDefinitiveConnectFailure(coded("EHOSTUNREACH"))).toBe(true);
+    // Faults a fresh attempt can clear keep the transport-retry ladder.
+    for (const code of ["ECONNRESET", "ETIMEDOUT", "EAI_AGAIN", "UND_ERR_SOCKET"]) {
+      expect(isDefinitiveConnectFailure(coded(code))).toBe(false);
+    }
+    // Message text alone never decides.
+    expect(isDefinitiveConnectFailure(new Error("connect ECONNREFUSED 127.0.0.1:9"))).toBe(false);
+  });
+
+  it("is a terminal verdict, never a transport retry", () => {
+    expect(providerErrorDisposition({ class: "unreachable" })).toEqual({
+      category: "provider-terminal",
+      retryable: false,
+    });
+  });
+
+  it("observes a refused connection as a sent request that never connected", async () => {
+    const error = await refusedFetchError();
+    const run = await secondRequest(() => {
+      throw error;
+    });
+    expect(run.exchange).toEqual({ sent: true, connectFailed: true });
+    expect(run.observed.providerError).toEqual({ class: "unreachable" });
+  });
+
+  it(
+    "ends a read-only step after one refused request under the default transport budget",
+    async () => {
+      const repositoryPath = await createRepository();
+      const provider = vi.fn(async () => {
+        throw await refusedFetchError();
+      });
+      vi.stubGlobal("fetch", provider);
+      const harness = new PiHarness({
+        skillCrateDirectory,
+        model: validModelConfig,
+        createConnection: (model, options) => createModelConnection(model, options),
+      });
+      const input = stepInput(repositoryPath);
+      const policy = parseRetryPolicy({});
+      // The default policy retries transport faults; this one must not use it.
+      expect(policy.transport?.maxRetries).toBeGreaterThan(0);
+      const sleep = vi.fn(async () => undefined);
+      const execution = await executeInferenceStep({
+        mode: "read-only",
+        policy,
+        evidenceIdentity: input.evidenceIdentity,
+        execute: () => harness.runStep(input),
+        sleep,
+      });
+
+      expect(execution.status).toBe("failed");
+      expect(provider).toHaveBeenCalledTimes(1);
+      expect(sleep).not.toHaveBeenCalled();
+      expect(execution.evidence.attempts).toHaveLength(1);
+      const attempt = execution.evidence.attempts[0]!;
+      expect(attempt).toMatchObject({
+        outcome: "provider-terminal",
+        retryable: false,
+        retryScheduled: false,
+      });
+      expect(attempt.modelTelemetry?.providerError).toEqual({ class: "unreachable" });
+      expect(isInferenceAttemptModelTelemetry(attempt.modelTelemetry, attempt.outcome)).toBe(true);
+      const message = execution.status === "failed" ? execution.error.message : "";
+      expect(message).not.toContain("rate limit");
+      expect(message).not.toContain("retry-max-transport-retries-bound");
+
+      const record = failedRecord(attempt);
+      const next = buildRunHumanNextCommand({
+        record,
+        recordPath: `/state/${record.id}.json`,
+        repositoryPath: "/private/checkout",
+        exitCode: 1,
+      });
+      expect(next?.command).toContain("docsfab doctor");
+      expect(next?.command).toContain("--live");
+      expect(next?.reason).toContain("endpoint URL");
+      expect(next?.reason).not.toMatch(/rate limit|capability or policy wall/u);
+    },
+    SLOW,
+  );
+
+  it("tells the operator to check the endpoint and run doctor --live", () => {
+    const reason = providerFailureReason({ class: "unreachable" }, 1);
+    expect(reason).toContain("docsfab doctor --live");
+    expect(reason).toContain("endpoint URL");
+    expect(reason).not.toContain("rate");
+  });
+});
+
 async function runOneAttempt(
   input: HarnessStepInput,
   configureSession?: PiHarnessOptions["configureSession"],
@@ -981,7 +1111,7 @@ function catalogSse(model: string): Response {
  * transport answer is `second`, and read what the connection observed of it.
  */
 async function secondRequest(
-  second: () => Response,
+  second: () => Response | Promise<Response>,
   options: { onPayloadThrows?: boolean; maxProviderTurns?: number } = {},
 ) {
   const profile = catalogProfile();

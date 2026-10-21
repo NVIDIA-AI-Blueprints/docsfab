@@ -55,6 +55,19 @@ function runRecord(id: string, artifacts: RunRecord["artifacts"]): RunRecord {
 }
 
 describe("review-result reference-only artifact kind", () => {
+  it("admits the private inspection-intent reference only at version 1", () => {
+    const reference = { ...reviewResultReference(), kind: "review-delivery-intent" } as const;
+    expect(ARTIFACT_REFERENCE_ONLY_KINDS).toContain("review-delivery-intent");
+    expect(ARTIFACT_KINDS).not.toContain("review-delivery-intent" as never);
+    expect(
+      validateArtifactReference(reference, { expectedKind: "review-delivery-intent" }),
+    ).toEqual(reference);
+    expectArtifactError(
+      () => validateArtifactReference({ ...reference, schemaVersion: 2 }),
+      "future-version",
+    );
+  });
+
   it("admits the closed version 1 reference and keeps it outside semantic envelopes", () => {
     const reference = reviewResultReference();
     const use = { role: "output", stepId: "review", reference } as const;

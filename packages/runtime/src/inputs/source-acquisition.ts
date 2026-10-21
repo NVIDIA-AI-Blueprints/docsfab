@@ -416,15 +416,32 @@ export interface AcquiredSourceBindingV1 {
   readScope: readonly string[];
 }
 
+/** Retains exact bytes only inside a host callback; it does not mint a binding. */
+export interface AcquiredTrackedSourceObservationV1 extends AcquiredSourceV1 {
+  readonly original: Uint8Array;
+  readonly originalRepresentation?: SourceRepresentationV1;
+}
+
+export interface AcquiredTrackedSourceObservationsV1 {
+  readonly acquired: readonly AcquiredTrackedSourceObservationV1[];
+  readonly producerScopes: ReadonlyArray<{ producerId: string; scopeSha256: string }>;
+  readonly readScope: readonly string[];
+}
+
+export interface AcquireTrackedSourceObservationsInput extends AcquireTrackedSourceBindingInput {
+  /** Optional host-owned exact view; used only by the H callback before custody seals. */
+  readonly createOriginalRepresentation?: (bytes: Uint8Array) => SourceRepresentationV1;
+}
+
 /**
  * Acquire the selected tracked files and mint the run's source binding.
  *
  * Refusal order per path is scope, tracking, media type, then bytes, so a path
  * outside the grant never reaches the repository.
  */
-export async function acquireTrackedSourceBinding(
-  input: AcquireTrackedSourceBindingInput,
-): Promise<AcquiredSourceBindingV1> {
+export async function acquireTrackedSourceObservations(
+  input: AcquireTrackedSourceObservationsInput,
+): Promise<AcquiredTrackedSourceObservationsV1> {
   const readScope = normalizeSourceReadScope(input.readScope);
   const selection = normalizeSourceSelection(input.selection, readScope);
   const registry = input.registry ?? createDefaultSourceExtractorRegistry();
@@ -439,7 +456,7 @@ export async function acquireTrackedSourceBinding(
     readScope,
   });
 
-  const acquired: AcquiredSourceV1[] = [];
+  const acquired: AcquiredTrackedSourceObservationV1[] = [];
   for (const repositoryPath of selection) {
     if (!(await input.reader.isTrackedRegularFile(repositoryPath))) {
       refuse("path-not-tracked", repositoryPath);
@@ -492,6 +509,21 @@ export async function acquireTrackedSourceBinding(
       representationSha256: extracted.representation.representationSha256,
     });
     const inputId = computeSourceInputId(observationId);
+    const originalRepresentation = input.createOriginalRepresentation?.(bytes);
+    const originalInputId = originalRepresentation
+      ? `input-${canonicalDigest({ kind: "docsfab-h-source-original-input", observationId })}`
+      : undefined;
+    const originalRegistrationSha256 = originalInputId
+      ? registerTrackedRepositorySourceInput(input.externalInputs, {
+          inputId: originalInputId,
+          canonicalLocator: trackedSourceCanonicalLocator(repositoryPath),
+          safeTitle: repositoryPath,
+          contentDigestSha256: sha256Bytes(bytes),
+          revision: input.repository.revision,
+          producerId: TRACKED_SOURCE_PRODUCER_ID,
+          producerVersion: TRACKED_SOURCE_PRODUCER_VERSION,
+        }).entrySha256
+      : undefined;
     const { entrySha256 } = registerTrackedRepositorySourceInput(input.externalInputs, {
       inputId,
       canonicalLocator: trackedSourceCanonicalLocator(repositoryPath),
@@ -507,6 +539,8 @@ export async function acquireTrackedSourceBinding(
       originIdSha256,
       inputId,
       registrationSha256: entrySha256,
+      ...(originalInputId ? { originalInputId } : {}),
+      ...(originalRegistrationSha256 ? { originalRegistrationSha256 } : {}),
       runIdSha256: input.runIdSha256,
       repository: input.repository,
       requestSha256: input.requestSha256,
@@ -536,34 +570,57 @@ export async function acquireTrackedSourceBinding(
         version: { kind: "repository-revision", revision: input.repository.revision },
         repositoryPath,
       },
-      representations: [extracted.representation],
+      representations: originalRepresentation
+        ? [extracted.representation, originalRepresentation]
+        : [extracted.representation],
     });
     acquired.push({
       observation,
       representation: extracted.representation,
       derivative: extracted.derivative,
       repositoryPath,
+      original: bytes,
+      ...(originalRepresentation ? { originalRepresentation } : {}),
     });
   }
 
   const producerScopes = Object.freeze([
     { producerId: TRACKED_SOURCE_PRODUCER_ID, scopeSha256: readScopeSha256 },
   ]);
+  return { acquired: Object.freeze(acquired), producerScopes, readScope };
+}
+
+/** Legacy binder over the same producer loop; its returned shape and digest are unchanged. */
+export async function acquireTrackedSourceBinding(
+  input: AcquireTrackedSourceBindingInput,
+): Promise<AcquiredSourceBindingV1> {
+  const observed = await acquireTrackedSourceObservations(input);
+  const acquired: AcquiredSourceV1[] = observed.acquired.map((entry) => ({
+    observation: entry.observation,
+    representation: entry.representation,
+    derivative: entry.derivative,
+    repositoryPath: entry.repositoryPath,
+  }));
   const binding = createSourceBinding({
     runIdSha256: input.runIdSha256,
     repository: input.repository,
     requestSha256: input.requestSha256,
     hostPolicySha256: input.hostPolicySha256,
-    producerScopeSha256: digestSourceProducerScopes(producerScopes),
+    producerScopeSha256: digestSourceProducerScopes(observed.producerScopes),
     parentBindingSha256: null,
-    observations: acquired.map((entry) => ({
+    observations: observed.acquired.map((entry) => ({
       observationId: entry.observation.observationId,
       observationSha256: entry.observation.observationSha256,
     })),
     // A run that never read a selected source may not write.
-    requiredObservationIds: acquired.map((entry) => entry.observation.observationId),
+    requiredObservationIds: observed.acquired.map((entry) => entry.observation.observationId),
   });
-  return { binding, acquired: Object.freeze(acquired), producerScopes, readScope };
+  return {
+    binding,
+    acquired: Object.freeze(acquired),
+    producerScopes: observed.producerScopes,
+    readScope: observed.readScope,
+  };
 }
 
 /**

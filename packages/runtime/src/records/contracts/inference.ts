@@ -235,7 +235,8 @@ export type ModelFinishReason =
 /**
  * Class of a provider error that ended an attempt; the telemetry never carries
  * its text. `stream-incomplete` is a 2xx chat-completions stream that closed
- * cleanly before any finish reason or `[DONE]`.
+ * cleanly before any finish reason or `[DONE]`. `unreachable` is a request
+ * that never connected: refused, unresolvable host name, or no route.
  */
 export type ProviderErrorClass =
   | "rate-limit"
@@ -245,6 +246,7 @@ export type ProviderErrorClass =
   | "content-filter"
   | "network"
   | "stream-incomplete"
+  | "unreachable"
   | "invalid-request"
   | "unknown";
 export interface ProviderErrorTelemetryV1 {

@@ -478,6 +478,8 @@ export interface RunRecord {
    * Keeps a narrow review from being mistaken for a whole-set baseline.
    */
   reviewScope?: import("../../execution/contracts.js").RunReviewScope;
+  /** Immutable M/B/H, target/fork, and manifest provenance for one public PR review. */
+  prReviewBasis?: import("../../inputs/pr-review-basis-binding.js").PrReviewBasisBindingV1;
   /**
    * How the request interpretation before the first step ended, and the sealed
    * intent it admitted. Present from the first queued save of every run that
@@ -515,6 +517,8 @@ export interface RunRecord {
    * summary and the sealed span citations it attached.
    */
   sourceCitations?: import("../source-citations.js").SourceRunCitationsV1;
+  /** Versioned exact-step review finding to source-span joins; never write coverage. */
+  prReviewSourceCitations?: import("../pr-review-source-citations.js").PrReviewSourceCitationsV1;
   /**
    * Present only when the run bound a code change: one entry per sealed
    * change-source record, from the queued save. A stop before the runner

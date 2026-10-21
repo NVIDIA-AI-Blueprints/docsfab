@@ -4,6 +4,7 @@
 /** Literal GitHub review text derived only from the sealed D1 plan. */
 import { assertHostedReportUrl } from "../../evaluation-report/hosted-report.js";
 import type { ReviewDeliveryAction, ReviewDeliveryPlan } from "../contracts.js";
+import type { ReviewDeliveryOverviewPresentation } from "../execute.js";
 
 function literal(value: string): string {
   let longest = 2;
@@ -158,6 +159,27 @@ export function renderGithubOverviewBody(
   const report = safeReportLink(plan.result.hostedReportUrl);
   if (report) sections.push("Hosted report candidate (audience access unconfirmed):", report);
   return sections.join("\n\n");
+}
+
+/** Fixed, inert accounting for an overview retained outside the native review body. */
+export function renderGithubCompactOverviewBody(
+  plan: ReviewDeliveryPlan,
+  createMarker: string,
+  presentation: ReviewDeliveryOverviewPresentation,
+): string {
+  if (plan.target.scmProvider !== "github" || presentation.kind !== "compact-partial")
+    throw new Error("The compact GitHub overview requires a sealed GitHub target and accounting.");
+  const { remaining, retained } = presentation;
+  return [
+    "DocsFab documentation review",
+    `<!-- docsfab-review:${createMarker} -->`,
+    "Overview presentation: partial; full retained content was not published in this review body.",
+    `Target: GitHub repository ${plan.target.repositoryId}, pull request #${plan.target.pullRequestNumber}.`,
+    `Reviewed head: ${plan.result.reviewedHeadSha}.`,
+    `Retained identity: result ${retained.resultSha256}; source ${retained.sourceSha256}; snapshot ${retained.snapshotSha256}; run ${retained.runIdSha256}; actions ${retained.actionSetSha256}.`,
+    `Publication accounting: retained findings total ${remaining.findingsTotal}; summary-selected findings ${remaining.summarySelectedFindings}; native-inline findings ${remaining.nativeInlineFindings}; retained-unposted findings ${remaining.retainedUnpostedFindings}; unsupported subset of retained-unposted ${remaining.unsupportedUnpostedFindings}; finding limitations ${remaining.findingLimitations}; checks ${remaining.checks}; unanswered questions ${remaining.unansweredQuestions}; review scope present ${remaining.reviewScopePresent}; anchor paths ${remaining.anchorPaths}; deferred paths ${remaining.deferredPaths}; continuation locator present ${remaining.continuationLocatorPresent}; template report present ${remaining.templateReportPresent}; template pages ${remaining.templatePages}; template rules ${remaining.templateRules}; template suggestion IDs ${remaining.templateSuggestionIds}; affected paths ${remaining.affectedPaths}; skipped paths ${remaining.skippedPaths}; plan limitations ${remaining.planLimitations}; hosted-report candidate present ${remaining.hostedReportCandidatePresent}.`,
+    "Inspection: use the saved run ID and state directory from the DocsFab delivery invocation to read the verified original result; if unavailable, this overview remains incomplete.",
+  ].join("\n\n");
 }
 
 export function renderGithubInlineBody(

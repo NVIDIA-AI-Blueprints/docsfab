@@ -37,6 +37,9 @@ export interface ProviderErrorClassDisposition {
  * - `network`, `server`, and `timeout` are faults a fresh attempt can clear.
  *   So is `stream-incomplete`: the stream closed before the provider finished
  *   its answer, a transport fault rather than an answer about the request.
+ * - `unreachable` (refused, unresolvable host name, or no route) is an answer
+ *   about the configured endpoint that a replay seconds later repeats, so it
+ *   ends the step at once instead of walking the transport-retry ladder.
  * - `rate-limit` is retryable only when answered with a status; see
  *   {@link providerErrorDisposition}.
  * - `content-filter`, `auth`, and `invalid-request` are answers about this
@@ -51,6 +54,7 @@ export const PROVIDER_ERROR_CLASS_DISPOSITIONS: Readonly<
   network: Object.freeze({ category: "provider-transient", retryable: true }),
   server: Object.freeze({ category: "provider-transient", retryable: true }),
   "stream-incomplete": Object.freeze({ category: "provider-transient", retryable: true }),
+  unreachable: Object.freeze({ category: "provider-terminal", retryable: false }),
   timeout: Object.freeze({ category: "timeout", retryable: true }),
   "rate-limit": Object.freeze({ category: "throttled", retryable: true }),
   "content-filter": Object.freeze({ category: "provider-terminal", retryable: false }),
@@ -161,9 +165,10 @@ export function decideSentProviderFailure(failure: InferenceStepError): Inferenc
       : streamStatus !== undefined
         ? ` (in-stream status ${streamStatus})`
         : "";
+  const article = /^[aeiou]/u.test(disposition.providerErrorClass) ? "an" : "a";
   const decided = new InferenceStepError(
     `Model request failed [${disposition.category}; retryable=${disposition.retryable}]: the sent ` +
-      `provider request ended with a ${disposition.providerErrorClass} error${statusClause}.`,
+      `provider request ended with ${article} ${disposition.providerErrorClass} error${statusClause}.`,
     disposition.category,
     disposition.retryable,
     failure.evidence,

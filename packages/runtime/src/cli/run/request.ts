@@ -101,6 +101,11 @@ export interface CliRunOptions {
   reviewResultRetention?: import("../../workflow-execution/runner-ports.js").WorkflowRunnerOptions["reviewResultRetention"];
   /** Deterministic product-outcome fixture; production uses the installed workflow projector. */
   outcomeProjector?: import("../../workflow-contracts/contracts.js").WorkflowOutcomeProjector;
+  /** Offline public-PR fixture HTTP ports; production uses the bounded provider transports. */
+  githubPrFixturePorts?: Pick<
+    import("../../inputs/adapters/github-pr-provider.js").AcquireGithubPrOptions,
+    "apiFetch" | "objectFetch" | "scratchRoot"
+  >;
   /** Test seam for the host's early required-check isolation probe. */
   probeRequiredCheckReadiness?: typeof import("../../workflow-execution/required-check-readiness.js").probeRequiredCheckReadiness;
   /** Host-prepared PR review evidence; checked against the selected snapshot before inference. */
@@ -173,6 +178,10 @@ export interface CliRunOptions {
 }
 
 export interface CliRunInvocation {
+  /** Live callback basis; never serialized or retained beyond selected workspace scope. */
+  readonly githubPrBasis?: import("../../inputs/adapters/github-pr-provider.js").GithubPrReviewBasis;
+  readonly githubPrBasisBinding?: import("../../inputs/pr-review-basis-binding.js").PrReviewBasisBindingV1;
+  readonly githubPrScope?: import("../../workflow-execution/pr-review-scope.js").PrReviewScopeProjectionV1;
   request: RunRequestWithPublishProjection;
   config: RunRuntimeConfig;
   options: CliRunOptions;

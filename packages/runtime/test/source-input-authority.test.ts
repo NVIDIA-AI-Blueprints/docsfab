@@ -21,6 +21,8 @@ import {
   SOURCE_REQUEST_PROJECTED_FIELDS_V3_ADDITIONS,
   SOURCE_REQUEST_PROJECTED_FIELDS_V4,
   SOURCE_REQUEST_PROJECTED_FIELDS_V4_ADDITIONS,
+  SOURCE_REQUEST_PROJECTED_FIELDS_V5,
+  SOURCE_REQUEST_PROJECTED_FIELDS_V5_ADDITIONS,
   SOURCE_REQUEST_PROJECTION_VERSIONS,
   SOURCE_REQUEST_RESOLVED_FIELDS,
   SourceEvidenceContractError,
@@ -320,7 +322,7 @@ describe("source request projection versioning (#798)", () => {
   });
 
   it("selects the lowest projection version that represents the request", () => {
-    expect(SOURCE_REQUEST_PROJECTION_VERSIONS).toEqual([1, 2, 3, 4]);
+    expect(SOURCE_REQUEST_PROJECTION_VERSIONS).toEqual([1, 2, 3, 4, 5]);
     expect(selectSourceRequestProjectionVersion({ ...CREATE_REQUEST })).toBe(1);
     for (const field of SOURCE_REQUEST_PROJECTED_FIELDS_V2_ADDITIONS) {
       expect(selectSourceRequestProjectionVersion({ ...CREATE_REQUEST, [field]: null })).toBe(2);
@@ -331,16 +333,18 @@ describe("source request projection versioning (#798)", () => {
   });
 
   it("refuses an unrecognized projection version instead of minting one", () => {
-    for (const version of [0, 5, 1.5, -1, Number.NaN]) {
+    for (const version of [0, 6, 1.5, -1, Number.NaN]) {
       expectContractCode(
         () => project(CREATE_REQUEST, { projectionVersion: version }),
         "projection-unversioned",
       );
     }
     // Positive control: every recognized version projects.
-    for (const version of SOURCE_REQUEST_PROJECTION_VERSIONS) {
+    for (const version of SOURCE_REQUEST_PROJECTION_VERSIONS.filter((value) => value < 5)) {
       expect(project(CREATE_REQUEST, { projectionVersion: version })).toMatch(/^[0-9a-f]{64}$/u);
     }
+    // V5 is recognized but requires a sealed host-projected PR basis.
+    expectContractCode(() => project(CREATE_REQUEST, { projectionVersion: 5 }), "invalid-shape");
   });
 
   it("still refuses an unknown field with projection-unversioned after the new fields are recognized", () => {
@@ -453,12 +457,12 @@ const VERSION_4_GOLDEN_SHA256 = "b7cfd3f9f4b5ccc42ec4bc037df4d2193f42bb478d0fe6d
 
 const REQUEST_INTENT = { schemaVersion: 1, kind: "recorded-intent", sha256: sha("intent") };
 
-describe("source request projection versions 3 and 4", () => {
+describe("source request projection versions 3 through 5", () => {
   it("classifies every run-request field exactly once, from one table", () => {
     const classified = Object.keys(SOURCE_REQUEST_FIELD_CLASSES);
     const partition = [
       ...SOURCE_REQUEST_RESOLVED_FIELDS,
-      ...SOURCE_REQUEST_PROJECTED_FIELDS_V4,
+      ...SOURCE_REQUEST_PROJECTED_FIELDS_V5,
       ...SOURCE_REQUEST_PENDING_CONTINUATION_FIELDS,
     ];
     expect([...partition].sort()).toEqual([...classified].sort());
@@ -475,6 +479,11 @@ describe("source request projection versions 3 and 4", () => {
     expect(SOURCE_REQUEST_PROJECTED_FIELDS_V4).toEqual([
       ...SOURCE_REQUEST_PROJECTED_FIELDS_V3,
       ...SOURCE_REQUEST_PROJECTED_FIELDS_V4_ADDITIONS,
+    ]);
+    expect(SOURCE_REQUEST_PROJECTED_FIELDS_V5_ADDITIONS).toEqual(["prReviewBasis"]);
+    expect(SOURCE_REQUEST_PROJECTED_FIELDS_V5).toEqual([
+      ...SOURCE_REQUEST_PROJECTED_FIELDS_V4,
+      ...SOURCE_REQUEST_PROJECTED_FIELDS_V5_ADDITIONS,
     ]);
   });
 

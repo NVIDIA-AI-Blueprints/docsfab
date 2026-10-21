@@ -666,6 +666,7 @@ describe("diagnosis attempt classifier", () => {
     [{ httpStatus: 404, providerErrorClass: "invalid-request" }, "provider-request-refused"],
     [{ providerErrorClass: "unknown", finishReason: "error" }, "provider-stream-error"],
     [{ providerErrorClass: "network", finishReason: "error" }, "provider-unavailable"],
+    [{ providerErrorClass: "unreachable", finishReason: "error" }, "provider-endpoint-unreachable"],
     [
       { providerErrorClass: "stream-incomplete", finishReason: "error" },
       "provider-stream-incomplete",

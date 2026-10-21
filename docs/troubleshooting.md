@@ -431,7 +431,7 @@ ownership failure is distinct from `git-configuration-refused` and
 configuration errors.
 
 For setup guidance, refer to
-[Runner Quickstart](get-started/runner-quickstart.md#prerequisites).
+[Workflow Quickstart](get-started/runner-quickstart.md#prerequisites).
 
 ## DocsFab Cannot Verify the Git Setup of a Checkout
 
@@ -815,7 +815,7 @@ line.
 The following pages provide related information:
 
 - [Install DocsFab](get-started/installation.md)
-- [Runner Quickstart](get-started/runner-quickstart.md)
+- [Workflow Quickstart](get-started/runner-quickstart.md)
 - [Run a Documentation Workflow](workflows/run-a-documentation-workflow.md)
 - [Runtime CLI and Configuration in DocsFab](reference/status-and-configuration/runtime-cli-and-configuration.md)
 - [DocsFab Operator Error Envelope](reference/status-and-configuration/operator-error-envelope.md)

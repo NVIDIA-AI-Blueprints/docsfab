@@ -13,6 +13,7 @@ import {
   SourceAcquisitionError,
   TrackedSourceOversizeError,
   acquireTrackedSourceBinding,
+  acquireTrackedSourceObservations,
   computeSourceOriginId,
   digestSourceReadScope,
   isWithinSourceReadScope,
@@ -516,6 +517,57 @@ describe("tracked source acquisition refusals (#835)", () => {
 });
 
 describe("tracked source acquisition binding (#835)", () => {
+  it("shares the observation producer and preserves pre-refactor legacy binding digests", async () => {
+    const path = "docs/source.md";
+    const bytes = new Uint8Array(Buffer.from("# Exact source\n", "utf8"));
+    const fields = {
+      reader: reader({ [path]: bytes }),
+      selection: [path],
+      readScope: ["."],
+      runIdSha256: RUN_ID_SHA,
+      repository: REPOSITORY,
+      requestSha256: REQUEST_SHA,
+      hostPolicySha256: POLICY_SHA,
+      observedAt: OBSERVED_AT,
+    };
+    const observations = await acquireTrackedSourceObservations({
+      ...fields,
+      externalInputs: openExternalInputAccessCapture({
+        runIdSha256: RUN_ID_SHA,
+        repository: REPOSITORY,
+      }),
+    });
+    const legacy = await acquireTrackedSourceBinding({
+      ...fields,
+      externalInputs: openExternalInputAccessCapture({
+        runIdSha256: RUN_ID_SHA,
+        repository: REPOSITORY,
+      }),
+    });
+    expect(observations.acquired[0]?.original).toEqual(bytes);
+    expect(observations.acquired[0]?.observation).toEqual(legacy.acquired[0]?.observation);
+    expect(observations.producerScopes).toEqual(legacy.producerScopes);
+    expect(observations.readScope).toEqual(legacy.readScope);
+    expect(Object.keys(legacy.acquired[0]!).sort()).toEqual(
+      ["derivative", "observation", "repositoryPath", "representation"].sort(),
+    );
+    expect(decodeSourceBinding(legacy.binding).observations[0]?.observationSha256).toBe(
+      observations.acquired[0]?.observation.observationSha256,
+    );
+    // Captured by executing acquireTrackedSourceBinding from a1495b46f^ against
+    // this exact fixture before the producer extraction; independent of the
+    // refactored binder and observations helper now under test.
+    expect(legacy.binding.bindingSha256).toBe(
+      "8f3597a51da4866faeb5598b38a9f214812b48a20ac3d0de5f64ab1b072534f3",
+    );
+    expect(legacy.acquired[0]?.observation.observationSha256).toBe(
+      "0920e9249755a684a7c9631c49b2f3f3a5699c7442e9b49ac2769d8ea7dc92dd",
+    );
+    expect(legacy.acquired[0]?.representation.representationSha256).toBe(
+      "ed95b786cf09cbfbe575d805c976581996f3ecdf46801d6f6537bc594e89caae",
+    );
+  });
+
   it.each([
     ["md", "text/markdown", "# Café\r\n\r\nRésumé\nTail"],
     ["markdown", "text/markdown", "\uFEFF# Ωmega\r\n\r\nβeta"],

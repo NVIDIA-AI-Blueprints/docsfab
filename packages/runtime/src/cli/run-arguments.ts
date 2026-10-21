@@ -21,9 +21,9 @@ import {
   type GithubPullRequestSelectorV1,
 } from "../inputs/change-source/github-url.js";
 import { getWorkflow, parkedWorkflowError } from "../workflow-registry/catalog.js";
-import { ReviewDeliveryCliOperatorError } from "./review-delivery-error.js";
 import { isWorkflowManifestV2 } from "../workflow-contracts/contracts.js";
 import { parseCommentMrTarget } from "./comment-existing-mr-target.js";
+import { ReviewDeliveryCliOperatorError } from "./review-delivery-error.js";
 import {
   assertPublicationNotProhibited,
   DEFAULT_REPOSITORY_PATH,
@@ -47,6 +47,7 @@ import {
   parseMergedMrUpdateInstruction,
 } from "../inputs/merged-mr-instruction.js";
 import { SOURCE_AWARE_WORKFLOWS } from "../inputs/source-aware-workflows.js";
+import { admitGithubPrReviewInput } from "./run/pr-input.js";
 
 export type RunCliArguments = RunArguments & {
   readonly draftMr: boolean;
@@ -410,8 +411,13 @@ export function admitCliSourceSelection(
   args: string[],
   input: {
     readonly workflow?: string;
-    readonly resumeOption?: { readonly name: string; readonly present: boolean };
+    readonly resumeOption?: {
+      readonly name: string;
+      readonly present: boolean;
+    };
     readonly claimedChangeRequest?: boolean;
+    /** Only run may admit a parsed public GitHub PR for read-only review. */
+    readonly githubReview?: boolean;
   } = {},
 ): CliSourceSelectionV1 {
   const resumeName = input.resumeOption?.name;
@@ -427,7 +433,8 @@ export function admitCliSourceSelection(
   if (
     sourceValues.length > 0 &&
     input.workflow !== undefined &&
-    !(SOURCE_AWARE_WORKFLOWS as readonly string[]).includes(input.workflow)
+    !(SOURCE_AWARE_WORKFLOWS as readonly string[]).includes(input.workflow) &&
+    !(input.githubReview === true && input.workflow === "review-documentation")
   ) {
     throw new Error(unsupportedSourceWorkflowRefusal());
   }
@@ -458,7 +465,8 @@ export function admitCliSourceSelection(
   if (
     prCount > 0 &&
     input.workflow !== undefined &&
-    !(SOURCE_AWARE_WORKFLOWS as readonly string[]).includes(input.workflow)
+    !(SOURCE_AWARE_WORKFLOWS as readonly string[]).includes(input.workflow) &&
+    !(input.githubReview === true && input.workflow === "review-documentation")
   ) {
     throw new Error(unsupportedSourceWorkflowRefusal(SOURCE_AWARE_WORKFLOWS, "--pr"));
   }
@@ -494,7 +502,10 @@ function claimRunGithubChangeRequest(
   );
   // `--pr=<url>` is one token; `--pr <url>` is the option and its value.
   const width = args[index]!.includes("=") ? 1 : 2;
-  return { args: [...args.slice(0, index), ...args.slice(index + width)], value: values[0]! };
+  return {
+    args: [...args.slice(0, index), ...args.slice(index + width)],
+    value: values[0]!,
+  };
 }
 
 /**
@@ -520,7 +531,10 @@ export function admitCliChangeSourceSelection(
   args: string[],
   input: {
     readonly workflow?: string;
-    readonly resumeOption?: { readonly name: string; readonly present: boolean };
+    readonly resumeOption?: {
+      readonly name: string;
+      readonly present: boolean;
+    };
   } = {},
 ): ChangeSourceSelectorV1 | undefined {
   const values = admittedOptionValues(args, {
@@ -831,7 +845,11 @@ export function parseRunArguments(args: string[]): RunCliArguments {
     );
   }
   const comparisonRequest: RunComparisonRequest | undefined = comparisonBase
-    ? { kind: "base-head", baseRevision: comparisonBase, headRevision: requestedRevision! }
+    ? {
+        kind: "base-head",
+        baseRevision: comparisonBase,
+        headRevision: requestedRevision!,
+      }
     : comparisonWorkspaceCount === 1
       ? { kind: "workspace" }
       : undefined;
@@ -845,25 +863,44 @@ export function parseRunArguments(args: string[]): RunCliArguments {
   ) {
     throw new Error("Every --reader-source role and path binding must be unique.");
   }
-  const resumeOption = { name: "--resume-from", present: resumeFrom !== undefined };
+  const resumeOption = {
+    name: "--resume-from",
+    present: resumeFrom !== undefined,
+  };
   // `run --pr <github.com pull request URL>` is a change source: the shared
   // admission counts and gates it but never parses it as a merge request.
   const githubChangeRequest = claimRunGithubChangeRequest(withoutOutputFlags);
+  const githubPullRequest = githubChangeRequest
+    ? runGithubPullRequestChangeSource(githubChangeRequest.value)
+    : undefined;
+  const githubPrReview =
+    githubPullRequest && workflow === "review-documentation"
+      ? admitGithubPrReviewInput({
+          workflow,
+          args,
+          url: githubChangeRequest!.value,
+          selector: githubPullRequest,
+        })
+      : undefined;
   const { sourcePaths, changeRequestSelector } = admitCliSourceSelection(
     githubChangeRequest?.args ?? withoutOutputFlags,
-    { workflow, resumeOption, claimedChangeRequest: githubChangeRequest !== undefined },
+    {
+      workflow,
+      resumeOption,
+      claimedChangeRequest: githubChangeRequest !== undefined,
+      githubReview: githubPrReview !== undefined,
+    },
   );
   // The original args, so `--change` beside a GitHub `--pr` still conflicts.
   const changeSource = admitCliChangeSourceSelection(withoutOutputFlags, {
     workflow,
     resumeOption,
   });
-  const githubPullRequest = githubChangeRequest
-    ? runGithubPullRequestChangeSource(githubChangeRequest.value)
-    : undefined;
   // `run --mr` also binds the merge request's pinned diff, as `--change` would.
   const runChangeSource =
-    changeSource ?? githubPullRequest ?? mergeRequestChangeSourceSelector(changeRequestSelector);
+    changeSource ??
+    (githubPrReview ? undefined : githubPullRequest) ??
+    mergeRequestChangeSourceSelector(changeRequestSelector);
   const reviewDeliveryValues = options(withoutOutputFlags, "--review-delivery");
   const reviewDeliveryTargetValues = options(withoutOutputFlags, "--review-delivery-target");
   if (reviewDeliveryValues.length > 1 || reviewDeliveryTargetValues.length > 1) {
@@ -875,7 +912,7 @@ export function parseRunArguments(args: string[]): RunCliArguments {
     throw new ReviewDeliveryCliOperatorError("missing-pair");
   }
   if (reviewDelivery !== undefined) {
-    if (workflow !== "review-documentation" || !runChangeSource) {
+    if (workflow !== "review-documentation" || !runChangeSource || githubPrReview) {
       throw new ReviewDeliveryCliOperatorError("explicit-source-required");
     }
     if (reviewDelivery !== "preview" && reviewDelivery !== "publish") {
@@ -1117,11 +1154,14 @@ export function parseRunArguments(args: string[]): RunCliArguments {
     revisionExplicit: requestedRevision !== undefined,
     ...(readerSources.length > 0 ? { readerSources } : {}),
     ...(sourcePaths.length > 0 ? { sourcePaths } : {}),
+    ...(githubPrReview ? { githubPrReview } : {}),
     ...(changeRequestSelector ? { changeRequestSelector } : {}),
     ...(runChangeSource ? { changeSource: runChangeSource } : {}),
     ...(reviewDelivery ? { reviewDelivery, reviewDeliveryTarget } : {}),
     ...(grants.draftMr
-      ? { revisionPolicy: revisionPolicyForDraftMr(revision, requestedRevision !== undefined) }
+      ? {
+          revisionPolicy: revisionPolicyForDraftMr(revision, requestedRevision !== undefined),
+        }
       : {}),
     ...(instruction ? { instruction } : {}),
     ...(mergedMrSelection ? { mergedMrSelection } : {}),

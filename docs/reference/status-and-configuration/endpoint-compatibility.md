@@ -41,7 +41,9 @@ The report names one of the following verdicts:
 - `incompatible`: at least one check failed.
 - `inconclusive`: no check failed, but at least one could not decide.
 - `not-checked`: the endpoint's transport is not OpenAI-compatible chat
-  completions, which the probe speaks.
+  completions, which the probe speaks. For example, an OpenAI profile on
+  `openai-responses` reports `not-checked`, and doctor's connectivity turn
+  checks that transport instead.
 
 Each check reports `pass`, `fail`, `inconclusive`, or `not-checked`, a
 finding, and a detail line. A failed or inconclusive check also names a

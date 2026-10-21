@@ -20,6 +20,7 @@ import {
 } from "../workflow-contracts/contracts.js";
 import { admitRunSourceBinding, type SourceRunCapabilityV1 } from "../inputs/source-resolver.js";
 import { projectSourceRequestContext } from "../inputs/source-evidence.js";
+import { assertPrReviewCitationAdmission } from "./pr-review-citation-admission.js";
 import { stepAdmitsSourceRead } from "../inputs/source-step-policy.js";
 import { getWorkflow } from "../workflow-registry/catalog.js";
 import { validateTaskInput } from "./runner-schedule.js";
@@ -208,6 +209,25 @@ export function admitWorkflowRunRequest(
       })
     : undefined;
 
+  if (request.prReviewBasis || runner.options.prReviewCitationAdmission) {
+    if (!request.prReviewBasis || !request.sourceBinding || !sourceEvidence || !sourceCapability) {
+      throw new Error("PR review requires one live source binding and citation admission.");
+    }
+    assertPrReviewCitationAdmission({
+      admission: runner.options.prReviewCitationAdmission,
+      workflow,
+      runId,
+      requestSha256: projectSourceRequestContext(request as unknown as Record<string, unknown>, {
+        runId,
+        workspaceIdentitySha256: sourceEvidence.workspaceIdentitySha256,
+        repository: sourceRepository,
+      }),
+      basisBinding: request.prReviewBasis,
+      sourceBindingSha256: request.sourceBinding.digest,
+      sourceEvidence,
+    });
+  }
+
   const v2 = isWorkflowManifestV2(workflow);
   const v3 = isWorkflowManifestV3(workflow);
   if (v3 && !runner.options.authoringCandidateLifecycle) {
@@ -327,6 +347,7 @@ export function createQueuedRunRecord(
     // Recorded from the queued save, so a focused run is identifiable as
     // focused even if it never reaches a terminal state.
     ...(request.reviewScope ? { reviewScope: structuredClone(request.reviewScope) } : {}),
+    ...(request.prReviewBasis ? { prReviewBasis: structuredClone(request.prReviewBasis) } : {}),
     // From the queued save, so every stop shows how the request was read.
     ...(request.requestIntent ? { requestIntent: structuredClone(request.requestIntent) } : {}),
     ...(request.firstPassChoices?.length

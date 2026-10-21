@@ -101,6 +101,13 @@ import {
   SourceLineLedger,
   type ReviewReadObservationSnapshot,
 } from "./confined-tools/source-coordinates.js";
+import {
+  REVIEW_CHANGE_READ_TOOL_NAME,
+  REVIEW_CHANGE_PROPOSAL_ACK,
+  ReviewChangeCapture,
+  type ReviewChangeObservation,
+  type ReviewChangeSource,
+} from "./confined-tools/review-change-side.js";
 
 const VIRTUAL_GOVERNED_DIRECTORY = ".docsfab-governed-assets";
 const FIND_PATTERN_DESCRIPTION =
@@ -335,6 +342,10 @@ export interface ConfinedToolOptions {
   readEvidence?: ReadEvidenceLedger;
   /** Local review-only effective artifact object bound; absent disables retention. */
   reviewReadMaxObjectBytes?: number;
+  /** Private pinned source is registered only for the selected technical-review attempt. */
+  reviewChangeSource?: ReviewChangeSource;
+  reviewChangeRunId?: string;
+  reviewChangeStepId?: string;
   /** Read only by `toolResultRecall` and the git history tools. */
   limits?: ResolveLimitsOptions;
   /** `raw` preserves Pi's read output. */
@@ -381,6 +392,8 @@ export interface ConfinedToolSet {
   getObservedSourceLines(): ObservedSourceLinesV1 | undefined;
   getReviewReadObservation(): ReviewReadObservationSnapshot | undefined;
   disposeReviewReadObservation(): void;
+  getReviewChangeObservation(): ReviewChangeObservation | undefined;
+  disposeReviewChangeObservation(): void;
   /** Git history pages served, in the order the calls finished; `undefined` when none was. */
   getHistoryReads(): HistoryReadCitationV1[] | undefined;
   /** Refused source and history calls, content-free; `undefined` when none was refused. */
@@ -414,6 +427,19 @@ export async function createConfinedToolSet(
   const reviewRead =
     readTextRendering === "source-coordinates" && options.reviewReadMaxObjectBytes !== undefined
       ? new ReviewReadCapture(confinement, options.reviewReadMaxObjectBytes)
+      : undefined;
+  const reviewChange =
+    options.reviewChangeSource &&
+    options.reviewReadMaxObjectBytes !== undefined &&
+    options.reviewChangeRunId &&
+    options.reviewChangeStepId
+      ? new ReviewChangeCapture(
+          options.reviewChangeSource,
+          options.reviewChangeRunId,
+          options.reviewChangeStepId,
+          options.reviewReadMaxObjectBytes,
+          () => reviewRead?.snapshot(),
+        )
       : undefined;
   // One archive per tool set, so it lives exactly as long as its tools.
   const archive = options.toolResultRecall
@@ -493,6 +519,15 @@ export async function createConfinedToolSet(
   const definitions: AnyToolDefinition[] = [read, grep, find, ls].map((definition) =>
     withToolOutputCap(definition, capBytes, archive),
   );
+  if (reviewChange) {
+    if (capBytes < Buffer.byteLength(REVIEW_CHANGE_PROPOSAL_ACK)) {
+      throw new Error(
+        "Review anchor confirmation exceeds the configured tool output cap; raise the effective tool cap before this review.",
+      );
+    }
+    definitions.push(withToolOutputCap(reviewChange.readTool(), capBytes, archive));
+    definitions.push(withToolOutputCap(reviewChange.selectTool(), capBytes, archive));
+  }
   if (archive) {
     definitions.push(recordRecallFailures(createToolResultRecallTool(archive), failures));
   }
@@ -686,7 +721,10 @@ export async function createConfinedToolSet(
       const delivered = options.readEvidence
         ? withReadEvidence(confined, options.readEvidence)
         : confined;
-      return reviewRead && definition.name === "read" ? reviewRead.observe(delivered) : delivered;
+      if (reviewRead && definition.name === "read") return reviewRead.observe(delivered);
+      if (reviewChange && definition.name === REVIEW_CHANGE_READ_TOOL_NAME)
+        return reviewChange.observeDelivered(delivered);
+      return delivered;
     }),
     governedSkillVirtualPath: confinement.governedSkillVirtualPath,
     governedQualityVirtualPath: confinement.governedQualityVirtualPath,
@@ -697,6 +735,8 @@ export async function createConfinedToolSet(
     getObservedSourceLines: () => sourceLines?.snapshot(),
     getReviewReadObservation: () => reviewRead?.snapshot(),
     disposeReviewReadObservation: () => reviewRead?.dispose(),
+    getReviewChangeObservation: () => reviewChange?.snapshot(),
+    disposeReviewChangeObservation: () => reviewChange?.dispose(),
     getHistoryReads: () => historyReads?.snapshot(),
     getToolRefusals: () => refusals?.snapshot(),
     getToolArgumentFiller: () => filler?.snapshot(),

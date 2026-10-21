@@ -118,7 +118,7 @@ runtime model profile. Hosted notes require separate host configuration. Refer t
 
 For machine consumers, add `--json` and read the single JSON object on
 stdout. Do not scrape the human footer or skill Markdown. Refer to
-[Runner Quickstart](../get-started/runner-quickstart.md) for the findings
+[Human Output and JSON in DocsFab](../reference/status-and-configuration/human-output-and-json.md) for the findings
 projection contract.
 
 ## Use Hosted Automatic Review
@@ -270,10 +270,10 @@ broader write grant.
     [Update Documentation Beside a Change in DocsFab](update-documentation-beside-a-change.md)
   </Card>
   <Card
-    title="Runner Quickstart"
+    title="Workflow Quickstart"
     href="/get-started/runner-quickstart"
   >
-    [Runner Quickstart](../get-started/runner-quickstart.md)
+    [Workflow Quickstart](../get-started/runner-quickstart.md)
   </Card>
   <Card
     title="Run a Documentation Workflow in DocsFab"

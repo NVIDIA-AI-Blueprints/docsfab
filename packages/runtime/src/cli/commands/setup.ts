@@ -17,7 +17,8 @@ import { createTerminalSetupPrompter, runInteractiveSetup } from "../../setup/in
 
 export const SETUP_USAGE = `Usage:
   docsfab setup [--provider <provider>] [--model <id>] [--endpoint <url>] [--api <api>] [--verbose | --json]
-  docsfab setup [--profile <compositionId> | --preset <id> | --migrate] [--verbose | --json]
+  docsfab setup --profile <compositionId> [--endpoint <url>] [--verbose | --json]
+  docsfab setup [--preset <id> | --migrate] [--verbose | --json]
 
 Configures the host model profile and credential. In an attached terminal,
 bare setup asks for a provider, model, applicable endpoint/API, and a
@@ -31,7 +32,8 @@ Options:
   --provider     openai, openai-compatible, anthropic, or anthropic-compatible
   --model <id>   Model id offered by the selected provider
   --endpoint     HTTPS base URL, or http:// to localhost, 127.0.0.1, or [::1];
-                 required for compatible providers without a terminal
+                 required for compatible providers without a terminal;
+                 with --profile, save this endpoint in host.yaml for later commands
   --api          openai-chat-completions, openai-responses, or anthropic-messages
   --profile <id>  Select an installed composition by id and write that id plus required secret names
   --preset <id>  Deprecated YAML field-block copy for existing hosts; prefer --profile
@@ -93,8 +95,11 @@ export function parseSetupArguments(args: string[]) {
   const profile = values.get("--profile");
   const preset = values.get("--preset");
   const migrate = flags.has("--migrate");
-  if ((modelId || baseUrl || api) && !provider) {
-    throw new SetupOperatorError("The --model, --endpoint, and --api options require --provider.");
+  if ((modelId || api) && !provider) {
+    throw new SetupOperatorError("The --model and --api options require --provider.");
+  }
+  if (baseUrl && !provider && !profile) {
+    throw new SetupOperatorError("The --endpoint option requires --provider or --profile.");
   }
   if (provider) parseModelProviderOption(provider);
   if (api) parseProviderTransport(api);
@@ -143,7 +148,7 @@ export async function handleSetupCommand(args: string[]): Promise<void> {
     ? await runInteractiveSetup({
         ...(provider ? { provider, modelId, baseUrl, api } : {}),
         ...(preset ? { preset } : {}),
-        ...(profile ? { profile } : {}),
+        ...(profile ? { profile, ...(baseUrl ? { baseUrl } : {}) } : {}),
         ...(migrate ? { migrate: true } : {}),
         prompter: createTerminalSetupPrompter(),
       })
@@ -159,7 +164,7 @@ export async function handleSetupCommand(args: string[]): Promise<void> {
             }
           : {}),
         ...(preset ? { preset } : {}),
-        ...(profile ? { profile } : {}),
+        ...(profile ? { profile, ...(baseUrl ? { baseUrl } : {}) } : {}),
         ...(migrate ? { migrate: true } : {}),
       });
   console.log(

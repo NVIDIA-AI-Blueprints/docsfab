@@ -45,6 +45,8 @@ export interface RunArguments {
    * numeric project id is resolved at the provider boundary.
    */
   changeRequestSelector?: ChangeRequestSelectorV1;
+  /** Public GitHub PR review selection; unresolved until the host acquires its private basis. */
+  githubPrReview?: import("./run/pr-input.js").GithubPrReviewInputV1;
   /**
    * `--change`, parsed only. The host resolves it against the checkout before
    * any model call; it never enters the source request projection.

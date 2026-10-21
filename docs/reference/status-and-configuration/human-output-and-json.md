@@ -561,5 +561,5 @@ On the default `PRODUCT` section, findings, limitations, and open
 decisions that share one code collapse to a single `Product findings:`
 line. Empty `none` lists are omitted.
 
-Refer to the [Runner Quickstart](../../get-started/runner-quickstart.md)
+Refer to the [Workflow Quickstart](../../get-started/runner-quickstart.md)
 for a first named workflow using this interface.

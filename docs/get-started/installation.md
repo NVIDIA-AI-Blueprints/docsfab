@@ -77,7 +77,7 @@ Choose the guide that matches your next task:
 
 - [Discover workflows](discover-workflows.md) to inspect available workflows.
 - [Live Agent Quickstart](live-agent-quickstart.md) to review or edit documentation in a conversation.
-- [Runner Quickstart](runner-quickstart.md) to run a named workflow and retain a local patch.
+- [Workflow Quickstart](runner-quickstart.md) to run a named workflow and retain a local patch.
 - [Configure DocsFab](../configure/index.md) to change the model or output location.
 - [Manage DocsFab](../manage/index.md) to check local readiness or change an installation.
 - [Troubleshooting](../troubleshooting.md) for installation and configuration errors.

@@ -46,6 +46,90 @@ afterEach(async () => {
 });
 
 describe("docsfab runs delete", () => {
+  it("discovers only strictly addressed run-owned inspection intents and retains shared objects", async () => {
+    const parent = await realpath(await mkdtemp(join(tmpdir(), "docsfab-inspection-delete-")));
+    roots.push(parent);
+    const stateDirectory = join(parent, "state");
+    const artifacts = new DurableArtifactStore(join(parent, "artifacts"));
+    const runStore = new FileRunStore(stateDirectory);
+    const runId = "inspection-owner";
+    const digestValue = "a".repeat(64);
+    const body = {
+      kind: "docsfab-review-delivery-inspection-intent",
+      schemaVersion: 1,
+      runId,
+      logicalDeliveryId: digestValue,
+      idempotencyKey: digestValue,
+      manifestSha256: digestValue,
+      targetSha256: digestValue,
+      resultSha256: digestValue,
+      sourceSha256: digestValue,
+      snapshotSha256: digestValue,
+      artifactId: "artifact:inspection",
+      actor: { host: "gitlab.example.test", id: "user:42" },
+      requestedActions: null,
+      capabilities: {
+        scmProvider: "gitlab",
+        host: "gitlab.example.test",
+        summary: true,
+        inline: true,
+      },
+      selections: [],
+      actions: [],
+    } as const;
+    const objectDigest = opaqueRecordDigest(body);
+    await artifacts.putRecord(objectDigest, body);
+    const base = authoringReviewFindingsRecord();
+    await runStore.save({ ...base, id: runId });
+    const readerId = "inspection-shared-reader";
+    await runStore.save({
+      ...base,
+      id: readerId,
+      artifacts: [
+        {
+          role: "output",
+          reference: {
+            kind: "review-delivery-intent",
+            schemaVersion: 1,
+            digest: objectDigest,
+            repositoryRevision: base.repository.revision,
+            repositoryContentDigest: digestValue,
+          },
+        },
+      ],
+    });
+    const ownerPreview = await previewRunDeletion(stateDirectory, runId);
+    expect(ownerPreview.sharedRetained).toBeGreaterThan(0);
+    expect(
+      (await applyRunDeletion(stateDirectory, runId, ownerPreview.confirmation)).complete,
+    ).toBe(true);
+    expect(await artifacts.has(objectDigest)).toBe(true);
+    const readerPreview = await previewRunDeletion(stateDirectory, readerId);
+    expect(
+      (await applyRunDeletion(stateDirectory, readerId, readerPreview.confirmation)).complete,
+    ).toBe(true);
+    expect(await artifacts.has(objectDigest)).toBe(false);
+
+    const orphanId = "inspection-interrupted-attachment";
+    const orphan = { ...body, runId: orphanId };
+    const orphanDigest = opaqueRecordDigest(orphan);
+    await artifacts.putRecord(orphanDigest, orphan);
+    await runStore.save({ ...base, id: orphanId });
+    const orphanPreview = await previewRunDeletion(stateDirectory, orphanId);
+    expect(
+      (await applyRunDeletion(stateDirectory, orphanId, orphanPreview.confirmation)).complete,
+    ).toBe(true);
+    expect(await artifacts.has(orphanDigest)).toBe(false);
+
+    const tamperedId = "inspection-tampered-owner";
+    const tampered = { ...body, runId: tamperedId, originalResult: { findings: [] } };
+    await artifacts.putRecord(opaqueRecordDigest(tampered), tampered);
+    await runStore.save({ ...base, id: tamperedId });
+    await expect(previewRunDeletion(stateDirectory, tamperedId)).rejects.toMatchObject({
+      code: "artifact-owner-invalid",
+    });
+  });
+
   it(
     "traverses a typed review source root to every part and refuses a readdressed malformed root",
     async () => {

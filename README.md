@@ -69,7 +69,7 @@ DocsFab can inspect a local checkout hosted on GitHub or GitLab. Local review an
 | --- | --- |
 | Install DocsFab and configure a model | [Installation](docs/get-started/installation.md) |
 | Inspect before making changes | [Live Agent Quickstart](docs/get-started/live-agent-quickstart.md) |
-| Run a named workflow and keep a local patch | [Runner Quickstart](docs/get-started/runner-quickstart.md) |
+| Run a named workflow and keep a local patch | [Workflow Quickstart](docs/get-started/runner-quickstart.md) |
 | Explore workflows and their steps | [Workflow Discovery](docs/get-started/discover-workflows.md) |
 | Understand the product and its boundaries | [Docs index](docs/README.md), [architecture](docs/about/architecture.md), and [support matrix](docs/reference/support-matrix.md) |
 

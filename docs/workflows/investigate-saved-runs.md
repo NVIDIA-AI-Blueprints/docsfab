@@ -107,6 +107,18 @@ The index can support diagnosis and aggregate counts, but it cannot provide the 
 
 The query result is an index summary, not a transcript or raw model output. Use the saved record to check retained rejection evidence and available report or artifact references. Missing fields mean the record did not retain that evidence; do not treat them as zero or infer the cause from the nearest available code.
 
+For a review with a retained inspection intent, find the `review-delivery-intent` output reference in `docsfab runs show "$RUN_ID" --state-dir "$RUN_STATE" --json`. Use its `digest` to open the complete original review:
+
+```bash
+INTENT_SHA256=copy-the-retained-inspection-intent-object-digest
+docsfab runs show "$RUN_ID" --state-dir "$RUN_STATE" \
+  --review-delivery-inventory "$INTENT_SHA256" --json
+```
+
+This read-only command returns a `saved-review-inventory` object with the original review result and reconstructed delivery plan. The result includes findings, checks, unanswered questions, review scope, and template coverage. The plan includes every selected action and its limitations. It reads the retained run, source, result, intent, and receipt from the local private stores, including after a complete custody import. It does not rerun a model or contact the review provider. Use the original saved run ID and the imported state directory after transfer.
+
+An `inspection-unavailable` result names the failed evidence check and a next action. It means DocsFab could not verify the complete inventory. Keep the retained objects and receipt for investigation; a digest by itself cannot open missing content. This option requires `--json` and cannot be combined with other `runs show` projections.
+
 While a step is running, `docsfab runs show <run-id> --json` includes an optional `inferenceProgress` projection with the latest observed Pi provider-turn or tool-execution boundary, its time and attempt, and boundary counts. The observation can include current-attempt cumulative Pi session token counters, including cache counters when reported. These provisional snapshots are separate from terminal usage. A pending provider turn is a harness-side observation, not proof of network reachability; an absent field means no boundary was observed. This evidence does not indicate that the step or run has finished.
 
 For output-limit questions, inspect `firstFinishReason`, `continuations`, `answerOutputTokens`, `finishReason`, and `outputAllowance` together. `finishReason` describes the last provider turn. A continued answer can have an earlier cut and a final turn that stopped normally. A `stop` finish below the allowance alone cannot rule out an earlier cut followed by continuation.
@@ -138,6 +150,8 @@ Deletion changes only local state. A branch that DocsFab pushed stays on the rem
 A preserved worktree whose HEAD, index, or files changed after the failure is an unresolved entry. The preview prints only how many entries need ownership review, and the confirmation output names each entry. Confirmation deletes nothing until you resolve them. To resolve an entry, save any work that you want to keep, for example on a branch that you name. Then run `git worktree list` in the original repository, find the worktree under the attempt directory that the confirmation output names, and remove it with `git worktree remove --force <path>`. Preview the run again and confirm with the new token.
 
 If an older publication used custom roots, pass each `--delivery-root <path>` and `--receipt-root <path>` at preview and confirmation. DocsFab removes only entries it can bind to the run. It keeps shared artifacts and reports an incomplete result with a next action when ownership, a registered Git worktree, or an index rebuild needs attention. After you resolve the named condition, retry with the same confirmation token when a private deletion journal exists; otherwise preview again.
+
+An interrupted deletion can resume after its run record is removed when the private journal and deletion tombstone still identify every unchanged review receipt that the original preview proved unrelated. If a receipt changes, a new receipt appears, or an older journal lacks that evidence, DocsFab keeps the receipt and reports an incomplete deletion. Preserve the journal and receipt, inspect their custody and ownership, and use the reported next action before retrying. Do not remove a receipt to force deletion to complete.
 
 ## Next Steps
 

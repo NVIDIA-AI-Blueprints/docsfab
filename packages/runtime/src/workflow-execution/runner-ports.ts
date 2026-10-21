@@ -30,6 +30,7 @@ import type {
   HostOperationExecutor,
   InferenceRetryPolicy,
   RunRequest,
+  PrReviewCitationAdmissionV1,
   SourceEvidenceRunnerBinding,
 } from "../execution/contracts.js";
 import {
@@ -355,6 +356,8 @@ export interface DocumentationPlanWriteScope {
 }
 
 export interface WorkflowRunnerOptions {
+  /** Fresh GitLab CLI's private pinned before/after source; never a saved record. */
+  reviewChangeSource?: import("../harness/confined-tools/review-change-side.js").ReviewChangeSource;
   /** Local read-only review observation CAS; absent on hosted and older runners. */
   reviewLocatorArtifacts?: import("../artifacts/store.js").DurableArtifactStore;
   /** Host-owned original provider result and the existing private artifact store. */
@@ -426,6 +429,8 @@ export interface WorkflowRunnerOptions {
   };
   /** Process-local source-evidence service and effective policy. */
   sourceEvidence?: SourceEvidenceRunnerBinding;
+  /** Process-local citation grant bound to the selected public PR and source policy. */
+  prReviewCitationAdmission?: PrReviewCitationAdmissionV1;
   /**
    * The sealed change-source records the run bound, cited on the queued save.
    * Non-empty by type, so a run without a change carries no key.

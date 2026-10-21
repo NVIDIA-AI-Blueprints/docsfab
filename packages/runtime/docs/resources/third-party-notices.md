@@ -20,7 +20,7 @@ The runtime quality bundle includes the `template-set-v1` files. The runtime `qu
 
 ## Roadmap Helper Bundles
 
-[`governed-assets/lock.json`](../../governed-assets/lock.json) records two roadmap helper bundles, their versions, licenses, source revisions, and the path and SHA-256 checksum of each file. Both bundles declare Apache-2.0.
+Public source and npm distributions exclude the roadmap helper payloads. [`governed-assets/lock.json`](../../governed-assets/lock.json) contains only empty integrity metadata (`bundles: []`); no roadmap helper bundles are included.
 
 ## Runtime npm Dependencies
 

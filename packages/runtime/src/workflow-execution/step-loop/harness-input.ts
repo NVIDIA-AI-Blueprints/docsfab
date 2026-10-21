@@ -133,6 +133,13 @@ export function assembleStepHarnessInput(input: StepHarnessInputPort): HarnessSt
   return {
     signal: request.signal,
     runId: record.id,
+    ...(workflow.name === "review-documentation" &&
+    step.id === "verify-technical-accuracy" &&
+    step.skill === "verify-technical-accuracy" &&
+    step.mode === "read-only" &&
+    options.reviewChangeSource
+      ? { reviewChangeSource: options.reviewChangeSource }
+      : {}),
     ...(rstWriterToolCeiling
       ? { toolCeiling: rstWriterToolCeiling }
       : options.toolCeiling

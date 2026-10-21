@@ -31,7 +31,7 @@ supported for scripted compatibility and two-phase recovery. Neither
 recovery path expands the original authority. For the authority model,
 refer to
 [Delivering Results](../about/core-concepts/documentation-jobs.md#delivering-results)
-and [Runner Quickstart](../get-started/runner-quickstart.md).
+and [Workflow Quickstart](../get-started/runner-quickstart.md).
 
 ## Draft-MR Private Roots and Recovery
 

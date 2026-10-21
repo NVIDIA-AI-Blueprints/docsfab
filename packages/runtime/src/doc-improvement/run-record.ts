@@ -188,6 +188,7 @@ export const DOC_IMPROVEMENT_RUN_READER = defineRunRecordReader({
     changes: "admitted",
     impactPostflight: "admitted",
     reviewScope: DOC_IMPROVEMENT_UNVERIFIED,
+    prReviewBasis: DOC_IMPROVEMENT_UNVERIFIED,
     requestIntent: "decoded",
     // Written only on a needs-input run, which this reader never admits.
     firstPassContradiction: DOC_IMPROVEMENT_UNVERIFIED,
@@ -198,6 +199,7 @@ export const DOC_IMPROVEMENT_RUN_READER = defineRunRecordReader({
     liveAgentTurnFailure: "producer-not-admitted",
     // Optional per-run citation evidence (absent until a writer exists).
     sourceCitations: "admitted",
+    prReviewSourceCitations: DOC_IMPROVEMENT_UNVERIFIED,
     // Content-free findings (#1807): locations and rule ids only.
     credentialFindings: "admitted",
     evidenceWarnings: "admitted",

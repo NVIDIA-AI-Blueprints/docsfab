@@ -98,6 +98,18 @@ limits:
     remediation: Cite fewer sentences per call, or raise sources.citeMaxClaimsPerCall in config/limits/sources.yaml. Beyond the bound the call refuses rather than silently registering a prefix.
     rationale: A model may cite a short run of sentences in one call rather than one call per sentence. Eight bounds how much a single call can register without making the receipt unreadable.
 
+  - name: sources.listMaxEntries
+    value: 256
+    unit: count
+    scope: sealed
+    warnAt: 0.8
+    override: none
+    min: 1
+    max: 256
+    refusal: sources-list-max-entries-bound
+    remediation: Request fewer entries in one docsfab_list_sources or docsfab_read_review_change_side inventory call with maxEntries or maxFiles, then follow its next cursor. Raising sources.listMaxEntries requires a reviewed change to config/limits/sources.yaml; hosts cannot override the model-visible tool schema.
+    rationale: Presentation. This retains the existing 256-entry default and maximum of docsfab_list_sources and shares them with the pinned review side inventory, so one source-list policy governs both model-visible page schemas. A page above the host output cap is explicitly marked and can be retried from the same cursor with a smaller requested size; entries are never silently skipped. The limit is sealed because the tool schema advertises its maximum before the model connects and must agree across hosts.
+
   - name: sources.readResponseCeilingBytes
     value: 262144
     unit: bytes

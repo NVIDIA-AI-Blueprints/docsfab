@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { spawnSync } from "node:child_process";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdir, mkdtemp, rename, rm } from "node:fs/promises";
 import { createHash, randomBytes } from "node:crypto";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -873,6 +873,232 @@ describe("review-delivery recovery", () => {
   );
 
   it(
+    "runs retained-intent verification before zero-action completion and refuses a failed readback",
+    async () => {
+      const plan = fixture("gitlab", { summary: true, inline: true, findings: 0 });
+      expect(plan.actions).toHaveLength(0);
+      const root = await temporaryRoot();
+      const { store, admission } = await retainedOrigin(root, plan);
+      const prepare = vi.fn(async () => ({ kind: "complete" as const }));
+      const publish = vi.fn(async () => {
+        throw new Error("A zero-action plan must not publish.");
+      });
+      const retainedIntent = vi.fn(async () => ({
+        kind: "blocked" as const,
+        code: "readback-unproved" as const,
+      }));
+      const result = await executeReviewDelivery({
+        plan,
+        store,
+        originAdmission: admission,
+        grantsByActionId: new Map(),
+        retainedIntent,
+        effects: { prepareNextEffect: prepare, publishEffect: publish },
+        recovery: {
+          observeCurrent: vi.fn(async () => ({ kind: "unavailable" as const, reason: "unused" })),
+          observeEffect: vi.fn(async () => ({
+            kind: "unavailable" as const,
+            effectId: HASH,
+            reason: "unused",
+          })),
+        },
+      });
+      expect(retainedIntent).toHaveBeenCalledOnce();
+      expect(result).toMatchObject({
+        kind: "stopped",
+        reason: "retention",
+        retentionCode: "readback-unproved",
+      });
+      expect(result.record).toBeTruthy();
+      expect(prepare).not.toHaveBeenCalled();
+      expect(publish).not.toHaveBeenCalled();
+      expect(
+        (await store.loadReview(createReviewDeliveryManifest(plan).idempotencyKey))?.sha256,
+      ).toBe(result.record?.sha256);
+    },
+    RECOVERY_TEST_TIMEOUT_MS,
+  );
+
+  it(
+    "reports zero-action completion only after retained intent is verified",
+    async () => {
+      const plan = fixture("gitlab", { summary: true, inline: true, findings: 0 });
+      const root = await temporaryRoot();
+      const { store, admission } = await retainedOrigin(root, plan);
+      const retainedIntent = vi.fn(async () => ({ kind: "verified" as const }));
+      const prepare = vi.fn(async () => ({ kind: "complete" as const }));
+      const result = await executeReviewDelivery({
+        plan,
+        store,
+        originAdmission: admission,
+        grantsByActionId: new Map(),
+        retainedIntent,
+        effects: {
+          prepareNextEffect: prepare,
+          publishEffect: vi.fn(async () => {
+            throw new Error("A zero-action plan must not publish.");
+          }),
+        },
+        recovery: {
+          observeCurrent: vi.fn(async () => ({ kind: "unavailable" as const, reason: "unused" })),
+          observeEffect: vi.fn(async () => ({
+            kind: "unavailable" as const,
+            effectId: HASH,
+            reason: "unused",
+          })),
+        },
+      });
+      expect(result.kind).toBe("complete");
+      expect(retainedIntent).toHaveBeenCalledOnce();
+      expect(retainedIntent).toHaveBeenCalledWith({
+        plan,
+        claimedRecord: expect.objectContaining({
+          manifest: expect.objectContaining({
+            idempotencyKey: createReviewDeliveryManifest(plan).idempotencyKey,
+          }),
+        }),
+      });
+      expect(prepare).not.toHaveBeenCalled();
+    },
+    RECOVERY_TEST_TIMEOUT_MS,
+  );
+
+  it.each(["cancel", "grant"] as const)(
+    "rechecks %s authority after retained-intent await before preparing or publishing",
+    async (mode) => {
+      const plan = fixture("gitlab", { summary: true, inline: true });
+      const root = await temporaryRoot();
+      const { store, admission } = await retainedOrigin(root, plan);
+      const grants = grantsFor(plan);
+      let cancelled = false;
+      const prepare = vi.fn(async () => ({ kind: "complete" as const }));
+      const publish = vi.fn(async () => {
+        throw new Error("Revoked authority must not publish.");
+      });
+      const result = await executeReviewDelivery({
+        plan,
+        store,
+        originAdmission: admission,
+        grantsByActionId: grants,
+        cancelled: () => cancelled,
+        retainedIntent: async () => {
+          if (mode === "cancel") cancelled = true;
+          else grants.clear();
+          return { kind: "verified" };
+        },
+        effects: { prepareNextEffect: prepare, publishEffect: publish },
+        recovery: {
+          observeCurrent: vi.fn(async () => ({ kind: "unavailable" as const, reason: "unused" })),
+          observeEffect: vi.fn(async () => ({
+            kind: "unavailable" as const,
+            effectId: HASH,
+            reason: "unused",
+          })),
+        },
+      });
+      expect(result).toMatchObject({ kind: "stopped", reason: "authority" });
+      expect(result.record).toBeTruthy();
+      expect(prepare).not.toHaveBeenCalled();
+      expect(publish).not.toHaveBeenCalled();
+    },
+    RECOVERY_TEST_TIMEOUT_MS,
+  );
+
+  it.each(["blocked", "throw"] as const)(
+    "retains the claimed receipt and never prepares an effect when intent retention is %s",
+    async (mode) => {
+      const plan = fixture("gitlab", { summary: true, inline: true });
+      const root = await temporaryRoot();
+      const { store, admission } = await retainedOrigin(root, plan);
+      const prepare = vi.fn(async () => ({ kind: "complete" as const }));
+      const publish = vi.fn(async () => {
+        throw new Error("Failed retention must not publish.");
+      });
+      const result = await executeReviewDelivery({
+        plan,
+        store,
+        originAdmission: admission,
+        grantsByActionId: grantsFor(plan),
+        retainedIntent: async () => {
+          if (mode === "throw") throw new Error("uncertain saved-run readback");
+          return { kind: "blocked", code: "intent-conflict" } as const;
+        },
+        effects: { prepareNextEffect: prepare, publishEffect: publish },
+        recovery: {
+          observeCurrent: vi.fn(async () => ({ kind: "unavailable" as const, reason: "unused" })),
+          observeEffect: vi.fn(async () => ({
+            kind: "unavailable" as const,
+            effectId: HASH,
+            reason: "unused",
+          })),
+        },
+      });
+      expect(result).toMatchObject({
+        kind: "stopped",
+        reason: "retention",
+        retentionCode: mode === "throw" ? "readback-unproved" : "intent-conflict",
+      });
+      expect(result.record).toBeTruthy();
+      expect(
+        (await store.loadReview(createReviewDeliveryManifest(plan).idempotencyKey))?.sha256,
+      ).toBe(result.record?.sha256);
+      expect(prepare).not.toHaveBeenCalled();
+      expect(publish).not.toHaveBeenCalled();
+    },
+    RECOVERY_TEST_TIMEOUT_MS,
+  );
+
+  it(
+    "refuses a receipt-root replacement during post-retention custody authorization before preparation",
+    async () => {
+      const plan = fixture("gitlab", { summary: true, inline: true });
+      const root = await temporaryRoot();
+      const { store, admission, retained } = await retainedOrigin(root, plan);
+      const read = retained.runStore.getWithDigest.bind(retained.runStore);
+      let retentionReturned = false;
+      let replaced = false;
+      vi.spyOn(retained.runStore, "getWithDigest").mockImplementation(async (...args) => {
+        const value = await read(...args);
+        if (retentionReturned && !replaced) {
+          replaced = true;
+          await rename(root, `${root}-replaced`);
+          roots.push(`${root}-replaced`);
+          await mkdir(root);
+        }
+        return value;
+      });
+      const prepare = vi.fn(async () => ({ kind: "complete" as const }));
+      const publish = vi.fn(async () => {
+        throw new Error("A replaced receipt root must not publish.");
+      });
+      const result = await executeReviewDelivery({
+        plan,
+        store,
+        originAdmission: admission,
+        grantsByActionId: grantsFor(plan),
+        retainedIntent: async () => {
+          retentionReturned = true;
+          return { kind: "verified" };
+        },
+        effects: { prepareNextEffect: prepare, publishEffect: publish },
+        recovery: {
+          observeCurrent: vi.fn(async () => ({ kind: "unavailable" as const, reason: "unused" })),
+          observeEffect: vi.fn(async () => ({
+            kind: "unavailable" as const,
+            effectId: HASH,
+            reason: "unused",
+          })),
+        },
+      });
+      expect(replaced).toBe(true);
+      expect(result).toMatchObject({ kind: "stopped", reason: "store-uncertain" });
+      expect(prepare).not.toHaveBeenCalled();
+      expect(publish).not.toHaveBeenCalled();
+    },
+    RECOVERY_TEST_TIMEOUT_MS,
+  );
+
+  it(
     "does not adopt a confirmed terse GitLab note as a same-key explicit overview",
     async () => {
       const defaultPlan = fixture("gitlab", { summary: true, inline: false, actorId: "42" });
@@ -971,11 +1197,21 @@ describe("review-delivery recovery", () => {
       const { store, admission, retained } = await retainedOrigin(root, plan);
       const http = new RetainedGitLabHttp();
       const provider = new GitLabReviewDeliveryProvider(plan.target.host, http);
+      let firstIntentVerified = false;
+      const realPublish = provider.publishEffect.bind(provider);
+      vi.spyOn(provider, "publishEffect").mockImplementation(async (input) => {
+        expect(firstIntentVerified).toBe(true);
+        return realPublish(input);
+      });
       const first = await executeReviewDelivery({
         plan,
         store,
         originAdmission: admission,
         grantsByActionId: grantsFor(plan),
+        retainedIntent: async () => {
+          firstIntentVerified = true;
+          return { kind: "verified" };
+        },
         effects: provider,
         recovery: provider,
       });
@@ -984,15 +1220,18 @@ describe("review-delivery recovery", () => {
       const reopened = new FileScmDeliveryReceiptStore(root);
       const coldProvider = new GitLabReviewDeliveryProvider(plan.target.host, http);
       const prepare = vi.spyOn(coldProvider, "prepareNextEffect");
+      const coldIntent = vi.fn(async () => ({ kind: "verified" as const }));
       const replay = await executeReviewDelivery({
         plan,
         store: reopened,
         originAdmission: originAdmission(root, plan, reopened, retained),
         grantsByActionId: grantsFor(plan),
+        retainedIntent: coldIntent,
         effects: coldProvider,
         recovery: coldProvider,
       });
       expect(replay.kind).toBe("complete");
+      expect(coldIntent).toHaveBeenCalledOnce();
       expect(prepare).toHaveBeenCalled();
       expect(http.postCount()).toBe(1);
     },
@@ -1134,14 +1373,20 @@ describe("review-delivery recovery", () => {
         startSha: binding.startSha,
       }));
       let posts = 0;
+      let firstIntentVerified = false;
       const first = await executeReviewDelivery({
         plan,
         store,
         originAdmission: admission,
         grantsByActionId: grantsFor(plan),
+        retainedIntent: async () => {
+          firstIntentVerified = true;
+          return { kind: "verified" };
+        },
         effects: {
           prepareNextEffect: vi.fn(prepare),
           publishEffect: vi.fn(async ({ effect }) => {
+            expect(firstIntentVerified).toBe(true);
             posts++;
             return effect.coveredActionIds[0] === firstAction!.id
               ? { kind: "confirmed" as const, providerReference: "discussion:8001" }
@@ -1172,11 +1417,13 @@ describe("review-delivery recovery", () => {
       expect(posts).toBe(2);
 
       const reopened = new FileScmDeliveryReceiptStore(root);
+      const restartedIntent = vi.fn(async () => ({ kind: "verified" as const }));
       const restarted = await executeReviewDelivery({
         plan,
         store: reopened,
         originAdmission: originAdmission(root, plan, reopened, retained),
         grantsByActionId: grantsFor(plan),
+        retainedIntent: restartedIntent,
         effects: {
           prepareNextEffect: vi.fn(prepare),
           publishEffect: vi.fn(async () => {
@@ -1197,6 +1444,7 @@ describe("review-delivery recovery", () => {
         },
       });
       expect(restarted.kind).toBe("complete");
+      expect(restartedIntent).toHaveBeenCalledOnce();
       expect(posts).toBe(2);
       expect(restarted.record?.effects.every((item) => item.state === "confirmed")).toBe(true);
 
@@ -1206,6 +1454,7 @@ describe("review-delivery recovery", () => {
         plan,
         store: completeStore,
         originAdmission: originAdmission(root, plan, completeStore, retained),
+        retainedIntent: vi.fn(async () => ({ kind: "verified" as const })),
         effects: {
           prepareNextEffect: completePrepare,
           publishEffect: vi.fn(async () => {
@@ -1231,6 +1480,7 @@ describe("review-delivery recovery", () => {
         grantsByActionId: grantsFor(plan),
       });
       expect(complete.kind).toBe("complete");
+      expect(completeInput.retainedIntent).toHaveBeenCalledOnce();
       expect(completePrepare).not.toHaveBeenCalled();
     },
     RECOVERY_TEST_TIMEOUT_MS,
@@ -1270,11 +1520,13 @@ describe("review-delivery recovery", () => {
         startSha: binding.startSha,
       }));
       let posts = 0;
+      const firstRetainedIntent = vi.fn(async () => ({ kind: "verified" as const }));
       const first = await executeReviewDelivery({
         plan,
         store,
         originAdmission: admission,
         grantsByActionId: grantsFor(plan),
+        retainedIntent: firstRetainedIntent,
         effects: {
           prepareNextEffect: vi.fn(prepare),
           publishEffect: vi.fn(async ({ effect }) => {
@@ -1298,6 +1550,7 @@ describe("review-delivery recovery", () => {
         },
       });
       expect(first).toMatchObject({ kind: "stopped", reason: "remote-uncertain" });
+      expect(firstRetainedIntent).toHaveBeenCalledOnce();
       expect(
         first.record?.effects.find((item) => item.stage === "github-pending-review-create")?.state,
       ).toBe("accepted-pending");
@@ -1308,11 +1561,13 @@ describe("review-delivery recovery", () => {
 
       const reopened = new FileScmDeliveryReceiptStore(root);
       const restartedPrepare = vi.fn(prepare);
+      const restartedRetainedIntent = vi.fn(async () => ({ kind: "verified" as const }));
       const restarted = await executeReviewDelivery({
         plan,
         store: reopened,
         originAdmission: originAdmission(root, plan, reopened, retained),
         grantsByActionId: grantsFor(plan),
+        retainedIntent: restartedRetainedIntent,
         effects: {
           prepareNextEffect: restartedPrepare,
           classifyCommittedOverviewPresentation: ({ context }) => {
@@ -1346,6 +1601,7 @@ describe("review-delivery recovery", () => {
         remaining,
         retained: retainedIdentity,
       });
+      expect(restartedRetainedIntent).toHaveBeenCalledOnce();
       expect(posts).toBe(2);
       const submitPreparation = restartedPrepare.mock.calls.find(
         (call) => call[0].priorObservations.length === 1,
@@ -1363,11 +1619,13 @@ describe("review-delivery recovery", () => {
       const noPrepare = vi.fn(async () => {
         throw new Error("A confirmed default delivery must not prepare again.");
       });
+      const retainedFast = vi.fn(async () => ({ kind: "verified" as const }));
       const fast = await executeReviewDelivery({
         plan,
         store: fullyReopened,
         originAdmission: originAdmission(root, plan, fullyReopened, retained),
         grantsByActionId: grantsFor(plan),
+        retainedIntent: retainedFast,
         effects: {
           prepareNextEffect: noPrepare,
           classifyCommittedOverviewPresentation: () => ({
@@ -1386,6 +1644,7 @@ describe("review-delivery recovery", () => {
         },
       });
       expect(fast).toMatchObject({ kind: "partial", overview: "partial", remaining });
+      expect(retainedFast).toHaveBeenCalledOnce();
       expect(noPrepare).not.toHaveBeenCalled();
       const hooklessStore = new FileScmDeliveryReceiptStore(root);
       const hookless = await executeReviewDelivery({

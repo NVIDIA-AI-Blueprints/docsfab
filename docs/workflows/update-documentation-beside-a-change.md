@@ -44,8 +44,8 @@ Confirm the following inputs:
 
 `--reader-source` is valid only on `docsfab run update-documentation`.
 `docsfab do` does not grow that flag. Do not combine `--reader-source` with a
-date-scoped merged-merge-request instruction. That discovery path is on the
-[Runner Quickstart](../get-started/runner-quickstart.md).
+date-scoped merged-merge-request instruction. For that discovery path, refer to
+[Bind a GitLab Change](bind-gitlab-change.md).
 
 Only the default draft merge request flow requires all of the following delivery conditions:
 
@@ -461,10 +461,10 @@ Use these topics for the supporting contracts and next actions.
     [Update Documentation Contract](../reference/workflow-contracts/update-documentation.md)
   </Card>
   <Card
-    title="Runner Quickstart"
+    title="Workflow Quickstart"
     href="/get-started/runner-quickstart"
   >
-    [Runner Quickstart](../get-started/runner-quickstart.md)
+    [Workflow Quickstart](../get-started/runner-quickstart.md)
   </Card>
   <Card
     title="Live Agent Quickstart"

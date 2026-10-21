@@ -26,6 +26,10 @@ import {
 import { TOOL_RESULT_RECALL_TOOL_NAME } from "./tool-output-cap.js";
 import { HISTORY_TOOL_NAMES } from "./history-tools.js";
 import {
+  REVIEW_CHANGE_READ_TOOL_NAME,
+  REVIEW_CHANGE_SELECT_TOOL_NAME,
+} from "./confined-tools/review-change-side.js";
+import {
   answerSubmissionApplies,
   QUALITY_SUBMISSION_TOOL_NAME,
   QUALITY_ANSWER_RECORD_TOOL_NAME,
@@ -199,6 +203,8 @@ export function grantedToolsForStep(
   /** Host-qualified source-obligation adapter; absent by default. */
   sourceObligationAnswerRecords = false,
   preservationSourceRead = false,
+  /** Fresh local GitLab snapshot capability; selected read-only technical step only. */
+  reviewChangeRead = false,
 ): string[] {
   const reviewQualityAnswerRecords =
     qualityAnswerRecords &&
@@ -251,7 +257,15 @@ export function grantedToolsForStep(
   const withPreservationSource = preservationSourceRead
     ? [...derived, ...PRESERVATION_SOURCE_READ_TOOL_NAMES]
     : derived;
+  const withReviewChange =
+    reviewChangeRead &&
+    workflow.name === "review-documentation" &&
+    step.id === "verify-technical-accuracy" &&
+    step.skill === "verify-technical-accuracy" &&
+    step.mode === "read-only"
+      ? [...withPreservationSource, REVIEW_CHANGE_READ_TOOL_NAME, REVIEW_CHANGE_SELECT_TOOL_NAME]
+      : withPreservationSource;
   return toolCeiling === undefined
-    ? withPreservationSource
-    : withPreservationSource.filter((tool) => toolCeiling.includes(tool));
+    ? withReviewChange
+    : withReviewChange.filter((tool) => toolCeiling.includes(tool));
 }

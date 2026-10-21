@@ -3417,6 +3417,9 @@ export class PiHarness implements AgentHarness {
         ...(confinedTools.getReviewReadObservation()
           ? { reviewReadObservation: confinedTools.getReviewReadObservation() }
           : {}),
+        ...(confinedTools.getReviewChangeObservation()
+          ? { reviewChangeObservation: confinedTools.getReviewChangeObservation() }
+          : {}),
         ...(repositoryInstructions.length > 0 ? { repositoryInstructions } : {}),
         skill: governedEvidence ?? {
           id: skill.name,
@@ -3447,6 +3450,7 @@ export class PiHarness implements AgentHarness {
           } finally {
             if (attemptTimeout !== undefined) clearTimeout(attemptTimeout);
             confinedTools.disposeReviewReadObservation();
+            confinedTools.disposeReviewChangeObservation();
             session.dispose();
             observedSession?.dispose();
           }
@@ -3478,6 +3482,7 @@ export class PiHarness implements AgentHarness {
       input.qualityAnswerRecords !== undefined,
       input.sourceObligationAnswerRecords !== undefined,
       input.preservationSourceReader !== undefined,
+      input.reviewChangeSource !== undefined,
     );
   }
 }

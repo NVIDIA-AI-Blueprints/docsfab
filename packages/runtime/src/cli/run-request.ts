@@ -362,6 +362,9 @@ async function printDryRun(
         workflow: request.workflow,
         wouldWrite,
         wouldPublish,
+        ...(request.githubPrReview
+          ? { plannedPrBasis: { state: "unresolved", url: request.githubPrReview.url } }
+          : {}),
       } as unknown as JsonEvidenceValue),
     );
     return;
@@ -369,7 +372,9 @@ async function printDryRun(
   const rendered = renderCliPreview(
     workflowPreviewFacts({
       workflow: request.workflow,
-      repositoryPath: request.repositoryPath,
+      repositoryPath: request.githubPrReview
+        ? `Unresolved GitHub PR: ${request.githubPrReview.url}`
+        : request.repositoryPath,
       wouldWrite,
       wouldPublish,
       title: `Dry run: ${request.workflow}`,

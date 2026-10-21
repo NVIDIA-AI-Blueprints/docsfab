@@ -184,6 +184,17 @@ Source-aware execution:
                                         parses the value without reading git or GitLab.
 
 --patch-only and --dry-run are separate modes and cannot be combined.
+Public GitHub PR review:
+  docsfab run review-documentation --pr https://github.com/OWNER/REPO/pull/N
+  This read-only route authenticates a public PR's merge base (M), target base
+  (B), and fork head (H), then reviews a private H export. --dry-run displays
+  an unresolved selection without network, source, or model work. Normal runs
+  save a private run record and local Markdown/JSON review report. Repository
+  checks are inventoried but not executed; an unavailable check never passes.
+  Do not combine this route with --repo, --revision, --remote, --draft-mr,
+  --comment-mr, --change, --resume-from, --review-target, --rescope-from,
+  --patch-only, or --allow-write.
+
 Write workflows require a concrete --instruction. Review uses repository
 content as static evidence but can call the configured model.
 An instruction that says not to publish, such as "Do not publish." or

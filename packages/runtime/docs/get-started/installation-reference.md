@@ -33,6 +33,44 @@ and key outside the project checkout. By default the configuration root is
 `DOCSFAB_CONFIG_ROOT` to use another normalized absolute directory.
 `secrets.env` is private user configuration, not a project file.
 
+### Select an installed composition
+
+List available compositions with `docsfab composition list`. Public packages
+omit private NVIDIA Inference Hub endpoint defaults. For those profiles, supply
+the base endpoint URL provided by your Inference Hub administrator:
+
+```bash
+docsfab setup --profile nvidia-inference-gpt-6-sol-pi \
+  --endpoint https://models.example.com/v1
+```
+
+Replace the example URL with your actual provider endpoint. Setup keeps the
+selected composition's model and context window and saves the endpoint in
+`host.yaml` under `active.writing.settings.baseUrl`. Enter the model key at
+the hidden prompt, or supply the profile's required credential through its
+named environment variable for non-interactive setup. The key is saved in
+owner-private `secrets.env`; never put a key in the endpoint URL.
+
+The endpoint persists across shells. Rerunning `setup --profile` without
+`--endpoint` retains the saved endpoint. You can also merge this setting into
+an existing `host.yaml`, preserving its other fields:
+
+```yaml
+active:
+  writing:
+    compositionId: nvidia-inference-gpt-6-sol-pi
+    settings:
+      baseUrl: https://models.example.com/v1
+```
+
+An exported `MODEL_BASE_URL` overrides the saved setting for that process;
+exporting it alone does not save it for a later shell. If an endpoint is missing,
+setup reports **Endpoint required** (`blocked-missing-endpoint` in `--json`)
+and names the `--profile … --endpoint …` command that saves it. Setup validates
+local configuration without contacting the provider. Run `docsfab profile inspect`
+to inspect the selection; use `docsfab doctor --live` when you want a provider
+connection check.
+
 A globally installed checkout may link to the source tree. Reinstall after
 changing checkout versions if the global command uses a copied snapshot.
 Contributor build and validation commands are in

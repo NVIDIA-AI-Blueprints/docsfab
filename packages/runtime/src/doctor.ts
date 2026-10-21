@@ -169,6 +169,18 @@ export interface DoctorResult {
 }
 
 /**
+ * Whether the configured requests go to `/chat/completions`, the only API the
+ * live probes speak. `apiFormat` reads `chat_completions` for the Responses
+ * transport too, so the bound transport decides as well.
+ */
+function speaksChatCompletions(
+  model: DocsFabConfig["model"],
+  profile: { readonly transport: string },
+): boolean {
+  return model.apiFormat === "chat_completions" && profile.transport === "openai-chat-completions";
+}
+
+/**
  * Probe the configured endpoint with the request shape DocsFab sends: the
  * bound composition's request policy, or else the reasoning control measured
  * for an unmatched endpoint's model, and the effective output limit.
@@ -178,9 +190,10 @@ export async function probeConfiguredEndpointCompatibility(
 ): Promise<EndpointCompatibilityReport> {
   const binding = await resolveOperatorExecutionBinding({ model });
   const maxOutputTokens = binding.profile.profile.maxOutputTokens;
-  if (model.apiFormat !== "chat_completions") {
+  if (!speaksChatCompletions(model, binding.profile)) {
+    const transport = binding.profile.transport;
     return notCheckedReport(
-      "Not checked: the endpoint probe speaks OpenAI-compatible chat completions only.",
+      `Not checked: the endpoint probe speaks OpenAI-compatible chat completions only, and this profile sends ${transport}. The connectivity check uses ${transport}.`,
       maxOutputTokens,
     );
   }
@@ -253,7 +266,7 @@ export async function answerSubmissionProbeTarget(
   AnswerSubmissionProbeTarget | { readonly decision: "not-checked"; readonly reason: string }
 > {
   const binding = await resolveOperatorExecutionBinding({ model });
-  if (model.apiFormat !== "chat_completions") {
+  if (!speaksChatCompletions(model, binding.profile)) {
     return {
       decision: "not-checked",
       reason: "The answer-submission probe speaks OpenAI-compatible chat completions only.",
@@ -621,7 +634,7 @@ async function answerRecordProbeTarget(
     ? await resolveOperatorExecutionIdentity({ model })
     : await resolveOperatorExecutionBinding({ model });
   const selection = options.selection ?? "premise";
-  if (model.apiFormat !== "chat_completions") {
+  if (!speaksChatCompletions(model, binding.profile)) {
     return {
       decision: "not-checked",
       reason: "The answer-record probe speaks OpenAI-compatible chat completions only.",

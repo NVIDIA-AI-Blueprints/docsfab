@@ -43,6 +43,7 @@ import {
   isQualityCandidateValidationStep,
 } from "../execution/contracts.js";
 import { beginSourceReadAttempt, type SourceRunCapabilityV1 } from "../inputs/source-resolver.js";
+import { prReviewStepAdmitsCitation } from "./pr-review-citation-admission.js";
 import {
   stepAdmitsSourceCite,
   stepAdmitsSourceRead,
@@ -221,6 +222,7 @@ import { createPlanScopeStop } from "../workflow-contracts/plan-scope-stop.js";
 import { writerNoChangeStopFor } from "../workflow-contracts/writer-no-change-stop.js";
 import type { KnowledgeResumeReceiptV1 } from "../canon/from-knowledge-snapshot.js";
 import { settleStepSourceCitations } from "./step-loop/citation-settlement.js";
+import { settlePrReviewFindingCitations } from "../records/pr-review-source-citations.js";
 import { createAttemptAdmission } from "./step-loop/attempt-admission.js";
 import {
   settleQualityResult,
@@ -963,7 +965,15 @@ async function _executeGovernedWorkflowStep(
     // Narrowed to write mode as well as the policy grant: coverage judges what
     // a step wrote, so the tool stays unregistered on read-only steps.
     citeSource:
-      executionStep.mode === "write" && stepAdmitsSourceCite(sourceEvidence?.policy, executionStep),
+      stepAdmitsSourceCite(sourceEvidence?.policy, executionStep) &&
+      (executionStep.mode === "write" ||
+        prReviewStepAdmitsCitation({
+          admission: options.prReviewCitationAdmission,
+          workflow,
+          stepId: executionStep.id,
+          skill: executionStep.skill,
+          mode: executionStep.mode,
+        })),
     remainingBudgetBytes: sourceEvidence?.policy.perStepBudgetBytes ?? 0,
     ...(request.signal ? { signal: request.signal } : {}),
   });
@@ -2362,6 +2372,9 @@ async function _executeGovernedWorkflowStep(
         }
       : {}),
   });
+  if (sourceCapability) {
+    settlePrReviewFindingCitations({ record, step: stepRecord, capability: sourceCapability });
+  }
   if (result.skill) {
     if (result.skill.id !== step.skill) {
       throw new Error(`Workflow step returned an unexpected skill identity.`);

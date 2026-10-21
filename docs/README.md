@@ -9,7 +9,7 @@ Use this guide to choose a task or find product details.
 | Install DocsFab or configure a model | [Install DocsFab](get-started/installation.md) |
 | Find a workflow before running it | [Discover Workflows](get-started/discover-workflows.md) |
 | Review documentation in a conversation | [Live Agent Quickstart](get-started/live-agent-quickstart.md) |
-| Create or update documentation with a named workflow | [Runner Quickstart](get-started/runner-quickstart.md) |
+| Create or update documentation with a named workflow | [Workflow Quickstart](get-started/runner-quickstart.md) |
 | Configure models and output locations | [Configure DocsFab](configure/index.md) |
 | Check readiness, limits, or local state | [Manage DocsFab](manage/index.md) |
 | Look up supported platforms and requirements | [Support Matrix](reference/support-matrix.md) |

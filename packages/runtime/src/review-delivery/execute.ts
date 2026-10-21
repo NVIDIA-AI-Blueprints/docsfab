@@ -316,6 +316,17 @@ export interface ExecuteReviewDeliveryInput<TSource> {
   readonly effects: ReviewDeliveryRecoverableEffectPort<TSource>;
   readonly recovery: ReviewDeliveryRecoveryPort;
   readonly cancelled?: () => boolean;
+  /** Trusted host continuation after the actual receipt is claimed, before any effect. */
+  readonly retainedIntent?: (input: {
+    readonly plan: ReviewDeliveryPlan<TSource>;
+    readonly claimedRecord: Readonly<ReviewDeliveryRecordV1>;
+  }) => Promise<
+    | { readonly kind: "verified" }
+    | {
+        readonly kind: "blocked";
+        readonly code: "intent-conflict" | "intent-unavailable" | "readback-unproved";
+      }
+  >;
 }
 
 export type ReviewDeliveryExecutionResult =
@@ -336,6 +347,12 @@ export type ReviewDeliveryExecutionResult =
       readonly kind: "stopped";
       readonly reason: "capacity";
       readonly capacity: ReviewDeliveryCapacityStop;
+      readonly record: ReviewDeliveryRecordV1;
+    }
+  | {
+      readonly kind: "stopped";
+      readonly reason: "retention";
+      readonly retentionCode: "intent-conflict" | "intent-unavailable" | "readback-unproved";
       readonly record: ReviewDeliveryRecordV1;
     }
   | {
@@ -1109,6 +1126,74 @@ export async function executeReviewDelivery<TSource>(
           record.custody.transferId !== transferId
         )
           return { kind: "stopped", reason: "custody", record };
+        if (input.retainedIntent) {
+          if (
+            input.cancelled?.() === true ||
+            !grantsAdmit(input.plan, input.plan.actions, input.grantsByActionId)
+          )
+            return { kind: "stopped", reason: "authority", record };
+          try {
+            await assertHeldReviewIntent(record.sha256);
+          } catch {
+            return { kind: "stopped", reason: "store-uncertain", record };
+          }
+          try {
+            await authorize();
+          } catch {
+            return { kind: "stopped", reason: "custody", record };
+          }
+          try {
+            await assertHeldReviewIntent(record.sha256);
+          } catch {
+            return { kind: "stopped", reason: "store-uncertain", record };
+          }
+          if (
+            input.cancelled?.() === true ||
+            !grantsAdmit(input.plan, input.plan.actions, input.grantsByActionId)
+          )
+            return { kind: "stopped", reason: "authority", record };
+          let retained:
+            | { readonly kind: "verified" }
+            | {
+                readonly kind: "blocked";
+                readonly code: "intent-conflict" | "intent-unavailable" | "readback-unproved";
+              };
+          try {
+            retained = await input.retainedIntent({
+              plan: input.plan,
+              claimedRecord: structuredClone(record),
+            });
+          } catch {
+            retained = { kind: "blocked", code: "readback-unproved" };
+          }
+          try {
+            await assertHeldReviewIntent(record.sha256);
+          } catch {
+            return { kind: "stopped", reason: "store-uncertain", record };
+          }
+          if (
+            input.cancelled?.() === true ||
+            !grantsAdmit(input.plan, input.plan.actions, input.grantsByActionId)
+          )
+            return { kind: "stopped", reason: "authority", record };
+          try {
+            await authorize();
+          } catch {
+            return { kind: "stopped", reason: "custody", record };
+          }
+          try {
+            await assertHeldReviewIntent(record.sha256);
+          } catch {
+            return { kind: "stopped", reason: "store-uncertain", record };
+          }
+          if (
+            input.cancelled?.() === true ||
+            !grantsAdmit(input.plan, input.plan.actions, input.grantsByActionId)
+          )
+            return { kind: "stopped", reason: "authority", record };
+          if (retained.kind !== "verified")
+            return { kind: "stopped", reason: "retention", retentionCode: retained.code, record };
+        }
         if (
           input.plan.requestedActions === undefined &&
           record.custody.state === "active" &&

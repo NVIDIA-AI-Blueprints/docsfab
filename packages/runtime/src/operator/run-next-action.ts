@@ -1261,6 +1261,15 @@ function buildFailureRecoveryAction(
   if (!terminalAttempt || terminalAttempt.outcome === "succeeded") return undefined;
   const proxyRefusal = terminalStep && buildProxyRefusalRecoveryAction(terminalStep, repoArg);
   if (proxyRefusal) return proxyRefusal;
+  // A request that never connected is about the configured endpoint, not the
+  // provider's capacity or this request, so neither waiting nor rewording helps.
+  if (terminalAttempt.modelTelemetry?.providerError?.class === "unreachable") {
+    return {
+      command: `docsfab doctor${repoArg} --live`,
+      reason:
+        "DocsFab could not connect to the model endpoint: the connection was refused, the host name did not resolve, or no route reached it. Check the endpoint URL shown by docsfab setup and the network, then confirm the endpoint answers with docsfab doctor --live before rerunning.",
+    };
+  }
   if (terminalAttempt.outcome === "host-runtime-failure") {
     return {
       command: `docsfab runs show ${shellArgument(record.id)}${stateDirArg} --json`,

@@ -24,6 +24,7 @@ import { deliverCliRunResult } from "../src/cli/run/delivery.js";
 import { resolveDocsFabPublicationRoots } from "../src/config/host-paths.js";
 import { lookupSavedRunRetainedDelivery } from "../src/operator/run-publication-lookup.js";
 import type { RunRecord } from "../src/records/contracts.js";
+import { applyRunDeletion, previewRunDeletion } from "../src/records/run-deletion.js";
 import {
   DeliveryWorktreeError,
   authorizeLocalUserPublication,
@@ -997,7 +998,12 @@ describe("retained failed-delivery cleanup", { timeout: testTimeoutMs(180_000) }
       authorization,
       createdAt: "2026-10-15T00:00:00.000Z",
     });
-    await new FileScmDeliveryReceiptStore(where.receiptRoot).claim(receipt, run.plan);
+    const receiptStore = new FileScmDeliveryReceiptStore(where.receiptRoot);
+    await receiptStore.claim(receipt, run.plan);
+    expect(await receiptStore.loadEither(receipt.idempotencyKey)).toEqual({
+      kind: "scm",
+      record: receipt,
+    });
     const before = await snapshot(where.root);
     const result = JSON.parse(await showSaved(where, run, true));
     expect(result.retainedDelivery).toMatchObject({
@@ -1565,7 +1571,7 @@ describe("retained failed-delivery cleanup", { timeout: testTimeoutMs(180_000) }
     expect(await branchRevision(where.source, run.plan.proposedSourceBranch)).toBe(moved);
   });
 
-  it("refuses a branch that moves while a deletion resumes from its journal and keeps the operator's commit", async () => {
+  it("refuses a branch that moves after partial Git cleanup and keeps the operator's commit", async () => {
     const where = await layout();
     const run = await savedRun(where, "run-resume-moved", {
       content: "resume moved change\n",
@@ -1593,6 +1599,12 @@ describe("retained failed-delivery cleanup", { timeout: testTimeoutMs(180_000) }
 
     // The tip moves after the preview and before the confirmation: the token no longer matches.
     const preview = await runPrinted(printedPreview(retry2));
+    if (
+      !preview.stdout.includes(
+        `Git cleanup: 2 delivery worktree(s) and 1 delivery branch(es) (${branch}) would be removed.`,
+      )
+    )
+      throw new Error(`Expected registered Git cleanup in preview:\n${preview.stdout}`);
     expect(preview.stdout).toContain(
       `Git cleanup: 2 delivery worktree(s) and 1 delivery branch(es) (${branch}) would be removed.`,
     );
@@ -1604,8 +1616,8 @@ describe("retained failed-delivery cleanup", { timeout: testTimeoutMs(180_000) }
     expect(await exists(legacy[0]!.worktreePath)).toBe(true);
     expect(await exists(legacy[1]!.worktreePath)).toBe(true);
 
-    // Restore the tip and preview again. A locked worktree stops the confirmation part-way, which
-    // leaves the private journal that binds the approved tip.
+    // Restore the tip and preview again. A locked worktree stops Git cleanup before
+    // the final receipt-root phase, so no private deletion journal is written.
     await git(where.source, ["update-ref", `refs/heads/${branch}`, where.base, operator]);
     const approved = await runPrinted(printedPreview(retry2));
     const token = printedConfirmation(approved.stdout);
@@ -1619,22 +1631,55 @@ describe("retained failed-delivery cleanup", { timeout: testTimeoutMs(180_000) }
     const partial = await runPrinted(token);
     expect(partial.exitCode).toBe(1);
     expect(partial.stdout).toContain("Git refused exact worktree cleanup");
+    expect(await exists(join(where.stateDirectory, ".docsfab-run-delete-journals"))).toBe(false);
+    expect(await branchRevision(where.source, branch)).toBe(where.base);
+
+    // The tip moves again. The old token cannot authorize changed Git state.
+    await git(where.source, ["update-ref", `refs/heads/${branch}`, operator, where.base]);
+    await git(where.source, ["worktree", "unlock", legacy[1]!.worktreePath]);
+    await expect(runPrinted(token)).rejects.toMatchObject({ code: "confirmation-changed" });
+    expect(await branchRevision(where.source, branch)).toBe(operator);
+    expect(await exists(legacy[0]!.worktreePath)).toBe(false);
+    expect(await exists(legacy[1]!.worktreePath)).toBe(true);
+    expect(await exists(join(where.stateDirectory, `${run.runId}.json`))).toBe(true);
+
+    // A later interruption after the final gate has begun really does persist a
+    // journal. Its approved branch tip must still be checked on every resume.
+    await git(where.source, ["update-ref", `refs/heads/${branch}`, where.base, operator]);
+    const reportDirectory = join(where.stateDirectory, "reports", run.runId);
+    await mkdir(reportDirectory, { recursive: true, mode: 0o700 });
+    const marker = join(reportDirectory, "interrupt.txt");
+    await writeFile(marker, "interrupt after Git cleanup\n", { mode: 0o600 });
+    const laterPreview = await previewRunDeletion(where.stateDirectory, run.runId, {
+      deliveryRoots: [where.deliveryRoot],
+      receiptRoots: [where.receiptRoot],
+    });
+    const interrupted = await applyRunDeletion(
+      where.stateDirectory,
+      run.runId,
+      laterPreview.confirmation,
+      {
+        afterRemove(path) {
+          if (path === marker) throw new Error("injected final-phase interruption");
+        },
+      },
+      { deliveryRoots: [where.deliveryRoot], receiptRoots: [where.receiptRoot] },
+    );
+    expect(interrupted.complete).toBe(false);
+    expect(interrupted.removed).toBeGreaterThan(0);
     expect(await readdir(join(where.stateDirectory, ".docsfab-run-delete-journals"))).toHaveLength(
       1,
     );
-    expect(await branchRevision(where.source, branch)).toBe(where.base);
-
-    // The tip moves again, the lock is released, and the same token resumes from the journal.
-    await git(where.source, ["update-ref", `refs/heads/${branch}`, operator, where.base]);
-    await git(where.source, ["worktree", "unlock", legacy[1]!.worktreePath]);
-    const resumed = await runPrinted(token);
-    expect(resumed.exitCode).toBe(1);
-    expect(resumed.stdout).toContain(
-      `Branch ${branch} moved after preview; inspect it and preview again.`,
+    expect(await branchRevision(where.source, branch)).toBeUndefined();
+    await git(where.source, ["update-ref", `refs/heads/${branch}`, operator]);
+    const journalResume = await applyRunDeletion(
+      where.stateDirectory,
+      run.runId,
+      laterPreview.confirmation,
     );
+    expect(journalResume.complete).toBe(false);
+    expect(journalResume.nextAction).toContain(`Branch ${branch} moved after preview`);
     expect(await branchRevision(where.source, branch)).toBe(operator);
-    expect(await exists(legacy[0]!.worktreePath)).toBe(false);
-    expect(await exists(legacy[1]!.worktreePath)).toBe(false);
     expect(await exists(join(where.stateDirectory, `${run.runId}.json`))).toBe(true);
   });
 

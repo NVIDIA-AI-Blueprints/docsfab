@@ -67,6 +67,8 @@ import { notingRunStore, type RunNotes } from "../records/run-notes.js";
 import type { WorkflowApplicationServices } from "./contracts.js";
 
 export interface LocalWorkflowDependencyInput {
+  /** Authenticated public PR radius, determined before quality profile selection. */
+  readonly prReviewScope?: RunReviewScope;
   readonly config: RunRuntimeConfig;
   readonly request: RunRequest;
   /** CLI/host-admitted page selection, before it becomes the sealed review scope. */
@@ -128,14 +130,16 @@ export async function createLocalWorkflowApplicationServices(
     request.workflow === "review-documentation" || request.workflow === "audit-documentation"
       ? await buildRepositoryDiscoveryInventory({ workspace })
       : undefined;
-  const reviewScope = inventory
-    ? resolveLocalReviewScope({
-        instruction: request.instruction,
-        sourcePath: request.contextTarget?.sourcePath,
-        boundPaths: input.reviewTargetPaths,
-        inventory,
-      })
-    : undefined;
+  const reviewScope =
+    input.prReviewScope ??
+    (inventory
+      ? resolveLocalReviewScope({
+          instruction: request.instruction,
+          sourcePath: request.contextTarget?.sourcePath,
+          boundPaths: input.reviewTargetPaths,
+          inventory,
+        })
+      : undefined);
   const contextTarget =
     request.contextTarget ??
     (reviewScope?.targetPaths.length === 1

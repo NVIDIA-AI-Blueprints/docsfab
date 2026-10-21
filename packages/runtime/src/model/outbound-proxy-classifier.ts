@@ -48,7 +48,7 @@ const DEFAULT_PORTS: Readonly<Record<string, number>> = {
   "https:": 443,
 };
 
-type ErrorFields = {
+export type ErrorFields = {
   readonly name?: unknown;
   readonly code?: unknown;
   readonly message?: unknown;
@@ -59,7 +59,7 @@ type ErrorFields = {
 };
 
 /** Every error in the `cause` chain and in `AggregateError.errors`, each once. */
-function failureMembers(error: unknown): ErrorFields[] {
+export function failureMembers(error: unknown): ErrorFields[] {
   const members: ErrorFields[] = [];
   const seen = new Set<unknown>();
   const pending: unknown[] = [error];

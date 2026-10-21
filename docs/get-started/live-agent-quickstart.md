@@ -122,7 +122,7 @@ difference between a direct answer and a bounded workflow.
     When the agent starts the matching workflow, the result lands in a
     named-workflow run record of the same kind that
     `docsfab run review-documentation` writes. Refer to
-    [Runner Quickstart](runner-quickstart.md#check-the-result).
+    [Workflow Quickstart](runner-quickstart.md#check-the-result).
   </Tab>
 </Tabs>
 
@@ -414,8 +414,8 @@ For flags, activity labels, GitLab evidence screening, and write bounds,
 refer to [Live Agent Reference in DocsFab](../reference/status-and-configuration/live-agent.md).
 
 To run a named workflow without a persistent conversation, continue to the
-[Runner Quickstart](runner-quickstart.md) outcome chooser. That chooser covers
-create, update with `--reader-source`, and review.
+[Workflow Quickstart](runner-quickstart.md) to create a local patch and inspect
+the result. Its next steps link to update and review guides.
 
 Continue with the matching journey when you already know the outcome.
 

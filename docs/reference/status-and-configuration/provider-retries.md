@@ -104,6 +104,18 @@ so such a refusal can still be retried. When the failed attempt recorded a
 `Retry-After` with the HTTP status of its response, the step retry waits at
 least that long, up to the ceiling of the budget that judges the attempt.
 
+A request that never connected to the model endpoint is not retried at either
+layer. When Node reports the connection as refused (`ECONNREFUSED`), the host
+name as not found (`ENOTFOUND`), or the host or network as unreachable
+(`EHOSTUNREACH`, `ENETUNREACH`), DocsFab records the provider error class
+`unreachable`, a terminal `provider-terminal` failure. The same request a few
+seconds later gets the same answer, so the step fails after its first request
+instead of spending the transport retry budget. The run's next action is to
+check the endpoint URL that `docsfab setup` shows and the network, then run
+`docsfab doctor --live`. A reset connection, a timeout, a temporary lookup
+failure (`EAI_AGAIN`), and an unreachable outbound proxy keep the class
+`network` and stay retryable.
+
 A throttled or `provider-transient` attempt never delivered an answer that the
 step's contract could judge, so its retry comes from a separate transport
 budget and does not spend `DOCSFAB_READ_ONLY_MAX_RETRIES`. A step keeps every

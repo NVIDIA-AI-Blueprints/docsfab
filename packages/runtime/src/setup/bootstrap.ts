@@ -57,6 +57,7 @@ import { inspectLegacyPolicyProfileReadiness } from "./profile-readiness.js";
 import {
   buildPolicyProfileFromEndpoint,
   buildPolicyProfileFromPreset,
+  normalizeSetupEndpointUrl,
   profileRelativePathFromModelId,
   resolvePresetProfilePath,
   resolveSetupPreset,
@@ -68,6 +69,7 @@ export type SetupBootstrapStatus =
   | "ready"
   | "blocked-model-choice-required"
   | "blocked-missing-credential"
+  | "blocked-missing-endpoint"
   | "blocked-invalid-profile"
   | "blocked-unapproved-profile";
 
@@ -123,6 +125,8 @@ async function runSetupBootstrapSelection(
   input: {
     preset?: string;
     profile?: string;
+    /** Explicit operator endpoint persisted for an installed composition. */
+    baseUrl?: string;
     model?: SetupModelEndpoint;
     migrate?: boolean;
     environment?: NodeJS.ProcessEnv;
@@ -148,6 +152,7 @@ async function runSetupBootstrapSelection(
     startupCheck &&
     (input.preset !== undefined ||
       input.profile !== undefined ||
+      input.baseUrl !== undefined ||
       input.model !== undefined ||
       input.migrate)
   ) {
@@ -155,6 +160,12 @@ async function runSetupBootstrapSelection(
   }
   const preset = resolveSetupPreset(input.preset);
   const profile = resolveSetupExecutionProfile(input.profile);
+  if (input.baseUrl !== undefined && profile === undefined) {
+    throw new Error("An installed-profile endpoint requires an explicit --profile selection.");
+  }
+  // Validate operator input before creating or changing any host configuration.
+  const profileBaseUrl =
+    input.baseUrl === undefined ? undefined : normalizeSetupEndpointUrl(input.baseUrl);
   // A provider selection naming a retired model refuses before any write.
   if (input.model) assertRawModelIdNotRetired(input.model.modelId);
   // Validate the full endpoint selection before touching any saved configuration.
@@ -227,6 +238,7 @@ async function runSetupBootstrapSelection(
       configurationRoot,
       envPath,
       profileId: profile,
+      baseUrl: profileBaseUrl,
     });
   }
 
@@ -434,8 +446,9 @@ async function selectExecutionProfile(input: {
   configurationRoot: string;
   envPath: string;
   profileId: string;
+  baseUrl?: string;
 }): Promise<SetupBootstrapResult> {
-  const { environment, configurationRoot, envPath, profileId } = input;
+  const { environment, configurationRoot, envPath, profileId, baseUrl } = input;
   const requiredSecretNames = requiredSecretNamesForExecutionProfile(profileId);
   // An installed composition is an explicit, single-target selection, the
   // same kind as --model. Both require the credential under the name that
@@ -455,7 +468,7 @@ async function selectExecutionProfile(input: {
   await commitConfigurationRootChange(
     configurationRoot,
     {
-      host: (current) => executionProfileHost(current, profileId),
+      host: (current) => executionProfileHost(current, profileId, baseUrl),
       secrets:
         credentialSource !== "none"
           ? secretsFromSources(environment, envPath, requiredSecretNames)
@@ -540,6 +553,7 @@ function readProfileCredentialEnv(
 function executionProfileHost(
   existing: DocsFabHostConfigV1 | undefined,
   profileId: string,
+  baseUrl?: string,
 ): DocsFabHostConfigV1 {
   const host = existing ? { ...existing } : defaultExecutionHostConfig(profileId);
   host.activeExecutionProfile = profileId;
@@ -556,8 +570,13 @@ function executionProfileHost(
           }
         : {}),
       // Operator settings belong to the slot, so selecting another preset keeps them.
-      ...(existing?.active?.writing?.settings
-        ? { settings: existing.active.writing.settings }
+      ...(existing?.active?.writing?.settings || baseUrl !== undefined
+        ? {
+            settings: {
+              ...existing?.active?.writing?.settings,
+              ...(baseUrl !== undefined ? { baseUrl } : {}),
+            },
+          }
         : {}),
     },
     ...(existing?.active?.judge ? { judge: existing.active.judge } : {}),
@@ -686,6 +705,22 @@ async function finalizeSetupResult(input: {
     };
   } catch (error) {
     if (error instanceof ModelProfileMigrationError) {
+      if (
+        base.activeExecutionProfile &&
+        error.issues.some(
+          (issue) =>
+            issue.field === "MODEL_BASE_URL" &&
+            issue.message === "missing required environment variable",
+        )
+      ) {
+        return {
+          ...base,
+          status: "blocked-missing-endpoint",
+          nextCommand: `docsfab setup --profile ${base.activeExecutionProfile} --endpoint <provider-base-url>`,
+          explanation:
+            "The selected profile has no model endpoint in this installation. Supply your provider's base URL with --endpoint; setup saves it in host.yaml active.writing.settings.baseUrl for later commands. Keep the API key in secrets.env.",
+        };
+      }
       return {
         ...base,
         status: "blocked-invalid-profile",
@@ -962,6 +997,7 @@ export function setupBootstrapPresentation(
 }
 
 function setupGuidance(result: SetupBootstrapResult): string | undefined {
+  if (result.status === "blocked-missing-endpoint") return result.explanation;
   if (result.status === "blocked-model-choice-required") {
     return `Action: ${SETUP_MODEL_CHOICES}`;
   }
@@ -997,6 +1033,8 @@ function setupStatus(status: SetupBootstrapStatus): string {
       return "Model choice required";
     case "blocked-missing-credential":
       return "API key required";
+    case "blocked-missing-endpoint":
+      return "Endpoint required";
     case "blocked-invalid-profile":
       return "Configuration is invalid";
     case "blocked-unapproved-profile":

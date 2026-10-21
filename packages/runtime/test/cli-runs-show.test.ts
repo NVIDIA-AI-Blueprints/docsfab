@@ -62,6 +62,32 @@ afterEach(async () => {
 });
 
 describe("docsfab runs show", () => {
+  it("parses only the addressed JSON saved-review inventory projection", () => {
+    const digest = "a".repeat(64);
+    expect(
+      parseRunsArguments([
+        "show",
+        "saved-review",
+        "--state-dir",
+        "/tmp/runs",
+        "--review-delivery-inventory",
+        digest,
+        "--json",
+      ]),
+    ).toMatchObject({
+      command: "show",
+      runId: "saved-review",
+      json: true,
+      reviewDeliveryInventory: digest,
+    });
+    expect(() =>
+      parseRunsArguments(["show", "saved-review", "--review-delivery-inventory", digest]),
+    ).toThrow("requires --json");
+    expect(() =>
+      parseRunsArguments(["show", "saved-review", "--review-delivery-inventory", "bad", "--json"]),
+    ).toThrow("SHA-256");
+  });
+
   it("returns the same safe credential finding in saved human and JSON views", async () => {
     const finding = {
       code: "credential-like-content" as const,
@@ -919,11 +945,12 @@ describe("docsfab runs show", () => {
     );
   });
 
-  it("does not import evaluation or delivery loaders", async () => {
+  it("keeps saved-run loaders behind the read-only review facade", async () => {
     const runsPath = fileURLToPath(new URL("../src/cli/commands/runs.ts", import.meta.url));
     const source = await readFile(runsPath, "utf8");
     expect(source).not.toMatch(/evaluation\//u);
-    expect(source).not.toMatch(/delivery\//u);
+    expect(source).toContain("review-delivery/public.js");
+    expect(source.replace("review-delivery/public.js", "")).not.toMatch(/delivery\//u);
     expect(source).not.toContain("loadVerifiedPublicationRun");
     expect(source).not.toContain("FileRunStore");
     expect(source).not.toContain("loadRunRecord");

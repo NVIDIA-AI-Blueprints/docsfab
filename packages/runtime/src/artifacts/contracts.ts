@@ -34,6 +34,7 @@ export const ARTIFACT_REFERENCE_ONLY_KINDS = [
   "roadmap-host-operation-request",
   "editorial-decision",
   "review-result",
+  "review-delivery-intent",
 ] as const;
 
 export const ARTIFACT_REFERENCE_KINDS = [

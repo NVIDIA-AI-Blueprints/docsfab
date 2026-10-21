@@ -225,6 +225,18 @@ limits:
     remediation: If a finished pipeline's test totals on the dashboard differ from GitLab's, raise dashboard.ci.reuseSettleMinutes in config/limits/dashboard.yaml so the fetch reads each finished pipeline again later; lower it only if every hourly fetch rereads too many.
     rationale: How long after a main pipeline's last update the previous CI snapshot must have been taken before the fetch reuses that pipeline's test totals instead of asking GitLab again. GitLab parses each build's test report asynchronously after the build finishes, so a summary read just after the pipeline's last update can miss a build; reusing it would keep that gap for good. Sixty minutes, one hourly refresh, lets every finished pipeline be read once more before its totals are reused. Provisional planning value, not measured against GitLab's report parsing time.
 
+  - name: dashboard.bench.fetchPipelines
+    value: 20
+    unit: count
+    scope: per-project
+    warnAt: 0.8
+    override: null
+    min: 1
+    max: 100
+    refusal: dashboard-bench-fetch-pipelines-bound
+    remediation: Read the problem fetch-bench.mjs names in fetch-bench.json. If the Bench project's newest scheduled pipelines on main ran without a successful bench:dashboard-snapshot job, fix that job; if its schedule also starts pipelines without the job, raise dashboard.bench.fetchPipelines in config/limits/dashboard.yaml. The pair already fetched stays on the page either way.
+    rationale: How many of the Bench project's newest scheduled pipelines on main fetch-bench.mjs looks through, in one listing page, for the newest successful bench:dashboard-snapshot job. The fetch keeps the last good snapshot when it finds none, so a short run of failed jobs only delays the panel; twenty covers most of a day of an hourly schedule, or nearly three weeks of a daily one, while a fetch never walks the project's whole history. GitLab lists at most 100 items a page, hence the maximum. Provisional planning value, not measured; the Bench schedule's cadence, not yet decided, is the basis to revisit it.
+
   - name: dashboard.progress.trendWindowDays
     value: 7
     unit: days

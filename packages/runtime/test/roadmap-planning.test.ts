@@ -123,6 +123,7 @@ describe("read-only roadmap planning", () => {
     expect(Object.keys(reviewDeliveryPublicApi)).toEqual([
       "planRetainedReviewDelivery",
       "prepareRetainedReviewFeedback",
+      "inspectSavedReviewInventory",
     ]);
     expect(reviewDeliveryPublicApi).not.toHaveProperty("createReviewDeliveryGrant");
     expect(

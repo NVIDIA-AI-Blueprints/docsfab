@@ -2,12 +2,19 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-/** Exact packed CLI, real Pi read, then cold public-package review planning. */
+/**
+ * Exact packed CLI, real Pi read, then cold public-package review planning.
+ * The opt-in DOCSFAB_SOURCE_QUALIFICATION_CASE (ordinary|shared) keeps the
+ * routine synthetic-plan proof fast while measuring a 512-row source-bound
+ * fresh GitLab preview. DOCSFAB_SOURCE_QUALIFICATION_OUTPUT is a new private,
+ * persistent directory for its run store, Git bundle and measured evidence.
+ */
 import { execFile } from "node:child_process";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import {
   chmod,
+  cp,
   copyFile,
   mkdir,
   mkdtemp,
@@ -31,6 +38,16 @@ import {
 
 const execute = promisify(execFile);
 const projectRoot = resolve(fileURLToPath(new URL("..", import.meta.url)));
+const qualificationCase = process.env.DOCSFAB_SOURCE_QUALIFICATION_CASE;
+if (
+  qualificationCase !== undefined &&
+  qualificationCase !== "ordinary" &&
+  qualificationCase !== "shared"
+)
+  throw new Error("DOCSFAB_SOURCE_QUALIFICATION_CASE must be ordinary or shared");
+const qualificationOutput = process.env.DOCSFAB_SOURCE_QUALIFICATION_OUTPUT;
+if (qualificationCase && (!qualificationOutput || !qualificationOutput.startsWith("/")))
+  throw new Error("DOCSFAB_SOURCE_QUALIFICATION_OUTPUT must be an absolute persistent path");
 const { artifactDirectoryLeaf } = parsePackedCandidateArguments(process.argv.slice(2));
 const scratch = await realpath(await mkdtemp(join(tmpdir(), "docsfab-installed-locator-")));
 const host = "gitlab.example.test";
@@ -427,9 +444,11 @@ async function writeFakeGlab(bin, base, head) {
     `#!/usr/bin/env node
 const args = process.argv.slice(2);
 const endpoint = args.at(-1);
-if (args[0] !== "api" || args[1] !== "--hostname" || args[2] !== ${JSON.stringify(host)} || args[3] !== "--method" || args[4] !== "GET") process.exit(91);
+${qualificationCase ? `require('node:fs').appendFileSync(${JSON.stringify(join(resolve(qualificationOutput), "forge-read-commands.jsonl"))}, JSON.stringify(args) + '\\n');` : ""}
+if (args[0] !== "api" || args[1] !== "--hostname" || args[2] !== ${JSON.stringify(host)} ||
+    (args.includes("--method") && args[args.indexOf("--method") + 1] !== "GET")) process.exit(91);
 const project = { id: ${projectId}, path_with_namespace: ${JSON.stringify(projectPath)} };
-const mr = { id: 9100813, iid: ${iid}, project_id: ${projectId}, target_project_id: ${projectId}, source_project_id: ${projectId}, state: "opened", target_branch: "main", source_branch: "topic", sha: ${JSON.stringify(head)}, merge_commit_sha: null, squash_commit_sha: null, changes_count: "1", diff_refs: { base_sha: ${JSON.stringify(base)}, start_sha: ${JSON.stringify(base)}, head_sha: ${JSON.stringify(head)} }, references: { full: ${JSON.stringify(`${projectPath}!${iid}`)} } };
+const mr = { id: 9100813, iid: ${iid}, project_id: ${projectId}, target_project_id: ${projectId}, source_project_id: ${projectId}, state: "opened", target_branch: "main", source_branch: "topic", sha: ${JSON.stringify(head)}, merge_commit_sha: null, squash_commit_sha: null, changes_count: ${JSON.stringify(qualificationCase ? "512" : "1")}, diff_refs: { base_sha: ${JSON.stringify(base)}, start_sha: ${JSON.stringify(base)}, head_sha: ${JSON.stringify(head)} }, references: { full: ${JSON.stringify(`${projectPath}!${iid}`)} } };
 if (endpoint === "projects/${encodeURIComponent(projectPath)}" || endpoint === "projects/${projectId}") process.stdout.write(JSON.stringify(project));
 else if (endpoint === "projects/${encodeURIComponent(projectPath)}/merge_requests/${iid}" || endpoint === "projects/${projectId}/merge_requests/${iid}") process.stdout.write(JSON.stringify(mr));
 else process.exit(92);
@@ -439,7 +458,308 @@ else process.exit(92);
   await chmod(script, 0o700);
 }
 
+async function qualifyInstalledSource({
+  candidate,
+  installed,
+  env,
+  repo,
+  runId,
+  base,
+  head,
+  modelCalls,
+}) {
+  const output = resolve(qualificationOutput);
+  const stateDirectory = env.DOCSFAB_STATE_DIR;
+  const saved = JSON.parse(await readFile(join(stateDirectory, `${runId}.json`), "utf8"));
+  assert(saved.reviewDeliverySnapshot?.rootObjectSha256, "installed run omitted source reference");
+  assert(
+    saved.artifacts?.some((use) => use.reference?.kind === "review-result"),
+    "installed run omitted original result",
+  );
+  assert(
+    saved.steps?.some((step) => step.reviewLocatorObservation?.objectSha256),
+    "installed run omitted locator observation",
+  );
+  const tree = async (revision) => {
+    const listed = await command("git", ["ls-tree", "-r", "-z", revision], { cwd: repo, env });
+    return new Map(
+      listed.stdout
+        .split("\0")
+        .filter(Boolean)
+        .map((entry) => {
+          const match = /^\d+ blob ([a-f0-9]{40,64})\t(.+)$/u.exec(entry);
+          if (!match) fail("real Git tree contains a non-blob fixture entry");
+          return [match[2], match[1]];
+        }),
+    );
+  };
+  const [beforeTree, afterTree] = await Promise.all([tree(base), tree(head)]);
+  const fixturePaths = [
+    "README.md",
+    ...Array.from(
+      { length: 511 },
+      (_value, index) => `docs/${String(index + 1).padStart(3, "0")}.md`,
+    ),
+  ];
+  const expectedRows = [];
+  for (const path of fixturePaths) {
+    const beforeId = beforeTree.get(path);
+    const afterId = afterTree.get(path);
+    if (!beforeId || !afterId) fail(`real Git fixture omitted ${path}`);
+    const before = (
+      await command("git", ["show", `${base}:${path}`], { cwd: repo, env, encoding: "buffer" })
+    ).stdout;
+    const after = (
+      await command("git", ["show", `${head}:${path}`], { cwd: repo, env, encoding: "buffer" })
+    ).stdout;
+    expectedRows.push({
+      path,
+      before: { objectId: beforeId, byteLength: before.length, sha256: sha256(before) },
+      after: { objectId: afterId, byteLength: after.length, sha256: sha256(after) },
+    });
+  }
+  await writeFile(
+    join(output, "git-original-manifest.json"),
+    `${JSON.stringify({ base, head, rows: expectedRows }, null, 2)}\n`,
+  );
+  await git(repo, env, "bundle", "create", join(output, "fixture.bundle"), "--all");
+  await cp(join(dirname(stateDirectory)), join(output, "state"), { recursive: true });
+  await rm(repo, { recursive: true, force: true });
+  const consumer = join(scratch, "qualification-consumer");
+  await mkdir(join(consumer, "node_modules"), { recursive: true });
+  await symlink(installed.installedPackageRoot, join(consumer, "node_modules", "docsfab"));
+  await writeFile(
+    join(consumer, "input.json"),
+    JSON.stringify({
+      runId,
+      stateDirectory: join(output, "state", "runs"),
+      checkout: repo,
+      installedPackageRoot: installed.installedPackageRoot,
+      originalManifest: join(output, "git-original-manifest.json"),
+      expectedRows: 512,
+      case: qualificationCase,
+    }),
+  );
+  const coldSource = `import { readFile, readdir, stat, writeFile } from 'node:fs/promises';
+import { join, resolve } from 'node:path';
+import { performance } from 'node:perf_hooks';
+import { pathToFileURL } from 'node:url';
+const input = JSON.parse(await readFile(new URL('./input.json', import.meta.url), 'utf8'));
+const installed = async (path) => import(pathToFileURL(join(input.installedPackageRoot, 'dist', path)).href);
+const { FileRunStore } = await installed('records/file-store.js');
+const { DurableArtifactStore } = await installed('artifacts/store.js');
+const { loadRetainedReviewTargetBootstrap } = await installed('review-delivery/result-store.js');
+const { projectReviewResultV1 } = await installed('review/target-migration.js');
+const { loadReviewLocatorAuthority } = await installed('review/locator-provenance.js');
+const { limit } = await installed('config/limits.js');
+let checkoutExists = true;
+try { await stat(input.checkout); } catch (error) { if (error.code === 'ENOENT') checkoutExists = false; else throw error; }
+if (checkoutExists) throw Error('fixture checkout remains available to cold child');
+const baselineRssBytes = process.memoryUsage().rss;
+const started = performance.now();
+const runStore = new FileRunStore(input.stateDirectory);
+const artifactRoot = resolve(input.stateDirectory, '..', 'artifacts');
+const artifacts = new DurableArtifactStore(artifactRoot);
+let artifactReads = 0;
+const originalGet = artifacts.getRecord.bind(artifacts);
+artifacts.getRecord = async (...args) => { artifactReads += 1; return originalGet(...args); };
+const loaded = await loadRetainedReviewTargetBootstrap({ runStore, artifacts, runId: input.runId, readOnly: true });
+const sourceLoadMs = performance.now() - started;
+const projection = projectReviewResultV1(loaded.originalResult, loaded.historicalTarget);
+const locator = await loadReviewLocatorAuthority({
+  runStore, artifacts, runId: input.runId,
+  binding: { target: loaded.historicalTarget, source: loaded.source.source },
+  result: projection, snapshotSha256: loaded.snapshotSha256, readOnly: true,
+});
+const locatorLoadMs = performance.now() - started - sourceLoadMs;
+if (locator.kind !== 'verified') throw Error('cold locator unavailable: ' + locator.reason);
+const rows = loaded.source.snapshot.files;
+if (rows.length !== input.expectedRows || rows.some((row) => row.state !== 'complete'))
+  throw Error('cold source lost ordinary complete rows');
+const originalManifest = JSON.parse(await readFile(input.originalManifest, 'utf8'));
+const originals = new Map(originalManifest.rows.map((row) => [row.path, row]));
+if (originals.size !== input.expectedRows || originalManifest.head !== loaded.source.source.revision.head)
+  throw Error('real Git manifest does not bind retained head');
+const visitedPaths = new Set();
+for (let index = 0; index < rows.length; index += 1) {
+  const row = rows[index];
+  const sourceRow = loaded.source.source.files[index];
+  const expected = originals.get(row.newPath);
+  if (!expected || visitedPaths.has(row.newPath) || row.oldPath !== expected.path ||
+      sourceRow.oldBlob !== expected.before.objectId ||
+      sourceRow.newBlob !== expected.after.objectId || !(row.beforeBytes instanceof Uint8Array) ||
+      !(row.afterBytes instanceof Uint8Array)) throw Error('retained row lost real Git identity');
+  visitedPaths.add(row.newPath);
+  const { createHash } = await import('node:crypto');
+  const hash = (bytes) => createHash('sha256').update(bytes).digest('hex');
+  if (row.beforeBytes.length !== expected.before.byteLength ||
+      row.afterBytes.length !== expected.after.byteLength ||
+      hash(row.beforeBytes) !== expected.before.sha256 ||
+      hash(row.afterBytes) !== expected.after.sha256)
+    throw Error('retained row bytes differ from real Git object');
+}
+if (visitedPaths.size !== originals.size ||
+    [...originals.keys()].some((path) => !visitedPaths.has(path)))
+  throw Error('retained rows omitted real Git manifest paths');
+const root = loaded.source.root;
+if (root.states.length !== input.expectedRows || root.sideBlobIndices.length !== input.expectedRows * 2)
+  throw Error('cold source root row/index mismatch');
+const blobs = root.blobs;
+const referencedSides = root.sideBlobIndices.filter((index) => index !== null).length;
+const uniqueBlobIds = new Set(blobs.map((blob) => blob.objectId));
+if (uniqueBlobIds.size !== blobs.length || referencedSides !== input.expectedRows * 2)
+  throw Error('cold source unique-object inventory mismatch');
+if (input.case === 'shared' && blobs.length >= referencedSides / 2)
+  throw Error('shared fixture did not reuse Git blob IDs');
+if (input.case === 'ordinary' && blobs.length !== referencedSides)
+  throw Error('ordinary fixture did not retain distinct original blobs');
+const objectDir = join(artifactRoot, 'objects', 'sha256');
+const objectNames = (await readdir(objectDir)).filter((name) => name.endsWith('.json'));
+let serializedArtifactBytes = 0;
+let largestSerializedArtifactBytes = 0;
+const artifactInventory = [];
+for (const name of objectNames) {
+  const artifactPath = join(objectDir, name);
+  const bytes = (await stat(artifactPath)).size;
+  serializedArtifactBytes += bytes;
+  largestSerializedArtifactBytes = Math.max(largestSerializedArtifactBytes, bytes);
+  const record = JSON.parse(await readFile(artifactPath, 'utf8'));
+  artifactInventory.push({ digest: name.slice(0, -5), kind: record.kind ?? 'untyped-artifact', bytes });
+}
+artifactInventory.sort((left, right) => left.digest.localeCompare(right.digest));
+const artifactBytes = (digest) => artifactInventory.find((item) => item.digest === digest)?.bytes;
+const savedRecord = (await runStore.getWithDigest(input.runId, { readOnly: true })).record;
+const locatorReferences = savedRecord.steps.flatMap((step) =>
+  step.reviewLocatorObservation ? [step.reviewLocatorObservation] : []);
+if (locatorReferences.length !== 1 || !artifactBytes(locatorReferences[0].objectSha256))
+  throw Error('locator object missing from private inventory');
+if (!artifactBytes(savedRecord.reviewDeliverySnapshot.rootObjectSha256) ||
+    root.partDigests.some((digest) => !artifactBytes(digest)) ||
+    !artifactBytes(loaded.resultObjectSha256))
+  throw Error('source/result object missing from private inventory');
+let largestRawPartBytes = 0;
+for (const digest of root.partDigests) {
+  const part = await artifacts.getRecord(digest, { readOnly: true });
+  largestRawPartBytes = Math.max(largestRawPartBytes, part.rawLength);
+}
+const bounded = (name, observed) => {
+  const resolved = limit(name);
+  return { value: resolved.value, source: resolved.source, unit: resolved.unit,
+    observed, headroom: resolved.value - observed };
+};
+const effectiveLimits = {
+  changedFiles: bounded('changeSources.changedFilesMax', rows.length),
+  diffBytes: bounded('changeSources.diffMaxBytes', root.diff.byteLength),
+  uniqueOriginalBytes: bounded('reviewDelivery.snapshotUniqueOriginalBytesMax',
+    blobs.reduce((sum, blob) => sum + blob.rawLength, 0)),
+  partBytes: bounded('reviewDelivery.snapshotPartBytes', largestRawPartBytes),
+  artifactObjectBytes: bounded('artifacts.maxObjectBytes', largestSerializedArtifactBytes),
+};
+if (Object.values(effectiveLimits).some((entry) => entry.headroom < 0))
+  throw Error('effective qualification limit exceeded');
+const runBytes = (await stat(join(input.stateDirectory, input.runId + '.json'))).size;
+const unit = 'KiB';
+const measurement = {
+  kind: 'docsfab-installed-retained-source-qualification', case: input.case,
+  runId: input.runId, runRecordSha256: loaded.runRecordSha256,
+  sourceSha256: loaded.source.source.changeSourceSha256,
+  snapshotSha256: loaded.snapshotSha256,
+  resultSha256: loaded.originalResultSha256,
+  resultObjectSha256: loaded.resultObjectSha256,
+  locator: { kind: locator.kind, count: 1 },
+  rows: rows.length, completeRows: rows.filter((row) => row.state === 'complete').length,
+  rowsVerifiedAgainstGit: visitedPaths.size,
+  rootObjectSha256: savedRecord.reviewDeliverySnapshot.rootObjectSha256,
+  rootSerializedBytes: artifactBytes(savedRecord.reviewDeliverySnapshot.rootObjectSha256),
+  partSerializedBytes: root.partDigests.map(artifactBytes),
+  resultSerializedBytes: artifactBytes(loaded.resultObjectSha256),
+  locatorObjectSha256: locatorReferences[0].objectSha256,
+  locatorSerializedBytes: artifactBytes(locatorReferences[0].objectSha256),
+  partCount: root.partDigests.length, uniqueBlobCount: blobs.length,
+  uniqueOriginalBytes: blobs.reduce((sum, blob) => sum + blob.rawLength, 0),
+  referencedSides, artifactReads, artifactObjectCount: objectNames.length,
+  serializedArtifactBytes, artifactInventory, runRecordBytes: runBytes, checkoutAbsent: !checkoutExists,
+  largestSerializedArtifactBytes, largestRawPartBytes, effectiveLimits,
+  timingMs: { sourceResult: sourceLoadMs, locator: locatorLoadMs },
+  memory: { baselineRssBytes, childPeakRss: process.resourceUsage().maxRSS, childPeakRssUnit: unit },
+  platform: { os: process.platform, architecture: process.arch, node: process.version },
+};
+await writeFile(new URL('./measurement.json', import.meta.url), JSON.stringify(measurement, null, 2) + '\\n');
+`;
+  await writeFile(join(consumer, "cold.mjs"), coldSource);
+  const forgeLog = join(output, "forge-read-commands.jsonl");
+  const forgeCallsBeforeCold = (await readFile(forgeLog, "utf8"))
+    .trim()
+    .split("\n")
+    .map(JSON.parse);
+  let coldModelCalls = 0;
+  const coldProvider = createServer((_request, response) => {
+    coldModelCalls += 1;
+    response.writeHead(500);
+    response.end("cold model use forbidden");
+  });
+  await listen(coldProvider);
+  const coldAddress = coldProvider.address();
+  assert(coldAddress && typeof coldAddress !== "string", "cold sentinel did not bind");
+  const coldStarted = Date.now();
+  let cold;
+  try {
+    cold = await command(process.execPath, [join(consumer, "cold.mjs")], {
+      cwd: consumer,
+      env: { ...env, MODEL_BASE_URL: `http://127.0.0.1:${coldAddress.port}/v1` },
+    });
+  } finally {
+    await new Promise((ok) => coldProvider.close(ok));
+  }
+  const forgeCallsAfterCold = (await readFile(forgeLog, "utf8")).trim().split("\n").map(JSON.parse);
+  const forgeWrites = forgeCallsAfterCold.filter(
+    (args) => args.includes("--method") && args[args.indexOf("--method") + 1] !== "GET",
+  ).length;
+  assert(
+    coldModelCalls === 0 &&
+      forgeCallsAfterCold.length === forgeCallsBeforeCold.length &&
+      forgeWrites === 0,
+    "qualification cold load used outbound I/O",
+  );
+  const measurement = JSON.parse(await readFile(join(consumer, "measurement.json"), "utf8"));
+  assert(measurement.checkoutAbsent, "cold child observed fixture checkout");
+  assert(measurement.rows === 512 && measurement.completeRows === 512, "cold rows changed");
+  await writeFile(
+    join(output, "measurement.json"),
+    `${JSON.stringify(
+      {
+        ...measurement,
+        package: {
+          name: candidate.record.name,
+          version: candidate.record.version,
+          integrity: candidate.integrity,
+        },
+        fixture: { base, head, url: mrUrl, bundle: "fixture.bundle" },
+        outbound: {
+          modelCalls,
+          coldModelCalls,
+          forgeReadCalls: forgeCallsBeforeCold.length,
+          coldForgeCalls: forgeCallsAfterCold.length - forgeCallsBeforeCold.length,
+          forgeWrites,
+        },
+        coldChild: { exitCode: 0, wallMs: Date.now() - coldStarted },
+      },
+      null,
+      2,
+    )}\n`,
+  );
+  await writeFile(
+    join(output, "cold-child.log"),
+    `exit=0\nstdout=${cold.stdout}\nstderr=${cold.stderr}\n`,
+  );
+  process.stdout.write(`${JSON.stringify(measurement)}\n`);
+}
+
 async function main() {
+  if (qualificationCase) {
+    await mkdir(dirname(resolve(qualificationOutput)), { recursive: true, mode: 0o700 });
+    await mkdir(resolve(qualificationOutput), { recursive: false, mode: 0o700 });
+  }
   const packRoot = join(scratch, "pack");
   const installRoot = join(scratch, "installed");
   const bin = join(scratch, "bin");
@@ -491,6 +811,15 @@ async function main() {
   await git(repo, env, "config", "commit.gpgsign", "false");
   await git(repo, env, "remote", "add", "origin", `https://${host}/${projectPath}.git`);
   await writeFile(join(repo, "README.md"), beforeText);
+  if (qualificationCase) {
+    await mkdir(join(repo, "docs"));
+    for (let index = 1; index < 512; index += 1) {
+      const suffix = String(index).padStart(3, "0");
+      const content =
+        qualificationCase === "shared" ? "# Shared original\n" : `# Original ${suffix}\n`;
+      await writeFile(join(repo, "docs", `${suffix}.md`), content);
+    }
+  }
   await writeFile(
     join(repo, ".docsfab.json"),
     JSON.stringify({
@@ -506,7 +835,14 @@ async function main() {
   const base = await git(repo, env, "rev-parse", "HEAD");
   await git(repo, env, "checkout", "-b", "topic");
   await writeFile(join(repo, "README.md"), afterText);
-  await git(repo, env, "add", "README.md");
+  if (qualificationCase) {
+    for (let index = 1; index < 512; index += 1) {
+      const suffix = String(index).padStart(3, "0");
+      const content = qualificationCase === "shared" ? "# Shared head\n" : `# Reviewed ${suffix}\n`;
+      await writeFile(join(repo, "docs", `${suffix}.md`), content);
+    }
+  }
+  await git(repo, env, "add", "--all");
   await git(repo, env, "commit", "-m", "Review head");
   const head = await git(repo, env, "rev-parse", "HEAD");
   reviewedRevision = head;
@@ -550,6 +886,9 @@ async function main() {
         "Review README.md for technical accuracy.",
         "--change",
         mrUrl,
+        ...(qualificationCase
+          ? ["--review-delivery-target", mrUrl, "--review-delivery", "preview"]
+          : []),
         "--json",
       ],
       { cwd: scratch, env },
@@ -558,6 +897,12 @@ async function main() {
   } catch (error) {
     if (serverFailure) throw serverFailure;
     const reported = runResultFromStdout(error.stdout ?? "");
+    if (qualificationCase) {
+      await writeFile(
+        join(resolve(qualificationOutput), "failed-installed-run.log"),
+        `exit=${error.code ?? "unknown"}\nstdout=${error.stdout ?? ""}\nstderr=${error.stderr ?? ""}\n`,
+      );
+    }
     fail(
       `installed run failed: ${reported?.failures?.map((entry) => entry.code).join(",") ?? error.code ?? "unclassified"}`,
     );
@@ -569,13 +914,26 @@ async function main() {
     run?.execution?.runId && run?.execution?.status === "succeeded",
     "installed review did not succeed",
   );
-  assert(
-    (await git(repo, env, "status", "--porcelain")) === "",
-    "installed review mutated checkout",
-  );
+  const checkoutStatus = await git(repo, env, "status", "--porcelain");
+  if (qualificationCase)
+    await writeFile(join(resolve(qualificationOutput), "checkout-status.txt"), checkoutStatus);
+  assert(checkoutStatus === "", "installed review mutated checkout");
   const runId = run.execution.runId;
   const stateDirectory = env.DOCSFAB_STATE_DIR;
   const record = JSON.parse(await readFile(join(stateDirectory, `${runId}.json`), "utf8"));
+  if (qualificationCase) {
+    await qualifyInstalledSource({
+      candidate,
+      installed,
+      env,
+      repo,
+      runId,
+      base,
+      head,
+      modelCalls,
+    });
+    return;
+  }
   const reference = record.steps?.find(
     (step) => step.id === "verify-technical-accuracy",
   )?.reviewLocatorObservation;

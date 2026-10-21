@@ -86,6 +86,7 @@ export const PROVIDER_ERROR_CLASSES = Object.freeze([
   "content-filter",
   "network",
   "stream-incomplete",
+  "unreachable",
   "invalid-request",
   "unknown",
 ] as const satisfies readonly ProviderErrorClass[]);

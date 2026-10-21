@@ -18,6 +18,7 @@ import { reviewResultFromRun } from "../review/run-result.js";
 import { createReviewTargetV2 } from "../review/target-migration.js";
 import type { ReviewTargetV2 } from "../review/contracts.js";
 import { retainReviewDeliverySourceSnapshot } from "../review-delivery/source-snapshot-writer.js";
+import { createReviewChangeSource } from "../harness/confined-tools/review-change-side.js";
 import { planRetainedReviewDelivery } from "../review-delivery/public.js";
 import type { ReviewDeliveryPlan } from "../review-delivery/contracts.js";
 import { loadRetainedReviewResult } from "../review-delivery/result-store.js";
@@ -73,6 +74,7 @@ export async function prepareFreshGitLabReviewDelivery(input: {
   readonly limits?: ResolveLimitsOptions;
 }): Promise<{
   readonly binding: FreshGitLabReviewBinding;
+  readonly reviewChangeSource: NonNullable<WorkflowRunnerOptions["reviewChangeSource"]>;
   readonly retention: NonNullable<WorkflowRunnerOptions["reviewResultRetention"]>;
 }> {
   const parsed = parseCommentMrTarget(input.targetUrl);
@@ -135,8 +137,14 @@ export async function prepareFreshGitLabReviewDelivery(input: {
     }),
     ...(input.limits ? { limits: input.limits } : {}),
   });
+  const reviewChangeSource = await createReviewChangeSource({
+    artifacts: input.artifacts,
+    reference: sourceReference,
+    source,
+  });
   return {
     binding: { target, source },
+    reviewChangeSource,
     retention: {
       artifacts: input.artifacts,
       prepare: async (record: Readonly<RunRecord>) => ({

@@ -18,16 +18,23 @@ import {
   decodeSourceSnapshotRoot,
   readSourceSnapshotParts,
 } from "../review-delivery/source-snapshot-store.js";
+import { decodeReviewInspectionIntent } from "../review-delivery/inspection-intent.js";
 import { decodeReviewLocatorObservationReference } from "./contracts/run-records.js";
 import { decodeReviewDeliverySnapshotReference } from "./review-delivery-snapshot-reference.js";
 import { decodeRunChangeSources } from "./change-sources.js";
 import {
-  applyRunDeliveryDeletion,
+  applyRunDeliveryDeletionUnderGate,
   countRemainingRunDeliveryTargets,
+  countRemainingRunDeliveryTargetsUnderGate,
   inventoryRunDelivery,
+  inventoryRunDeliveryUnderGate,
   runDeliveryInventoryDigest,
+  validUnrelatedReviewReceipts,
   type RunDeliveryDeletionInventory,
 } from "../delivery/run-deletion-adapter.js";
+import { withPinnedDeliveryRootGates } from "../delivery/delivery-root-gates.js";
+import { preparePrivateReceiptRootForDeletion } from "../delivery/receipt-store.js";
+import { resolveDocsFabPublicationRoots } from "../config/host-paths.js";
 import {
   cleanupRunDeliveryBranch,
   cleanupRunDeliveryWorktree,
@@ -124,6 +131,24 @@ interface ArtifactCandidate {
   readonly shared: boolean;
 }
 
+async function ownedReviewIntentCandidates(
+  artifacts: readonly ArtifactCandidate[],
+): Promise<{ digest: string; artifactRoot: string }[]> {
+  const reviewIntents: { digest: string; artifactRoot: string }[] = [];
+  for (const candidate of artifacts) {
+    if (!(await identityIfPresent(candidate.object.path, "file"))) continue;
+    const value = await objectJson(candidate.object.path);
+    if (
+      value &&
+      typeof value === "object" &&
+      !Array.isArray(value) &&
+      (value as { kind?: unknown }).kind === "docsfab-review-delivery-inspection-intent"
+    )
+      reviewIntents.push({ digest: candidate.digest, artifactRoot: candidate.root });
+  }
+  return reviewIntents;
+}
+
 interface RunDeletionJournal {
   readonly schemaVersion: 1;
   readonly kind: "docsfab-run-deletion-journal";
@@ -192,6 +217,8 @@ export interface RunDeletionResult {
 export interface RunDeletionHooks {
   /** Test seam immediately after a validated target has been unlinked. */
   readonly afterRemove?: (path: string) => void | Promise<void>;
+  /** Test seam after repository cleanup, before receipt roots are pinned. */
+  readonly beforeFinalReceiptGate?: () => void | Promise<void>;
 }
 
 export interface RunDeletionRoots {
@@ -285,6 +312,7 @@ async function loadJournal(root: string, runId: string): Promise<RunDeletionJour
     value.approved.delivery.recordSha256 !==
       value.approved.entries.find((entry) => entry.path === value.approved.recordPath)?.sha256 ||
     !deliveryDigestMatches(value.approved.delivery) ||
+    !validUnrelatedReviewReceipts(value.approved.delivery) ||
     value.approved.confirmation !== confirmationFor(value.approved)
   ) {
     return failure("journal-invalid", "Inspect the private deletion journal before retrying.");
@@ -712,6 +740,7 @@ async function scanArtifactCandidates(
   targetSidecar: unknown,
   allowMissingDigests: ReadonlySet<string> = new Set(),
   sharedBudget?: { count: number; max: number },
+  resumeApproved?: readonly ArtifactCandidate[],
 ): Promise<ArtifactCandidate[]> {
   const bound = limit("runs.deletionInventoryMaxEntries");
   const budget = sharedBudget ?? { count: 0, max: bound.value };
@@ -798,6 +827,15 @@ async function scanArtifactCandidates(
             );
           }
           direct.add(digest);
+        } else if (owned.kind === "docsfab-review-delivery-inspection-intent") {
+          const intent = decodeReviewInspectionIntent(value);
+          if (intent.runId !== runId || opaqueRecordDigest(intent) !== digest) {
+            return failure(
+              "artifact-owner-invalid",
+              "Inspect the sealed review inspection intent before deleting this run.",
+            );
+          }
+          direct.add(digest);
         }
       } catch {
         return failure(
@@ -810,6 +848,7 @@ async function scanArtifactCandidates(
   const queue = [...direct];
   const candidates = new Map<string, ArtifactCandidate>();
   const seenDigests = new Set<string>();
+  const missingApprovedSourceParts = new Set<string>();
   while (queue.length > 0) {
     const digest = queue.shift() as string;
     if (seenDigests.has(digest)) continue;
@@ -830,10 +869,69 @@ async function scanArtifactCandidates(
         (value as Record<string, unknown>).kind === "docsfab-review-delivery-snapshot"
       ) {
         try {
-          await readSourceSnapshotParts(
-            new DurableArtifactStore(dirname(dirname(objectDirectory))),
-            digest,
-          );
+          const artifactRoot = dirname(dirname(objectDirectory));
+          const root = decodeSourceSnapshotRoot(value);
+          const missingParts = new Set<string>();
+          for (const partDigest of root.partDigests) {
+            if (!(await identityIfPresent(join(objectDirectory, `${partDigest}.json`), "file"))) {
+              missingParts.add(partDigest);
+            }
+          }
+          if (missingParts.size === 0 || !resumeApproved) {
+            await readSourceSnapshotParts(new DurableArtifactStore(artifactRoot), digest);
+          } else {
+            const approvedByPath = new Map(
+              resumeApproved.map((candidate) => [candidate.object.path, candidate]),
+            );
+            const approvedRoot = approvedByPath.get(path);
+            if (
+              !approvedRoot ||
+              approvedRoot.shared ||
+              approvedRoot.digest !== digest ||
+              !sameIdentity(approvedRoot.object, object) ||
+              opaqueRecordDigest(root) !== digest
+            ) {
+              throw new Error(
+                "Resumed review source root differs from the confirmed deletion inventory.",
+              );
+            }
+            for (const [ordinal, partDigest] of root.partDigests.entries()) {
+              const partPath = join(objectDirectory, `${partDigest}.json`);
+              const approvedPart = approvedByPath.get(partPath);
+              if (!approvedPart || approvedPart.digest !== partDigest) {
+                throw new Error(
+                  "Resumed review source part was not approved in this artifact store.",
+                );
+              }
+              if (missingParts.has(partDigest)) {
+                if (approvedPart.shared || !allowMissingDigests.has(partDigest)) {
+                  throw new Error(
+                    "Resumed review source part is not an exclusive approved deletion target.",
+                  );
+                }
+                missingApprovedSourceParts.add(partDigest);
+                continue;
+              }
+              const current = await identity(partPath, "file");
+              if (!sameIdentity(approvedPart.object, current)) {
+                throw new Error(
+                  "Resumed review source part differs from the confirmed deletion inventory.",
+                );
+              }
+              const partValue = await objectJson(partPath);
+              const { part } = decodeSourceSnapshotPart(partValue);
+              if (
+                opaqueRecordDigest(part) !== partDigest ||
+                part.runId !== root.runId ||
+                part.sourceSha256 !== root.sourceSha256 ||
+                part.ordinal !== ordinal
+              ) {
+                throw new Error(
+                  "Resumed review source part binding differs from the confirmed deletion inventory.",
+                );
+              }
+            }
+          }
         } catch {
           return failure(
             "artifact-owner-invalid",
@@ -857,7 +955,10 @@ async function scanArtifactCandidates(
     }
   }
   const retainedReferences = new Set<string>();
-  const candidateDigests = new Set([...candidates.values()].map((candidate) => candidate.digest));
+  const candidateDigests = new Set([
+    ...[...candidates.values()].map((candidate) => candidate.digest),
+    ...missingApprovedSourceParts,
+  ]);
   for (const name of await readdir(stateDirectory)) {
     if (!name.endsWith(".json") || name === `${runId}.json`) continue;
     const otherId = name.slice(0, -".json".length);
@@ -893,6 +994,12 @@ async function scanArtifactCandidates(
         retainedReferences.add(digest);
       }
     }
+  }
+  if ([...missingApprovedSourceParts].some((digest) => retainedReferences.has(digest))) {
+    return failure(
+      "artifact-owner-invalid",
+      "Inspect the newly shared review source part before deleting this run.",
+    );
   }
   for (const candidate of candidates.values()) {
     if (retainedReferences.has(candidate.digest)) {
@@ -1120,11 +1227,13 @@ async function inventory(
     new Set(),
     inventoryBudget,
   );
+  const reviewIntents = await ownedReviewIntentCandidates(artifacts);
   const index = await scanRunIndexTargets(root, runId);
   const delivery = await inventoryRunDelivery({
     stateDirectory: root,
     runId,
     recordSha256: recordIdentity.sha256!,
+    reviewIntents,
     ...suppliedRoots,
   });
   const deliveryEntries = [
@@ -1350,7 +1459,6 @@ async function applyRunDeletionUnderGate(
         );
       }
     }
-    if (!priorJournal) await writeJournal(approved);
   }
   const approvedTargetCount =
     approved.entries.length +
@@ -1368,10 +1476,6 @@ async function applyRunDeletionUnderGate(
     : 0;
   let sharedRetained = approved.sharedRetained;
   try {
-    if (!tombstoned) await writeRunTombstone(approved.stateDirectory, runId);
-    for (const patchRoot of patchRoots) {
-      if (!(await isRunTombstoned(patchRoot, runId))) await writeRunTombstone(patchRoot, runId);
-    }
     for (const approvedWorktree of approved.gitCleanups) {
       const attempt = approved.delivery.attempts.find(
         (candidate) => candidate.path === approvedWorktree.attemptPath,
@@ -1394,120 +1498,214 @@ async function applyRunDeletionUnderGate(
     for (const approvedBranch of approved.gitBranches ?? []) {
       if (await cleanupRunDeliveryBranch(approvedBranch)) removed += 1;
     }
-    const deliveryResult = await applyRunDeliveryDeletion(approved.delivery, {
-      afterRemove: hooks.afterRemove,
-      clearedWorktrees: approved.gitCleanups,
-    });
-    removed += deliveryResult.removed;
-    sharedRetained += deliveryResult.sharedRetained - approved.delivery.sharedRetained;
-    const deliveryRemaining = await countRemainingRunDeliveryTargets(
-      approved.delivery,
-      approved.gitCleanups,
-    );
-    if (
-      deliveryResult.unresolved.length > 0 ||
-      deliveryRemaining.unresolved.length > 0 ||
-      deliveryRemaining.remaining > 0
-    ) {
-      return {
-        runId,
-        complete: false,
-        removed,
-        sharedRetained,
-        unresolved: Math.max(
-          deliveryRemaining.remaining,
-          deliveryResult.unresolved.length + deliveryRemaining.unresolved.length,
-        ),
-        nextAction:
-          deliveryResult.nextAction ??
-          "Inspect the remaining delivery targets and retry with the same confirmation.",
-      };
-    }
-    const fileEntries = approved.entries.filter((entry) => entry.kind === "file");
-    for (const entry of fileEntries.filter((item) => item.path !== approved.recordPath)) {
-      const actual = await identityIfPresent(entry.path, "file");
-      if (!actual && priorJournal) continue;
-      if (!actual || !sameIdentity(entry, actual)) {
-        return failure("entry-changed", "A sidecar changed during deletion; inspect and retry.");
-      }
-      await unlink(entry.path);
-      removed += 1;
-      await hooks.afterRemove?.(entry.path);
-    }
-    const directories = approved.entries
-      .filter((entry) => entry.kind === "directory")
-      .sort((a, b) => b.path.length - a.path.length);
-    for (const entry of directories) {
-      const actual = await identityIfPresent(entry.path, "directory");
-      if (!actual && priorJournal) continue;
-      if (!actual || !sameIdentity(entry, actual)) {
-        return failure("entry-changed", "A directory changed during deletion; inspect and retry.");
-      }
-      await rmdir(entry.path);
-      removed += 1;
-    }
-    removed += await purgeRunIndexRows(defaultRunIndexDirectory(approved.stateDirectory), runId);
-    for (const expected of approved.roots) {
-      if (!sameIdentity(expected, await identity(expected.path, "directory"))) {
-        return failure("root-changed", "Inspect the changed local store and resume deletion.");
-      }
-    }
-    const sourceStillPresent = await identityIfPresent(approved.recordPath, "file");
-    const missingApprovedDigests = new Set<string>();
-    if (priorJournal) {
-      for (const candidate of approved.artifacts) {
-        if (!(await identityIfPresent(candidate.object.path, "file"))) {
-          missingApprovedDigests.add(candidate.digest);
+    await hooks.beforeFinalReceiptGate?.();
+    const defaultReceiptRoot = resolveDocsFabPublicationRoots(
+      {},
+      approved.stateDirectory,
+    ).receiptRoot;
+    await preparePrivateReceiptRootForDeletion(defaultReceiptRoot);
+    return await withPinnedDeliveryRootGates(
+      [
+        defaultReceiptRoot,
+        ...(suppliedRoots.receiptRoots ?? []),
+        ...approved.delivery.receiptRoots,
+      ],
+      async (heldRoots) => {
+        const sourcePresent = await identityIfPresent(approved.recordPath, "file");
+        const freshMissingDigests = new Set<string>();
+        for (const candidate of approved.artifacts) {
+          if (!(await identityIfPresent(candidate.object.path, "file")))
+            freshMissingDigests.add(candidate.digest);
         }
-      }
-    }
-    const newlyShared = new Set<string>();
-    if (sourceStillPresent) {
-      const record = (await new FileRunStore(approved.stateDirectory).get(runId)) as RunRecord;
-      for (const candidate of await scanArtifactCandidates(
-        approved.stateDirectory,
-        runId,
-        record,
-        undefined,
-        missingApprovedDigests,
-      )) {
-        if (candidate.shared) newlyShared.add(candidate.object.path);
-      }
-    }
-    sharedRetained += approved.artifacts.filter(
-      (candidate) => !candidate.shared && newlyShared.has(candidate.object.path),
-    ).length;
-    for (const candidate of approved.artifacts) {
-      if (candidate.shared || newlyShared.has(candidate.object.path)) continue;
-      const current = await identityIfPresent(candidate.object.path, "file");
-      if (!current && priorJournal) continue;
-      if (!current || !sameIdentity(candidate.object, current)) {
-        return failure("artifact-changed", "Inspect the artifact store and resume deletion.");
-      }
-      await markArtifactObjectForDeletion(candidate.root, candidate.digest);
-      await unlink(candidate.object.path);
-      removed += 1;
-      await hooks.afterRemove?.(candidate.object.path);
-    }
-    const source = fileEntries.find((entry) => entry.path === approved.recordPath);
-    if (!source) return failure("record-missing", "Inspect the run store before retrying.");
-    const currentSource = await identityIfPresent(source.path, "file");
-    if (currentSource && !sameIdentity(source, currentSource)) {
-      return failure("entry-changed", "The run record changed; inspect and retry.");
-    }
-    if (currentSource) {
-      await unlink(source.path);
-      removed += 1;
-      await hooks.afterRemove?.(source.path);
-    }
-    await unlink(journalFile(approved.stateDirectory, runId));
-    return {
-      runId,
-      complete: true,
-      removed,
-      sharedRetained,
-      unresolved: 0,
-    };
+        const freshCandidates = sourcePresent
+          ? await scanArtifactCandidates(
+              approved.stateDirectory,
+              runId,
+              (await new FileRunStore(approved.stateDirectory).get(runId)) as RunRecord,
+              undefined,
+              freshMissingDigests,
+              undefined,
+              priorJournal && tombstoned ? approved.artifacts : undefined,
+            )
+          : approved.artifacts;
+        const fresh = await inventoryRunDeliveryUnderGate({
+          stateDirectory: approved.stateDirectory,
+          runId,
+          recordSha256: approved.delivery.recordSha256,
+          receiptRoots: heldRoots,
+          deliveryRoots: approved.delivery.deliveryRoots,
+          reviewIntents: await ownedReviewIntentCandidates(freshCandidates),
+          approvedUnrelatedReviewReceipts:
+            priorJournal && tombstoned ? approved.delivery.unrelatedReviewReceipts : undefined,
+        });
+        const expectedReceipts = new Set(
+          approved.delivery.receipts.map((entry) => `${entry.root}\0${entry.idempotencyKey}`),
+        );
+        const unexpected = fresh.receipts.filter(
+          (entry) => !expectedReceipts.has(`${entry.root}\0${entry.idempotencyKey}`),
+        );
+        const unrelatedReceiptEvidenceChanged =
+          approved.delivery.unrelatedReviewReceipts !== undefined &&
+          JSON.stringify(fresh.unrelatedReviewReceipts) !==
+            JSON.stringify(approved.delivery.unrelatedReviewReceipts);
+        if (
+          fresh.unresolved.length > 0 ||
+          unexpected.length > 0 ||
+          unrelatedReceiptEvidenceChanged
+        ) {
+          const residuals = [
+            ...fresh.unresolved,
+            ...unexpected.map(
+              (entry) =>
+                `New legacy receipt ${entry.root}/${entry.idempotencyKey} appeared after preview; inspect and preview again.`,
+            ),
+            ...(unrelatedReceiptEvidenceChanged
+              ? [
+                  "Review receipt evidence changed after preview; inspect custody and preview or resume safely.",
+                ]
+              : []),
+          ];
+          return {
+            runId,
+            complete: false,
+            removed,
+            sharedRetained,
+            unresolved: residuals.length,
+            nextAction: residuals.join(" "),
+          };
+        }
+        if (!priorJournal) await writeJournal(approved);
+        if (!tombstoned) await writeRunTombstone(approved.stateDirectory, runId);
+        for (const patchRoot of patchRoots) {
+          if (!(await isRunTombstoned(patchRoot, runId))) await writeRunTombstone(patchRoot, runId);
+        }
+        const deliveryResult = await applyRunDeliveryDeletionUnderGate(approved.delivery, {
+          afterRemove: hooks.afterRemove,
+          clearedWorktrees: approved.gitCleanups,
+        });
+        removed += deliveryResult.removed;
+        sharedRetained += deliveryResult.sharedRetained - approved.delivery.sharedRetained;
+        const deliveryRemaining = await countRemainingRunDeliveryTargetsUnderGate(
+          approved.delivery,
+          approved.gitCleanups,
+        );
+        if (
+          deliveryResult.unresolved.length > 0 ||
+          deliveryRemaining.unresolved.length > 0 ||
+          deliveryRemaining.remaining > 0
+        ) {
+          return {
+            runId,
+            complete: false,
+            removed,
+            sharedRetained,
+            unresolved: Math.max(
+              deliveryRemaining.remaining,
+              deliveryResult.unresolved.length + deliveryRemaining.unresolved.length,
+            ),
+            nextAction:
+              deliveryResult.nextAction ??
+              "Inspect the remaining delivery targets and retry with the same confirmation.",
+          };
+        }
+        const fileEntries = approved.entries.filter((entry) => entry.kind === "file");
+        for (const entry of fileEntries.filter((item) => item.path !== approved.recordPath)) {
+          const actual = await identityIfPresent(entry.path, "file");
+          if (!actual && priorJournal) continue;
+          if (!actual || !sameIdentity(entry, actual)) {
+            return failure(
+              "entry-changed",
+              "A sidecar changed during deletion; inspect and retry.",
+            );
+          }
+          await unlink(entry.path);
+          removed += 1;
+          await hooks.afterRemove?.(entry.path);
+        }
+        const directories = approved.entries
+          .filter((entry) => entry.kind === "directory")
+          .sort((a, b) => b.path.length - a.path.length);
+        for (const entry of directories) {
+          const actual = await identityIfPresent(entry.path, "directory");
+          if (!actual && priorJournal) continue;
+          if (!actual || !sameIdentity(entry, actual)) {
+            return failure(
+              "entry-changed",
+              "A directory changed during deletion; inspect and retry.",
+            );
+          }
+          await rmdir(entry.path);
+          removed += 1;
+        }
+        removed += await purgeRunIndexRows(
+          defaultRunIndexDirectory(approved.stateDirectory),
+          runId,
+        );
+        for (const expected of approved.roots) {
+          if (!sameIdentity(expected, await identity(expected.path, "directory"))) {
+            return failure("root-changed", "Inspect the changed local store and resume deletion.");
+          }
+        }
+        const sourceStillPresent = await identityIfPresent(approved.recordPath, "file");
+        const missingApprovedDigests = new Set<string>();
+        if (priorJournal) {
+          for (const candidate of approved.artifacts) {
+            if (!(await identityIfPresent(candidate.object.path, "file"))) {
+              missingApprovedDigests.add(candidate.digest);
+            }
+          }
+        }
+        const newlyShared = new Set<string>();
+        if (sourceStillPresent) {
+          const record = (await new FileRunStore(approved.stateDirectory).get(runId)) as RunRecord;
+          for (const candidate of await scanArtifactCandidates(
+            approved.stateDirectory,
+            runId,
+            record,
+            undefined,
+            missingApprovedDigests,
+            undefined,
+            priorJournal && tombstoned ? approved.artifacts : undefined,
+          )) {
+            if (candidate.shared) newlyShared.add(candidate.object.path);
+          }
+        }
+        sharedRetained += approved.artifacts.filter(
+          (candidate) => !candidate.shared && newlyShared.has(candidate.object.path),
+        ).length;
+        for (const candidate of approved.artifacts) {
+          if (candidate.shared || newlyShared.has(candidate.object.path)) continue;
+          const current = await identityIfPresent(candidate.object.path, "file");
+          if (!current && priorJournal) continue;
+          if (!current || !sameIdentity(candidate.object, current)) {
+            return failure("artifact-changed", "Inspect the artifact store and resume deletion.");
+          }
+          await markArtifactObjectForDeletion(candidate.root, candidate.digest);
+          await unlink(candidate.object.path);
+          removed += 1;
+          await hooks.afterRemove?.(candidate.object.path);
+        }
+        const source = fileEntries.find((entry) => entry.path === approved.recordPath);
+        if (!source) return failure("record-missing", "Inspect the run store before retrying.");
+        const currentSource = await identityIfPresent(source.path, "file");
+        if (currentSource && !sameIdentity(source, currentSource)) {
+          return failure("entry-changed", "The run record changed; inspect and retry.");
+        }
+        if (currentSource) {
+          await unlink(source.path);
+          removed += 1;
+          await hooks.afterRemove?.(source.path);
+        }
+        await unlink(journalFile(approved.stateDirectory, runId));
+        return {
+          runId,
+          complete: true,
+          removed,
+          sharedRetained,
+          unresolved: 0,
+        };
+      },
+    );
   } catch (error) {
     const unresolved = await countUnresolvedApprovedTargets(approved).catch(() =>
       Math.max(1, approvedTargetCount - removed),

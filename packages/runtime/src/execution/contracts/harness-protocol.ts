@@ -145,6 +145,8 @@ export interface InferenceResponseCorrectionV1 {
 }
 
 export interface HarnessStepInput {
+  /** Selected technical-review attempt only; the model sees tools, never this object. */
+  reviewChangeSource?: import("../../harness/confined-tools/review-change-side.js").ReviewChangeSource;
   signal?: AbortSignal;
   /** Additional host restriction; it can only remove workflow-derived tools. */
   toolCeiling?: readonly string[];
@@ -450,6 +452,8 @@ export interface QualityAnswerRecordReplayPairV1 {
   readonly checkpointSha256: string;
 }
 export interface HarnessStepResult {
+  /** Host-only delivered side lines and proposals from this successful attempt. */
+  reviewChangeObservation?: import("../../harness/confined-tools/review-change-side.js").ReviewChangeObservation;
   summary: string;
   verificationResult?: import("../../workflow-execution/verification-result.js").VerificationResult;
   outcome?: "succeeded" | "needs-input" | "needs-human-decision";

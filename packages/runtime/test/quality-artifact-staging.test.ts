@@ -128,6 +128,7 @@ import { governProviderTurn } from "../src/model/turn-governor.js";
 import {
   loadVerifiedReviewEvaluationArtifact,
   projectReviewFindingsFromRetainedRun,
+  projectReviewFindingsFromRun,
 } from "../src/review/index.js";
 import { decodeRunResultV1 } from "../src/operator/run-result.js";
 import {
@@ -4449,6 +4450,152 @@ describe("quality artifact staging and validator host", {
     });
   });
 
+  it("lists an evaluator restatement of a review issue once, on the originating finding", async () => {
+    // Shape of a live rc.14 review: the evaluator retained each editorial
+    // REV-* issue as its own F-* finding that names the originating ID.
+    const value = await fixture();
+    const artifactCandidate = candidate(
+      value.selection.profile,
+      value.revision,
+      restatingEvaluationFindings(),
+    );
+    artifactCandidate.selectionSha256 = value.selection.receipt.selectionSha256;
+    const validated = await value.host.validate(
+      validationInput(value, "quality-findings-restatement", artifactCandidate),
+    );
+    const record = validatedRunRecord(value, validated);
+    record.steps.unshift({
+      ...retainedUnsupportedStep("review-documentation"),
+      summary: canonicalizeJsonEvidence(
+        restatedEditorialReview() as unknown as JsonEvidenceValue,
+      ).trim(),
+    });
+
+    const expected = [
+      expect.objectContaining({
+        id: "F-4",
+        code: "F-4",
+        summary: "The Usage page has no next step.",
+      }),
+      expect.objectContaining({
+        id: "finding:review-documentation:REV-001:1",
+        code: "REV-001",
+        severity: "warning",
+        path: "README.md",
+        line: 3,
+        summary: expect.stringMatching(/^The Install section contains only `widget --help`\./u),
+        recommendation: expect.stringMatching(/^Provide an installation path/u),
+        evidence:
+          "README.md: README.md:3-5; evaluate-document-quality F-1: README.md:3-5: Install label and help command, as reported by independent editorial review.",
+      }),
+      expect.objectContaining({
+        id: "finding:review-documentation:REV-002:2",
+        code: "REV-002",
+        path: "docs/usage.md",
+        evidence: expect.stringContaining("; evaluate-document-quality F-2: docs/usage.md:1"),
+      }),
+      expect.objectContaining({
+        id: "finding:review-documentation:REV-003:3",
+        code: "REV-003",
+        // The evaluator's stronger severity wins over the originating minor.
+        severity: "warning",
+        path: "docs/usage.md",
+        evidence: expect.stringContaining("; evaluate-document-quality F-3: docs/usage.md:1"),
+      }),
+    ];
+
+    const retained = await projectReviewFindingsFromRetainedRun(record, value.store);
+    expect(retained.findings).toEqual(expected);
+    expect(
+      retained.limitations.filter((item) => item.startsWith("review-findings-duplicate")),
+    ).toEqual([]);
+
+    const live = structuredClone(record);
+    live.steps.find((step) => step.id === "evaluate-document-quality")!.summary =
+      canonicalizeJsonEvidence(artifactCandidate.evaluation as unknown as JsonEvidenceValue).trim();
+    expect(projectReviewFindingsFromRun(live).findings).toEqual(expected);
+    // Folding is safe to repeat: a second copy of the same evaluator result
+    // (for example a re-run evaluator step) appends each trace once.
+    const repeated = structuredClone(live);
+    repeated.steps.push(
+      structuredClone(repeated.steps.find((step) => step.id === "evaluate-document-quality")!),
+    );
+    const twice = projectReviewFindingsFromRun(repeated);
+    expect(twice.findings).toEqual(expected);
+    for (const finding of twice.findings) {
+      expect(finding.evidence?.match(/evaluate-document-quality F-/gu)?.length ?? 0).toBeLessThan(
+        2,
+      );
+    }
+  });
+
+  it("keeps an evaluator finding separate unless its named issues share one producer and path", async () => {
+    const value = await fixture();
+    const artifactCandidate = candidate(value.selection.profile, value.revision, [
+      ...restatingEvaluationFindings().slice(0, 1),
+      restatingEvaluationFinding(
+        "F-5",
+        "REV-001 and REV-002: neither page gives a usable task.",
+        "README.md:3-5",
+      ),
+      restatingEvaluationFinding(
+        "F-6",
+        "REV-002 and TECH-001: the usage task and its command are both unverified.",
+        "docs/usage.md:1",
+      ),
+    ]);
+    artifactCandidate.selectionSha256 = value.selection.receipt.selectionSha256;
+    const validated = await value.host.validate(
+      validationInput(value, "quality-findings-restatement-scope", artifactCandidate),
+    );
+    const record = validatedRunRecord(value, validated);
+    const canonical = (root: Record<string, unknown>) =>
+      canonicalizeJsonEvidence(root as unknown as JsonEvidenceValue).trim();
+    record.steps.unshift(
+      {
+        ...retainedUnsupportedStep("verify-technical-accuracy"),
+        summary: canonical({
+          verdict: "needs-revision",
+          issues: [
+            {
+              id: "TECH-001",
+              severity: "major",
+              category: "technical_accuracy",
+              location: "docs/usage.md:1",
+              finding: "The usage page names no verified command.",
+              evidence: { source_id: "docs/usage.md", locator: "docs/usage.md:1" },
+              required_change: "Name a command confirmed by an approved source.",
+            },
+          ],
+        }),
+      },
+      {
+        ...retainedUnsupportedStep("review-documentation"),
+        summary: canonical(restatedEditorialReview({ fullEvidence: true })),
+      },
+    );
+
+    const projection = await projectReviewFindingsFromRetainedRun(record, value.store);
+    const byId = new Map(projection.findings.map((finding) => [finding.id, finding]));
+    // Both adjacent shapes stay listed: F-5 spans two files, F-6 two producers.
+    expect(byId.get("F-5")).toMatchObject({ code: "F-5", path: "README.md" });
+    expect(byId.get("F-6")).toMatchObject({ code: "F-6", path: "docs/usage.md" });
+    expect(byId.get("finding:verify-technical-accuracy:TECH-001:1")).toMatchObject({
+      code: "TECH-001",
+    });
+    expect(byId.get("finding:review-documentation:REV-002:2")?.evidence).toBe(
+      "docs/usage.md: docs/usage.md:1",
+    );
+    // F-1 still folds when the originating evidence is nearly full: the
+    // evaluator ID survives, and its evidence stays in the retained artifact.
+    expect(byId.has("F-1")).toBe(false);
+    const folded = byId.get("finding:review-documentation:REV-001:1")!.evidence!;
+    expect(folded).toMatch(
+      /; evaluate-document-quality F-1: evidence retained in the evaluation artifact$/u,
+    );
+    expect(folded.length).toBeLessThanOrEqual(512);
+  });
+
   it("rejects schema-valid candidates that violate profile gate and confidence semantics", async () => {
     const value = await fixture();
     const gate = (value.selection.profile.hard_gates as readonly string[])[0]!;
@@ -7297,6 +7444,142 @@ function runRecord(
       },
     ],
   };
+}
+
+function restatedEditorialReview(
+  options: { fullEvidence?: boolean } = {},
+): Record<string, unknown> {
+  const issue = (
+    id: string,
+    severity: string,
+    category: string,
+    path: string,
+    locator: string,
+    finding: string,
+    requiredChange: string,
+  ) => ({
+    id,
+    severity,
+    category,
+    location: `${path}:${locator.split(":")[1]!.split("-")[0]}`,
+    finding,
+    evidence: { source_id: path, locator },
+    required_change: requiredChange,
+  });
+  return {
+    verdict: "needs-revision",
+    issues: [
+      issue(
+        "REV-001",
+        "major",
+        "task_success",
+        "README.md",
+        options.fullEvidence
+          ? `README.md:3-5 ${"Install heading followed only by the help command. ".repeat(8)}`.trim()
+          : "README.md:3-5",
+        "The Install section contains only `widget --help`. A reader looking for installation steps cannot determine how to install Widget before running the command.",
+        "Provide an installation path supported by an approved source, or change the section heading so it accurately describes the help command.",
+      ),
+      issue(
+        "REV-002",
+        "major",
+        "completeness",
+        "docs/usage.md",
+        "docs/usage.md:1",
+        "The Usage page contains only a heading. A reader cannot find a usage task, its prerequisites, or a way to recognize a useful result.",
+        "Add a source-grounded usage task with the prerequisites and observable result needed to follow it.",
+      ),
+      issue(
+        "REV-003",
+        "minor",
+        "style_compliance",
+        "docs/usage.md",
+        "docs/usage.md:1",
+        "The title omits Widget, and the page has no opening paragraph identifying the product or directing readers to its parent.",
+        "Include Widget in the page title and add an opening paragraph that names Widget in its first sentence.",
+      ),
+    ],
+  };
+}
+
+function restatingEvaluationFinding(
+  id: string,
+  description: string,
+  locator: string,
+): Record<string, unknown> {
+  return {
+    id,
+    severity: "major",
+    dimension_id: "scoped-sufficiency",
+    description,
+    evidence: [
+      {
+        evidence_class: "grounded-judgment",
+        strength: "direct",
+        locator,
+        description: "Restated editorial evidence.",
+      },
+    ],
+    owner: "documentation-owner",
+    acceptance_condition: `Resolve ${id}.`,
+    status: "open",
+  };
+}
+
+function restatingEvaluationFindings(): Record<string, unknown>[] {
+  const finding = (
+    id: string,
+    severity: string,
+    dimension: string,
+    description: string,
+    locator: string,
+    evidence: string,
+  ) => ({
+    id,
+    severity,
+    dimension_id: dimension,
+    description,
+    evidence: [
+      { evidence_class: "grounded-judgment", strength: "direct", locator, description: evidence },
+    ],
+    owner: "documentation-owner",
+    acceptance_condition: `Resolve ${id}.`,
+    status: "open",
+  });
+  return [
+    finding(
+      "F-1",
+      "major",
+      "scoped-sufficiency",
+      "REV-001: Install section offers only widget --help, not an installation path; task success has not been observed.",
+      "README.md:3-5",
+      "Install label and help command, as reported by independent editorial review.",
+    ),
+    finding(
+      "F-2",
+      "major",
+      "scoped-sufficiency",
+      "REV-002: Usage page has only a heading and no usable task, prerequisites, or expected result.",
+      "docs/usage.md:1",
+      "Heading-only page in independent editorial review.",
+    ),
+    finding(
+      "F-3",
+      "major",
+      "scoped-sufficiency",
+      "REV-003: Usage title lacks Widget context.",
+      "docs/usage.md:1",
+      "Only generic title.",
+    ),
+    finding(
+      "F-4",
+      "minor",
+      "editorial-style",
+      "The Usage page has no next step.",
+      "docs/usage.md:1",
+      "No link after the heading.",
+    ),
+  ];
 }
 
 function retainedUnsupportedStep(

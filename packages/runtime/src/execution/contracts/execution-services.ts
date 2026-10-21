@@ -34,6 +34,11 @@ export interface SourceEvidenceRunnerBinding {
   ) => import("../../inputs/source-step-search.js").SourceStepSearcherV1;
 }
 
+/** A process-local host grant; only the runner's minting module can validate it. */
+export interface PrReviewCitationAdmissionV1 {
+  readonly kind: "docsfab-pr-review-citation-admission";
+}
+
 export interface ExecutionServices {
   harness: AgentHarness;
   skillResolver?: GovernedSkillResolver;
@@ -41,4 +46,6 @@ export interface ExecutionServices {
   store: RunStore;
   /** Process-local source-evidence host service. Never serialized. */
   sourceEvidence?: SourceEvidenceRunnerBinding;
+  /** Live, exact-run grant for installed read-only PR review citations. */
+  prReviewCitationAdmission?: PrReviewCitationAdmissionV1;
 }

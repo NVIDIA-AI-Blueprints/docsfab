@@ -9,6 +9,7 @@ import {
 import { CONSERVATIVE_MODEL_FALLBACK } from "../model/configuration.js";
 import { assertModelEndpointTransport } from "../model/endpoint-transport.js";
 import { modelProfileFromAssignments } from "../config/profile-projection.js";
+import { modelEndpointShapeProblem } from "../config/model-settings.js";
 import type { DocsFabModelProfileV1 } from "../config/profile-projection.js";
 import { assertSelectionNotRetired } from "./retired-selections.js";
 import {
@@ -70,10 +71,7 @@ export function normalizeSetupEndpointUrl(value: string): string {
   }
   if (
     (endpoint.protocol !== "https:" && endpoint.protocol !== "http:") ||
-    endpoint.username !== "" ||
-    endpoint.password !== "" ||
-    endpoint.search !== "" ||
-    endpoint.hash !== ""
+    modelEndpointShapeProblem(endpoint) !== undefined
   ) {
     throw new Error(
       "DocsFab setup requires an HTTP or HTTPS model endpoint URL without credentials, query parameters, or a fragment.",

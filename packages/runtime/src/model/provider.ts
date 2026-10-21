@@ -28,6 +28,7 @@ import {
   LOCALHOST_RESOLUTION_MESSAGE,
 } from "./endpoint-transport.js";
 import { createLoopbackHttpFetch, LoopbackResolutionRefusal } from "./loopback-http-fetch.js";
+import { isDefinitiveConnectFailure } from "./endpoint-connect-failure.js";
 import { OutboundProxyRefusal, outboundFetch } from "./outbound-http-policy.js";
 import { resolveOperatorExecutionBinding } from "./operator-execution-binding.js";
 import type {
@@ -1149,6 +1150,15 @@ async function createBoundModelConnection(
           // Response-size refusal follows a response from the provider; it is local
           // policy, but the physical request did leave the host.
           exchange = { sent: error instanceof ProviderResponseLimitError || !local };
+          // An unreachable proxy keeps its own refusal; only a direct connect
+          // to the endpoint names the endpoint.
+          if (
+            !local &&
+            !(error instanceof OutboundProxyRefusal) &&
+            isDefinitiveConnectFailure(error)
+          ) {
+            exchange = { sent: true, connectFailed: true };
+          }
           if (error instanceof OutboundProxyRefusal) proxyRefusal = error;
           if (error instanceof CredentialBoundaryError) credentialRefusal = error;
           throw error;

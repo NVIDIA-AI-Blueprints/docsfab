@@ -83,6 +83,7 @@ export const PROVIDER_STATUS_ERROR_FAILURE_CLASSES = Object.freeze({
   timeout: "flake",
   network: "unknown",
   "stream-incomplete": "unknown",
+  unreachable: "unknown",
   "content-filter": "unknown",
   "invalid-request": "unknown",
   unknown: "unknown",
@@ -91,9 +92,9 @@ export const PROVIDER_STATUS_ERROR_FAILURE_CLASSES = Object.freeze({
 /**
  * Classes for a recorded provider error with no failing HTTP status: a stream
  * cut, socket failure, DNS failure, or an error event inside a 2xx stream.
- * The provider marked nothing repeatable, so `network`, `timeout`, and
- * `stream-incomplete` (a 2xx stream that closed before it finished) are
- * `infrastructure`, not `flake`. This module reads only the retained closed
+ * The provider marked nothing repeatable, so `network`, `unreachable`,
+ * `timeout`, and `stream-incomplete` (a 2xx stream that closed before it
+ * finished) are `infrastructure`, not `flake`. This module reads only the retained closed
  * class, never the provider's error text or an in-stream `streamErrorStatus`,
  * so a declared server error keeps its `provider-transient` category's class.
  */
@@ -104,6 +105,7 @@ export const PROVIDER_UNANSWERED_ERROR_FAILURE_CLASSES = Object.freeze({
   timeout: "infrastructure",
   network: "infrastructure",
   "stream-incomplete": "infrastructure",
+  unreachable: "infrastructure",
   "content-filter": "unknown",
   "invalid-request": "unknown",
   unknown: "unknown",

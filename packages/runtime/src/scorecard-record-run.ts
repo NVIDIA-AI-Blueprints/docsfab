@@ -159,6 +159,7 @@ export const RELEASE_READINESS_RUN_READER = defineRunRecordReader({
     changes: "admitted",
     impactPostflight: "admitted",
     reviewScope: "producer-not-admitted",
+    prReviewBasis: "producer-not-admitted",
     requestIntent: "decoded",
     // Written only on a needs-input run, which this reader never admits.
     firstPassContradiction: UNVERIFIED,
@@ -170,6 +171,7 @@ export const RELEASE_READINESS_RUN_READER = defineRunRecordReader({
     answerRecordContinuation: UNVERIFIED,
     // Optional per-run citation evidence; no readiness writer emits it yet.
     sourceCitations: "admitted",
+    prReviewSourceCitations: "producer-not-admitted",
     // Content-free findings (#1807): locations and rule ids only.
     credentialFindings: "admitted",
     evidenceWarnings: "admitted",
@@ -246,6 +248,7 @@ export const READINESS_RUN_READER = defineRunRecordReader({
     changes: "decoded",
     impactPostflight: UNVERIFIED,
     reviewScope: "producer-not-admitted",
+    prReviewBasis: "producer-not-admitted",
     requestIntent: "decoded",
     // Written only on a needs-input run, which this reader never admits.
     firstPassContradiction: UNVERIFIED,
@@ -256,6 +259,7 @@ export const READINESS_RUN_READER = defineRunRecordReader({
     liveAgentTurnFailure: "producer-not-admitted",
     // Optional per-run citation evidence (see above).
     sourceCitations: "admitted",
+    prReviewSourceCitations: "producer-not-admitted",
     // Content-free findings (#1807): locations and rule ids only.
     credentialFindings: "admitted",
     evidenceWarnings: "decoded",

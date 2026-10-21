@@ -10,6 +10,7 @@ import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 
 import { createConfinedToolSet } from "../src/harness/confined-tools.js";
+import { SOURCE_LIST_MAX_ENTRIES } from "../src/harness/source-tools.js";
 import {
   DEFAULT_TOOL_OUTPUT_CAP_BYTES,
   MINIMUM_TOOL_OUTPUT_CAP_BYTES,
@@ -559,10 +560,16 @@ describe("confined exact-original source reads", () => {
     expect(inventory).toMatchObject({ spanCount: 1, nextFromEntry: null });
     expect(
       JSON.parse(
-        (await refused.list.execute("list-at-limit", { maxEntries: 256 })).content[0]!.text,
+        (await refused.list.execute("list-at-limit", { maxEntries: SOURCE_LIST_MAX_ENTRIES }))
+          .content[0]!.text,
       ),
     ).toMatchObject({ spanCount: 1, nextFromEntry: null });
-    await expect(refused.list.execute("list-invalid", { maxEntries: 257 })).rejects.toThrow();
+    await expect(
+      refused.list.execute("list-invalid", { maxEntries: SOURCE_LIST_MAX_ENTRIES + 1 }),
+    ).rejects.toThrow(
+      `sources-list-max-entries-bound: ${SOURCE_LIST_MAX_ENTRIES + 1} exceeds ` +
+        `sources.listMaxEntries = ${SOURCE_LIST_MAX_ENTRIES} count`,
+    );
   });
 
   it("screens the complete original when a credential crosses sealed spans", async () => {

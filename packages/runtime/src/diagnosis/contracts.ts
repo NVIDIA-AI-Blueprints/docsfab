@@ -91,6 +91,7 @@ export const DIAGNOSIS_CAUSE_OWNERS = Object.freeze({
   "provider-model-retired": "operator-configuration",
   "provider-auth-refused": "operator-configuration",
   "provider-request-refused": "operator-configuration",
+  "provider-endpoint-unreachable": "operator-configuration",
   "request-not-sent": "operator-configuration",
   "context-window-exhausted": "operator-configuration",
   "operator-input-refused": "operator-configuration",

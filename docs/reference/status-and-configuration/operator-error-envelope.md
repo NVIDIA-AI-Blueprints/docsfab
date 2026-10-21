@@ -159,7 +159,7 @@ fields are present.
 `docs/troubleshooting.md`. When Fern publishes that
 file, the site route is the path under `docs/` without the `docs/` prefix
 or `.md` suffix, for example
-[Troubleshooting DocsFab](/troubleshooting). Printed
+[Troubleshooting DocsFab](../../troubleshooting.md). Printed
 operator output does not substitute that URL for the `Docs:` line.
 
 ## Credential Scrub
@@ -189,46 +189,46 @@ The following table lists each snapshotted code, its `Docs:` path, and its publi
 
 | `code` | `Docs:` path | Published Fern page |
 | --- | --- | --- |
-| `migration-required` | `docs/about/architecture.md` | [DocsFab Architecture](/about/architecture) |
-| `cli-usage` | `docs/reference/status-and-configuration/human-output-and-json.md` | [Human Output and JSON](/reference/status-and-configuration/human-output-and-json) |
-| `doctor` | `docs/manage/check-readiness.md` | [Check Readiness](/manage/check-readiness) |
-| `profile-inspect` | `docs/reference/status-and-configuration/model-profile-approval.md` | [Model-Profile Approval](/reference/status-and-configuration/model-profile-approval) |
-| `profile-inspection-clock-invalid` | `docs/reference/status-and-configuration/model-profile-approval.md` | [Model-Profile Approval](/reference/status-and-configuration/model-profile-approval) |
-| `profile-evidence-invalid` | `docs/reference/status-and-configuration/model-profile-approval.md` | [Model-Profile Approval](/reference/status-and-configuration/model-profile-approval) |
-| `invalid-model-profile-configuration` | `docs/reference/status-and-configuration/model-profile-approval.md` | [Model-Profile Approval](/reference/status-and-configuration/model-profile-approval) |
-| `unsupported-model-profile-api-format` | `docs/reference/status-and-configuration/model-profile-approval.md` | [Model-Profile Approval](/reference/status-and-configuration/model-profile-approval) |
-| `invalid-model-profile-approval` | `docs/reference/status-and-configuration/model-profile-approval.md` | [Model-Profile Approval](/reference/status-and-configuration/model-profile-approval) |
-| `profile-apply-rejected` | `docs/reference/status-and-configuration/model-profile-approval.md` | [Model-Profile Approval](/reference/status-and-configuration/model-profile-approval) |
-| `profile-owner-artifact-rejected` | `docs/reference/status-and-configuration/model-profile-approval.md` | [Model-Profile Approval](/reference/status-and-configuration/model-profile-approval) |
-| `profile-apply-ambiguous` | `docs/reference/status-and-configuration/model-profile-approval.md` | [Model-Profile Approval](/reference/status-and-configuration/model-profile-approval) |
-| `profile-rollback-ambiguous` | `docs/reference/status-and-configuration/model-profile-approval.md` | [Model-Profile Approval](/reference/status-and-configuration/model-profile-approval) |
-| `glab-auth-login` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](/troubleshooting) |
-| `aggregate-timeout` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](/troubleshooting) |
-| `per-blob-timeout` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](/troubleshooting) |
-| `source-authority-path-refused` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](/troubleshooting) |
-| `composition-retired` | `docs/configure/model.md` | [Configure the Model](/configure/model) |
-| `setup-model-choice-required` | `docs/configure/model.md` | [Configure the Model](/configure/model) |
-| `profile-seed-choice-required` | `docs/reference/status-and-configuration/model-profile-fields.md` | [Model-Profile Fields](/reference/status-and-configuration/model-profile-fields) |
-| `deployment-binding-mismatch` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](/troubleshooting) |
-| `model-endpoint-insecure-transport` | `docs/configure/model.md` | [Configure the Model](/configure/model) |
-| `tracked-source-dirty` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](/troubleshooting) |
-| `not-a-git-repository` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](/troubleshooting) |
-| `not-repository-root` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](/troubleshooting) |
-| `unsafe-git-configuration` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](/troubleshooting) |
-| `git-identity-drift` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](/troubleshooting) |
-| `git-configuration-refused` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](/troubleshooting) |
-| `git-checkout-unverified` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](/troubleshooting) |
-| `ambiguous-remote` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](/troubleshooting) |
-| `repository-mismatch` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](/troubleshooting) |
-| `first-pass-support-invalid` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](/troubleshooting) |
-| `required-source-unread` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](/troubleshooting) |
-| `preflight-budget-exceeded` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](/troubleshooting) |
-| `content-index-refused` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](/troubleshooting) |
-| `content-index-unreadable` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](/troubleshooting) |
-| `context-compile-failed` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](/troubleshooting) |
-| `navigation-alias-refused` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](/troubleshooting) |
-| `empty-page-anchor` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](/troubleshooting) |
-| `duplicate-page-anchor` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](/troubleshooting) |
+| `migration-required` | `docs/about/architecture.md` | [DocsFab Architecture](../../about/architecture.md) |
+| `cli-usage` | `docs/reference/status-and-configuration/human-output-and-json.md` | [Human Output and JSON](human-output-and-json.md) |
+| `doctor` | `docs/manage/check-readiness.md` | [Check Readiness](../../manage/check-readiness.md) |
+| `profile-inspect` | `docs/reference/status-and-configuration/model-profile-approval.md` | [Model-Profile Approval](model-profile-approval.md) |
+| `profile-inspection-clock-invalid` | `docs/reference/status-and-configuration/model-profile-approval.md` | [Model-Profile Approval](model-profile-approval.md) |
+| `profile-evidence-invalid` | `docs/reference/status-and-configuration/model-profile-approval.md` | [Model-Profile Approval](model-profile-approval.md) |
+| `invalid-model-profile-configuration` | `docs/reference/status-and-configuration/model-profile-approval.md` | [Model-Profile Approval](model-profile-approval.md) |
+| `unsupported-model-profile-api-format` | `docs/reference/status-and-configuration/model-profile-approval.md` | [Model-Profile Approval](model-profile-approval.md) |
+| `invalid-model-profile-approval` | `docs/reference/status-and-configuration/model-profile-approval.md` | [Model-Profile Approval](model-profile-approval.md) |
+| `profile-apply-rejected` | `docs/reference/status-and-configuration/model-profile-approval.md` | [Model-Profile Approval](model-profile-approval.md) |
+| `profile-owner-artifact-rejected` | `docs/reference/status-and-configuration/model-profile-approval.md` | [Model-Profile Approval](model-profile-approval.md) |
+| `profile-apply-ambiguous` | `docs/reference/status-and-configuration/model-profile-approval.md` | [Model-Profile Approval](model-profile-approval.md) |
+| `profile-rollback-ambiguous` | `docs/reference/status-and-configuration/model-profile-approval.md` | [Model-Profile Approval](model-profile-approval.md) |
+| `glab-auth-login` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](../../troubleshooting.md) |
+| `aggregate-timeout` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](../../troubleshooting.md) |
+| `per-blob-timeout` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](../../troubleshooting.md) |
+| `source-authority-path-refused` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](../../troubleshooting.md) |
+| `composition-retired` | `docs/configure/model.md` | [Configure the Model](../../configure/model.md) |
+| `setup-model-choice-required` | `docs/configure/model.md` | [Configure the Model](../../configure/model.md) |
+| `profile-seed-choice-required` | `docs/reference/status-and-configuration/model-profile-fields.md` | [Model-Profile Fields](model-profile-fields.md) |
+| `deployment-binding-mismatch` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](../../troubleshooting.md) |
+| `model-endpoint-insecure-transport` | `docs/configure/model.md` | [Configure the Model](../../configure/model.md) |
+| `tracked-source-dirty` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](../../troubleshooting.md) |
+| `not-a-git-repository` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](../../troubleshooting.md) |
+| `not-repository-root` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](../../troubleshooting.md) |
+| `unsafe-git-configuration` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](../../troubleshooting.md) |
+| `git-identity-drift` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](../../troubleshooting.md) |
+| `git-configuration-refused` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](../../troubleshooting.md) |
+| `git-checkout-unverified` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](../../troubleshooting.md) |
+| `ambiguous-remote` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](../../troubleshooting.md) |
+| `repository-mismatch` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](../../troubleshooting.md) |
+| `first-pass-support-invalid` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](../../troubleshooting.md) |
+| `required-source-unread` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](../../troubleshooting.md) |
+| `preflight-budget-exceeded` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](../../troubleshooting.md) |
+| `content-index-refused` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](../../troubleshooting.md) |
+| `content-index-unreadable` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](../../troubleshooting.md) |
+| `context-compile-failed` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](../../troubleshooting.md) |
+| `navigation-alias-refused` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](../../troubleshooting.md) |
+| `empty-page-anchor` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](../../troubleshooting.md) |
+| `duplicate-page-anchor` | `docs/troubleshooting.md` | [Troubleshooting DocsFab](../../troubleshooting.md) |
 
 A missing-profile `migration-required` throw can override that stem's
 architecture page and send `Docs:` to

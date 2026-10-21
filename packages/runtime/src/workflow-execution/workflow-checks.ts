@@ -48,6 +48,10 @@ import { resolveTemplateSet, type TemplateSetCapability } from "../templates/loa
 import { readWorkspacePage } from "../templates/page-guidance.js";
 import { documentationPlanPagePaths } from "./plan-binding.js";
 import {
+  assertPrReviewCheckAdmission,
+  type PrReviewCheckAdmissionV1,
+} from "./pr-review-check-admission.js";
+import {
   DockerCheckContainmentError,
   DockerCheckPreparationError,
   prepareDarwinCheckAuthority,
@@ -107,6 +111,8 @@ export interface CheckCommandAuthority {
 }
 
 export interface WorkflowChecksOptions {
+  /** Acquired public PR review: observe real checks and retain named not-run rows. */
+  prReviewAdmission?: PrReviewCheckAdmissionV1;
   /** Rejects when read-only, offline isolation cannot be established. */
   prepareAuthority?: (repository: string) => Promise<CheckCommandAuthority>;
   /**
@@ -436,6 +442,7 @@ function networkReason(command: string): string {
 export class WorkflowChecksHostOperation implements HostOperationExecutor {
   private readonly prepareAuthority: (repository: string) => Promise<CheckCommandAuthority>;
   private readonly templates: TemplateSetCapability | undefined;
+  private readonly prReviewAdmission: PrReviewCheckAdmissionV1 | undefined;
 
   public constructor(
     private readonly workspace: RepositoryWorkspace,
@@ -445,6 +452,8 @@ export class WorkflowChecksHostOperation implements HostOperationExecutor {
     this.prepareAuthority =
       options.prepareAuthority ?? (() => hostSelectedCheckAuthority(this.workspace));
     this.templates = options.templates;
+    this.prReviewAdmission = options.prReviewAdmission;
+    if (this.prReviewAdmission) assertPrReviewCheckAdmission(this.prReviewAdmission, workspace);
   }
 
   public async runStep(input: HarnessStepInput): Promise<HarnessStepResult> {
@@ -639,6 +648,30 @@ export class WorkflowChecksHostOperation implements HostOperationExecutor {
     ];
     // Nothing can run: no sandbox, no Git metadata, and no second look at the tree.
     if (runnable.length === 0) return result(evidence, binding);
+    if (this.prReviewAdmission) {
+      assertPrReviewCheckAdmission(this.prReviewAdmission, this.workspace);
+      for (const entry of runnable) {
+        evidence.push(
+          entry.kind === "required"
+            ? requiredEvidence(
+                entry.check,
+                "unavailable",
+                "Public PR review inventories this required repository check but does not admit script execution.",
+                "pr-review-not-admitted",
+              )
+            : {
+                command: entry.check.command,
+                directory: dirname(entry.check.packagePath),
+                packagePath: entry.check.packagePath,
+                status: "unavailable",
+                cause: "pr-review-not-admitted",
+                reason:
+                  "Public PR review inventories this native documentation check but does not admit script execution.",
+              },
+        );
+      }
+      return result(evidence, binding);
+    }
     let authority: CheckCommandAuthority;
     try {
       authority = await this.prepareAuthority(this.workspace.path);

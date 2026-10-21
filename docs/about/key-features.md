@@ -33,7 +33,7 @@ proposals are intended. The following table distinguishes these paths.
 
 | Feature | What It Does | Evidence State | Learn More |
 | --- | --- | --- | --- |
-| `docsfab run` and `docsfab do` | `run` executes a named catalog workflow. `do` classifies a natural-language sentence onto a catalog workflow, then can run it. | Repository-tested | [Runner Quickstart](../get-started/runner-quickstart.md) |
+| `docsfab run` and `docsfab do` | `run` executes a named catalog workflow. `do` classifies a natural-language sentence onto a catalog workflow, then can run it. | Repository-tested | [Workflow Quickstart](../get-started/runner-quickstart.md) |
 | Local `docsfab live-agent` | Starts or resumes a persistent local conversation. Documentation writes are enabled by default. `--read-only` disables edits, workflow writes, and host commands. | Repository-tested | [Live Agent Quickstart](../get-started/live-agent-quickstart.md) |
 | Automatic GitLab CI proposals | Intended path: a repository CI event starts a revision-bound job and proposes documentation beside the change. | Intent; integration pending | [Propose Documentation After CI in DocsFab](../workflows/automatic-ci-proposals.md) |
 | GitLab notes on an existing merge request | Projects a succeeded hosted review into one bot-owned note with source-linked findings. It does not merge. | Pilot-verified | [Review Merge Request Impact in DocsFab](../workflows/review-merge-request-impact.md) |
@@ -48,7 +48,7 @@ following table lists those jobs.
 
 | Feature | What It Does | Evidence State | Learn More |
 | --- | --- | --- | --- |
-| Create documentation | Runs `create-documentation` to produce a bounded new page or short set from pinned evidence and an instruction. | Repository-tested | [Runner Quickstart](../get-started/runner-quickstart.md) |
+| Create documentation | Runs `create-documentation` to produce a bounded new page or short set from pinned evidence and an instruction. | Repository-tested | [Workflow Quickstart](../get-started/runner-quickstart.md) |
 | Update documentation, including no-change | Runs `update-documentation` for a scoped patch. After planning, the job can instead return a read-only no-change assessment when independent evidence supports leaving pages unchanged. | Repository-tested | [Update Documentation Beside a Change in DocsFab](../workflows/update-documentation-beside-a-change.md) |
 | Review documentation | Runs read-only `review-documentation` with audit, inventory-only verification, lint, canonical verification, independent review, audience, and evaluation steps. | Repository-tested | [Review Merge Request Impact in DocsFab](../workflows/review-merge-request-impact.md) |
 | Restructure documentation | Catalog job `restructure-documentation` for information-architecture change without treating the product as new. | Catalogued; not a v0.0.1 proof | [Run a Documentation Workflow in DocsFab](../workflows/run-a-documentation-workflow.md) |
@@ -89,8 +89,8 @@ lists those delivery capabilities.
 
 | Feature | What It Does | Evidence State | Learn More |
 | --- | --- | --- | --- |
-| `--patch-only` | Retains an inspectable local patch. It does not apply the patch to the source checkout or open a merge request. | Repository-tested | [Runner Quickstart](../get-started/runner-quickstart.md) |
-| Draft merge request | Default write delivery creates a branch and opens one draft merge request when delivery prerequisites pass. A human still accepts the draft. | Repository-tested | [Runner Quickstart](../get-started/runner-quickstart.md) |
+| `--patch-only` | Retains an inspectable local patch. It does not apply the patch to the source checkout or open a merge request. | Repository-tested | [Workflow Quickstart](../get-started/runner-quickstart.md) |
+| Draft merge request | Default write delivery creates a branch and opens one draft merge request when delivery prerequisites pass. A human still accepts the draft. | Repository-tested | [Workflow Quickstart](../get-started/runner-quickstart.md) |
 | `docsfab reports serve` | Serves saved review HTML from the selected state directory. It does not change the saved result. | Repository-tested | [Review Merge Request Impact in DocsFab](../workflows/review-merge-request-impact.md) |
 
 For hands-on paths, continue with the following pages.
@@ -99,7 +99,7 @@ For hands-on paths, continue with the following pages.
   <Card title="Install DocsFab" href="/get-started/installation">
     [Install DocsFab](../get-started/installation.md)
   </Card>
-  <Card title="Runner Quickstart" href="/get-started/runner-quickstart">
-    [Runner Quickstart](../get-started/runner-quickstart.md)
+  <Card title="Workflow Quickstart" href="/get-started/runner-quickstart">
+    [Workflow Quickstart](../get-started/runner-quickstart.md)
   </Card>
 </CardGroup>

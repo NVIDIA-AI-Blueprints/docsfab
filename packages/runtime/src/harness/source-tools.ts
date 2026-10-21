@@ -47,8 +47,11 @@ import {
 } from "../inputs/source-resolver.js";
 import type { SourceDiffLocatorV1 } from "../inputs/source-evidence.js";
 import { SOURCE_EXACT_ORIGINAL_FORM } from "../inputs/source-evidence.js";
-import { refuseLimit } from "../config/limits.js";
-import { sourceReadResponseCeiling } from "../config/source-read-limits.js";
+import { formatLimitObservation, limit, refuseLimit } from "../config/limits.js";
+import {
+  SOURCE_LIST_MAX_ENTRIES_LIMIT,
+  sourceReadResponseCeiling,
+} from "../config/source-read-limits.js";
 import { SOURCE_READ_RESPONSE_CEILING_BYTES } from "../inputs/source-step-policy.js";
 import {
   SOURCE_SEARCH_MAX_DESCRIPTORS,
@@ -112,8 +115,8 @@ export {
 /** Maximum span ids one read call may name; a narrower host budget still wins. */
 export const SOURCE_READ_MAX_SPANS_PER_CALL = 32;
 
-/** The inventory enters the prompt, so a listing is bounded and says when it is truncated. */
-export const SOURCE_LIST_MAX_ENTRIES = 256;
+/** The inventory enters the prompt; its sealed catalog value is also its default page size. */
+export const SOURCE_LIST_MAX_ENTRIES = limit(SOURCE_LIST_MAX_ENTRIES_LIMIT).value;
 
 type AnyToolDefinition = ToolDefinition<any, any, any>;
 
@@ -282,13 +285,18 @@ function listSourcesTool(options: SourceToolOptions): AnyToolDefinition {
         !Number.isSafeInteger(fromEntry) ||
         (fromEntry as number) < 0 ||
         !Number.isSafeInteger(maxEntries) ||
-        (maxEntries as number) < 1 ||
-        (maxEntries as number) > SOURCE_LIST_MAX_ENTRIES
+        (maxEntries as number) < 1
       )
         failSourceEvidenceService(
           "span-unavailable",
           "Inventory page arguments are outside the declared range.",
           "argument-shape",
+        );
+      if ((maxEntries as number) > SOURCE_LIST_MAX_ENTRIES)
+        failSourceEvidenceService(
+          "span-unavailable",
+          formatLimitObservation(limit(SOURCE_LIST_MAX_ENTRIES_LIMIT), maxEntries as number),
+          "window-range",
         );
       const entries = options.reader.listSources();
       if ((fromEntry as number) > entries.length)
